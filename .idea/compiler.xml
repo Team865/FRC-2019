@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="ActionJ.FRC-2019.ActionAPI-Kotlin.main" target="11" />
+      <module name="ActionJ.FRC-2019.ActionAPI-Kotlin.test" target="11" />
+      <module name="ActionKt.FRC-2019.ActionAPI-Kotlin.main" target="11" />
+      <module name="ActionKt.FRC-2019.ActionAPI-Kotlin.test" target="11" />
+      <module name="FRC-2019.Action-API-Java.main" target="11" />
+      <module name="FRC-2019.Action-API-Java.test" target="11" />
+      <module name="FRC-2019.ActionAPI-Kotlin.main" target="11" />
+      <module name="FRC-2019.ActionAPI-Kotlin.test" target="11" />
+      <module name="FRC-2019.FRC-2019-Robot.main" target="11" />
+      <module name="FRC-2019.FRC-2019-Robot.test" target="11" />
+      <module name="FRC-2019.Robot-2019.main" target="11" />
+      <module name="FRC-2019.Robot-2019.test" target="11" />
+      <module name="FRC-2019.Robot.main" target="11" />
+      <module name="FRC-2019.Robot.test" target="11" />
+      <module name="FRC-2019.Team865-2019-Robot.main" target="11" />
+      <module name="FRC-2019.Team865-2019-Robot.test" target="11" />
+      <module name="FRC-2019.Team865-FRC-2019-Robot.main" target="11" />
+      <module name="FRC-2019.Team865-FRC-2019-Robot.test" target="11" />
+      <module name="FRC2019.ActionAPI-Java.main" target="11" />
+      <module name="FRC2019.ActionAPI-Java.test" target="11" />
+      <module name="FRC2019.main" target="11" />
+      <module name="FRC2019.MiniPID.main" target="11" />
+      <module name="FRC2019.MiniPID.test" target="11" />
+      <module name="FRC2019.Robot-2019.main" target="11" />
+      <module name="FRC2019.Robot-2019.test" target="11" />
+      <module name="FRC2019.Robot-Commons.main" target="11" />
+      <module name="FRC2019.Robot-Commons.test" target="11" />
+      <module name="FRC2019.test" target="11" />
+      <module name="FRC2r019.ActionAPI-Java.main" target="11" />
+      <module name="FRC2r019.ActionAPI-Java.test" target="11" />
+      <module name="FRC2r019.main" target="11" />
+      <module name="FRC2r019.MiniPID.main" target="11" />
+      <module name="FRC2r019.MiniPID.test" target="11" />
+      <module name="FRC2r019.Robot-2019.main" target="11" />
+      <module name="FRC2r019.Robot-2019.test" target="11" />
+      <module name="FRC2r019.Robot-Commons.main" target="11" />
+      <module name="FRC2r019.Robot-Commons.test" target="11" />
+      <module name="FRC2r019.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
