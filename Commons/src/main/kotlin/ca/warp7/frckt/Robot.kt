@@ -18,6 +18,3 @@ fun action(factory: IAction.API.() -> IAction): IAction = factory.invoke(Queue()
 fun autonomousMode(factory: IAction.API.() -> IAction): () -> IAction = { action(factory) }
 fun runRobotAutonomous(mode: () -> IAction, timeout: Double = 15.0) = RT.initAuto(mode, timeout)
 fun IAction.API.setState(subsystem: Subsystem, state: IAction): IAction.API = exec { subsystem.state = state }
-
-fun runRobot() = Unit // TODO
-fun mainLoop() = Unit // TODO
