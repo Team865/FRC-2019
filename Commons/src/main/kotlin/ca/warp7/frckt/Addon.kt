@@ -20,6 +20,3 @@ fun sandstorm(mode: () -> IAction, exitCondition: () -> Boolean, controlLoop: Co
         }
     })
 }
-
-val driver = robotController(0, true)
-val operator = robotController(1, true)
