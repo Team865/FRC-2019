@@ -66,7 +66,7 @@ public class RobotRuntime {
         }
     }
 
-    public void initAuto(IAction.Mode mode, double timeout) {
+    public IAction initAuto(IAction.Mode mode, double timeout) {
         System.out.println(String.format("Robot State: Autonomous [%s]", mode.getClass().getSimpleName()));
         IAction action = mode.getAction();
         if (mAutoRunner != null) mAutoRunner.stop();
@@ -78,6 +78,7 @@ public class RobotRuntime {
             mInputs.forEach(Input::onZeroSensors);
         }
         mAutoRunner.start();
+        return mAutoRunner;
     }
 
     public void initControls(ControlLoop controlLoop) {

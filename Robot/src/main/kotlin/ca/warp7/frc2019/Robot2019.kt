@@ -1,6 +1,9 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frckt.*
+import ca.warp7.frckt.disableRobot
+import ca.warp7.frckt.mainLoop
+import ca.warp7.frckt.runRobot
+import ca.warp7.frckt.startControlLoop
 import edu.wpi.first.wpilibj.TimedRobot
 
 /**
@@ -35,23 +38,20 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
     override fun disabledInit() = disableRobot()
 
     /**
-     * Starts the autonomous mode by providing a mode to execute.
-     *
-     * With the sandstorm in the 2019 season, a helper method starts the
-     * autonomous mode, then interrupts and goes into controller
+     * Starts the autonomous mode by providing a control loop
      */
-    override fun autonomousInit() = sandstorm(Autonomous.mode, Autonomous.exitCondition, ControllerMain, 15.0)
+    override fun autonomousInit() = startControlLoop(Sandstorm)
 
     /**
      * Starts the teleop mode by providing a control loop.
      * Stops the autonomous routine if there is one
      */
-    override fun teleopInit() = startRobotControls(ControllerMain)
+    override fun teleopInit() = startControlLoop(MainController)
 
     /**
      * Starts the test mode by providing a potentially different control loop
      */
-    override fun testInit() = startRobotControls(ControllerTest)
+    override fun testInit() = startControlLoop(TestController)
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous

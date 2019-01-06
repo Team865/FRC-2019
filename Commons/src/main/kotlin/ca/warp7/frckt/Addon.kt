@@ -10,12 +10,12 @@ fun stopAutonomous() = Unit
 
 fun sandstorm(mode: () -> IAction, exitCondition: () -> Boolean, controlLoop: ControlLoop, timeout: Double = 15.0) {
     runRobotAutonomous(mode, timeout)
-    startRobotControls(object : ControlLoop {
+    startControlLoop(object : ControlLoop {
         override fun setup() = Unit
         override fun periodic() {
             if (exitCondition.invoke()) {
                 stopAutonomous()
-                startRobotControls(controlLoop)
+                startControlLoop(controlLoop)
             }
         }
     })

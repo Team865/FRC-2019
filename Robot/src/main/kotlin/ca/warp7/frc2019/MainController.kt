@@ -4,9 +4,10 @@ import ca.warp7.frc.ControlLoop
 import ca.warp7.frckt.driver
 import ca.warp7.frckt.operator
 
-object ControllerMain : ControlLoop {
+object MainController : ControlLoop {
 
     override fun setup() {
+        println("Robot State: Teleop")
     }
 
     override fun periodic() {
