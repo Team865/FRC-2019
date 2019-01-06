@@ -1,9 +1,7 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frckt.disableRobot
-import ca.warp7.frckt.mainLoop
-import ca.warp7.frckt.runRobot
-import ca.warp7.frckt.startControlLoop
+import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frckt.*
 import edu.wpi.first.wpilibj.TimedRobot
 
 /**
@@ -28,6 +26,11 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+
+        registerInput(Drive)
+
+        Drive.setIdle()
+
         runRobot()
     }
 
