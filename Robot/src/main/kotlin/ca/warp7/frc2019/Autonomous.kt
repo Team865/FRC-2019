@@ -1,11 +1,11 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frckt.autonomousMode
+import ca.warp7.frckt.NothingAction
 
 @Suppress("unused")
 object Autonomous {
 
     val mode get() = nothingMode
 
-    private val nothingMode = autonomousMode { exec { } }
+    private val nothingMode = { NothingAction() }
 }

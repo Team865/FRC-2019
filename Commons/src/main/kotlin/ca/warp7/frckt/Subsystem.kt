@@ -2,7 +2,7 @@ package ca.warp7.frckt
 
 abstract class Subsystem : InputSystem() {
 
-    var state: Action? = null
+    internal var state: Action? = null
 
     var idle = true
 
