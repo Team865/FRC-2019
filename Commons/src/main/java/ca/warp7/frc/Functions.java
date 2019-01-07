@@ -6,7 +6,4 @@ public interface Functions {
         return Math.max(-lim, Math.min(val, lim));
     }
 
-    static double constrainMinimum(double n, double tolerance) {
-        return Math.abs(n) > Math.abs(tolerance) ? n : 0;
-    }
 }

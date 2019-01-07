@@ -24,7 +24,7 @@ class RobotController internal constructor(internal val port: Int) {
     val leftYAxis get() = data.leftYAxis
     val rightXAxis get() = data.rightXAxis
     val rightYAxis get() = data.rightYAxis
-    var enabled = false
+    var controllerEnabled = false
 
     override fun equals(other: Any?): Boolean {
         return other is RobotController && port == other.port

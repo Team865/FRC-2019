@@ -29,8 +29,8 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
 
         Drive.setIdle()
 
-        driver.enabled = true
-        operator.enabled = true
+        driver.controllerEnabled = true
+        operator.controllerEnabled = true
 
         runRobot()
     }
@@ -44,18 +44,18 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
     /**
      * Starts the autonomous mode by providing a control loop
      */
-    override fun autonomousInit() = startControlLoop(Sandstorm)
+    override fun autonomousInit() = setControlLoop(Sandstorm)
 
     /**
      * Starts the teleop mode by providing a control loop.
      * Stops the autonomous routine if there is one
      */
-    override fun teleopInit() = startControlLoop(MainController)
+    override fun teleopInit() = setControlLoop(MainController)
 
     /**
      * Starts the test mode by providing a potentially different control loop
      */
-    override fun testInit() = startControlLoop(TestController)
+    override fun testInit() = setControlLoop(TestController)
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous
