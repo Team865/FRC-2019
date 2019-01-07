@@ -1,10 +1,11 @@
 package ca.warp7.frckt
 
+@Suppress("unused")
 abstract class Subsystem : InputSystem() {
 
     internal var state: Action? = null
 
-    var idle = true
+    private var idle = true
 
     /**
      *
@@ -39,6 +40,8 @@ abstract class Subsystem : InputSystem() {
         state = action
         block.invoke(action)
     }
+
+    fun <T : Action> future(action: T, block: T.() -> Unit = {}): Action = ExecutionAction { setState(action, block) }
 
     @Synchronized
     fun setIdle() {

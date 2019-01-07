@@ -16,6 +16,10 @@ private class KotlinAction(val action: IAction) : Action {
     override fun stop() = action.stop()
 }
 
+internal class ExecutionAction(private val exec: () -> Unit) : Action {
+    override fun start() = exec.invoke()
+}
+
 val Action.javaAction: IAction get() = JavaAction(this)
 val IAction.ktAction: Action get() = KotlinAction(this)
 

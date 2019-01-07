@@ -2,7 +2,7 @@ package ca.warp7.frckt
 
 fun runRobot() = Lifecycle.runRobot()
 
-fun mainLoop() = Lifecycle.mainLoop()
+fun runMainLoop() = Lifecycle.mainLoop()
 
 fun disableRobot() = Lifecycle.disableOutputs()
 

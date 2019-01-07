@@ -62,7 +62,7 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
-    override fun robotPeriodic() = mainLoop()
+    override fun robotPeriodic() = runMainLoop()
 
     /*
     =====================================================
