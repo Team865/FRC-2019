@@ -3,13 +3,13 @@ package ca.warp7.frc2019.state.drive
 import ca.warp7.frc2019.constants.DriveConstants.kCheesyDriveDeadband
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frckt.Action
+import ca.warp7.frckt.CheesyDriveCalculator
 
 object CheesyDrive : Action {
 
-    private val calculator = ca.warp7.frc.CheesyDrive(this::setPercent)
-
-    init {
-        calculator.disableInternalDeadband()
+    private val calculator = CheesyDriveCalculator { left, right ->
+        leftPercent = left
+        rightPercent = right
     }
 
     private var leftPercent = 0.0
@@ -19,22 +19,14 @@ object CheesyDrive : Action {
     var throttle = 0.0
     var quickTurn = false
 
-    private fun linearScaleDeadband(n: Double) = if (Math.abs(n) < kCheesyDriveDeadband) 0.0
-    else (n - Math.copySign(kCheesyDriveDeadband, n)) / (1 - kCheesyDriveDeadband)
-
-    @Synchronized
-    private fun setPercent(left: Double, right: Double) {
-        leftPercent = left
-        rightPercent = right
+    private fun linearScaleDeadband(n: Double): Double {
+        return if (Math.abs(n) < kCheesyDriveDeadband) 0.0
+        else (n - Math.copySign(kCheesyDriveDeadband, n)) / (1 - kCheesyDriveDeadband)
     }
 
-    @Synchronized
     override fun start() = Unit
-
-    @Synchronized
     override fun shouldFinish() = false
 
-    @Synchronized
     override fun update() {
         calculator.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), quickTurn)
         Drive.leftDemand = leftPercent
