@@ -14,7 +14,7 @@ internal fun u(old: ControllerState, _new: Boolean): ControllerState {
     else if (old == ControllerState.Released || old == ControllerState.KeptUp) ControllerState.KeptUp else ControllerState.Released
 }
 
-private fun collect(s: ControllerData, c: XboxController) {
+internal fun collectControllerData(s: ControllerData, c: XboxController) {
     s.leftTriggerAxis = c.getTriggerAxis(kLeft)
     s.rightTriggerAxis = c.getTriggerAxis(kRight)
     s.leftXAxis = c.getX(kLeft)

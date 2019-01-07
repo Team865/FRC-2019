@@ -34,7 +34,7 @@ abstract class Subsystem : InputSystem() {
     abstract fun onOutput()
 
     fun <T : Action> setState(action: T, block: T.() -> Unit = {}) {
-        if (state != null) state!!.stop()
+        state?.stop()
         action.start()
         state = action
         block.invoke(action)

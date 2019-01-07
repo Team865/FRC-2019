@@ -1,7 +1,11 @@
 package ca.warp7.frckt
 
+import edu.wpi.first.wpilibj.XboxController
+
 @Suppress("unused")
-class RobotController(private val data: ControllerData) {
+class RobotController internal constructor(internal val data: ControllerData,
+                                           internal val controller: XboxController) {
+
     val aButton get() = data.aButton
     val bButton get() = data.bButton
     val xButton get() = data.xButton

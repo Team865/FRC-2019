@@ -1,6 +1,7 @@
 package ca.warp7.frckt
 
-class ControllerData {
+internal class ControllerData {
+
     var aButton = ControllerState.KeptUp
     var bButton = ControllerState.KeptUp
     var xButton = ControllerState.KeptUp
