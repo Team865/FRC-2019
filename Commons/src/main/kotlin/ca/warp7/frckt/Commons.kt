@@ -5,3 +5,6 @@ fun runRobot() = Lifecycle.runRobot()
 fun mainLoop() = Lifecycle.mainLoop()
 
 fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Math.min(value, Math.abs(lim)))
+
+val driver = RobotController(0).also { Lifecycle.controllers.add(it) }
+val operator = RobotController(1).also { Lifecycle.controllers.add(it) }

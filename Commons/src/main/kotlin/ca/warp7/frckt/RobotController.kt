@@ -3,8 +3,10 @@ package ca.warp7.frckt
 import edu.wpi.first.wpilibj.XboxController
 
 @Suppress("unused")
-class RobotController internal constructor(internal val data: ControllerData,
-                                           internal val controller: XboxController) {
+class RobotController internal constructor(internal val port: Int) {
+
+    internal val data = ControllerData()
+    internal val controller = XboxController(port)
 
     val aButton get() = data.aButton
     val bButton get() = data.bButton
@@ -23,5 +25,13 @@ class RobotController internal constructor(internal val data: ControllerData,
     val rightXAxis get() = data.rightXAxis
     val rightYAxis get() = data.rightYAxis
     var enabled = false
+
+    override fun equals(other: Any?): Boolean {
+        return other is RobotController && port == other.port
+    }
+
+    override fun hashCode(): Int {
+        return port
+    }
 }
 
