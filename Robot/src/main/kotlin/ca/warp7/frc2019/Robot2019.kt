@@ -27,9 +27,10 @@ class Robot2019 : TimedRobot(kDefaultPeriod) {
     override fun robotInit() {
         println("Hello me is robit!")
 
-        registerInput(Drive)
-
         Drive.setIdle()
+
+        driver.enabled = true
+        operator.enabled = true
 
         runRobot()
     }

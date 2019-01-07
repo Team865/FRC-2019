@@ -1,5 +1,6 @@
 package ca.warp7.frckt
 
+@Suppress("unused")
 class RobotController(private val data: ControllerData) {
     val aButton get() = data.aButton
     val bButton get() = data.bButton
@@ -17,5 +18,6 @@ class RobotController(private val data: ControllerData) {
     val leftYAxis get() = data.leftYAxis
     val rightXAxis get() = data.rightXAxis
     val rightYAxis get() = data.rightYAxis
+    var enabled = false
 }
 
