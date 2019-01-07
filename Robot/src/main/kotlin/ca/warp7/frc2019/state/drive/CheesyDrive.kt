@@ -18,7 +18,6 @@ object CheesyDrive : Action {
     var wheel = 0.0
     var throttle = 0.0
     var quickTurn = false
-    var solenoidOnForShifter = false
 
     private fun linearScaleDeadband(n: Double) = if (Math.abs(n) < kCheesyDriveDeadband) 0.0
     else (n - Math.copySign(kCheesyDriveDeadband, n)) / (1 - kCheesyDriveDeadband)

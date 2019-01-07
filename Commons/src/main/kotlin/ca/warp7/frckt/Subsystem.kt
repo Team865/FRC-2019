@@ -1,6 +1,6 @@
 package ca.warp7.frckt
 
-abstract class Subsystem {
+abstract class Subsystem : InputSystem() {
 
     var state: Action? = null
 
@@ -42,6 +42,7 @@ abstract class Subsystem {
 
     @Synchronized
     fun setIdle() {
+        initInputs()
         Lifecycle.subsystems.add(this)
         idle = true
     }

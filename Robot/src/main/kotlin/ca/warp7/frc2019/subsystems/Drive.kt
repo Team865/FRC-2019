@@ -2,7 +2,6 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Input
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frckt.Subsystem
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -10,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object Drive : Subsystem(), Input {
+object Drive : Subsystem() {
 
     private val leftMaster = TalonSRX(DriveConstants.kLeftMaster)
     private val rightMaster = TalonSRX(DriveConstants.kRightMaster)

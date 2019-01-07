@@ -3,11 +3,9 @@ package ca.warp7.frckt
 import ca.warp7.action.IAction
 import ca.warp7.action.impl.Queue
 import ca.warp7.frc.ControlLoop
-import ca.warp7.frc.Input
 import ca.warp7.frc.RobotRuntime.RT
 import ca.warp7.frc.Subsystem
 
-fun registerInput(input: Input) = RT.registerInput(input)
 fun startControlLoop(controlLoop: ControlLoop?) = RT.initControls(controlLoop)
 fun disableRobot() = RT.disableOutputs()
 
