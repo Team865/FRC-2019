@@ -4,6 +4,8 @@ import ca.warp7.frc2019.constants.DriveConstants.kCheesyDriveDeadband
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frckt.Action
 import ca.warp7.frckt.CheesyDriveCalculator
+import ca.warp7.frckt.ControllerState
+import ca.warp7.frckt.RobotController
 
 object CheesyDrive : Action {
 
@@ -31,5 +33,13 @@ object CheesyDrive : Action {
         calculator.cheesyDrive(linearScaleDeadband(wheel), linearScaleDeadband(throttle), quickTurn)
         Drive.leftDemand = leftPercent
         Drive.rightDemand = rightPercent
+    }
+
+    fun RobotController.cheesyDrive() {
+        Drive.setState(CheesyDrive) {
+            wheel = rightXAxis
+            throttle = leftYAxis
+            quickTurn = leftBumper == ControllerState.HeldDown
+        }
     }
 }

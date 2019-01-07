@@ -1,13 +1,11 @@
 package ca.warp7.frc2019
 
+import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frckt.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-/**
- * The robot class with a default period (0.02 seconds per loop)
- */
-class Robot2019 : TimedRobot(kDefaultPeriod) {
+class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
     companion object {
 
