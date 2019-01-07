@@ -26,6 +26,8 @@ pluginManagement {
 
 include ":MiniPID"
 
+include ":Constants"
+
 include ":ActionJ"
 project(":ActionJ").name = "ActionAPI-Java"
 

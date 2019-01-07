@@ -2,6 +2,8 @@ plugins {
     id("java")
 }
 
+buildDir = new File(rootProject.projectDir, "build/" + project.name)
+
 dependencies {
     testImplementation("junit:junit:4.12")
 }
