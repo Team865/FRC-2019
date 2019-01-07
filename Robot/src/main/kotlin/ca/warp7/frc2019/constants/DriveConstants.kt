@@ -7,4 +7,6 @@ object DriveConstants {
     const val kRightMaster = RobotPins.kDriveRightMaster
     const val kRightFollowerA = RobotPins.kDriveRightFollowerA
     const val kRightFollowerB = RobotPins.kDriveRightFollowerB
+
+    const val kCheesyDriveDeadband = 0.2
 }
