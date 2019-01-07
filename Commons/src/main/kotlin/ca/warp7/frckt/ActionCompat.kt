@@ -17,4 +17,6 @@ private class KotlinAction(val action: IAction) : Action {
 }
 
 val Action.javaAction: IAction get() = JavaAction(this)
-val IAction.kotlinAction: Action get() = KotlinAction(this)
+val IAction.ktAction: Action get() = KotlinAction(this)
+
+internal class NothingAction : Action

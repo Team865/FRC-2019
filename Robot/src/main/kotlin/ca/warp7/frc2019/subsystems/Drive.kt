@@ -3,8 +3,8 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Input
-import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frckt.Subsystem
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
@@ -47,6 +47,12 @@ object Drive : Subsystem(), Input {
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
+    }
+
+    override fun onIdle() {
+        mode = Mode.Percent
+        leftDemand = 0.0
+        rightDemand = 0.0
     }
 
     override fun onOutput() {

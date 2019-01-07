@@ -13,7 +13,7 @@ object MainController : ControlLoop {
     override fun setup() {
         println("Robot State: Teleop")
 
-        Drive.state = CheesyDrive
+        Drive.setState(CheesyDrive)
     }
 
     override fun periodic() {

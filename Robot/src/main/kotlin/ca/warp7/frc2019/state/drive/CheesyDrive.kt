@@ -1,10 +1,10 @@
 package ca.warp7.frc2019.state.drive
 
-import ca.warp7.action.IAction
 import ca.warp7.frc2019.constants.DriveConstants.kCheesyDriveDeadband
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frckt.Action
 
-object CheesyDrive : IAction {
+object CheesyDrive : Action {
 
     private val calculator = ca.warp7.frc.CheesyDrive(this::setPercent)
 
@@ -33,9 +33,7 @@ object CheesyDrive : IAction {
     override fun start() = Unit
 
     @Synchronized
-    override fun shouldFinish(): Boolean {
-        return false
-    }
+    override fun shouldFinish() = false
 
     @Synchronized
     override fun update() {
