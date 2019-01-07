@@ -23,6 +23,10 @@ internal object Lifecycle {
     var robotEnabled = false
 
     var controlLoop: ControlLoop? = null
+        set(value) {
+            robotEnabled = true
+            field = value
+        }
 
     private var autoRunner: Action = NothingAction()
 

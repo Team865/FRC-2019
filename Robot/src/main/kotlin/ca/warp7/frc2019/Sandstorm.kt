@@ -4,7 +4,7 @@ import ca.warp7.frckt.*
 
 object Sandstorm : ControlLoop {
 
-    lateinit var autonomousAction: Action
+    private lateinit var autonomousAction: Action
 
     override fun setup() {
         println("Robot State: Sandstorm")
