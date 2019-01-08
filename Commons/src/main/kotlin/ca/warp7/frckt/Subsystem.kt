@@ -43,10 +43,9 @@ abstract class Subsystem : InputSystem() {
 
     fun <T : Action> future(action: T, block: T.() -> Unit = {}): Action = ExecutionAction { setState(action, block) }
 
-    @Synchronized
     fun setIdle() {
         initInputs()
-        Lifecycle.subsystems.add(this)
+        CommonsRobot.subsystems.add(this)
         idle = true
     }
 }

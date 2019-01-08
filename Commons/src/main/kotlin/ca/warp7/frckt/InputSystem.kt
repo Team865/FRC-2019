@@ -1,9 +1,9 @@
 package ca.warp7.frckt
 
-abstract class InputSystem {
+abstract class InputSystem : ShuffleSource {
 
     fun initInputs() {
-        Lifecycle.inputSystems.add(this)
+        CommonsRobot.inputSystems.add(this)
     }
 
     /**
