@@ -31,8 +31,6 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
         driver.controllerEnabled = true
         operator.controllerEnabled = true
-
-        runRobot()
     }
 
     /**

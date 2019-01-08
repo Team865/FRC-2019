@@ -30,7 +30,7 @@ internal object Lifecycle {
 
     private var autoRunner: Action = NothingAction()
 
-    fun runRobot() {
+    init {
         Thread.currentThread().name = "Robot"
         System.setOut(PrintStream(outContent))
         System.setErr(PrintStream(errContent))
