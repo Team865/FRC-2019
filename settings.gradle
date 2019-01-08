@@ -31,6 +31,9 @@ include ":Constants"
 include ":ActionJ"
 project(":ActionJ").name = "ActionAPI-Java"
 
+include ":ActionKt"
+project(":ActionKt").name = "ActionDSL-Kotlin"
+
 include ":Commons"
 project(":Commons").name = "Robot-Commons"
 
