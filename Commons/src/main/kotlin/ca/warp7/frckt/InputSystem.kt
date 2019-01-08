@@ -1,6 +1,6 @@
 package ca.warp7.frckt
 
-abstract class InputSystem : ShuffleSource() {
+abstract class InputSystem : ShuffleSource {
 
     fun initInputs() {
         Lifecycle.inputSystems.add(this)
