@@ -17,9 +17,9 @@ object CheesyDrive : Action {
     private var leftPercent = 0.0
     private var rightPercent = 0.0
 
-    var wheel = 0.0
-    var throttle = 0.0
-    var quickTurn = false
+    private var wheel = 0.0
+    private var throttle = 0.0
+    private var quickTurn = false
 
     private fun linearScaleDeadband(n: Double): Double {
         return if (Math.abs(n) < kCheesyDriveDeadband) 0.0

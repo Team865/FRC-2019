@@ -49,16 +49,14 @@ object Drive : Subsystem() {
         rightDemand = 0.0
     }
 
-    override fun onOutput() {
-        when (mode) {
-            Mode.Percent -> {
-                leftMaster.set(ControlMode.PercentOutput, leftDemand)
-                rightMaster.set(ControlMode.PercentOutput, rightDemand)
-            }
-            Mode.Velocity -> {
-                leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
-                rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
-            }
+    override fun onOutput() = when (mode) {
+        Mode.Percent -> {
+            leftMaster.set(ControlMode.PercentOutput, leftDemand)
+            rightMaster.set(ControlMode.PercentOutput, rightDemand)
+        }
+        Mode.Velocity -> {
+            leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+            rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
     }
 
