@@ -1,5 +1,7 @@
 package ca.warp7.frc
 
+import ca.warp7.actionkt.Action
+
 fun runMainLoop() = CommonsRobot.mainLoop()
 
 fun disableRobot() = CommonsRobot.disableOutputs()

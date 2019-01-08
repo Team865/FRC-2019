@@ -1,5 +1,8 @@
 package ca.warp7.frc
 
+import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.ExecutionAction
+
 @Suppress("unused")
 abstract class Subsystem : InputSystem() {
 

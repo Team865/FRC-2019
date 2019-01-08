@@ -1,4 +1,4 @@
-package ca.warp7.frc
+package ca.warp7.actionkt
 
 import ca.warp7.actionj.IAction
 
@@ -16,7 +16,7 @@ private class KotlinAction(val action: IAction) : Action {
     override fun stop() = action.stop()
 }
 
-internal class ExecutionAction(private val exec: () -> Unit) : Action {
+class ExecutionAction(private val exec: () -> Unit) : Action {
     override fun start() = exec.invoke()
 }
 

@@ -1,6 +1,6 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.NothingAction
+import ca.warp7.actionkt.NothingAction
 
 @Suppress("unused")
 object Autonomous {

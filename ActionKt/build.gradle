@@ -10,12 +10,8 @@ repositories {
 buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 dependencies {
-    compile project(":ActionDSL-Kotlin")
-    compile project(":MiniPID")
-    compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
-    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
-    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    compile project(":ActionAPI-Java")
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     compile "org.jetbrains.kotlin:kotlin-test"
+    testImplementation("junit:junit:4.12")
 }
