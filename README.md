@@ -8,7 +8,9 @@ The `Robot` module contains the main robot code.
 
 Each module has the main source code in `src/main` and test code in `src/test`
 
-The modules use Gradle's multi-project build system
+`Constants` contains Robot constants. It is in a separate module because robot characterization also requires those constants
+
+The modules are organized by Gradle's multi-project build system
 
 The `Robot` module also has a deploy folder that gets copied to RoboRIO
 
