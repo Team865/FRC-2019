@@ -11,14 +11,23 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    private val leftMaster = TalonSRX(DriveConstants.kLeftMaster)
-    private val rightMaster = TalonSRX(DriveConstants.kRightMaster)
+    private val leftMaster = TalonSRX(DriveConstants.kLeftMaster).also {
+        VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
+        VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
+    }
+
+    private val rightMaster = TalonSRX(DriveConstants.kRightMaster).also {
+        it.inverted = true
+        VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
+        VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
+    }
 
     enum class Mode {
         Percent, Velocity
     }
 
     var mode: Mode = Mode.Percent
+
     var leftDemand = 0.0
     var rightDemand = 0.0
     var leftFeedForward = 0.0
@@ -28,20 +37,6 @@ object Drive : Subsystem() {
     var rightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
-
-    init {
-        val leftFollowerA = VictorSPX(DriveConstants.kLeftFollowerA)
-        val leftFollowerB = VictorSPX(DriveConstants.kLeftFollowerB)
-
-        val rightFollowerA = VictorSPX(DriveConstants.kRightFollowerA)
-        val rightFollowerB = VictorSPX(DriveConstants.kRightFollowerB)
-
-        leftFollowerA.follow(leftMaster)
-        leftFollowerB.follow(leftMaster)
-
-        rightFollowerA.follow(rightMaster)
-        rightFollowerB.follow(rightMaster)
-    }
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
