@@ -3,9 +3,9 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frckt.Subsystem
-import ca.warp7.frckt.differentialDrive
-import ca.warp7.frckt.sendAll
+import ca.warp7.frc.Subsystem
+import ca.warp7.frc.differentialDrive
+import ca.warp7.frc.sendAll
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
