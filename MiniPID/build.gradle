@@ -1,3 +1,6 @@
 plugins {
     id("java")
 }
+
+
+buildDir = new File(rootProject.projectDir, "build/" + project.name)
