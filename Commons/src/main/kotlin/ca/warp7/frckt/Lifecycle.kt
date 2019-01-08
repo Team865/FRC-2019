@@ -14,19 +14,19 @@ internal object Lifecycle {
     val inputSystems: MutableSet<InputSystem> = mutableSetOf()
     val controllers: MutableSet<RobotController> = mutableSetOf()
 
-    private val outContent = ByteArrayOutputStream()
-    private val errContent = ByteArrayOutputStream()
-    private val originalOut = System.out
-    private val originalErr = System.err
-
-    var previousTime = 0.0
-    var robotEnabled = false
-
     var controlLoop: ControlLoop? = null
         set(value) {
             robotEnabled = true
             field = value
         }
+
+    private val outContent = ByteArrayOutputStream()
+    private val errContent = ByteArrayOutputStream()
+    private val originalOut = System.out
+    private val originalErr = System.err
+
+    private var previousTime = 0.0
+    private var robotEnabled = false
 
     private var autoRunner: Action = NothingAction()
 
@@ -64,19 +64,19 @@ internal object Lifecycle {
     }
 
     fun disableOutputs() {
+        autoRunner.stop()
         robotEnabled = false
     }
 
-    fun runAutonomous(mode: () -> Action, timeout: Double): Action {
-        autoRunner = ActionMode.createRunner(
-                IAction.ITimer { Timer.getFPGATimestamp() },
-                20.0,
-                timeout,
-                mode.invoke().javaAction,
-                true).ktAction
+    fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
+            IAction.ITimer { Timer.getFPGATimestamp() },
+            20.0,
+            timeout,
+            mode.invoke().javaAction,
+            true).ktAction.also {
+        autoRunner = it
         robotEnabled = true
-        autoRunner.start()
-        return autoRunner
+        it.start()
     }
 }
 
