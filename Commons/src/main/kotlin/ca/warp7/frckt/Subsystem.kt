@@ -45,7 +45,7 @@ abstract class Subsystem : InputSystem() {
 
     fun setIdle() {
         initInputs()
-        Lifecycle.subsystems.add(this)
+        CommonsRobot.subsystems.add(this)
         idle = true
     }
 }

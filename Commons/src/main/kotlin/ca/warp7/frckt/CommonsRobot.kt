@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-internal object Lifecycle {
+internal object CommonsRobot {
 
     val subsystems: MutableSet<Subsystem> = mutableSetOf()
     val inputSystems: MutableSet<InputSystem> = mutableSetOf()
