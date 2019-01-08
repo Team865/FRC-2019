@@ -4,10 +4,13 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frckt.Subsystem
+import ca.warp7.frckt.differentialDrive
+import ca.warp7.frckt.sendAll
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
@@ -70,5 +73,11 @@ object Drive : Subsystem() {
     override fun onZeroSensors() {
         leftMaster.selectedSensorPosition = 0
         rightMaster.selectedSensorPosition = 0
+    }
+
+    override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
+        container.sendAll {
+            differentialDrive()
+        }
     }
 }
