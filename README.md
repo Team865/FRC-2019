@@ -1,5 +1,14 @@
 # Team 865 FRC 2019 Robot Code
 
+```text
+ ██╗    ██╗ █████╗ ██████╗ ██████╗ ███████╗
+██║    ██║██╔══██╗██╔══██╗██╔══██╗╚════██║
+██║ █╗ ██║███████║██████╔╝██████╔╝    ██╔╝
+██║███╗██║██╔══██║██╔══██╗██╔═══╝    ██╔╝ 
+╚███╔███╔╝██║  ██║██║  ██║██║        ██║  
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝  
+```
+
 This repository will contain all the relevant robot software. It does not include scouting software, which are found in other repositories
 
 The `Robot` module contains the main robot code.

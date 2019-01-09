@@ -1,9 +1,9 @@
 package ca.warp7.frc2019
 
+import ca.warp7.frc.*
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Electrical
-import ca.warp7.frc.*
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
@@ -26,8 +26,10 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     override fun robotInit() {
         println("Hello me is robit!")
 
-        Electrical.setIdle()
-        Drive.setIdle()
+        arrayOf(
+                Electrical,
+                Drive
+        ).forEach { it.setIdle() }
 
         driver.controllerEnabled = true
         operator.controllerEnabled = true
