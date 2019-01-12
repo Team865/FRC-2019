@@ -14,5 +14,9 @@ fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonsR
 
 fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Math.min(value, Math.abs(lim)))
 
-val driver = RobotController(0).also { CommonsRobot.controllers.add(it) }
-val operator = RobotController(1).also { CommonsRobot.controllers.add(it) }
+private fun controller(port: Int) = RobotController(port).also { CommonsRobot.controllers.add(it) }
+
+object Controls {
+    val driver = controller(0)
+    val operator = controller(1)
+}

@@ -36,7 +36,7 @@ object CheesyDrive : Action {
     }
 
     fun RobotController.cheesyDrive() {
-        Drive.setState(CheesyDrive) {
+        Drive.set(CheesyDrive) {
             wheel = rightXAxis
             throttle = leftYAxis
             quickTurn = leftBumper == ControllerState.HeldDown

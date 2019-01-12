@@ -1,9 +1,14 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.*
+import ca.warp7.frc.Controls
+import ca.warp7.frc.disableRobot
+import ca.warp7.frc.runMainLoop
+import ca.warp7.frc.setControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.DriveState
 import ca.warp7.frc2019.subsystems.Electrical
+import ca.warp7.frc2019.subsystems.ElectricalState
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
@@ -26,13 +31,11 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     override fun robotInit() {
         println("Hello me is robit!")
 
-        arrayOf(
-                Electrical,
-                Drive
-        ).forEach { it.setIdle() }
+        Electrical.set(ElectricalState.Idle)
+        Drive.set(DriveState.Brake)
 
-        driver.controllerEnabled = true
-        operator.controllerEnabled = true
+        Controls.driver.enabled = true
+        Controls.operator.enabled = true
     }
 
     /**
@@ -50,12 +53,12 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
      * Starts the teleop mode by providing a control loop.
      * Stops the autonomous routine if there is one
      */
-    override fun teleopInit() = setControlLoop(MainController)
+    override fun teleopInit() = setControlLoop(MainControl)
 
     /**
      * Starts the test mode by providing a potentially different control loop
      */
-    override fun testInit() = setControlLoop(TestController)
+    override fun testInit() = setControlLoop(TestControl)
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous
@@ -70,7 +73,6 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     they are all handled by the `robotPeriodic` function
     =====================================================
      */
-
     override fun disabledPeriodic() = Unit
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit

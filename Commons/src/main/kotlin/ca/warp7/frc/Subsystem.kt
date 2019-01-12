@@ -37,14 +37,14 @@ abstract class Subsystem : InputSystem() {
      */
     abstract fun onOutput()
 
-    fun <T : Action> setState(action: T, block: T.() -> Unit = {}) {
+    fun <T : Action> set(newState: T, block: T.() -> Unit = {}) {
         state?.stop()
-        action.start()
-        state = action
-        block.invoke(action)
+        newState.start()
+        state = newState
+        block.invoke(newState)
     }
 
-    fun <T : Action> future(action: T, block: T.() -> Unit = {}): Action = ExecutionAction { setState(action, block) }
+    fun <T : Action> future(action: T, block: T.() -> Unit = {}): Action = ExecutionAction { set(action, block) }
 
     fun setIdle() {
         initInputs()
