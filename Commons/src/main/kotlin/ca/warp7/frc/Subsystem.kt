@@ -1,17 +1,14 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.ExecutionAction
 
-@Suppress("unused")
 abstract class Subsystem : InputSystem() {
 
     internal var state: Action? = null
 
-    private var idle = true
+    private var initialized = false
 
     /**
-     *
      * Called when the robot is disabled
      *
      *
@@ -20,35 +17,25 @@ abstract class Subsystem : InputSystem() {
      */
     abstract fun onDisabled()
 
-
     /**
-     * Called when the subsystem does not currently have a state
-     */
-    open fun onIdle() = onDisabled()
-
-    /**
-     *
      * Called periodically for the subsystem to send outputs to its output device.
-     * This method is called from the State Change Looper.
-     *
      *
      * This method is guaranteed to not be called when the robot is disabled.
      * Any output limits should be applied here for safety reasons.
      */
     abstract fun onOutput()
 
+    /**
+     * Sets the current state of the subsystem
+     */
     fun <T : Action> set(newState: T, block: T.() -> Unit = {}) {
+        if (!initialized) {
+            initInputs()
+            CommonRobot.subsystems.add(this)
+        }
         state?.stop()
         newState.start()
         state = newState
         block.invoke(newState)
-    }
-
-    fun <T : Action> future(action: T, block: T.() -> Unit = {}): Action = ExecutionAction { set(action, block) }
-
-    fun setIdle() {
-        initInputs()
-        CommonsRobot.subsystems.add(this)
-        idle = true
     }
 }

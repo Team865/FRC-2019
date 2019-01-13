@@ -3,7 +3,7 @@ package ca.warp7.frc
 abstract class InputSystem : ShuffleSource {
 
     fun initInputs() {
-        CommonsRobot.inputSystems.add(this)
+        CommonRobot.inputSystems.add(this)
     }
 
     /**

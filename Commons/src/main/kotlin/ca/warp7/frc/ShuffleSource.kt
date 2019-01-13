@@ -4,5 +4,5 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 interface ShuffleSource {
 
-    open fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
+    fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
 }

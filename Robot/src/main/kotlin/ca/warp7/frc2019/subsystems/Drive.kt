@@ -2,10 +2,8 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc.Subsystem
-import ca.warp7.frc.differentialDrive
-import ca.warp7.frc.sendAll
+import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
@@ -46,12 +44,6 @@ object Drive : Subsystem() {
         rightMaster.neutralOutput()
     }
 
-    override fun onIdle() {
-        mode = Mode.Percent
-        leftDemand = 0.0
-        rightDemand = 0.0
-    }
-
     override fun onOutput() = when (mode) {
         Mode.Percent -> {
             leftMaster.set(ControlMode.PercentOutput, leftDemand)
@@ -76,8 +68,5 @@ object Drive : Subsystem() {
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.sendAll {
-            differentialDrive()
-        }
     }
 }

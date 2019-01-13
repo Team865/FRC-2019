@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-internal object CommonsRobot {
+internal object CommonRobot {
 
     val subsystems: MutableSet<Subsystem> = mutableSetOf()
     val inputSystems: MutableSet<InputSystem> = mutableSetOf()
