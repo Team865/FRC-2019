@@ -16,11 +16,13 @@ private class KotlinAction(val action: IAction) : Action {
     override fun stop() = action.stop()
 }
 
-class ExecutionAction(private val exec: () -> Unit) : Action {
-    override fun start() = exec.invoke()
-}
-
 val Action.javaAction: IAction get() = JavaAction(this)
 val IAction.ktAction: Action get() = KotlinAction(this)
 
 class NothingAction : Action
+
+private class RunOnce(private val block: () -> Unit)
+
+fun runOnce(block: () -> Unit): Action = object : Action {
+    override fun start() = block.invoke()
+}

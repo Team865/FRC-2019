@@ -23,11 +23,11 @@ object Drive : Subsystem() {
         VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
     }
 
-    enum class Mode {
+    enum class OutputMode {
         Percent, Velocity
     }
 
-    var mode: Mode = Mode.Percent
+    var outputMode: OutputMode = OutputMode.Percent
 
     var leftDemand = 0.0
     var rightDemand = 0.0
@@ -44,12 +44,12 @@ object Drive : Subsystem() {
         rightMaster.neutralOutput()
     }
 
-    override fun onOutput() = when (mode) {
-        Mode.Percent -> {
+    override fun onOutput() = when (outputMode) {
+        OutputMode.Percent -> {
             leftMaster.set(ControlMode.PercentOutput, leftDemand)
             rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
-        Mode.Velocity -> {
+        OutputMode.Velocity -> {
             leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }

@@ -2,10 +2,14 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.actionj.IAction
-import ca.warp7.actionkt.ktAction
+import ca.warp7.actionkt.runOnce
 
 object DriveState {
-    val Brake = IAction {
-    }.ktAction
+
+    val Brake = runOnce {
+        Drive.outputMode = Drive.OutputMode.Percent
+        Drive.leftDemand = 0.0
+        Drive.rightDemand = 0.0
+    }
+
 }

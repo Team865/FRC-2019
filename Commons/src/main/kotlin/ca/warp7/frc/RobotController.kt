@@ -7,6 +7,7 @@ class RobotController internal constructor(internal val port: Int) {
 
     internal val data = ControllerData()
     internal val controller = XboxController(port)
+    internal var enabled = false
 
     val aButton get() = data.aButton
     val bButton get() = data.bButton
@@ -24,7 +25,10 @@ class RobotController internal constructor(internal val port: Int) {
     val leftYAxis get() = data.leftYAxis
     val rightXAxis get() = data.rightXAxis
     val rightYAxis get() = data.rightYAxis
-    var enabled = false
+
+    fun enable() {
+        enabled = true
+    }
 
     override fun equals(other: Any?): Boolean {
         return other is RobotController && port == other.port

@@ -34,8 +34,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
         Electrical.set(ElectricalState.Idle)
         Drive.set(DriveState.Brake)
 
-        Controls.driver.enabled = true
-        Controls.operator.enabled = true
+        Controls.driver.enable()
+        Controls.operator.enable()
     }
 
     /**
