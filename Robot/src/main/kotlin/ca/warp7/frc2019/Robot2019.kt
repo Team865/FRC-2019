@@ -27,9 +27,14 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+
         Electrical.set(ElectricalState.Idle)
         Drive.set(DriveState.Brake)
         Lift.set(LiftState.Idle)
+        BackIntake.set(BackIntakeState.Idle)
+        Conveyor.set(ConveyorState.Idle)
+        LED.set(LEDState.Off)
+
         Controls.driver.enable()
         Controls.operator.enable()
     }
@@ -70,6 +75,7 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     =====================================================
      */
     override fun disabledPeriodic() = Unit
+
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit
     override fun testPeriodic() = Unit
