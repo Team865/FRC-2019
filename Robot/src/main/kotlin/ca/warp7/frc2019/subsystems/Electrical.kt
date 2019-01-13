@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
-import ca.warp7.frc2019.constants.ElectricalConstants
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.PowerDistributionPanel
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets

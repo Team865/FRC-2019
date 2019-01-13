@@ -4,11 +4,10 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runMainLoop
 import ca.warp7.frc.setControlLoop
-import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
+class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
 
     companion object {
 
