@@ -84,6 +84,5 @@ object Drive : Subsystem() {
         container
                 .add(differentialDrive)
                 .withWidget(BuiltInWidgets.kDifferentialDrive)
-                .withPosition(0, 0)
     }
 }

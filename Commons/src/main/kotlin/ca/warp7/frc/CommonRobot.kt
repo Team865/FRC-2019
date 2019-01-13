@@ -9,6 +9,7 @@ import ca.warp7.actionkt.NothingAction
 import ca.warp7.actionkt.javaAction
 import ca.warp7.actionkt.ktAction
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -86,7 +87,14 @@ internal object CommonRobot {
             }
         }
         // Send data to Shuffleboard
-        inputSystems.forEach { it.onUpdateShuffleboard(Shuffleboard.getTab(it::class.java.simpleName)) }
+        inputSystems.forEach {
+            Shuffleboard.getTab(it::class.java.simpleName).apply {
+                if (it is Subsystem) add("Current State",
+                        if (it.currentState != null) it.currentState!!::class.java.simpleName else "None")
+                        .withWidget(BuiltInWidgets.kTextView).withPosition(0, 0)
+                it.onUpdateShuffleboard(this)
+            }
+        }
         // Flush the standard output
         outContent.apply {
             toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
