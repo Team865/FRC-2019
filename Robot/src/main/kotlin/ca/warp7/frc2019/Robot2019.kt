@@ -36,7 +36,7 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
         BackIntake.set(BackIntakeState.Idle)
         Conveyor.set(ConveyorState.Idle)
         LED.set(LEDState.Off)
-        Superstructure.set(SuperstructureState.Idle)
+        Superstructure.set(SuperstructureState.StartingConfiguration)
 
         Controls.driver.enable()
         Controls.operator.enable()

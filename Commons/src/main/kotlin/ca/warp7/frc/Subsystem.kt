@@ -33,9 +33,11 @@ abstract class Subsystem : InputSystem() {
             initInputs()
             CommonRobot.subsystems.add(this)
         }
-        state?.stop()
-        newState.start()
-        state = newState
+        if (newState !== state) {
+            state?.stop()
+            newState.start()
+            state = newState
+        }
         block.invoke(newState)
     }
 }
