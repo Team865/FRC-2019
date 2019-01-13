@@ -6,6 +6,8 @@ import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
+import ca.warp7.frc2019.subsystems.Superstructure
+import ca.warp7.frc2019.subsystems.SuperstructureState
 
 object MainControl : ControlLoop {
 
@@ -28,7 +30,11 @@ object MainControl : ControlLoop {
             rightTriggerAxis // TODO Cargo pass-back
 
             if (rightBumper == Pressed) {
-                // TODO Toggle between defense
+                Superstructure.set(SuperstructureState.Defending)
+            }
+
+            if (startButton == Pressed) {
+                Superstructure.set(SuperstructureState.ClimbingPlatform)
             }
         }
 
