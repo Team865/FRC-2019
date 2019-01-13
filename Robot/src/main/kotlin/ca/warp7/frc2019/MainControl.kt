@@ -36,8 +36,6 @@ object MainControl : ControlLoop {
             leftTriggerAxis // TODO Intake, overriding the driver
             rightTriggerAxis // TODO Outtake, overriding the driver
 
-            leftXAxis // TODO override lift
-
             when (Pressed) {
                 leftBumper -> TODO("decrease set point on lift")
                 rightBumper -> TODO("increase set point on lift")
@@ -47,6 +45,10 @@ object MainControl : ControlLoop {
                 yButton -> TODO("Outtake the hatch panel by releasing the grip and push out with piston")
                 else -> {
                 }
+            }
+
+            if (leftStickButton == HeldDown) {
+
             }
         }
     }

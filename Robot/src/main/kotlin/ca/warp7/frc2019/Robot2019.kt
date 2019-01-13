@@ -5,10 +5,7 @@ import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runMainLoop
 import ca.warp7.frc.setControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.DriveState
-import ca.warp7.frc2019.subsystems.Electrical
-import ca.warp7.frc2019.subsystems.ElectricalState
+import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
@@ -32,6 +29,7 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Electrical.set(ElectricalState.Idle)
         Drive.set(DriveState.Brake)
+        Lift.set(LiftState.Idle)
         Controls.driver.enable()
         Controls.operator.enable()
     }

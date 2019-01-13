@@ -29,9 +29,7 @@ object DriveState {
         override fun shouldFinish() = false
 
         override fun stop() {
-            Drive.outputMode = Drive.OutputMode.Percent
-            Drive.leftDemand = 0.0
-            Drive.rightDemand = 0.0
+            Drive.set(Brake)
         }
     }
 }
