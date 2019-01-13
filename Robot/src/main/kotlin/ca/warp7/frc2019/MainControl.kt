@@ -4,10 +4,10 @@ import ca.warp7.frc.ControlLoop
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
+import ca.warp7.frc2019.states.DriveState
+import ca.warp7.frc2019.states.SuperstructureState
 import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.DriveState
 import ca.warp7.frc2019.subsystems.Superstructure
-import ca.warp7.frc2019.subsystems.SuperstructureState
 
 object MainControl : ControlLoop {
 
