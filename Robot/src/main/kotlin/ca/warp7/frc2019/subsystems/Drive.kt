@@ -6,25 +6,34 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.drive.DifferentialDrive
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    private val leftMaster = TalonSRX(DriveConstants.kLeftMaster).also {
+    val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
         VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
         VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
     }
 
-    private val rightMaster = TalonSRX(DriveConstants.kRightMaster).also {
+    val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
         it.inverted = true
         VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
         VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
     }
 
+    val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
+        isRightSideInverted = false
+        setDeadband(DriveConstants.kDifferentialDeadband)
+        setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
+        setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
+    }
+
     enum class OutputMode {
-        Percent, Velocity
+        Percent, Velocity, WPILibControlled
     }
 
     var outputMode: OutputMode = OutputMode.Percent
@@ -53,6 +62,8 @@ object Drive : Subsystem() {
             leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
+        OutputMode.WPILibControlled -> {
+        }
     }
 
     override fun onMeasure(dt: Double) {
@@ -68,5 +79,9 @@ object Drive : Subsystem() {
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
+        container
+                .add(differentialDrive)
+                .withWidget(BuiltInWidgets.kDifferentialDrive)
+                .withPosition(0, 0)
     }
 }

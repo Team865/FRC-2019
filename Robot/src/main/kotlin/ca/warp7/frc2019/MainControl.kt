@@ -1,9 +1,11 @@
 package ca.warp7.frc2019
 
 import ca.warp7.frc.ControlLoop
+import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
-import ca.warp7.frc2019.state.drive.CheesyDrive.cheesyDrive
+import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.DriveState
 
 object MainControl : ControlLoop {
 
@@ -14,7 +16,12 @@ object MainControl : ControlLoop {
     override fun periodic() {
 
         with(Controls.driver) {
-            cheesyDrive()
+
+            Drive.set(DriveState.Curvature) {
+                throttle = leftYAxis
+                wheel = rightXAxis
+                quickTurn = leftBumper == HeldDown
+            }
 
             leftTriggerAxis // TODO Cargo pass-forward
 

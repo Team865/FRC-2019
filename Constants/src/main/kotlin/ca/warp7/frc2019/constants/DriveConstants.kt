@@ -8,5 +8,5 @@ object DriveConstants {
     const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerAPin
     const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBPin
 
-    const val kCheesyDriveDeadband = 0.2
+    const val kDifferentialDeadband = 0.2
 }
