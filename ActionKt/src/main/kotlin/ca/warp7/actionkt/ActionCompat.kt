@@ -21,8 +21,6 @@ val IAction.ktAction: Action get() = KotlinAction(this)
 
 class NothingAction : Action
 
-private class RunOnce(private val block: () -> Unit)
-
 fun runOnce(block: () -> Unit): Action = object : Action {
     override fun start() = block.invoke()
 }

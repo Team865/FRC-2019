@@ -15,20 +15,22 @@ internal fun u(old: ControllerState, _new: Boolean): ControllerState {
 }
 
 internal fun collectControllerData(s: ControllerData, c: XboxController) {
-    s.leftTriggerAxis = c.getTriggerAxis(kLeft)
-    s.rightTriggerAxis = c.getTriggerAxis(kRight)
-    s.leftXAxis = c.getX(kLeft)
-    s.leftYAxis = c.getY(kLeft)
-    s.rightXAxis = c.getX(kRight)
-    s.rightYAxis = c.getY(kRight)
-    s.aButton = u(s.aButton, c.aButton)
-    s.bButton = u(s.bButton, c.bButton)
-    s.xButton = u(s.xButton, c.xButton)
-    s.yButton = u(s.yButton, c.yButton)
-    s.leftBumper = u(s.leftBumper, c.getBumper(kLeft))
-    s.rightBumper = u(s.rightBumper, c.getBumper(kRight))
-    s.leftStickButton = u(s.leftStickButton, c.getStickButton(kLeft))
-    s.rightStickButton = u(s.rightStickButton, c.getStickButton(kRight))
-    s.startButton = u(s.startButton, c.startButton)
-    s.backButton = u(s.backButton, c.backButton)
+    with(s) {
+        leftTriggerAxis = c.getTriggerAxis(kLeft)
+        rightTriggerAxis = c.getTriggerAxis(kRight)
+        leftXAxis = c.getX(kLeft)
+        leftYAxis = c.getY(kLeft)
+        rightXAxis = c.getX(kRight)
+        rightYAxis = c.getY(kRight)
+        aButton = u(aButton, c.aButton)
+        bButton = u(bButton, c.bButton)
+        xButton = u(xButton, c.xButton)
+        yButton = u(yButton, c.yButton)
+        leftBumper = u(leftBumper, c.getBumper(kLeft))
+        rightBumper = u(rightBumper, c.getBumper(kRight))
+        leftStickButton = u(leftStickButton, c.getStickButton(kLeft))
+        rightStickButton = u(rightStickButton, c.getStickButton(kRight))
+        startButton = u(startButton, c.startButton)
+        backButton = u(backButton, c.backButton)
+    }
 }

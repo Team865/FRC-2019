@@ -30,10 +30,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-
         Electrical.set(ElectricalState.Idle)
         Drive.set(DriveState.Brake)
-
         Controls.driver.enable()
         Controls.operator.enable()
     }

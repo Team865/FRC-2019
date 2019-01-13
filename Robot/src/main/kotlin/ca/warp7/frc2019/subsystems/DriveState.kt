@@ -12,4 +12,5 @@ object DriveState {
         Drive.rightDemand = 0.0
     }
 
+    val CheesyDrive = ca.warp7.frc2019.state.drive.CheesyDrive
 }
