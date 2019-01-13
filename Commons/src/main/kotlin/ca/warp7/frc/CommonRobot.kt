@@ -41,7 +41,13 @@ internal object CommonRobot {
         System.setErr(PrintStream(errContent))
     }
 
+    /**
+     * Runs a periodic loop that collects inputs, update the autonomous
+     * routine and controller loop, process subsystem states, send output
+     * signals, and send telemetry data
+     */
     fun mainLoop() {
+
         // Collect controller data
         controllers.forEach { if (it.enabled) collectControllerData(it.data, it.controller) }
 
@@ -59,9 +65,12 @@ internal object CommonRobot {
             // Update the control loop
             controlLoop?.periodic()
 
-            // Update subsystem state and do output
+            // Update subsystem state and do output, stopping the state if it wants to
             subsystems.forEach {
-                it.state?.update()
+                if (it.state?.shouldFinish() == true) {
+                    it.state?.stop()
+                    it.state = null
+                } else it.state?.update()
                 it.onOutput()
             }
         }
