@@ -17,7 +17,24 @@ object SuperstructureState {
             Superstructure.compressor.closedLoopControl = false
         }
 
+    val Manual = runOnce { }
+
+    val MovingToDefenceMode
+        get() = runOnce {
+
+        }
+
     val Defending
+        get() = runOnce {
+
+        }
+
+    val PassingCargo
+        get() = runOnce {
+
+        }
+
+    val FeedingCargo
         get() = runOnce {
 
         }

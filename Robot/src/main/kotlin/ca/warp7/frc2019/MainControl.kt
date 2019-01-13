@@ -4,6 +4,7 @@ import ca.warp7.frc.ControlLoop
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
+import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.states.DriveState
 import ca.warp7.frc2019.states.SuperstructureState
 import ca.warp7.frc2019.subsystems.Drive
@@ -29,8 +30,14 @@ object MainControl : ControlLoop {
 
             rightTriggerAxis // TODO Cargo pass-back
 
+            if (leftTriggerAxis > ControlConstants.kCargoPassDeadband) {
+                Superstructure.set(SuperstructureState.PassingCargo)
+            } else if (rightTriggerAxis > ControlConstants.kCargoPassDeadband) {
+                Superstructure.set(SuperstructureState.FeedingCargo)
+            }
+
             if (rightBumper == Pressed) {
-                Superstructure.set(SuperstructureState.Defending)
+                Superstructure.set(SuperstructureState.MovingToDefenceMode)
             }
 
             if (startButton == Pressed) {

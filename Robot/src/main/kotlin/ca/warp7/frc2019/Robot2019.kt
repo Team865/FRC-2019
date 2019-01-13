@@ -1,14 +1,14 @@
 package ca.warp7.frc2019
 
 import ca.warp7.frc.*
-import ca.warp7.frc2019.constants.RobotConstants
+import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.states.DriveState
 import ca.warp7.frc2019.states.SuperstructureState
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Superstructure
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
+class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
     companion object {
 
