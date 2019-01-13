@@ -18,6 +18,8 @@ object MainControl : ControlLoop {
 
     override fun periodic() {
 
+        var overrideDefence = false
+
         with(Controls.driver) {
 
             Drive.set(DriveState.Curvature) {
@@ -26,23 +28,21 @@ object MainControl : ControlLoop {
                 isQuickTurn = leftBumper == HeldDown
             }
 
-            leftTriggerAxis // TODO Cargo pass-forward
-
-            rightTriggerAxis // TODO Cargo pass-back
-
             if (leftTriggerAxis > ControlConstants.kCargoPassDeadband) {
-                Superstructure.set(SuperstructureState.PassingCargo)
+                Superstructure.set(SuperstructureState.PassingCargo) {
+                    speed = leftTriggerAxis
+                    deadband = ControlConstants.kCargoPassDeadband
+                }
             } else if (rightTriggerAxis > ControlConstants.kCargoPassDeadband) {
-                Superstructure.set(SuperstructureState.FeedingCargo)
+                Superstructure.set(SuperstructureState.FeedingCargo) {
+                    speed = leftTriggerAxis
+                    deadband = ControlConstants.kCargoPassDeadband
+                }
             }
 
-            if (rightBumper == Pressed) {
-                Superstructure.set(SuperstructureState.MovingToDefence)
-            }
-
-            if (startButton == Pressed) {
-                Superstructure.set(SuperstructureState.MovingToClimb)
-            }
+            if (rightBumper == Pressed) overrideDefence = true
+            if (backButton == Pressed) Superstructure.set(SuperstructureState.Idle)
+            if (startButton == Pressed) Superstructure.set(SuperstructureState.MovingToClimb)
         }
 
         with(Controls.operator) {
@@ -63,6 +63,10 @@ object MainControl : ControlLoop {
             if (leftStickButton == HeldDown) {
 
             }
+        }
+
+        if (overrideDefence) {
+            Superstructure.set(SuperstructureState.MovingToDefence)
         }
     }
 }
