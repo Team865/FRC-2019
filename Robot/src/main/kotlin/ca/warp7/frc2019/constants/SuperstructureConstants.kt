@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.subsystems
+package ca.warp7.frc2019.constants
 
 object SuperstructureConstants {
 

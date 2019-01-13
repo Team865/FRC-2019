@@ -3,6 +3,7 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
@@ -14,12 +15,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 object Drive : Subsystem() {
 
     val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
+        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
         VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
         VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
     }
 
     val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
         it.inverted = true
+        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
         VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
         VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
     }

@@ -1,14 +1,21 @@
-@file:Suppress("unused")
-
 package ca.warp7.frc2019.constants
 
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
-object CTREDefaultConstants {
+@Suppress("unused")
+object DriveConstants {
+    const val kLeftMaster = ElectricalConstants.kDriveLeftMasterPin
+    const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerAPin
+    const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBPin
+    const val kRightMaster = ElectricalConstants.kDriveRightMasterPin
+    const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerAPin
+    const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBPin
 
-    private val kDefaultVictorSPX = VictorSPXConfiguration().apply {
+    const val kDifferentialDeadband = 0.2
+
+    val kDefaultVictorSPX = VictorSPXConfiguration().apply {
 
         // CustomParamsConfiguration
 
@@ -141,7 +148,7 @@ object CTREDefaultConstants {
         diff1Term = RemoteFeedbackDevice.RemoteSensor0
     }
 
-    private val kDefaultTalonSRX = TalonSRXConfiguration().apply {
+    val kDefaultTalonSRX = TalonSRXConfiguration().apply {
 
         // CustomParamsConfiguration
 
