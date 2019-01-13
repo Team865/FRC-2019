@@ -1,12 +1,11 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.Controls
-import ca.warp7.frc.disableRobot
-import ca.warp7.frc.runMainLoop
-import ca.warp7.frc.setControlLoop
+import ca.warp7.frc.*
 import ca.warp7.frc2019.constants.RobotConstants
-import ca.warp7.frc2019.states.*
-import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.states.DriveState
+import ca.warp7.frc2019.states.SuperstructureState
+import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Superstructure
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
@@ -28,17 +27,8 @@ class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-
-        Electrical.set(ElectricalState.Idle)
-        Drive.set(DriveState.Brake)
+        Drive.set(DriveState.Neutral)
         Superstructure.set(SuperstructureState.StartingConfiguration)
-        FrontIntake.set(FrontIntakeState.Idle)
-        HatchIntake.set(HatchIntakeState.PullBack)
-        Lift.set(LiftState.Idle)
-        BackIntake.set(BackIntakeState.PivotUp)
-        Conveyor.set(ConveyorState.Idle)
-        LED.set(LEDState.Off)
-
         Controls.driver.enable()
         Controls.operator.enable()
     }
@@ -63,7 +53,7 @@ class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
     /**
      * Starts the test mode by providing a potentially different control loop
      */
-    override fun testInit() = setControlLoop(TestControl)
+    override fun testInit() = setTestControlLoop(TestControl)
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous

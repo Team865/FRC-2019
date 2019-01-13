@@ -10,6 +10,10 @@ fun setControlLoop(controlLoop: ControlLoop?) {
     CommonRobot.controlLoop = controlLoop
 }
 
+fun setTestControlLoop(controlLoop: ControlLoop?) {
+    CommonRobot.controlLoop = controlLoop
+}
+
 fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)
 
 fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Math.min(value, Math.abs(lim)))

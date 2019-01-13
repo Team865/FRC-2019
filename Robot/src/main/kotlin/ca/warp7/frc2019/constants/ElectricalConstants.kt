@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.constants
 
 object ElectricalConstants {
-    const val compressorModule = 0
-    const val pdpModule = 0
+    const val kCompressorModule = 0
+    const val kPDPModule = 0
 
     const val kDriveLeftMasterPin = 0 // TODO
     const val kDriveLeftFollowerAPin = 0 // TODO

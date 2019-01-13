@@ -8,10 +8,14 @@ import ca.warp7.frc2019.subsystems.Drive
 
 object DriveState {
 
-    val Brake = runOnce {
-        Drive.outputMode = Drive.OutputMode.Percent
-        Drive.leftDemand = 0.0
-        Drive.rightDemand = 0.0
+    val Neutral = runOnce {
+        Drive.apply {
+            outputMode = Drive.OutputMode.Percent
+            leftDemand = 0.0
+            rightDemand = 0.0
+            leftMaster.neutralOutput()
+            rightMaster.neutralOutput()
+        }
     }
 
     object Curvature : Action {
@@ -30,7 +34,7 @@ object DriveState {
         override fun shouldFinish() = false
 
         override fun stop() {
-            Drive.set(Brake)
+            Drive.set(Neutral)
         }
     }
 }
