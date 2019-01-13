@@ -22,7 +22,7 @@ object SuperstructureState {
 
         }
 
-    val ClimbingPlatform
+    val ClimbingSecondLevel
         get() = runOnce {
             BackIntake.set(BackIntakeState.LiftingRobot)
         }

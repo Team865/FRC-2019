@@ -27,10 +27,10 @@ class Robot2019 : TimedRobot(RobotConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        Drive.set(DriveState.Neutral)
+        Drive.set(DriveState.NeutralOutput)
         Superstructure.set(SuperstructureState.StartingConfiguration)
-        Controls.driver.enable()
-        Controls.operator.enable()
+        Controls.driver.activate()
+        Controls.operator.activate()
     }
 
     /**

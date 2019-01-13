@@ -49,7 +49,7 @@ internal object CommonRobot {
     fun mainLoop() {
 
         // Collect controller data
-        controllers.forEach { if (it.enabled) collectControllerData(it.data, it.controller) }
+        controllers.forEach { if (it.active) collectControllerData(it.data, it.controller) }
 
         // Calculate exact loop time
         val time = Timer.getFPGATimestamp()

@@ -20,9 +20,9 @@ object MainControl : ControlLoop {
         with(Controls.driver) {
 
             Drive.set(DriveState.Curvature) {
-                throttle = leftYAxis
-                wheel = rightXAxis
-                quickTurn = leftBumper == HeldDown
+                xSpeed = leftYAxis
+                zRotation = rightXAxis
+                isQuickTurn = leftBumper == HeldDown
             }
 
             leftTriggerAxis // TODO Cargo pass-forward
@@ -34,7 +34,7 @@ object MainControl : ControlLoop {
             }
 
             if (startButton == Pressed) {
-                Superstructure.set(SuperstructureState.ClimbingPlatform)
+                Superstructure.set(SuperstructureState.ClimbingSecondLevel)
             }
         }
 
