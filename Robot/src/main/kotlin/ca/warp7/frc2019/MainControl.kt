@@ -37,11 +37,11 @@ object MainControl : ControlLoop {
             }
 
             if (rightBumper == Pressed) {
-                Superstructure.set(SuperstructureState.MovingToDefenceMode)
+                Superstructure.set(SuperstructureState.MovingToDefence)
             }
 
             if (startButton == Pressed) {
-                Superstructure.set(SuperstructureState.ClimbingSecondLevel)
+                Superstructure.set(SuperstructureState.MovingToClimb)
             }
         }
 

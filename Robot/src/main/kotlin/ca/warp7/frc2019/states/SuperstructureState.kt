@@ -19,7 +19,7 @@ object SuperstructureState {
 
     val Manual = runOnce { }
 
-    val MovingToDefenceMode
+    val MovingToDefence
         get() = runOnce {
 
         }
@@ -39,7 +39,7 @@ object SuperstructureState {
 
         }
 
-    val ClimbingSecondLevel
+    val MovingToClimb
         get() = runOnce {
             BackIntake.set(BackIntakeState.LiftingRobot)
         }

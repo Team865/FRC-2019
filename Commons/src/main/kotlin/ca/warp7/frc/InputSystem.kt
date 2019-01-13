@@ -1,6 +1,6 @@
 package ca.warp7.frc
 
-abstract class InputSystem : ShuffleSource {
+abstract class InputSystem : ShuffleboardUpdater {
 
     fun initInputs() {
         CommonRobot.inputSystems.add(this)

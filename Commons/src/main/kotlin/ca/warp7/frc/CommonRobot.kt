@@ -47,42 +47,50 @@ internal object CommonRobot {
      * signals, and send telemetry data
      */
     fun mainLoop() {
-
         // Collect controller data
         controllers.forEach { if (it.active) collectControllerData(it.data, it.controller) }
-
-        // Calculate exact loop time
+        // Calculate exact loop peroid for measurements
         val time = Timer.getFPGATimestamp()
         val dt = time - previousTime
         previousTime = time
-
         // Get inputs from sensors
         inputSystems.forEach { it.onMeasure(dt) }
-
         // Check for enabled state
         if (robotEnabled) {
-
             // Update the control loop
             controlLoop?.periodic()
-
             // Update subsystem state and do output, stopping the state if it wants to
             subsystems.forEach {
-                if (it.state?.shouldFinish() == true) {
-                    it.state?.stop()
-                    it.state = null
-                } else it.state?.update()
-                it.onOutput()
+                it.apply {
+                    // Check if there is a new wanted state that is not the same as the current state
+                    if (wantedState != null && wantedState != currentState) {
+                        // Change to the new state
+                        currentState = wantedState
+                        // Start the new state
+                        currentState?.start()
+                        // Remove the wanted state
+                        wantedState = null
+                    }
+                    // Check if the current state wants to finish before updating
+                    if (currentState?.shouldFinish() == true) {
+                        // Stop and remove the current state
+                        currentState?.stop()
+                        currentState = null
+                    } else {
+                        // Update the current state
+                        currentState?.update()
+                    }
+                    // To subsystem output
+                    onOutput()
+                }
             }
         }
-
         // Send data to Shuffleboard
         inputSystems.forEach { it.onUpdateShuffleboard(Shuffleboard.getTab(it::class.java.simpleName)) }
-
         // Flush the standard output
         outContent.apply {
             toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
         }.reset()
-
         // Flush the standard error adding ERROR before it
         errContent.apply {
             toString().split(System.lineSeparator().toRegex()).forEach {

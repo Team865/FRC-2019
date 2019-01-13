@@ -4,7 +4,8 @@ import ca.warp7.actionkt.Action
 
 abstract class Subsystem : InputSystem() {
 
-    internal var state: Action? = null
+    internal var currentState: Action? = null
+    internal var wantedState: Action? = null
 
     private var initialized = false
 
@@ -28,16 +29,13 @@ abstract class Subsystem : InputSystem() {
     /**
      * Sets the current state of the subsystem
      */
-    fun <T : Action> set(newState: T, block: T.() -> Unit = {}) {
+    fun <T : Action> set(state: T, block: T.() -> Unit = {}) {
         if (!initialized) {
+            initialized = true
             initInputs()
             CommonRobot.subsystems.add(this)
         }
-        if (newState !== state) {
-            state?.stop()
-            newState.start()
-            state = newState
-        }
-        block.invoke(newState)
+        wantedState = state
+        block.invoke(state)
     }
 }
