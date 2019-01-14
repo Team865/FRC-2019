@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.states
 
 import ca.warp7.actionkt.runOnce
+import ca.warp7.frc2019.states.superstructure.MoveToPosition
 import ca.warp7.frc2019.states.superstructure.PassBack
 import ca.warp7.frc2019.states.superstructure.PassForward
 import ca.warp7.frc2019.subsystems.*
@@ -44,4 +45,6 @@ object SuperstructureState {
         get() = runOnce {
             BackIntake.set(BackIntakeState.LiftingRobot)
         }
+
+    val MovingToPosition = MoveToPosition
 }

@@ -20,6 +20,6 @@ fun <T : RobotBase> startRobot(robot: T) = RobotBase.startRobot { robot }
 private fun controller(port: Int) = RobotController(port).also { CommonRobot.controllers.add(it) }
 
 object Controls {
-    val driver = controller(0)
-    val operator = controller(1)
+    val Driver = controller(0)
+    val Operator = controller(1)
 }

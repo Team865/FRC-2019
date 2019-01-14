@@ -8,6 +8,7 @@ import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.states.DriveState
 import ca.warp7.frc2019.states.FrontIntakeState
 import ca.warp7.frc2019.states.SuperstructureState
+import ca.warp7.frc2019.states.superstructure.WantedPosition
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.FrontIntake
 import ca.warp7.frc2019.subsystems.Superstructure
@@ -22,7 +23,7 @@ object ControlLoop : RobotControlLoop {
 
         var overrideDefence = false
 
-        with(Controls.driver) {
+        with(Controls.Driver) {
 
             Drive.set(DriveState.Curvature) {
                 xSpeed = leftYAxis
@@ -47,7 +48,7 @@ object ControlLoop : RobotControlLoop {
             if (startButton == Pressed) Superstructure.set(SuperstructureState.MovingToClimb)
         }
 
-        with(Controls.operator) {
+        with(Controls.Operator) {
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
                 FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
@@ -55,10 +56,14 @@ object ControlLoop : RobotControlLoop {
             }
 
             when (Pressed) {
-                leftBumper -> TODO("decrease set point on lift")
-                rightBumper -> TODO("increase set point on lift")
-                aButton -> TODO("Raise lift to the specified set point for the cargo")
-                bButton -> TODO("Raise lift to the specified setpoint for the hatch panel")
+                leftBumper -> SuperstructureState.MovingToPosition.wantedPosition.decreaseSetpoint()
+                rightBumper -> SuperstructureState.MovingToPosition.wantedPosition.increaseSetpoint()
+                aButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
+                    wantedPosition.setpointType = WantedPosition.SetpointType.Cargo
+                }
+                bButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
+                    wantedPosition.setpointType = WantedPosition.SetpointType.HatchPanel
+                }
                 xButton -> TODO("Toggle the secondary intake to hold or release grip on the hatch panel")
                 yButton -> TODO("Outtake the hatch panel by releasing the grip and push out with piston")
                 else -> {

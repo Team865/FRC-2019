@@ -18,8 +18,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Drive.set(DriveState.NeutralOutput)
         Superstructure.set(SuperstructureState.StartingConfiguration)
-        Controls.driver.activate()
-        Controls.operator.activate()
+        Controls.Driver.activate()
+        Controls.Operator.activate()
     }
 
     /**
