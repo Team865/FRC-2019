@@ -1,16 +1,18 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.ControlLoop
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
+import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.states.DriveState
+import ca.warp7.frc2019.states.FrontIntakeState
 import ca.warp7.frc2019.states.SuperstructureState
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.FrontIntake
 import ca.warp7.frc2019.subsystems.Superstructure
 
-object MainControl : ControlLoop {
+object ControlLoop : RobotControlLoop {
 
     override fun setup() {
         println("Robot State: Teleop")
@@ -28,15 +30,15 @@ object MainControl : ControlLoop {
                 isQuickTurn = leftBumper == HeldDown
             }
 
-            if (leftTriggerAxis > ControlConstants.kCargoPassDeadband) {
+            if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
                 Superstructure.set(SuperstructureState.PassingCargo) {
                     speed = leftTriggerAxis
-                    deadband = ControlConstants.kCargoPassDeadband
+                    deadband = ControlConstants.kAxisDeadband
                 }
-            } else if (rightTriggerAxis > ControlConstants.kCargoPassDeadband) {
+            } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
                 Superstructure.set(SuperstructureState.FeedingCargo) {
                     speed = leftTriggerAxis
-                    deadband = ControlConstants.kCargoPassDeadband
+                    deadband = ControlConstants.kAxisDeadband
                 }
             }
 
@@ -46,8 +48,11 @@ object MainControl : ControlLoop {
         }
 
         with(Controls.operator) {
-            leftTriggerAxis // TODO Intake, overriding the driver
-            rightTriggerAxis // TODO Outtake, overriding the driver
+            if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
+                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis }
+            } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
+                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis * -1 }
+            }
 
             when (Pressed) {
                 leftBumper -> TODO("decrease set point on lift")

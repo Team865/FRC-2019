@@ -5,9 +5,9 @@ package ca.warp7.frc
 import ca.warp7.actionj.IAction
 import ca.warp7.actionj.impl.ActionMode
 import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.NothingAction
 import ca.warp7.actionkt.javaAction
 import ca.warp7.actionkt.ktAction
+import ca.warp7.actionkt.runOnce
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
@@ -20,8 +20,9 @@ internal object CommonRobot {
     val inputSystems: MutableSet<InputSystem> = mutableSetOf()
     val controllers: MutableSet<RobotController> = mutableSetOf()
 
-    var controlLoop: ControlLoop? = null
+    var controlLoop: RobotControlLoop? = null
         set(value) {
+            autoRunner.stop()
             robotEnabled = true
             field = value
         }
@@ -34,7 +35,7 @@ internal object CommonRobot {
     private var previousTime = 0.0
     private var robotEnabled = false
 
-    private var autoRunner: Action = NothingAction()
+    private var autoRunner: Action = runOnce { }
 
     init {
         Thread.currentThread().name = "Robot"
@@ -63,15 +64,6 @@ internal object CommonRobot {
             // Update subsystem state and do output, stopping the state if it wants to
             subsystems.forEach {
                 it.apply {
-                    // Check if there is a new wanted state that is not the same as the current state
-                    if (wantedState != null && wantedState != currentState) {
-                        // Change to the new state
-                        currentState = wantedState
-                        // Start the new state
-                        currentState?.start()
-                        // Remove the wanted state
-                        wantedState = null
-                    }
                     // Check if the current state wants to finish before updating
                     if (currentState?.shouldFinish() == true) {
                         // Stop and remove the current state

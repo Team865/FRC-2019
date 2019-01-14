@@ -14,16 +14,16 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
         /**
          * The main function that is executed from the `Main-Class` of the jar file.
-         * It calls on TimedRobot to initialize system hardware and start the main
+         * It calls on RobotBase to initialize system hardware and start the main
          * loop that calls the other functions
          */
         @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Robot2019() }
+        fun main(args: Array<String>) = startRobot(Robot2019())
     }
 
     /**
-     * Initializes the robot by registering input devices, then setting all the
-     * subsystem objects to their idle state. Finally initialize the runtime
+     * Initializes the robot by setting the state of subsystems directly or transitively
+     * and activating the controllers
      */
     override fun robotInit() {
         println("Hello me is robit!")
@@ -46,14 +46,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
     /**
      * Starts the teleop mode by providing a control loop.
-     * Stops the autonomous routine if there is one
      */
-    override fun teleopInit() = setControlLoop(MainControl)
-
-    /**
-     * Starts the test mode by providing a potentially different control loop
-     */
-    override fun testInit() = setTestControlLoop(TestControl)
+    override fun teleopInit() = setControlLoop(ControlLoop)
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous
