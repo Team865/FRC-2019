@@ -10,20 +10,9 @@ import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
-    companion object {
-
-        /**
-         * The main function that is executed from the `Main-Class` of the jar file.
-         * It calls on RobotBase to initialize system hardware and start the main
-         * loop that calls the other functions
-         */
-        @JvmStatic
-        fun main(args: Array<String>) = startRobot(Robot2019())
-    }
-
     /**
      * Initializes the robot by setting the state of subsystems directly or transitively
-     * and activating the controllers
+     * and activating the controllers. Comment out the controllers to disable them
      */
     override fun robotInit() {
         println("Hello me is robit!")
@@ -67,4 +56,14 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit
     override fun testPeriodic() = Unit
+
+    /**
+     * The main function that is executed from the `Main-Class` of the jar file.
+     * It calls on RobotBase to initialize system hardware and start the main
+     * loop that calls the other functions
+     */
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) = startRobot(Robot2019())
+    }
 }

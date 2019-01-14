@@ -7,17 +7,16 @@ import ca.warp7.frc2019.subsystems.*
 
 @Suppress("unused")
 object SuperstructureState {
-    val StartingConfiguration
-        get() = runOnce {
-            FrontIntake.set(FrontIntakeState.Idle)
-            HatchIntake.set(HatchIntakeState.Retracting)
-            Lift.set(LiftState.Idle)
-            BackIntake.set(BackIntakeState.Retracting)
-            Conveyor.set(ConveyorState.Idle)
-            LED.set(LEDState.Off)
+    val StartingConfiguration = runOnce {
+        FrontIntake.set(FrontIntakeState.Idle)
+        HatchIntake.set(HatchIntakeState.Retracting)
+        Lift.set(LiftState.Idle)
+        BackIntake.set(BackIntakeState.Retracting)
+        Conveyor.set(ConveyorState.Idle)
+        LED.set(LEDState.Off)
 
-            Superstructure.compressor.closedLoopControl = false
-        }
+        Superstructure.compressor.closedLoopControl = false
+    }
 
     val Manual = runOnce { }
 
