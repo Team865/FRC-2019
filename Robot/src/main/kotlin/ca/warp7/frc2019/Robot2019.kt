@@ -34,27 +34,27 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     }
 
     /**
-     * Disables the robot by disabling each subsystem and not calling output methods.
-     * Stops the autonomous routine if there is one
-     */
-    override fun disabledInit() = disableRobot()
-
-    /**
-     * Starts the autonomous mode by providing a control loop
-     */
-    override fun autonomousInit() = setControlLoop(Sandstorm)
-
-    /**
-     * Starts the teleop mode by providing a control loop.
-     */
-    override fun teleopInit() = setControlLoop(ControlLoop)
-
-    /**
      * Runs a periodic loop that collects inputs, update the autonomous
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
     override fun robotPeriodic() = runMainLoop()
+
+    /**
+     * Disables the robot by disabling each subsystem and not calling output methods.
+     * Stops the autonomous routine if there is one
+     */
+    override fun disabledInit() = disableRobot()
+
+    /*
+    =====================================================
+    Starts various modes of the robot using control loops
+    =====================================================
+     */
+
+    override fun autonomousInit() = setControlLoop(Sandstorm)
+    override fun teleopInit() = setControlLoop(ControlLoop)
+    override fun testInit() = setControlLoop(ControlLoop)
 
     /*
     =====================================================
@@ -62,8 +62,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     they are all handled by the `robotPeriodic` function
     =====================================================
      */
-    override fun disabledPeriodic() = Unit
 
+    override fun disabledPeriodic() = Unit
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit
     override fun testPeriodic() = Unit
