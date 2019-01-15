@@ -9,10 +9,10 @@ class WantedPosition {
     private var setpoint = 0
     var setpointType = SetpointType.Cargo
 
-    fun increaseSetpoint() {
+    fun increaseLiftSetpoint() {
     }
 
-    fun decreaseSetpoint() {
+    fun decreaseLiftSetpoint() {
 
     }
 }

@@ -34,6 +34,7 @@ internal object CommonRobot {
 
     private var previousTime = 0.0
     private var robotEnabled = false
+    private var crashed = false
 
     private var autoRunner: Action = runOnce { }
 
@@ -43,15 +44,26 @@ internal object CommonRobot {
         System.setErr(PrintStream(errContent))
     }
 
+    fun pauseOnCrashMainLoop() {
+        if (!crashed) {
+            try {
+                mainLoop()
+            } catch (e: Throwable) {
+                crashed = true
+                originalErr.println("ERROR LOOP ENDED\n${e.message}")
+            }
+        }
+    }
+
     /**
      * Runs a periodic loop that collects inputs, update the autonomous
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
-    fun mainLoop() {
+    private fun mainLoop() {
         // Collect controller data
         controllers.forEach { if (it.active) collectControllerData(it.data, it.controller) }
-        // Calculate exact loop peroid for measurements
+        // Calculate exact loop period for measurements
         val time = Timer.getFPGATimestamp()
         val dt = time - previousTime
         previousTime = time

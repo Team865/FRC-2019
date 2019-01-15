@@ -3,7 +3,7 @@ package ca.warp7.frc
 import ca.warp7.actionkt.Action
 import edu.wpi.first.wpilibj.RobotBase
 
-fun runMainLoop() = CommonRobot.mainLoop()
+fun runMainLoop() = CommonRobot.pauseOnCrashMainLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 

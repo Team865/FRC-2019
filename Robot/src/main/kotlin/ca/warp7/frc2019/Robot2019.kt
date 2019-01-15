@@ -11,8 +11,9 @@ import edu.wpi.first.wpilibj.TimedRobot
 class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
 
     /**
-     * Initializes the robot by setting the state of subsystems directly or transitively
-     * and activating the controllers. Comment out the controllers to disable them
+     * Initializes the robot by setting the state of subsystems
+     * directly or transitively and activating the controllers.
+     * Comment out the controller lines to disable them
      */
     override fun robotInit() {
         println("Hello me is robit!")
@@ -30,8 +31,8 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
     override fun robotPeriodic() = runMainLoop()
 
     /**
-     * Disables the robot by disabling each subsystem and not calling output methods.
-     * Stops the autonomous routine if there is one
+     * Disables the robot by disabling each subsystem and not calling
+     * output methods. Stops the autonomous routine
      */
     override fun disabledInit() = disableRobot()
 

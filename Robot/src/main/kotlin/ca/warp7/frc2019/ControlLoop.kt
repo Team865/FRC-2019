@@ -56,15 +56,15 @@ object ControlLoop : RobotControlLoop {
             }
 
             when (Pressed) {
-                leftBumper -> SuperstructureState.MovingToPosition.wantedPosition.decreaseSetpoint()
-                rightBumper -> SuperstructureState.MovingToPosition.wantedPosition.increaseSetpoint()
+                leftBumper -> SuperstructureState.MovingToPosition.wantedPosition.decreaseLiftSetpoint()
+                rightBumper -> SuperstructureState.MovingToPosition.wantedPosition.increaseLiftSetpoint()
                 aButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
                     wantedPosition.setpointType = WantedPosition.SetpointType.Cargo
                 }
                 bButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
                     wantedPosition.setpointType = WantedPosition.SetpointType.HatchPanel
                 }
-                xButton -> TODO("Toggle the secondary intake to hold or release grip on the hatch panel")
+                xButton -> TODO("Toggle the secondary intake to hold or release grip on the hat ch panel")
                 yButton -> TODO("Outtake the hatch panel by releasing the grip and push out with piston")
                 else -> {
                 }
