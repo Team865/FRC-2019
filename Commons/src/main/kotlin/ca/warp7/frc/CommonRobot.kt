@@ -44,6 +44,9 @@ internal object CommonRobot {
         System.setErr(PrintStream(errContent))
     }
 
+    /**
+     * Runs the loop with a try-catch statement
+     */
     fun pauseOnCrashMainLoop() {
         if (!crashed) {
             try {
@@ -93,9 +96,11 @@ internal object CommonRobot {
         // Send data to Shuffleboard
         inputSystems.forEach {
             Shuffleboard.getTab(it::class.java.simpleName).apply {
+                // Show the current state in the appropriate tab
                 if (it is Subsystem) add("Current State",
                         if (it.currentState != null) it.currentState!!::class.java.simpleName else "None")
                         .withWidget(BuiltInWidgets.kTextView).withPosition(0, 0)
+                // Update the rest to shuffleboard
                 it.onUpdateShuffleboard(this)
             }
         }
@@ -121,7 +126,8 @@ internal object CommonRobot {
             20.0,
             timeout,
             mode.invoke().javaAction,
-            true).ktAction.also {
+            true)
+            .ktAction.also {
         autoRunner = it
         robotEnabled = true
         it.start()

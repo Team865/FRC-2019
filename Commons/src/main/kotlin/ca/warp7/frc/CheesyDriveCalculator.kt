@@ -1,5 +1,6 @@
 package ca.warp7.frc
 
+@Suppress("unused")
 class CheesyDriveCalculator(private val mReceiver: (left: Double, right: Double) -> Unit) {
 
     private var quickStopAccumulator = 0.0
