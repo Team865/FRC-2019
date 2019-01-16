@@ -2,12 +2,8 @@
 
 package ca.warp7.frc
 
-import ca.warp7.actionj.IAction
 import ca.warp7.actionj.impl.ActionMode
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.javaAction
-import ca.warp7.actionkt.ktAction
-import ca.warp7.actionkt.runOnce
+import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
@@ -47,10 +43,10 @@ internal object CommonRobot {
     /**
      * Runs the loop with a try-catch statement
      */
-    fun pauseOnCrashMainLoop() {
+    fun pauseOnCrashPeriodicLoop() {
         if (!crashed) {
             try {
-                mainLoop()
+                periodicLoop()
             } catch (e: Throwable) {
                 crashed = true
                 originalErr.println("ERROR LOOP ENDED\n${e.message}")
@@ -63,7 +59,7 @@ internal object CommonRobot {
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
-    private fun mainLoop() {
+    private fun periodicLoop() {
         // Collect controller data
         controllers.forEach { if (it.active) collectControllerData(it.data, it.controller) }
         // Calculate exact loop period for measurements
@@ -122,7 +118,7 @@ internal object CommonRobot {
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
-            IAction.ITimer { Timer.getFPGATimestamp() },
+            actionTimer { Timer.getFPGATimestamp() },
             20.0,
             timeout,
             mode.invoke().javaAction,

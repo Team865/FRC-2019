@@ -3,8 +3,8 @@ package ca.warp7.frc2019
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControlLoop
+import ca.warp7.frc.controlLoop
 import ca.warp7.frc.runAutonomous
-import ca.warp7.frc.setControlLoop
 
 object Sandstorm : RobotControlLoop {
 
@@ -17,7 +17,7 @@ object Sandstorm : RobotControlLoop {
 
     override fun periodic() {
         if (autonomousAction.shouldFinish() || Controls.Driver.leftXAxis > 0.8 || Controls.Operator.leftXAxis > 0.8) {
-            setControlLoop(ControlLoop)
+            controlLoop(MainLoop)
         }
     }
 }

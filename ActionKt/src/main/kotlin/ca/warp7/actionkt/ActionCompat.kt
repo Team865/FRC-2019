@@ -22,3 +22,5 @@ val IAction.ktAction: Action get() = KotlinAction(this)
 fun runOnce(block: () -> Unit): Action = object : Action {
     override fun start() = block.invoke()
 }
+
+fun actionTimer(timer: () -> Double) = IAction.ITimer { timer.invoke() }

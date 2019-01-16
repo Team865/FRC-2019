@@ -28,7 +28,7 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
-    override fun robotPeriodic() = runMainLoop()
+    override fun robotPeriodic() = runPeriodicLoop()
 
     /**
      * Disables the robot by disabling each subsystem and not calling
@@ -42,9 +42,9 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
     =====================================================
      */
 
-    override fun autonomousInit() = setControlLoop(Sandstorm)
-    override fun teleopInit() = setControlLoop(ControlLoop)
-    override fun testInit() = setControlLoop(ControlLoop)
+    override fun autonomousInit() = controlLoop(Sandstorm)
+    override fun teleopInit() = controlLoop(MainLoop)
+    override fun testInit() = controlLoop(MainLoop)
 
     /*
     =====================================================

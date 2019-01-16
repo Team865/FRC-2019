@@ -15,7 +15,7 @@ import ca.warp7.frc2019.subsystems.FrontIntake
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Superstructure
 
-object ControlLoop : RobotControlLoop {
+object MainLoop : RobotControlLoop {
 
     override fun setup() {
         println("Robot State: Teleop")

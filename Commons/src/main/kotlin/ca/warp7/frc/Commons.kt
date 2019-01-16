@@ -3,12 +3,12 @@ package ca.warp7.frc
 import ca.warp7.actionkt.Action
 import edu.wpi.first.wpilibj.RobotBase
 
-fun runMainLoop() = CommonRobot.pauseOnCrashMainLoop()
+fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun setControlLoop(controlLoop: RobotControlLoop?) {
-    CommonRobot.controlLoop = controlLoop
+fun controlLoop(loop: RobotControlLoop?) {
+    CommonRobot.controlLoop = loop
 }
 
 fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)
