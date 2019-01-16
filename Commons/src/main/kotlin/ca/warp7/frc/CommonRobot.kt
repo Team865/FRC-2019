@@ -16,17 +16,13 @@ internal object CommonRobot {
     val inputSystems: MutableSet<InputSystem> = mutableSetOf()
     val controllers: MutableSet<RobotController> = mutableSetOf()
 
-    var controlLoop: RobotControlLoop? = null
-        set(value) {
-            autoRunner.stop()
-            robotEnabled = true
-            field = value
-        }
+    val robotDriver = RobotController(0).also { controllers.add(it) }
+    val robotOperator = RobotController(1).also { controllers.add(it) }
 
-    private val outContent = ByteArrayOutputStream()
-    private val errContent = ByteArrayOutputStream()
     private val originalOut = System.out
     private val originalErr = System.err
+    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
+    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
 
     private var previousTime = 0.0
     private var robotEnabled = false
@@ -34,10 +30,27 @@ internal object CommonRobot {
 
     private var autoRunner: Action = runOnce { }
 
+    private val robotTab = Shuffleboard.getTab("Robot")
+    private val driverEnabled = robotTab.add("Driver Enabled", true)
+            .withSize(4, 4)
+            .withPosition(0, 0)
+            .withWidget(BuiltInWidgets.kBooleanBox).entry
+    private val operatorEnabled = robotTab.add("Operator Enabled", true)
+            .withSize(4, 4)
+            .withPosition(4, 0)
+            .withWidget(BuiltInWidgets.kBooleanBox).entry
+
+    var controlLoop: RobotControlLoop? = null
+        set(value) {
+            robotDriver.active = driverEnabled.getBoolean(true)
+            robotOperator.active = operatorEnabled.getBoolean(true)
+            autoRunner.stop()
+            robotEnabled = true
+            field = value
+        }
+
     init {
         Thread.currentThread().name = "Robot"
-        System.setOut(PrintStream(outContent))
-        System.setErr(PrintStream(errContent))
     }
 
     /**

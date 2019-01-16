@@ -7,7 +7,7 @@ fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun controlLoop(loop: RobotControlLoop?) {
+fun setLoop(loop: RobotControlLoop?) {
     CommonRobot.controlLoop = loop
 }
 
@@ -17,9 +17,7 @@ fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Mat
 
 fun <T : RobotBase> startRobot(robot: T) = RobotBase.startRobot { robot }
 
-private fun controller(port: Int) = RobotController(port).also { CommonRobot.controllers.add(it) }
-
 object Controls {
-    val Driver = controller(0)
-    val Operator = controller(1)
+    val robotDriver = CommonRobot.robotDriver
+    val robotOperator = CommonRobot.robotOperator
 }

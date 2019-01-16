@@ -27,7 +27,7 @@ object MainLoop : RobotControlLoop {
 
     override fun periodic() {
 
-        Controls.Driver.apply {
+        Controls.robotDriver.apply {
 
             Drive.set(DriveState.Curvature) {
                 xSpeed = leftYAxis
@@ -45,7 +45,7 @@ object MainLoop : RobotControlLoop {
             if (startButton == Pressed) Superstructure.set(SuperstructureState.MovingToClimb)
         }
 
-        Controls.Operator.apply {
+        Controls.robotOperator.apply {
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
                 FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {

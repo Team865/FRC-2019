@@ -1,6 +1,9 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.*
+import ca.warp7.frc.disableRobot
+import ca.warp7.frc.runPeriodicLoop
+import ca.warp7.frc.setLoop
+import ca.warp7.frc.startRobot
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.states.DriveState
 import ca.warp7.frc2019.states.SuperstructureState
@@ -19,8 +22,6 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Drive.set(DriveState.NeutralOutput)
         Superstructure.set(SuperstructureState.StartingConfiguration)
-        Controls.Driver.activate()
-        Controls.Operator.activate()
     }
 
     /**
@@ -42,9 +43,9 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
     =====================================================
      */
 
-    override fun autonomousInit() = controlLoop(Sandstorm)
-    override fun teleopInit() = controlLoop(MainLoop)
-    override fun testInit() = controlLoop(MainLoop)
+    override fun autonomousInit() = setLoop(SandstormLoop)
+    override fun teleopInit() = setLoop(MainLoop)
+    override fun testInit() = setLoop(MainLoop)
 
     /*
     =====================================================
