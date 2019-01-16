@@ -4,7 +4,7 @@ plugins {
     id "edu.wpi.first.GradleRIO"
 }
 
-def ROBOT_MAIN_CLASS = "ca.warp7.frc2019.Robot2019"
+def ROBOT_MAIN_CLASS = "ca.warp7.frc2019.Robot"
 
 deploy {
     targets {
@@ -34,7 +34,6 @@ buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 dependencies {
     compile project(":Robot-Commons")
-    compile project(":Constants")
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)

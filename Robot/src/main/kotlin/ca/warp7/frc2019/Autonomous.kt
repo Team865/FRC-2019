@@ -1,11 +1,11 @@
 package ca.warp7.frc2019
 
-import ca.warp7.actionkt.NothingAction
+import ca.warp7.actionkt.runOnce
 
 @Suppress("unused")
 object Autonomous {
 
     val mode get() = nothingMode
 
-    private val nothingMode = { NothingAction() }
+    private val nothingMode = { runOnce { } }
 }

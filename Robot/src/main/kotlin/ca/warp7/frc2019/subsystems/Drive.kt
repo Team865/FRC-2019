@@ -2,34 +2,43 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc.Subsystem
-import ca.warp7.frc.differentialDrive
-import ca.warp7.frc.sendAll
+import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.drive.DifferentialDrive
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    private val leftMaster = TalonSRX(DriveConstants.kLeftMaster).also {
+    val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
+        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
         VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
         VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
     }
 
-    private val rightMaster = TalonSRX(DriveConstants.kRightMaster).also {
+    val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
         it.inverted = true
+        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
         VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
         VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
     }
 
-    enum class Mode {
-        Percent, Velocity
+    val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
+        isRightSideInverted = false
+        setDeadband(DriveConstants.kDifferentialDeadband)
+        setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
+        setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
     }
 
-    var mode: Mode = Mode.Percent
+    enum class OutputMode {
+        Percent, Velocity, WPILibControlled
+    }
+
+    var outputMode: OutputMode = OutputMode.Percent
 
     var leftDemand = 0.0
     var rightDemand = 0.0
@@ -46,20 +55,16 @@ object Drive : Subsystem() {
         rightMaster.neutralOutput()
     }
 
-    override fun onIdle() {
-        mode = Mode.Percent
-        leftDemand = 0.0
-        rightDemand = 0.0
-    }
-
-    override fun onOutput() = when (mode) {
-        Mode.Percent -> {
+    override fun onOutput() = when (outputMode) {
+        OutputMode.Percent -> {
             leftMaster.set(ControlMode.PercentOutput, leftDemand)
             rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
-        Mode.Velocity -> {
+        OutputMode.Velocity -> {
             leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
+        }
+        OutputMode.WPILibControlled -> {
         }
     }
 
@@ -76,8 +81,8 @@ object Drive : Subsystem() {
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.sendAll {
-            differentialDrive()
-        }
+        container
+                .add(differentialDrive)
+                .withWidget(BuiltInWidgets.kDifferentialDrive)
     }
 }

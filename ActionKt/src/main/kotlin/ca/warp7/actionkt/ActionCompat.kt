@@ -16,11 +16,15 @@ private class KotlinAction(val action: IAction) : Action {
     override fun stop() = action.stop()
 }
 
-class ExecutionAction(private val exec: () -> Unit) : Action {
-    override fun start() = exec.invoke()
-}
-
 val Action.javaAction: IAction get() = JavaAction(this)
 val IAction.ktAction: Action get() = KotlinAction(this)
 
-class NothingAction : Action
+fun runOnce(block: () -> Unit): Action = object : Action {
+    override fun start() = block.invoke()
+}
+
+fun periodic(block: () -> Unit): Action = object : Action {
+    override fun update() = block.invoke()
+}
+
+fun actionTimer(timer: () -> Double) = IAction.ITimer { timer.invoke() }
