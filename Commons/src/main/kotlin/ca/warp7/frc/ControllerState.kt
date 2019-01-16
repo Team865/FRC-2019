@@ -1,5 +1,6 @@
 package ca.warp7.frc
 
+import ca.warp7.frc.ControllerState.*
 import edu.wpi.first.wpilibj.GenericHID.Hand.kLeft
 import edu.wpi.first.wpilibj.GenericHID.Hand.kRight
 import edu.wpi.first.wpilibj.XboxController
@@ -10,8 +11,8 @@ enum class ControllerState {
 
 internal fun u(old: ControllerState, _new: Boolean): ControllerState {
     return if (_new)
-        if (old == ControllerState.Pressed || old == ControllerState.HeldDown) ControllerState.HeldDown else ControllerState.Pressed
-    else if (old == ControllerState.Released || old == ControllerState.KeptUp) ControllerState.KeptUp else ControllerState.Released
+        if (old == Pressed || old == HeldDown) HeldDown else Pressed
+    else if (old == Released || old == KeptUp) KeptUp else Released
 }
 
 internal fun collectControllerData(s: ControllerData, c: XboxController) {
@@ -32,5 +33,26 @@ internal fun collectControllerData(s: ControllerData, c: XboxController) {
         rightStickButton = u(rightStickButton, c.getStickButton(kRight))
         startButton = u(startButton, c.startButton)
         backButton = u(backButton, c.backButton)
+    }
+}
+
+internal fun resetControllerData(s: ControllerData) {
+    with(s) {
+        leftTriggerAxis = 0.0
+        rightTriggerAxis = 0.0
+        leftXAxis = 0.0
+        leftYAxis = 0.0
+        rightXAxis = 0.0
+        rightYAxis = 0.0
+        aButton = KeptUp
+        bButton = KeptUp
+        xButton = KeptUp
+        yButton = KeptUp
+        leftBumper = KeptUp
+        rightBumper = KeptUp
+        leftStickButton = KeptUp
+        rightStickButton = KeptUp
+        startButton = KeptUp
+        backButton = KeptUp
     }
 }

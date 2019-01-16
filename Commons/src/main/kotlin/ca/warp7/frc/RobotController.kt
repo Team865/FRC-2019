@@ -7,7 +7,11 @@ class RobotController internal constructor(internal val port: Int) {
 
     internal val data = ControllerData()
     internal val controller = XboxController(port)
-    internal var active = false
+    internal var active = true
+        set(value) {
+            if (!value) resetControllerData(data)
+            field = value
+        }
 
     val aButton get() = data.aButton
     val bButton get() = data.bButton
