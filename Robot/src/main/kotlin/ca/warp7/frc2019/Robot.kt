@@ -8,7 +8,7 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Superstructure
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
+class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -65,6 +65,6 @@ class Robot2019 : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = startRobot(Robot2019())
+        fun main(args: Array<String>) = startRobot(Robot())
     }
 }

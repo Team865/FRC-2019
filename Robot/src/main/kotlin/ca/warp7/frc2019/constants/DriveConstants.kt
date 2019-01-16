@@ -6,12 +6,13 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
 @Suppress("unused")
 object DriveConstants {
-    const val kLeftMaster = ElectricalConstants.kDriveLeftMasterPin
-    const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerAPin
-    const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBPin
-    const val kRightMaster = ElectricalConstants.kDriveRightMasterPin
-    const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerAPin
-    const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBPin
+
+    const val kLeftMaster = ElectricalConstants.kDriveLeftMasterDeviceId
+    const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerADeviceId
+    const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBDeviceId
+    const val kRightMaster = ElectricalConstants.kDriveRightMasterDeviceId
+    const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerADeviceId
+    const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBDeviceId
 
     const val kDifferentialDeadband = 0.2
 
