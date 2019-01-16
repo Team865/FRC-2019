@@ -1,6 +1,7 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 /**
  * Subsystem defines a robot subsystem. A good example of a subsystem is the drive train or
@@ -35,7 +36,7 @@ import ca.warp7.actionkt.Action
  * that the periodic functions are not blocking operations as to prevent leaking.
  */
 
-abstract class Subsystem : InputSystem() {
+abstract class Subsystem {
 
     internal var currentState: Action? = null
     private var initialized = false
@@ -63,7 +64,6 @@ abstract class Subsystem : InputSystem() {
     fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         if (!initialized) {
             initialized = true
-            initInputs()
             CommonRobot.subsystems.add(this)
         }
         // Check if there is a new wanted state that is not the same as the current state
@@ -75,4 +75,33 @@ abstract class Subsystem : InputSystem() {
         }
         block.invoke(wantedState)
     }
+
+
+    /**
+     *
+     * Called periodically for the subsystem to get measurements from its input devices.
+     * This method is called from the Input Looper. All sensor reading should be done
+     * in this method.
+     *
+     *
+     * When using input/current states, the measured values here should change
+     * the subsystem's current state
+     *
+     *
+     * Note that this method may still be called while the robot is disabled, so
+     * extra care should be made that it performs no outputting
+     */
+    open fun onMeasure(dt: Double) {}
+
+    /**
+     *
+     * Called at the start for the subsystem to zero its sensors.
+     * In addition, this method may by called by autonomous actions
+     */
+    open fun onZeroSensors() {}
+
+    /**
+     * Send values to shuffleboard
+     */
+    open fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
 }

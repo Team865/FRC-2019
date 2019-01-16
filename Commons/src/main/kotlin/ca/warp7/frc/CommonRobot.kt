@@ -13,8 +13,7 @@ import java.io.PrintStream
 internal object CommonRobot {
 
     val subsystems: MutableSet<Subsystem> = mutableSetOf()
-    val inputSystems: MutableSet<InputSystem> = mutableSetOf()
-    val controllers: MutableSet<RobotController> = mutableSetOf()
+    private val controllers: MutableSet<RobotController> = mutableSetOf()
 
     val robotDriver = RobotController(0).also { controllers.add(it) }
     val robotOperator = RobotController(1).also { controllers.add(it) }
@@ -80,7 +79,7 @@ internal object CommonRobot {
         val dt = time - previousTime
         previousTime = time
         // Get inputs from sensors
-        inputSystems.forEach { it.onMeasure(dt) }
+        subsystems.forEach { it.onMeasure(dt) }
         // Check for enabled state
         if (robotEnabled) {
             // Update the control loop
@@ -103,10 +102,10 @@ internal object CommonRobot {
             }
         }
         // Send data to Shuffleboard
-        inputSystems.forEach {
+        subsystems.forEach {
             Shuffleboard.getTab(it::class.java.simpleName).apply {
                 // Show the current state in the appropriate tab
-                if (it is Subsystem) add("Current State",
+                add("Current State",
                         if (it.currentState != null) it.currentState!!::class.java.simpleName else "None")
                         .withWidget(BuiltInWidgets.kTextView).withPosition(0, 0)
                 // Update the rest to shuffleboard
