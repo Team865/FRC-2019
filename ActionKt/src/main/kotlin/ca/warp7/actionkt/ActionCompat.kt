@@ -23,4 +23,8 @@ fun runOnce(block: () -> Unit): Action = object : Action {
     override fun start() = block.invoke()
 }
 
+fun periodic(block: () -> Unit): Action = object : Action {
+    override fun update() = block.invoke()
+}
+
 fun actionTimer(timer: () -> Double) = IAction.ITimer { timer.invoke() }

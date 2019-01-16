@@ -5,10 +5,7 @@ import ca.warp7.frc.runPeriodicLoop
 import ca.warp7.frc.setLoop
 import ca.warp7.frc.startRobot
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.states.DriveState
-import ca.warp7.frc2019.states.SuperstructureState
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.Superstructure
+import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
@@ -20,6 +17,7 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+        Navx.set(NavxState.WaitForCalibration)
         Drive.set(DriveState.NeutralOutput)
         Superstructure.set(SuperstructureState.StartingConfiguration)
     }

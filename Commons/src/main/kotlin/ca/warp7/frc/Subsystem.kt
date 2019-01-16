@@ -48,7 +48,7 @@ abstract class Subsystem {
      * This method should reset everything having to do with output so as to put
      * the subsystem in a disabled state
      */
-    abstract fun onDisabled()
+    open fun onDisabled() {}
 
     /**
      * Called periodically for the subsystem to send outputs to its output device.
@@ -56,7 +56,7 @@ abstract class Subsystem {
      * This method is guaranteed to not be called when the robot is disabled.
      * Any output limits should be applied here for safety reasons.
      */
-    abstract fun onOutput()
+    open fun onOutput() {}
 
     /**
      * Sets the current state of the subsystem

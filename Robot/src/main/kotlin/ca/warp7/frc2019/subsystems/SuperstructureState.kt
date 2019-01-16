@@ -1,10 +1,9 @@
-package ca.warp7.frc2019.states
+package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc2019.states.superstructure.MoveToPosition
-import ca.warp7.frc2019.states.superstructure.PassBack
-import ca.warp7.frc2019.states.superstructure.PassForward
-import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.subsystems.superstructure.MoveToPosition
+import ca.warp7.frc2019.subsystems.superstructure.PassBack
+import ca.warp7.frc2019.subsystems.superstructure.PassForward
 
 @Suppress("unused")
 object SuperstructureState {
@@ -13,7 +12,6 @@ object SuperstructureState {
         HatchIntake.set(HatchIntakeState.Retracting)
         Lift.set(LiftState.Idle)
         BackIntake.set(BackIntakeState.Retracting)
-        Conveyor.set(ConveyorState.Idle)
         LED.set(LEDState.Off)
 
         Superstructure.compressor.closedLoopControl = false

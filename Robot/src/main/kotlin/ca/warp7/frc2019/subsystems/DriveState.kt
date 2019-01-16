@@ -1,10 +1,9 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc2019.states
+package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc2019.states.drive.CurvatureDrive
-import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.drive.CurvatureDrive
 
 object DriveState {
 

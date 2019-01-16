@@ -1,8 +1,8 @@
-package ca.warp7.frc2019.states.drive
+package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc2019.states.DriveState
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.DriveState
 
 object CurvatureDrive : Action {
     var xSpeed = 0.0

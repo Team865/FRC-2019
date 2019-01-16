@@ -5,15 +5,8 @@ import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.states.DriveState
-import ca.warp7.frc2019.states.FrontIntakeState
-import ca.warp7.frc2019.states.LiftState
-import ca.warp7.frc2019.states.SuperstructureState
-import ca.warp7.frc2019.states.superstructure.WantedPosition
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.FrontIntake
-import ca.warp7.frc2019.subsystems.Lift
-import ca.warp7.frc2019.subsystems.Superstructure
+import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.subsystems.superstructure.WantedPosition
 
 object MainLoop : RobotControlLoop {
 

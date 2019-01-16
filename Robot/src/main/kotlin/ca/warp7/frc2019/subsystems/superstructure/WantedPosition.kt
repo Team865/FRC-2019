@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.states.superstructure
+package ca.warp7.frc2019.subsystems.superstructure
 
 class WantedPosition {
 
