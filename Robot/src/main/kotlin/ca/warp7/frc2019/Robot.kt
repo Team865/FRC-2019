@@ -17,10 +17,10 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        Navx.set(NavxState.WaitForCalibration)
-        Drive.set(DriveState.NeutralOutput)
-        Localization.set(LocalizationState.DisplacementOnly)
-        Superstructure.set(SuperstructureState.StartingConfiguration)
+        Navx.set(NavxState.kWaitForCalibration)
+        Drive.set(DriveState.kNeutralOutput)
+        Localization.set(LocalizationState.kDisplacementOnly)
+        Superstructure.set(SuperstructureState.kStartingConfiguration)
     }
 
     /**

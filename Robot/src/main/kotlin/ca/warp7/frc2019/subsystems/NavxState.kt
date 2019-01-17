@@ -4,9 +4,9 @@ import ca.warp7.actionkt.periodic
 import ca.warp7.actionkt.runOnce
 
 object NavxState {
-    val WaitForCalibration = periodic {
-        if (!Navx.ahrs.isCalibrating) Navx.set(Normal)
+    val kWaitForCalibration = periodic {
+        if (!Navx.ahrs.isCalibrating) Navx.set(kNormal)
     }
 
-    private val Normal = runOnce { }
+    private val kNormal = runOnce { }
 }

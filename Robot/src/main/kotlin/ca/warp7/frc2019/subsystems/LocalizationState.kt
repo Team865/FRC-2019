@@ -6,7 +6,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object LocalizationState {
-    val DisplacementOnly = periodic {
+    val kDisplacementOnly = periodic {
         val leftDiff = Drive.leftPositionTicks - Drive.prevLeftPositionTicks
         val rightDiff = Drive.rightPositionTicks - Drive.prevRightPositionTicks
         val average = (leftDiff + rightDiff) / 2.0

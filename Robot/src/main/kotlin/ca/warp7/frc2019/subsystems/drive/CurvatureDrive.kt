@@ -20,6 +20,6 @@ object CurvatureDrive : Action {
     override fun shouldFinish() = false
 
     override fun stop() {
-        Drive.set(DriveState.NeutralOutput)
+        Drive.set(DriveState.kNeutralOutput)
     }
 }
