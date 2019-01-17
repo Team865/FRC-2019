@@ -27,7 +27,7 @@ object Drive : Subsystem() {
         VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
     }
 
-    val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
+    private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
         isRightSideInverted = false
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
@@ -49,6 +49,10 @@ object Drive : Subsystem() {
     var rightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
+
+    fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
+        if (outputMode == OutputMode.WPILibControlled) block.invoke(differentialDrive)
+    }
 
     override fun onDisabled() {
         leftMaster.neutralOutput()

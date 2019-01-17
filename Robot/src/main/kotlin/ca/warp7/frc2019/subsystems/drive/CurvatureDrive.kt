@@ -14,7 +14,7 @@ object CurvatureDrive : Action {
     }
 
     override fun update() {
-        Drive.differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
+        Drive.doWithCheckedWPIState { curvatureDrive(xSpeed, zRotation, isQuickTurn) }
     }
 
     override fun shouldFinish() = false
