@@ -9,7 +9,6 @@ import ca.warp7.frc2019.subsystems.superstructure.PassForward
 object SuperstructureState {
     val kStartingConfiguration = runOnce {
         FrontIntake.set(FrontIntakeState.kIdle)
-        HatchIntake.set(HatchIntakeState.kRetracting)
         Lift.set(LiftState.kIdle)
         BackIntake.set(BackIntakeState.kRetracting)
         LED.set(LEDState.kOff)

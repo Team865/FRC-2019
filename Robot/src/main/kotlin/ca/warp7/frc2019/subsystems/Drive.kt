@@ -16,15 +16,23 @@ object Drive : Subsystem() {
 
     val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
         it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
-        VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
+        VictorSPX(DriveConstants.kLeftFollowerA)
+                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
+        VictorSPX(DriveConstants.kLeftFollowerB)
+                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
     }
 
     val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
         it.inverted = true
         it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
-        VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
+        VictorSPX(DriveConstants.kRightFollowerA).apply {
+            configAllSettings(DriveConstants.kDefaultVictorSPX)
+            inverted = true
+        }.follow(it)
+        VictorSPX(DriveConstants.kRightFollowerB).apply {
+            configAllSettings(DriveConstants.kDefaultVictorSPX)
+            inverted = true
+        }.follow(it)
     }
 
     private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
