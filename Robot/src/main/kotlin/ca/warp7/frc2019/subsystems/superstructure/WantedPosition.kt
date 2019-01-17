@@ -24,6 +24,4 @@ class WantedPosition {
     fun decreaseLiftSetpoint() {
         setpoint--
     }
-
-    var defending = false
 }

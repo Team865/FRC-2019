@@ -2,7 +2,6 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc2019.subsystems.superstructure.MoveToPosition
-import ca.warp7.frc2019.subsystems.superstructure.PassBack
 import ca.warp7.frc2019.subsystems.superstructure.PassForward
 
 @Suppress("unused")
@@ -18,25 +17,13 @@ object SuperstructureState {
 
     val kManual = runOnce { }
 
-    val kMovingToDefence
-        get() = runOnce {
-
-        }
-
     val kIdle
         get() = runOnce {
 
         }
 
 
-    val kDefending
-        get() = runOnce {
-
-        }
-
     val kPassingCargo = PassForward
-
-    val kFeedingCargo = PassBack
 
     val kMovingToClimb
         get() = runOnce {
