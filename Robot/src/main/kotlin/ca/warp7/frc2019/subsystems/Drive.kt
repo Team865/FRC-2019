@@ -47,6 +47,8 @@ object Drive : Subsystem() {
 
     var leftPositionTicks = 0
     var rightPositionTicks = 0
+    var prevLeftPositionTicks = 0
+    var prevRightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
@@ -73,6 +75,8 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
+        prevLeftPositionTicks = leftPositionTicks
+        prevRightPositionTicks = rightPositionTicks
         leftPositionTicks = leftMaster.selectedSensorPosition
         rightPositionTicks = rightMaster.selectedSensorPosition
         leftVelocityTicks = leftMaster.selectedSensorVelocity

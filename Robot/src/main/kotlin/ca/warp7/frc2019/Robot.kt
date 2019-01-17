@@ -19,6 +19,7 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Navx.set(NavxState.WaitForCalibration)
         Drive.set(DriveState.NeutralOutput)
+        Localization.set(LocalizationState.DisplacementOnly)
         Superstructure.set(SuperstructureState.StartingConfiguration)
     }
 
