@@ -1,10 +1,10 @@
-@file:Suppress("unused")
-
 package ca.warp7.frc
 
 import ca.warp7.actionj.impl.ActionMode
 import ca.warp7.actionkt.*
+import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
@@ -12,11 +12,20 @@ import java.io.PrintStream
 
 internal object CommonRobot {
 
-    val subsystems: MutableSet<Subsystem> = mutableSetOf()
-    private val controllers: MutableSet<RobotController> = mutableSetOf()
+    init {
+        Thread.currentThread().name = "Robot"
+    }
 
-    val robotDriver = RobotController(0).also { controllers.add(it) }
-    val robotOperator = RobotController(1).also { controllers.add(it) }
+    val subsystems: MutableSet<Subsystem> = mutableSetOf()
+
+    val robotDriver = RobotController()
+    val robotOperator = RobotController()
+
+    private val xboxDriver = XboxController(0)
+    private val xboxOperator = XboxController(1)
+
+    private val fmsAttached = DriverStation.getInstance().isFMSAttached
+    private var controllerMode = 0
 
     private val originalOut = System.out
     private val originalErr = System.err
@@ -29,28 +38,12 @@ internal object CommonRobot {
 
     private var autoRunner: Action = runOnce { }
 
-    private val robotTab = Shuffleboard.getTab("Robot")
-    private val driverEnabled = robotTab.add("Driver Enabled", true)
-            .withSize(4, 4)
-            .withPosition(0, 0)
-            .withWidget(BuiltInWidgets.kBooleanBox).entry
-    private val operatorEnabled = robotTab.add("Operator Enabled", true)
-            .withSize(4, 4)
-            .withPosition(4, 0)
-            .withWidget(BuiltInWidgets.kBooleanBox).entry
-
     var controlLoop: RobotControlLoop? = null
         set(value) {
-            robotDriver.active = driverEnabled.getBoolean(true)
-            robotOperator.active = operatorEnabled.getBoolean(true)
             autoRunner.stop()
             robotEnabled = true
             field = value
         }
-
-    init {
-        Thread.currentThread().name = "Robot"
-    }
 
     /**
      * Runs the loop with a try-catch statement
@@ -73,7 +66,24 @@ internal object CommonRobot {
      */
     private fun periodicLoop() {
         // Collect controller data
-        controllers.forEach { if (it.active) collectControllerData(it.data, it.controller) }
+        when (controllerMode) {
+            0 -> {
+                collectControllerData(robotDriver.data, xboxDriver)
+                collectControllerData(robotOperator.data, xboxOperator)
+            }
+            1 -> {
+                collectControllerData(robotDriver.data, xboxDriver)
+                resetControllerData(robotOperator.data)
+            }
+            2 -> {
+                resetControllerData(robotDriver.data)
+                collectControllerData(robotOperator.data, xboxDriver)
+            }
+        }
+        // Check to switch controllers
+        if (!fmsAttached || robotDriver.data.backButton == ControllerState.Pressed) {
+            controllerMode = (controllerMode + 1) % 3
+        }
         // Calculate exact loop period for measurements
         val time = Timer.getFPGATimestamp()
         val dt = time - previousTime

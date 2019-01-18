@@ -34,7 +34,6 @@ object MainLoop : RobotControlLoop {
                 Superstructure.set(SuperstructureState.kPassingCargo) { speed = leftTriggerAxis * -1 }
             }
 
-            if (backButton == Pressed) Superstructure.set(SuperstructureState.kIdle)
             if (startButton == Pressed) Superstructure.set(SuperstructureState.kMovingToClimb)
         }
 
