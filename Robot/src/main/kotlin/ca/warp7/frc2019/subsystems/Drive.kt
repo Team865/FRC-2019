@@ -61,7 +61,7 @@ object Drive : Subsystem() {
     var rightVelocityTicks = 0
 
     fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
-        if (outputMode == OutputMode.WPILibControlled) block.invoke(differentialDrive)
+        if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
     }
 
     override fun onDisabled() {

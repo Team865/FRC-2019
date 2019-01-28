@@ -137,13 +137,14 @@ internal object CommonRobot {
     fun disableOutputs() {
         autoRunner.stop()
         robotEnabled = false
+        subsystems.forEach { it.onDisabled() }
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
             actionTimer { Timer.getFPGATimestamp() },
             20.0,
             timeout,
-            mode.invoke().javaAction,
+            mode().javaAction,
             true)
             .ktAction.also {
         autoRunner = it
