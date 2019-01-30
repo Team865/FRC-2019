@@ -11,8 +11,6 @@ object SuperstructureState {
         Lift.set(LiftState.kIdle)
         Intake.set(IntakeState.kRetracting)
         LED.set(LEDState.kOff)
-
-        Superstructure.compressor.closedLoopControl = false
     }
 
     val kManual = runOnce { }
