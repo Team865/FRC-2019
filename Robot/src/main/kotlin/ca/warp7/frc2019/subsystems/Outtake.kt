@@ -5,7 +5,7 @@ import ca.warp7.frc2019.constants.FrontIntakeConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
-object FrontIntake : Subsystem() {
+object Outtake : Subsystem() {
 
     private val left = VictorSPX(FrontIntakeConstants.kLeft)
     private val right = VictorSPX(FrontIntakeConstants.kRight)

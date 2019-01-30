@@ -39,9 +39,9 @@ object MainLoop : RobotControlLoop {
 
         Controls.robotOperator.apply {
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis }
+                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis * -1 }
+                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis * -1 }
             }
 
             when (Pressed) {
