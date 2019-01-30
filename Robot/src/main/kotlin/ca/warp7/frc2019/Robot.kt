@@ -3,7 +3,6 @@ package ca.warp7.frc2019
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
 import ca.warp7.frc.setLoop
-import ca.warp7.frc.startRobot
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
@@ -17,9 +16,10 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        Navx.set(NavxState.WaitForCalibration)
-        Drive.set(DriveState.NeutralOutput)
-        Superstructure.set(SuperstructureState.StartingConfiguration)
+        Drive.set(DriveState.kNeutralOutput)
+        Infrastructure.set(InfrastructureState.kInfrastructureSetup)
+        Localization.set(LocalizationState.kDisplacementOnly)
+        Superstructure.set(SuperstructureState.kStartingConfiguration)
     }
 
     /**
@@ -62,8 +62,9 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      * It calls on RobotBase to initialize system hardware and start the main
      * loop that calls the other functions
      */
+    @Suppress("UnusedMainParameter")
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = startRobot(Robot())
+        fun main(args: Array<String>) = TimedRobot.startRobot { Robot() }
     }
 }

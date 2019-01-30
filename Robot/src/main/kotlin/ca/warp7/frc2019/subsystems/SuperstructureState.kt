@@ -2,47 +2,32 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc2019.subsystems.superstructure.MoveToPosition
-import ca.warp7.frc2019.subsystems.superstructure.PassBack
 import ca.warp7.frc2019.subsystems.superstructure.PassForward
 
 @Suppress("unused")
 object SuperstructureState {
-    val StartingConfiguration = runOnce {
-        FrontIntake.set(FrontIntakeState.Idle)
-        HatchIntake.set(HatchIntakeState.Retracting)
-        Lift.set(LiftState.Idle)
-        BackIntake.set(BackIntakeState.Retracting)
-        LED.set(LEDState.Off)
+    val kStartingConfiguration = runOnce {
+        Outtake.set(OuttakeState.kIdle)
+        Lift.set(LiftState.kIdle)
+        Intake.set(IntakeState.kRetracting)
+        LED.set(LEDState.kOff)
 
         Superstructure.compressor.closedLoopControl = false
     }
 
-    val Manual = runOnce { }
+    val kManual = runOnce { }
 
-    val MovingToDefence
-        get() = runOnce {
-
-        }
-
-    val Idle
-        get() = runOnce {
+    val kIdle = runOnce {
 
         }
 
 
-    val Defending
-        get() = runOnce {
+    val kPassingCargo = PassForward
 
+    val kMovingToClimb
+        get() = runOnce {
+            Intake.set(IntakeState.LiftingRobot)
         }
 
-    val PassingCargo = PassForward
-
-    val FeedingCargo = PassBack
-
-    val MovingToClimb
-        get() = runOnce {
-            BackIntake.set(BackIntakeState.LiftingRobot)
-        }
-
-    val MovingToPosition = MoveToPosition
+    val kMovingToPosition = MoveToPosition
 }

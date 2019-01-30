@@ -16,18 +16,26 @@ object Drive : Subsystem() {
 
     val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
         it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kLeftFollowerA).follow(it)
-        VictorSPX(DriveConstants.kLeftFollowerB).follow(it)
+        VictorSPX(DriveConstants.kLeftFollowerA)
+                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
+        VictorSPX(DriveConstants.kLeftFollowerB)
+                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
     }
 
     val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
         it.inverted = true
         it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kRightFollowerA).apply { inverted = true }.follow(it)
-        VictorSPX(DriveConstants.kRightFollowerB).apply { inverted = true }.follow(it)
+        VictorSPX(DriveConstants.kRightFollowerA).apply {
+            configAllSettings(DriveConstants.kDefaultVictorSPX)
+            inverted = true
+        }.follow(it)
+        VictorSPX(DriveConstants.kRightFollowerB).apply {
+            configAllSettings(DriveConstants.kDefaultVictorSPX)
+            inverted = true
+        }.follow(it)
     }
 
-    val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
+    private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
         isRightSideInverted = false
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
@@ -47,8 +55,14 @@ object Drive : Subsystem() {
 
     var leftPositionTicks = 0
     var rightPositionTicks = 0
+    var prevLeftPositionTicks = 0
+    var prevRightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
+
+    fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
+        if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
+    }
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
@@ -69,6 +83,8 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
+        prevLeftPositionTicks = leftPositionTicks
+        prevRightPositionTicks = rightPositionTicks
         leftPositionTicks = leftMaster.selectedSensorPosition
         rightPositionTicks = rightMaster.selectedSensorPosition
         leftVelocityTicks = leftMaster.selectedSensorVelocity

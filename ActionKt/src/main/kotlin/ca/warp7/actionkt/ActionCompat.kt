@@ -20,11 +20,11 @@ val Action.javaAction: IAction get() = JavaAction(this)
 val IAction.ktAction: Action get() = KotlinAction(this)
 
 fun runOnce(block: () -> Unit): Action = object : Action {
-    override fun start() = block.invoke()
+    override fun start() = block()
 }
 
 fun periodic(block: () -> Unit): Action = object : Action {
-    override fun update() = block.invoke()
+    override fun update() = block()
 }
 
-fun actionTimer(timer: () -> Double) = IAction.ITimer { timer.invoke() }
+fun actionTimer(timer: () -> Double) = IAction.ITimer { timer() }

@@ -73,7 +73,7 @@ abstract class Subsystem {
             // Start the new state
             currentState?.start()
         }
-        block.invoke(wantedState)
+        block(wantedState)
     }
 
 

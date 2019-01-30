@@ -12,8 +12,8 @@ object MainLoop : RobotControlLoop {
 
     override fun setup() {
         println("Robot State: Teleop")
-        Drive.set(DriveState.NeutralOutput)
-        Superstructure.set(SuperstructureState.MovingToPosition) {
+        Drive.set(DriveState.kNeutralOutput)
+        Superstructure.set(SuperstructureState.kMovingToPosition) {
             wantedPosition.positionType = WantedPosition.PositionType.Normal
         }
     }
@@ -22,36 +22,35 @@ object MainLoop : RobotControlLoop {
 
         Controls.robotDriver.apply {
 
-            Drive.set(DriveState.Curvature) {
+            Drive.set(DriveState.kCurvature) {
                 xSpeed = leftYAxis
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == HeldDown
             }
 
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.PassingCargo) { speed = leftTriggerAxis }
+                Superstructure.set(SuperstructureState.kPassingCargo) { speed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.PassingCargo) { speed = leftTriggerAxis * -1 }
+                Superstructure.set(SuperstructureState.kPassingCargo) { speed = leftTriggerAxis * -1 }
             }
 
-            if (backButton == Pressed) Superstructure.set(SuperstructureState.Idle)
-            if (startButton == Pressed) Superstructure.set(SuperstructureState.MovingToClimb)
+            if (startButton == Pressed) Superstructure.set(SuperstructureState.kMovingToClimb)
         }
 
         Controls.robotOperator.apply {
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis }
+                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                FrontIntake.set(FrontIntakeState.ManualControl) { speed = leftTriggerAxis * -1 }
+                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis * -1 }
             }
 
             when (Pressed) {
-                leftBumper -> SuperstructureState.MovingToPosition.wantedPosition.decreaseLiftSetpoint()
-                rightBumper -> SuperstructureState.MovingToPosition.wantedPosition.increaseLiftSetpoint()
-                aButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
+                leftBumper -> SuperstructureState.kMovingToPosition.wantedPosition.decreaseLiftSetpoint()
+                rightBumper -> SuperstructureState.kMovingToPosition.wantedPosition.increaseLiftSetpoint()
+                aButton -> Superstructure.set(SuperstructureState.kMovingToPosition) {
                     wantedPosition.setpointType = WantedPosition.SetpointType.Cargo
                 }
-                bButton -> Superstructure.set(SuperstructureState.MovingToPosition) {
+                bButton -> Superstructure.set(SuperstructureState.kMovingToPosition) {
                     wantedPosition.setpointType = WantedPosition.SetpointType.HatchPanel
                 }
                 xButton -> TODO("Toggle the secondary intake to hold or release grip on the hatch panel")
@@ -61,11 +60,11 @@ object MainLoop : RobotControlLoop {
             }
 
             if (rightStickButton == HeldDown) {
-                Lift.set(LiftState.Idle)
+                Lift.set(LiftState.kIdle)
             }
 
             if (startButton == Pressed) {
-                Superstructure.set(SuperstructureState.MovingToPosition) {
+                Superstructure.set(SuperstructureState.kMovingToPosition) {
                     wantedPosition.positionType = when (wantedPosition.positionType) {
                         WantedPosition.PositionType.Normal -> WantedPosition.PositionType.Defending
                         WantedPosition.PositionType.Defending -> WantedPosition.PositionType.Normal

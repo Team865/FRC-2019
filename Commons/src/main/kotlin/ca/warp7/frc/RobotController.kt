@@ -1,18 +1,8 @@
 package ca.warp7.frc
 
-import edu.wpi.first.wpilibj.XboxController
-
 @Suppress("unused")
-class RobotController internal constructor(internal val port: Int) {
-
+class RobotController internal constructor() {
     internal val data = ControllerData()
-    internal val controller = XboxController(port)
-    internal var active = true
-        set(value) {
-            if (!value) resetControllerData(data)
-            field = value
-        }
-
     val aButton get() = data.aButton
     val bButton get() = data.bButton
     val xButton get() = data.xButton
@@ -22,20 +12,11 @@ class RobotController internal constructor(internal val port: Int) {
     val leftStickButton get() = data.leftStickButton
     val rightStickButton get() = data.rightStickButton
     val startButton get() = data.startButton
-    val backButton get() = data.backButton
     val leftTriggerAxis get() = data.leftTriggerAxis
     val rightTriggerAxis get() = data.rightTriggerAxis
     val leftXAxis get() = data.leftXAxis
     val leftYAxis get() = data.leftYAxis
     val rightXAxis get() = data.rightXAxis
     val rightYAxis get() = data.rightYAxis
-
-    override fun equals(other: Any?): Boolean {
-        return other is RobotController && port == other.port
-    }
-
-    override fun hashCode(): Int {
-        return port
-    }
 }
 

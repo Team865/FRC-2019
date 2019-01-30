@@ -11,7 +11,7 @@ object Navx : Subsystem() {
 
     override fun onMeasure(dt: Double) {
         if (calibrated) {
-            yaw = ahrs.fusedHeading.toDouble()
+            yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
         }
     }
 }

@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
-@Suppress("unused")
+
 object DriveConstants {
 
     const val kLeftMaster = ElectricalConstants.kDriveLeftMasterTalonId
