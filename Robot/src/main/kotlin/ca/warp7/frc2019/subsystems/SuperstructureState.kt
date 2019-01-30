@@ -1,29 +1,28 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc2019.subsystems.superstructure.MoveToPosition
-import ca.warp7.frc2019.subsystems.superstructure.PassForward
+import ca.warp7.frc2019.subsystems.superstructure.IndexingCargo
+import ca.warp7.frc2019.subsystems.superstructure.MovingLift
 
 @Suppress("unused")
 object SuperstructureState {
+
     val kStartingConfiguration = runOnce {
         Outtake.set(OuttakeState.kIdle)
         Lift.set(LiftState.kIdle)
         Intake.set(IntakeState.kRetracting)
         Conveyor.set(ConveyorState.kIdle)
-        LED.set(LEDState.kOff)
     }
 
-    val kManual = runOnce { }
+    val kDefending = runOnce {
+        // retract intake
+        // retract piston
+        Superstructure.set(kMovingLift) {
 
-    val kIdle = runOnce { }
-
-    val kPassingCargo = PassForward
-
-    val kMovingToClimb
-        get() = runOnce {
-            Intake.set(IntakeState.LiftingRobot)
         }
+    }
 
-    val kMovingToPosition = MoveToPosition
+    val kIndexingCargo = IndexingCargo
+
+    val kMovingLift = MovingLift
 }
