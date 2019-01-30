@@ -30,5 +30,14 @@ object ElectricalConstants {
     const val kConveyorLeftVictorId = 5
     const val kConveyorRightVictorId = 10
 
-    const val kBackIntakeVictorId = 8
+    const val kIntakeVictorId = 8
+
+    /*
+    ===============================================
+    The following solenoids must have the same id
+    as the the port they are plugged in to the PCM
+    ===============================================
+    */
+
+    const val kIntakeSolenoidId = 0
 }
