@@ -26,9 +26,9 @@ object MainLoop : RobotControlLoop {
             }
 
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { speed = leftTriggerAxis }
+                Superstructure.set(SuperstructureState.kIndexingCargo) { controlSpeed = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { speed = leftTriggerAxis * -1 }
+                Superstructure.set(SuperstructureState.kIndexingCargo) { controlSpeed = leftTriggerAxis * -1 }
             }
 
             if (startButton == Pressed) {
