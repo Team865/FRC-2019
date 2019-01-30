@@ -10,15 +10,13 @@ object SuperstructureState {
         Outtake.set(OuttakeState.kIdle)
         Lift.set(LiftState.kIdle)
         Intake.set(IntakeState.kRetracting)
+        Conveyor.set(ConveyorState.kIdle)
         LED.set(LEDState.kOff)
     }
 
     val kManual = runOnce { }
 
-    val kIdle = runOnce {
-
-        }
-
+    val kIdle = runOnce { }
 
     val kPassingCargo = PassForward
 
