@@ -60,7 +60,7 @@ object MainLoop : RobotControlLoop {
             }
 
             if (rightStickButton == HeldDown) {
-                Lift.set(LiftState.kIdle)
+                Lift.set(LiftState.kOpenLoop) {percentOut = leftYAxis}
             }
 
             if (startButton == Pressed) {
