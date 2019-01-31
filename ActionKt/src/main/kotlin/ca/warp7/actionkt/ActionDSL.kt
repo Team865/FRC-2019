@@ -13,7 +13,7 @@ open class ActionDSL {
     open fun realStop() = Unit
 
     fun toAction() = object : Action {
-        override fun shouldFinish() = masterPredicate.invoke() || maybeFinish()
+        override val shouldFinish get() = masterPredicate.invoke() || maybeFinish()
         override fun start() {
             preStart?.invoke()
             realStart()

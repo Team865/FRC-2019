@@ -1,7 +1,8 @@
+@file:Suppress("unused")
+
 package ca.warp7.actionkt.test
 
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.action
+import ca.warp7.actionkt.*
 
 fun test(): Action {
     return action {
@@ -10,5 +11,17 @@ fun test(): Action {
         onStop {
         }
         finishWhen { true }
+    }
+}
+
+fun test2(): Action {
+    return queue {
+        +runOnce {
+        }
+        +periodic {
+
+        }
+        +action {
+        }
     }
 }

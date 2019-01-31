@@ -16,7 +16,7 @@ object SandstormLoop : RobotControlLoop {
     }
 
     override fun periodic() {
-        if (autonomousAction.shouldFinish() || Controls.robotDriver.leftXAxis > 0.8
+        if (autonomousAction.shouldFinish || Controls.robotDriver.leftXAxis > 0.8
                 || Controls.robotOperator.leftXAxis > 0.8) {
             setLoop(MainLoop)
         }
