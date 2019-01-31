@@ -7,4 +7,5 @@ import ca.warp7.frc2019.subsystems.lift.OpenLoopLift
 object LiftState {
     val kIdle = runOnce { }
     val kOpenLoop = OpenLoopLift
+    //val kGoToPosition =
 }

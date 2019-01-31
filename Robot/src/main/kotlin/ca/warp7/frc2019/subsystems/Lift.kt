@@ -13,7 +13,7 @@ object Lift : Subsystem() {
     }
 
     var percentOutput = 0.0
-
+    var demandedPosition = 0.0
 
     var outputMode: OutputType = OutputType.Percent
 
@@ -33,10 +33,10 @@ object Lift : Subsystem() {
                 master.set(ControlMode.PercentOutput, percentOutput)
             }
             OutputType.LinearPID ->{
-                TODO()
+                master.set(ControlMode.Position, demandedPosition)
             }
             OutputType.Position ->{
-                TODO()
+                //master.set(ControlMode.MotionMagic, )
             }
             OutputType.Velocity ->{
                 TODO()
