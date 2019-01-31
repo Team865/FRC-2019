@@ -6,7 +6,7 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
-import ca.warp7.frc2019.subsystems.superstructure.WantedPosition
+import ca.warp7.frc2019.subsystems.superstructure.LiftSetpointType
 
 object MainLoop : RobotControlLoop {
 
@@ -49,10 +49,10 @@ object MainLoop : RobotControlLoop {
                 leftBumper -> SuperstructureState.kMovingLift.wantedPosition.decreaseLiftSetpoint()
                 rightBumper -> SuperstructureState.kMovingLift.wantedPosition.increaseLiftSetpoint()
                 yButton -> Superstructure.set(SuperstructureState.kMovingLift) {
-                    wantedPosition.setpointType = WantedPosition.SetpointType.Cargo
+                    wantedPosition.setpointType = LiftSetpointType.Cargo
                 }
                 bButton -> Superstructure.set(SuperstructureState.kMovingLift) {
-                    wantedPosition.setpointType = WantedPosition.SetpointType.HatchPanel
+                    wantedPosition.setpointType = LiftSetpointType.HatchPanel
                 }
                 else -> Unit
             }
