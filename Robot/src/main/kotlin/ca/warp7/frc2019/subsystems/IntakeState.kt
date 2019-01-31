@@ -18,5 +18,5 @@ object IntakeState {
         }
     }
 
-    val kOpenLoop = OpenLoopMotor{Intake.victor}
+    val kOpenLoop = OpenLoopMotor { Intake.speed = it }
 }
