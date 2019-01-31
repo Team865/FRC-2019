@@ -15,7 +15,7 @@ object MovingLift : Action {
     }
 
     override fun update() {
-        Lift.set(LiftState.kGoToPosition){ positionInput = setpoint}
+        Lift.set(LiftState.kGoToPosition){ heightInputAbsoluteInches = setpoint}
     }
 
     override fun shouldFinish(): Boolean {
