@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.constants
 
-// TODO
 object ElectricalConstants {
     const val kCompressorModule = 0
     const val kPDPModule = 0
@@ -9,12 +8,12 @@ object ElectricalConstants {
     =====================================================
     The following motor controllers must have the same id
     as the the port they are plugged in to the PDP. Left/
-    Right pairs should be made symmetrical on the PDP
+    Right pairs should be made symmetrical on the PDP.
     =====================================================
      */
 
-    const val kLiftMasterTalonId = 0
-    const val kLiftFollowerVictorId = 15
+    const val kLiftFollowerVictorId = 0
+    const val kLiftMasterTalonId = 15
 
     const val kDriveLeftMasterTalonId = 1
     const val kDriveRightMasterTalonId = 14
@@ -25,13 +24,14 @@ object ElectricalConstants {
     const val kDriveLeftFollowerBVictorId = 3
     const val kDriveRightFollowerBVictorId = 12
 
-    const val kOuttakeLeftVictorId = 4
-    const val kOuttakeRightVictorId = 11
+    const val kConveyorLeftVictorId = 4
+    const val kConveyorRightVictorId = 11
 
-    const val kConveyorLeftVictorId = 5
-    const val kConveyorRightVictorId = 10
+    const val kIntakeVictorId = 10
+    // 5 is not connected to anything
 
-    const val kIntakeVictorId = 8
+    const val kOuttakeLeftVictorId = 6
+    const val kOuttakeRightVictorId = 9
 
     /*
     ===============================================
