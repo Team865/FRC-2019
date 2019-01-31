@@ -11,7 +11,8 @@ object Intake : Subsystem() {
     val victor = VictorSPX(IntakeConstants.kVictor)
     val solenoid = Solenoid(IntakeConstants.kVictor)
 
-    var speed: Double = 0.0
+    var extended = false
+    var speed = 0.0
 
     override fun onDisabled() {
         victor.neutralOutput()

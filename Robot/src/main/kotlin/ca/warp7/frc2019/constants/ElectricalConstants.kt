@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.constants
 
+// TODO
 object ElectricalConstants {
     const val kCompressorModule = 0
     const val kPDPModule = 0
@@ -24,8 +25,8 @@ object ElectricalConstants {
     const val kDriveLeftFollowerBVictorId = 3
     const val kDriveRightFollowerBVictorId = 12
 
-    const val kFrontIntakeLeftVictorId = 4
-    const val kFrontIntakeRightVictorId = 11
+    const val kOuttakeLeftVictorId = 4
+    const val kOuttakeRightVictorId = 11
 
     const val kConveyorLeftVictorId = 5
     const val kConveyorRightVictorId = 10
@@ -40,4 +41,5 @@ object ElectricalConstants {
     */
 
     const val kIntakeSolenoidId = 0
+    const val kOuttakeSolenoidId = 1
 }
