@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.constants
 
 object FrontIntakeConstants {
-    const val kLeft = ElectricalConstants.kFrontIntakeLeftVictorId
-    const val kRight = ElectricalConstants.kFrontIntakeRightVictorId
+    const val kLeft = ElectricalConstants.kOuttakeLeftVictorId
+    const val kRight = ElectricalConstants.kOuttakeRightVictorId
 }
