@@ -14,14 +14,8 @@ fun <T> T.periodic(block: T.() -> Unit) = object : Action {
     override fun update() = block(this@periodic)
 }
 
-fun runOnce(block: () -> Unit): Action = object : Action {
-    override fun start() = block()
-}
-
-fun periodic(block: () -> Unit): Action = object : Action {
-    override fun update() = block()
-}
-
 fun javaAction(factory: IAction.API.() -> IAction) = factory(Queue())
 
 fun javaMode(factory: IAction.API.() -> IAction) = { javaAction(factory) }
+
+fun action(block: ActionDSL.() -> Unit) = ActionDSL().apply(block).toAction()
