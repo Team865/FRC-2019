@@ -6,16 +6,13 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
-import ca.warp7.frc2019.subsystems.superstructure.WantedPosition
+import ca.warp7.frc2019.subsystems.superstructure.LiftSetpointType
 
 object MainLoop : RobotControlLoop {
 
     override fun setup() {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
-        Superstructure.set(SuperstructureState.kMovingToPosition) {
-            wantedPosition.positionType = WantedPosition.PositionType.Normal
-        }
     }
 
     override fun periodic() {
@@ -29,48 +26,43 @@ object MainLoop : RobotControlLoop {
             }
 
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kPassingCargo) { speed = leftTriggerAxis }
+                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kPassingCargo) { speed = leftTriggerAxis * -1 }
-            }
-
-            if (startButton == Pressed) Superstructure.set(SuperstructureState.kMovingToClimb)
-        }
-
-        Controls.robotOperator.apply {
-            if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis }
-            } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Outtake.set(OuttakeState.ManualControl) { speed = leftTriggerAxis * -1 }
-            }
-
-            when (Pressed) {
-                leftBumper -> SuperstructureState.kMovingToPosition.wantedPosition.decreaseLiftSetpoint()
-                rightBumper -> SuperstructureState.kMovingToPosition.wantedPosition.increaseLiftSetpoint()
-                aButton -> Superstructure.set(SuperstructureState.kMovingToPosition) {
-                    wantedPosition.setpointType = WantedPosition.SetpointType.Cargo
-                }
-                bButton -> Superstructure.set(SuperstructureState.kMovingToPosition) {
-                    wantedPosition.setpointType = WantedPosition.SetpointType.HatchPanel
-                }
-                xButton -> TODO("Toggle the secondary intake to hold or release grip on the hatch panel")
-                yButton -> TODO("Outtake the hatch panel by releasing the grip and push out with piston")
-                else -> {
-                }
-            }
-
-            if (rightStickButton == HeldDown) {
-                Lift.set(LiftState.kIdle)
+                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis * -1 }
             }
 
             if (startButton == Pressed) {
-                Superstructure.set(SuperstructureState.kMovingToPosition) {
-                    wantedPosition.positionType = when (wantedPosition.positionType) {
-                        WantedPosition.PositionType.Normal -> WantedPosition.PositionType.Defending
-                        WantedPosition.PositionType.Defending -> WantedPosition.PositionType.Normal
-                        WantedPosition.PositionType.Climbing -> WantedPosition.PositionType.Climbing
-                    }
+                // TODO Reserved for climbing mechanism
+            }
+        }
+
+        Controls.robotOperator.apply {
+            when {
+                leftTriggerAxis > ControlConstants.kAxisDeadband ->
+                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis) }
+                rightTriggerAxis > ControlConstants.kAxisDeadband ->
+                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis * -1) }
+                else -> SuperstructureState.kIndexingCargo.isOverride = false
+            }
+
+            when (Pressed) {
+                leftBumper -> SuperstructureState.kMovingLift.wantedPosition.decreaseLiftSetpoint()
+                rightBumper -> SuperstructureState.kMovingLift.wantedPosition.increaseLiftSetpoint()
+                yButton -> Superstructure.set(SuperstructureState.kMovingLift) {
+                    wantedPosition.setpointType = LiftSetpointType.Cargo
                 }
+                bButton -> Superstructure.set(SuperstructureState.kMovingLift) {
+                    wantedPosition.setpointType = LiftSetpointType.Hatch
+                }
+                else -> Unit
+            }
+
+            if (rightStickButton == HeldDown) {
+                Lift.set(LiftState.kOpenLoop) {percentOut = leftYAxis}
+            }
+
+            if (startButton == Pressed) {
+                Superstructure.set(SuperstructureState.kDefending)
             }
         }
     }

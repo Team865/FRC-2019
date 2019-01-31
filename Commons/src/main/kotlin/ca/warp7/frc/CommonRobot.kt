@@ -42,6 +42,7 @@ internal object CommonRobot {
         set(value) {
             autoRunner.stop()
             robotEnabled = true
+            value?.setup()
             field = value
         }
 
@@ -141,11 +142,7 @@ internal object CommonRobot {
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
-            actionTimer { Timer.getFPGATimestamp() },
-            20.0,
-            timeout,
-            mode().javaAction,
-            true)
+            actionTimer { Timer.getFPGATimestamp() }, 20.0, timeout, mode().javaAction, true)
             .ktAction.also {
         autoRunner = it
         robotEnabled = true
