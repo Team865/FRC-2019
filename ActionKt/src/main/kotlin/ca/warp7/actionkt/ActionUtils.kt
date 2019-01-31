@@ -19,3 +19,5 @@ fun javaAction(factory: IAction.API.() -> IAction) = factory(Queue())
 fun javaMode(factory: IAction.API.() -> IAction) = { javaAction(factory) }
 
 fun action(block: ActionDSL.() -> Unit) = ActionDSL().apply(block).toAction()
+
+fun mode(block: ActionDSL.() -> Unit) = { action(block) }
