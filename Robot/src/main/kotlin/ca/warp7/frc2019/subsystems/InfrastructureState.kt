@@ -1,9 +1,11 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.actionkt.runOnce
+import ca.warp7.actionkt.periodic
 
 object InfrastructureState {
-    val kInfrastructureSetup = runOnce {
-        Navx.set(NavxState.kWaitForCalibration)
+    val kInfrastructureSetup = periodic {
+        if (!Infrastructure.calibrated && !Infrastructure.ahrs.isCalibrating) {
+            Infrastructure.calibrated = true
+        }
     }
 }
