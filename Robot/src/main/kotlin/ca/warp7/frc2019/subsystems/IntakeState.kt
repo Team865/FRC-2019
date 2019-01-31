@@ -18,5 +18,12 @@ object IntakeState {
         }
     }
 
+    val kStartOpenLoop: Action = runOnce {
+        Intake.apply {
+            solenoid.set(true)
+            set(IntakeState.kOpenLoop)
+        }
+    }
+
     val kOpenLoop = OpenLoopMotor { Intake.speed = it }
 }
