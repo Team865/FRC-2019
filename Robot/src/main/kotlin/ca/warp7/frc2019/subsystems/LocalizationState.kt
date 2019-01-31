@@ -11,8 +11,10 @@ object LocalizationState {
         val leftDiff = Drive.leftPositionTicks - Drive.prevLeftPositionTicks
         val rightDiff = Drive.rightPositionTicks - Drive.prevRightPositionTicks
         val avg = (leftDiff + rightDiff) / 2.0
-        Localization.predictedState += mat[avg * cos(Infrastructure.yaw), avg * sin(Infrastructure.yaw), 0.0, 0.0]
-        Localization.predictedState[2] = Infrastructure.yaw
-        Localization.predictedState[3] = 0.0
+        Localization.apply {
+            predictedState += mat[avg * cos(Infrastructure.yaw), avg * sin(Infrastructure.yaw), 0.0, 0.0]
+            predictedState[2] = Infrastructure.yaw
+            predictedState[3] = 0.0
+        }
     }
 }

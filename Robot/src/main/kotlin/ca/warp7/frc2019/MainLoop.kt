@@ -26,9 +26,9 @@ object MainLoop : RobotControlLoop {
             }
 
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { controlSpeed = leftTriggerAxis }
+                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { controlSpeed = leftTriggerAxis * -1 }
+                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis * -1 }
             }
 
             if (startButton == Pressed) {
@@ -37,10 +37,12 @@ object MainLoop : RobotControlLoop {
         }
 
         Controls.robotOperator.apply {
-            if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Outtake.set(OuttakeState.OpenLoop) { speed = leftTriggerAxis }
-            } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Outtake.set(OuttakeState.OpenLoop) { speed = leftTriggerAxis * -1 }
+            when {
+                leftTriggerAxis > ControlConstants.kAxisDeadband ->
+                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis) }
+                rightTriggerAxis > ControlConstants.kAxisDeadband ->
+                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis * -1) }
+                else -> SuperstructureState.kIndexingCargo.isOverride = false
             }
 
             when (Pressed) {
