@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.OpenLoopMotor
 import ca.warp7.actionkt.runOnce
+import ca.warp7.frc.OpenLoopState
 
 object IntakeState {
     val kIdle = runOnce {
@@ -25,5 +25,5 @@ object IntakeState {
         }
     }
 
-    val kOpenLoop = OpenLoopMotor { Intake.speed = it }
+    val kOpenLoop = OpenLoopState { Intake.speed = it }
 }

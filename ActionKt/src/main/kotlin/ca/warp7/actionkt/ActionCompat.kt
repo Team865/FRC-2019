@@ -19,19 +19,5 @@ private class KotlinAction(val action: IAction) : Action {
 val Action.javaAction: IAction get() = JavaAction(this)
 val IAction.ktAction: Action get() = KotlinAction(this)
 
-fun runOnce(block: () -> Unit): Action = object : Action {
-    override fun start() = block()
-}
-
-fun periodic(block: () -> Unit): Action = object : Action {
-    override fun update() = block()
-}
-
-class OpenLoopMotor(val setter: (Double) -> Unit) : Action {
-    var speed: Double = 0.0
-    override fun update() {
-        setter(speed)
-    }
-}
 
 fun actionTimer(timer: () -> Double) = IAction.ITimer { timer() }
