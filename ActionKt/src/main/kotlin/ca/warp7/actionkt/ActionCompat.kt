@@ -29,7 +29,9 @@ fun periodic(block: () -> Unit): Action = object : Action {
 
 class OpenLoopMotor(val setter: (Double) -> Unit) : Action {
     var speed: Double = 0.0
-    override fun update() = setter(speed)
+    override fun update() {
+        setter(speed)
+    }
 }
 
 fun actionTimer(timer: () -> Double) = IAction.ITimer { timer() }
