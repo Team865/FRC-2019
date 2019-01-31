@@ -10,7 +10,7 @@ object SuperstructureState {
     val kStartingConfiguration = runOnce {
         Outtake.set(OuttakeState.kIdle)
         Lift.set(LiftState.kIdle)
-        Intake.set(IntakeState.kRetracting)
+        Intake.set(IntakeState.kUp)
         Conveyor.set(ConveyorState.kIdle)
     }
 
