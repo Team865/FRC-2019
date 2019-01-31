@@ -41,4 +41,5 @@ object ElectricalConstants {
     */
 
     const val kIntakeSolenoidId = 0
+    const val kOuttakeSolenoidId = 1
 }

@@ -1,29 +1,29 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.OpenLoopMotor
 import ca.warp7.actionkt.runOnce
+import ca.warp7.frc.OpenLoopState
 
 object IntakeState {
     val kIdle = runOnce {
         Intake.apply {
-            victor.neutralOutput()
+            speed = 0.0
         }
     }
 
     val kUp = runOnce {
         Intake.apply {
-            solenoid.set(false)
-            victor.neutralOutput()
+            extended = false
+            speed = 0.0
         }
     }
 
     val kStartOpenLoop: Action = runOnce {
         Intake.apply {
-            solenoid.set(true)
+            extended = true
             set(IntakeState.kOpenLoop)
         }
     }
 
-    val kOpenLoop = OpenLoopMotor { Intake.speed = it }
+    val kOpenLoop = OpenLoopState { Intake.speed = it }
 }

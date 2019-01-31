@@ -15,11 +15,9 @@ object SuperstructureState {
     }
 
     val kDefending = runOnce {
-        // retract intake
-        // retract piston
-        Superstructure.set(kMovingLift) {
-
-        }
+        Intake.set(IntakeState.kUp)
+        Outtake.set(OuttakeState.kIdle)
+        Superstructure.set(kMovingLift) {} //TODO have the lift go down
     }
 
     val kIndexingCargo = IndexingCargo

@@ -12,8 +12,6 @@ object DriveState {
             outputMode = Drive.OutputMode.Percent
             leftDemand = 0.0
             rightDemand = 0.0
-            leftMaster.neutralOutput()
-            rightMaster.neutralOutput()
         }
     }
 
