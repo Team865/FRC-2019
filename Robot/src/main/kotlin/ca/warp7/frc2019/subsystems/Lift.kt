@@ -2,7 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.constants.LiftConstants.kMaxVelocityInchesPerSecond
+import ca.warp7.frc2019.constants.LiftConstants.kInchesPerTick
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
@@ -15,6 +15,8 @@ object Lift : Subsystem() {
 
     var percentOutput = 0.0
     var demandedPosition = 0.0
+    var positionFromHome = 0.0
+    var velocity = 0.0
 
     var outputMode: OutputType = OutputType.Percent
 
@@ -45,5 +47,10 @@ object Lift : Subsystem() {
             }
         }
 
+    }
+
+    override fun onMeasure(dt: Double) {
+        positionFromHome = master.getSelectedSensorPosition() / kInchesPerTick
+        velocity = master.getSelectedSensorVelocity() / kInchesPerTick
     }
 }

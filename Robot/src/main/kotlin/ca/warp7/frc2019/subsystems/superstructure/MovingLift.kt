@@ -18,6 +18,10 @@ object MovingLift : Action {
         Lift.set(LiftState.kGoToPosition){ positionInput = setpoint}
     }
 
+    override fun shouldFinish(): Boolean {
+        return super.shouldFinish()
+    }
+
     override fun stop() {
         Superstructure.set(SuperstructureState.kHoldingPosition)
     }
