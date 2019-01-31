@@ -11,4 +11,7 @@ object IndexingCargo : Action {
         isOverride = true
         overrideScale = scale
     }
+
+    override fun start() {
+    }
 }

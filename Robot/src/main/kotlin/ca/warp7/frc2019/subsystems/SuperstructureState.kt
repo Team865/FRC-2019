@@ -25,4 +25,6 @@ object SuperstructureState {
     val kIndexingCargo = IndexingCargo
 
     val kMovingLift = MovingLift
+
+    val kHoldingPosition = runOnce { }
 }

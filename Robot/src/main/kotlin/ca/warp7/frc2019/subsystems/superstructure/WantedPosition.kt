@@ -20,7 +20,7 @@ class WantedPosition {
     fun toWantedLiftHeight(): Double { // TODO
         return setpointLevel * 5.0 + when (setpointType) {
             LiftSetpointType.Cargo -> 3.0
-            LiftSetpointType.HatchPanel -> 2.0
+            LiftSetpointType.Hatch -> 2.0
         }
     }
 }

@@ -52,7 +52,7 @@ object MainLoop : RobotControlLoop {
                     wantedPosition.setpointType = LiftSetpointType.Cargo
                 }
                 bButton -> Superstructure.set(SuperstructureState.kMovingLift) {
-                    wantedPosition.setpointType = LiftSetpointType.HatchPanel
+                    wantedPosition.setpointType = LiftSetpointType.Hatch
                 }
                 else -> Unit
             }
