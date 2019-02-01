@@ -58,7 +58,7 @@ object MainLoop : RobotControlLoop {
             }
 
             if (rightStickButton == HeldDown) {
-                Lift.set(LiftState.kOpenLoop) {percentOut = leftYAxis}
+                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             }
 
             if (startButton == Pressed) {

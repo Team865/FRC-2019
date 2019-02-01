@@ -6,6 +6,7 @@ import ca.warp7.frc2019.subsystems.superstructure.MovingLift
 
 @Suppress("unused")
 object SuperstructureState {
+    val kIdle = runOnce {}
 
     val kStartingConfiguration = runOnce {
         Outtake.set(OuttakeState.kIdle)
@@ -15,14 +16,20 @@ object SuperstructureState {
     }
 
     val kDefending = runOnce {
+        Lift.set(LiftState.kGoToPosition) { positionInput = 0.0 }
         Intake.set(IntakeState.kUp)
         Outtake.set(OuttakeState.kIdle)
-        Superstructure.set(kMovingLift) {} //TODO have the lift go down
     }
 
     val kIndexingCargo = IndexingCargo
 
-    val kMovingLift = MovingLift
+    val kIntakeCargoMode = runOnce {
+        Intake.set(IntakeState.kStartOpenLoop)
+        Lift.set(LiftState.kGoToPosition){ positionInput = TODO("loading station cargo height") }
+    }
 
-    val kHoldingPosition = runOnce { }
+    val kIntakeHatchMode = runOnce {
+        Lift.set(LiftState.kGoToPosition) { positionInput = 0.0 }
+        Intake.set(IntakeState.kUp)
+    }
 }
