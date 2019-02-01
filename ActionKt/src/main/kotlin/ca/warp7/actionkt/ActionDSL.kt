@@ -2,8 +2,7 @@ package ca.warp7.actionkt
 
 @ActionDSLMarker
 open class ActionDSL : Action, ActionState {
-    override val elapsed: Double
-        get() = TODO("not implemented")
+    override var elapsed: Double = 0.0
 
     private var preStart: (() -> Unit)? = null
     private var preUpdate: (() -> Unit)? = null
@@ -21,7 +20,7 @@ open class ActionDSL : Action, ActionState {
     }
 
     override val shouldFinish: Boolean
-        get() = masterPredicate(SimpleActionState()) || maybeFinish()
+        get() = masterPredicate(this) || maybeFinish()
 
     override fun update() {
         preUpdate?.invoke()
