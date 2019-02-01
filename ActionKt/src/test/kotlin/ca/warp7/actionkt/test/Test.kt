@@ -16,12 +16,17 @@ fun test(): Action {
 
 fun test2(): Action {
     return queue {
+
         +runOnce {
         }
+
         +periodic {
 
         }
+
         +action {
         }
+
+        +wait(1)
     }
 }

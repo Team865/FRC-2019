@@ -9,4 +9,6 @@ fun <T> T.runOnce(block: T.() -> Unit) = object : Action {
 
 fun <T> T.periodic(block: T.() -> Unit) = object : Action {
     override fun update() = block(this@periodic)
+    override val shouldFinish: Boolean
+        get() = false
 }
