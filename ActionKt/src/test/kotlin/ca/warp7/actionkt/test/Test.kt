@@ -21,7 +21,6 @@ fun test2(): Action {
         }
 
         +periodic {
-
         }
 
         +action {

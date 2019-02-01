@@ -12,3 +12,7 @@ fun <T> T.periodic(block: T.() -> Unit) = object : Action {
     override val shouldFinish: Boolean
         get() = false
 }
+
+fun wait(seconds: Int) = wait(seconds.toDouble())
+
+fun wait(seconds: Double) = action { finishWhen { elapsed > seconds } }
