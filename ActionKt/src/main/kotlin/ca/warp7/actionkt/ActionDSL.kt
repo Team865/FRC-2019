@@ -1,5 +1,6 @@
 package ca.warp7.actionkt
 
+@ActionDSLMarker
 open class ActionDSL {
 
     private var preStart: (() -> Unit)? = null
