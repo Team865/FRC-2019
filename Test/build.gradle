@@ -1,0 +1,54 @@
+
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "edu.wpi.first.GradleRIO"
+}
+
+def ROBOT_MAIN_CLASS = "ca.warp7.frc2019.test.TestRobot"
+
+deploy {
+    targets {
+        roboRIO("roborio") {
+            team = frc.getTeamOrDefault(865)
+        }
+    }
+    artifacts {
+        frcJavaArtifact('frcJava') {
+            targets << "roborio"
+            debug = frc.getDebugOrDefault(false)
+        }
+
+        fileTreeArtifact('frcStaticFileDeploy') {
+            files = fileTree(dir: 'src/main/deploy')
+            targets << "roborio"
+            directory = '/home/lvuser/deploy'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://dl.bintray.com/kyonifer/maven"
+    }
+}
+
+buildDir = new File(rootProject.projectDir, "build/" + project.name)
+
+dependencies {
+    compile project(":Team865-Robot-2019")
+    compile wpi.deps.wpilib()
+    compile wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.jetbrains.kotlin:kotlin-test"
+    compile group: "com.kyonifer", name:"koma-core-ejml", version: "0.12"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": ROBOT_MAIN_CLASS
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
