@@ -37,3 +37,6 @@ project(":Commons").name = "Robot-Commons"
 
 include ":Robot"
 project(":Robot").name = "Team865-Robot-2019"
+
+include ":Test"
+project(":Test").name = "Robot-Tests"
