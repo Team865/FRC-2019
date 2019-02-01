@@ -6,7 +6,7 @@ open class ActionDSL {
     private var preStart: (() -> Unit)? = null
     private var preUpdate: (() -> Unit)? = null
     private var preStop: (() -> Unit)? = null
-    private var masterPredicate: () -> Boolean = { true }
+    private var masterPredicate: ActionState.() -> Boolean = { true }
 
     open fun realStart() = Unit
     open fun realUpdate() = Unit
@@ -14,7 +14,7 @@ open class ActionDSL {
     open fun realStop() = Unit
 
     fun toAction() = object : Action {
-        override val shouldFinish get() = masterPredicate.invoke() || maybeFinish()
+        override val shouldFinish get() = masterPredicate(SimpleActionState()) || maybeFinish()
         override fun start() {
             preStart?.invoke()
             realStart()
@@ -36,7 +36,7 @@ open class ActionDSL {
         else preStart = block
     }
 
-    fun finishWhen(block: () -> Boolean) {
+    fun finishWhen(block: ActionState.() -> Boolean) {
         masterPredicate = block
     }
 

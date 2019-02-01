@@ -4,8 +4,4 @@ class ActionQueue : ActionDSL() {
     operator fun Action.unaryPlus() {
 
     }
-
-    val Int.seconds get() = runOnce { }
-
-    val Double.seconds get() = runOnce { }
 }
