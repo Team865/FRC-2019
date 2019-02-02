@@ -32,4 +32,8 @@ object SuperstructureState {
         Lift.set(LiftState.kGoToPosition) { positionInput = 0.0 }
         Intake.set(IntakeState.kUp)
     }
+
+    val kMovingLift = MovingLift
+
+    val kHoldingPosition = runOnce { }
 }
