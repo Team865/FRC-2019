@@ -2,17 +2,20 @@ package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.subsystems.Lift
 
 object GoToPositionMotionPlanning : Action {
     var heightInputAbsoluteInches = 0.0
     var heightFromHome = 0.0
-    var tragectory = LiftTragectory
+    var tragectory = liftTragectory
+    var timeStarted = 0.0
 
-    override fun start() {
-        tragectory =
+    fun generateTragectory(targetHeightAbsolute: Double){
+        timeStarted = 0.0 //TODO get time and pass dt
+        heightInputAbsoluteInches = targetHeightAbsolute - LiftConstants.kHomeHeightInches
+        tragectory.generateTragectory(heightFromHome)
     }
     override fun update(){
-        heightFromHome = heightInputAbsoluteInches - LiftConstants.kHomeHeightInches
-
+        Lift.demandedVelocity = tragectory.desiredVelocoity(0.0)
     }
 }
