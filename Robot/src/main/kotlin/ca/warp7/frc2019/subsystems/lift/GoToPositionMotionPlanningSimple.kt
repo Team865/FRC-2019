@@ -20,8 +20,6 @@ object GoToPositionMotionPlanningSimple : Action {
     }
 
     override fun shouldFinish(): Boolean {
-        //TODO
-        return true
-
+        return Lift.currentPositionFromHome == targetHeightFromHome && Lift.currentVelocity == Lift.demandedVelocity
     }
 }
