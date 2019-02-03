@@ -20,7 +20,7 @@ object MovingLift : Action {
     }
 
     override fun shouldFinish(): Boolean {
-        return !(outputMode == Lift.OutputType.Position)
+        return !(outputMode == Lift.OutputType.LinearPID)
     }
 
     override fun stop() {
