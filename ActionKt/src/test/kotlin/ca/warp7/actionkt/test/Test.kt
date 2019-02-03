@@ -27,5 +27,9 @@ fun test2(): Action {
         }
 
         +wait(1)
+
+        +async {
+
+        }
     }
 }

@@ -1,5 +1,5 @@
 package ca.warp7.actionkt
 
-interface ActionQueue {
+interface ActionQueue : ActionDSL {
     operator fun Action.unaryPlus()
 }
