@@ -1,7 +1,7 @@
 package ca.warp7.actionkt
 
 @ActionDSLMarker
-open class ActionDSLBase : ActionDSL, Action, ActionState {
+open class ActionDSLImpl : ActionDSL, Action, ActionState {
     override var elapsed: Double = 0.0
 
     private var start: (() -> Unit)? = null
