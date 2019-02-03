@@ -3,11 +3,11 @@
 package ca.warp7.actionkt
 
 
-fun ActionDSL.runOnce(block: () -> Unit) = object : Action {
+fun ActionDSLBase.runOnce(block: () -> Unit) = object : Action {
     override fun start() = block()
 }
 
-fun ActionDSL.periodic(block: () -> Unit) = object : Action {
+fun ActionDSLBase.periodic(block: () -> Unit) = object : Action {
     override fun update() = block()
     override val shouldFinish: Boolean
         get() = false
