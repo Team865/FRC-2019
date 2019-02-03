@@ -19,6 +19,7 @@ object Lift : Subsystem() {
     var demandedHeightFromHome = 0.0
     var positionFromHome = 0.0
     var velocity = 0.0
+    var demandedVelocity = 0.0
 
     var outputMode: OutputType = OutputType.Percent
 
@@ -42,7 +43,7 @@ object Lift : Subsystem() {
                 master.set(ControlMode.Position, demandedHeightFromHome)
             }
             OutputType.Velocity ->{
-                master.set(ControlMode.Velocity, velocity)
+                master.set(ControlMode.Velocity, demandedVelocity)
             }
             OutputType.Hold ->
             {
