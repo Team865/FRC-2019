@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 object Lift : Subsystem() {
 
     enum class OutputType{
-        Percent, Position, Velocity, LinearPID, Hold
+        Percent, Velocity, LinearPID, Hold
     }
 
     var percentOutput = 0.0
@@ -41,13 +41,8 @@ object Lift : Subsystem() {
             OutputType.LinearPID ->{
                 master.set(ControlMode.Position, demandedHeightFromHome)
             }
-            OutputType.Position ->{
-                master.set(ControlMode.Position, demandedHeightFromHome)
-                //TODO learn how to use Motion Magic
-                //master.set(ControlMode.MotionMagic, demandedHeightFromHome, kMaxAcceleration, kMaxVelocityInchesPerSecond)
-            }
             OutputType.Velocity ->{
-                TODO()
+                master.set(ControlMode.Velocity, velocity)
             }
             OutputType.Hold ->
             {
