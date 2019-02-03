@@ -17,7 +17,7 @@ object CurvatureDrive : Action {
         Drive.doWithCheckedWPIState { curvatureDrive(xSpeed, zRotation, isQuickTurn) }
     }
 
-    override fun shouldFinish() = false
+    override val shouldFinish get() = false
 
     override fun stop() {
         Drive.set(DriveState.kNeutralOutput)
