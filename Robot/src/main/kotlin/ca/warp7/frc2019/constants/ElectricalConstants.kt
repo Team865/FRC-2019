@@ -35,11 +35,21 @@ object ElectricalConstants {
 
     /*
     ===============================================
-    The following solenoids must have the same id
+    The following solenoids must have the same port
     as the the port they are plugged in to the PCM
     ===============================================
     */
 
-    const val kIntakeSolenoidId = 0
-    const val kOuttakeSolenoidId = 1
+    const val kIntakeSolenoidPort = 0
+    const val kOuttakeSolenoidPort = 1
+
+
+    /*
+    ===============================================
+    The following Digital I/O ports are plugged
+    into the RIO
+    ===============================================
+     */
+
+    const val kLiftHallEffectSensorDIO = 0
 }
