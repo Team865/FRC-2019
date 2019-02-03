@@ -19,7 +19,7 @@ object GoToPosition: Action {
     }
 
     override fun shouldFinish(): Boolean {
-        return heightInputAbsoluteInches == Lift.positionFromHome
+        return heightInputAbsoluteInches == Lift.currentPositionFromHome
     }
 
     override fun stop() {

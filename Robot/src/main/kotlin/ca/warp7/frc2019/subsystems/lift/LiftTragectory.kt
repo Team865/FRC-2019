@@ -5,7 +5,8 @@ import ca.warp7.frc2019.subsystems.Lift
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-object liftTragectory {
+// TODO add catch case for needing to accelerate to opposite signed currentVelocity to reach setpoint with zero currentVelocity
+object LiftTragectory {
     var relativeTargetHeight = 0.0
     var isTriange = false
     var maxReachedVelocity = 0.0
@@ -14,18 +15,18 @@ object liftTragectory {
 
     fun generateTragectory(relativeHeight: Double) {
         relativeTargetHeight = relativeHeight
-        val dtFromZeroVelocity = Lift.velocity / LiftConstants.kMaxBaseAcceleration
-        val dxFromZeroVelocity = (Lift.velocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
+        val dtFromZeroVelocity = Lift.currentVelocity / LiftConstants.kMaxBaseAcceleration
+        val dxFromZeroVelocity = (Lift.currentVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
-        val maximumTheorecticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity)
+        val maximumTheorecticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
         val relativeHeightAtMaxTheoreticalVelocity = //TODO / 2
-                if (LiftConstants.kMaxVelocityInchesPerSecond >= maximumTheorecticallyReachableVelocity) {
-                    isTriange = true
-                    maxReachedVelocity = maximumTheorecticallyReachableVelocity
-                } else {
-                    isTriange = false
-                    maxReachedVelocity = LiftConstants.kMaxVelocityInchesPerSecond
-                }
+        if (LiftConstants.kMaxVelocityInchesPerSecond >= maximumTheorecticallyReachableVelocity) {
+            isTriange = true
+            maxReachedVelocity = maximumTheorecticallyReachableVelocity
+        } else {
+            isTriange = false
+            maxReachedVelocity = LiftConstants.kMaxVelocityInchesPerSecond
+        }
 
         timeUntilMaxVelocityReachedEstimate = maxReachedVelocity / LiftConstants.kMaxBaseAcceleration
 
@@ -41,6 +42,7 @@ object liftTragectory {
     }
 
     fun desiredVelocoity(timeSinceStart: Double): Double {
+        // TODO use position data for feedback loop
         // from Trapezoidal Velocity Drive
         if (timeSinceStart > totalTimeEstimate) {
             return 0.0
