@@ -14,8 +14,8 @@
       <module name="FRC-2019.Constants.test" target="11" />
       <module name="FRC-2019.FRC-2019-Robot.main" target="11" />
       <module name="FRC-2019.FRC-2019-Robot.test" target="11" />
-      <module name="FRC-2019.MiniPID.main" target="11" />
-      <module name="FRC-2019.MiniPID.test" target="11" />
+      <module name="FRC-2019.MiniPID.main" target="1.8" />
+      <module name="FRC-2019.MiniPID.test" target="1.8" />
       <module name="FRC-2019.Robot-2019.main" target="11" />
       <module name="FRC-2019.Robot-2019.test" target="11" />
       <module name="FRC-2019.Robot.main" target="11" />
