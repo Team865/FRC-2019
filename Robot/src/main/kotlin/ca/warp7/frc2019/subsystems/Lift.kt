@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Lift : Subsystem() {
@@ -20,6 +21,7 @@ object Lift : Subsystem() {
     var positionFromHome = 0.0
     var velocity = 0.0
     var demandedVelocity = 0.0
+    var time = 0.0
 
     var outputMode: OutputType = OutputType.Percent
 
@@ -56,6 +58,7 @@ object Lift : Subsystem() {
     override fun onMeasure(dt: Double) {
         positionFromHome = master.selectedSensorPosition / LiftConstants.kInchesPerTick
         velocity = master.selectedSensorVelocity / LiftConstants.kInchesPerTick
+        time = Timer.getFPGATimestamp()
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
