@@ -8,12 +8,10 @@ import ca.warp7.frc2019.subsystems.drive.CurvatureDrive
 
 object DriveState {
 
-    val kNeutralOutput = runOnce {
-        Drive.apply {
-            outputMode = Drive.OutputMode.Percent
-            leftDemand = 0.0
-            rightDemand = 0.0
-        }
+    val kNeutralOutput = Drive.runOnce {
+        outputMode = Drive.OutputMode.Percent
+        leftDemand = 0.0
+        rightDemand = 0.0
     }
 
     val kCurvature = CurvatureDrive
