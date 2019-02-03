@@ -25,4 +25,5 @@ fun actionTimer(timer: () -> Double) = IAction.ITimer { timer() }
 
 fun javaAction(factory: IAction.API.() -> IAction) = factory(Queue()).ktAction
 
+@Suppress("unused")
 fun javaMode(factory: IAction.API.() -> IAction) = { javaAction(factory) }

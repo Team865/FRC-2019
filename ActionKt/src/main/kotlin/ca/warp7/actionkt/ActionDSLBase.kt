@@ -4,50 +4,42 @@ package ca.warp7.actionkt
 open class ActionDSLBase : ActionDSL, Action, ActionState {
     override var elapsed: Double = 0.0
 
-    private var preStart: (() -> Unit)? = null
-    private var preUpdate: (() -> Unit)? = null
-    private var preStop: (() -> Unit)? = null
-    private var masterPredicate: ActionState.() -> Boolean = { true }
-
-    open fun realStart() = Unit
-    open fun realUpdate() = Unit
-    open fun maybeFinish() = true
-    open fun realStop() = Unit
+    private var start: (() -> Unit)? = null
+    private var update: (() -> Unit)? = null
+    private var stop: (() -> Unit)? = null
+    private var predicate: ActionState.() -> Boolean = { true }
 
     override fun start() {
-        preStart?.invoke()
-        realStart()
+        start?.invoke()
     }
 
     override val shouldFinish: Boolean
-        get() = masterPredicate(this) || maybeFinish()
+        get() = predicate(this)
 
     override fun update() {
-        preUpdate?.invoke()
-        realUpdate()
+        update?.invoke()
     }
 
     override fun stop() {
-        preStop?.invoke()
-        realStop()
+        stop?.invoke()
     }
 
     override fun onStart(block: () -> Unit) {
-        if (preStart != null) throw IllegalStateException()
-        else preStart = block
+        if (start != null) throw IllegalStateException()
+        else start = block
     }
 
     override fun finishWhen(block: ActionState.() -> Boolean) {
-        masterPredicate = block
+        predicate = block
     }
 
     override fun onUpdate(block: () -> Unit) {
-        if (preUpdate != null) throw IllegalStateException()
-        else preUpdate = block
+        if (update != null) throw IllegalStateException()
+        else update = block
     }
 
     override fun onStop(block: () -> Unit) {
-        if (preStop != null) throw IllegalArgumentException()
-        else preStop = block
+        if (stop != null) throw IllegalArgumentException()
+        else stop = block
     }
 }
