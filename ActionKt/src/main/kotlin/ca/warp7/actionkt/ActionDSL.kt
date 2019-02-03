@@ -6,4 +6,5 @@ interface ActionDSL {
     fun finishWhen(block: ActionState.() -> Boolean)
     fun onUpdate(block: ActionState.() -> Unit)
     fun onStop(block: ActionState.() -> Unit)
+    operator fun String.not()
 }

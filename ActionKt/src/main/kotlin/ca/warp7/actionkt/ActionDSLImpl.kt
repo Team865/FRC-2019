@@ -2,12 +2,17 @@ package ca.warp7.actionkt
 
 @ActionDSLMarker
 open class ActionDSLImpl : ActionDSL, Action, ActionState {
-    override var elapsed: Double = 0.0
+    override fun String.not() {
+        name = this
+    }
 
     private var start: ActionState.() -> Unit = {}
     private var update: ActionState.() -> Unit = {}
     private var stop: ActionState.() -> Unit = {}
     private var predicate: ActionState.() -> Boolean = { true }
+
+    override var name = ""
+    override var elapsed: Double = 0.0
 
     override fun start() {
         start.invoke(this)

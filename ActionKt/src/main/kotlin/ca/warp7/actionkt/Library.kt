@@ -32,6 +32,16 @@ fun <T> T.periodic(block: T.() -> Unit) = object : Action {
         get() = false
 }
 
+fun ActionDSL.runOnce(block: () -> Unit) = object : Action {
+    override fun start() = block()
+}
+
+fun ActionDSL.periodic(block: () -> Unit) = object : Action {
+    override fun update() = block()
+    override val shouldFinish: Boolean
+        get() = false
+}
+
 fun wait(seconds: Int) = wait(seconds.toDouble())
 
 fun wait(seconds: Double) = action { finishWhen { elapsed > seconds } }
