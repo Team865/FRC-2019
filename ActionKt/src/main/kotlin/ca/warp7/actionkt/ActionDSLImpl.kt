@@ -4,42 +4,39 @@ package ca.warp7.actionkt
 open class ActionDSLImpl : ActionDSL, Action, ActionState {
     override var elapsed: Double = 0.0
 
-    private var start: (() -> Unit)? = null
-    private var update: (() -> Unit)? = null
-    private var stop: (() -> Unit)? = null
+    private var start: ActionState.() -> Unit = {}
+    private var update: ActionState.() -> Unit = {}
+    private var stop: ActionState.() -> Unit = {}
     private var predicate: ActionState.() -> Boolean = { true }
 
     override fun start() {
-        start?.invoke()
+        start.invoke(this)
     }
 
     override val shouldFinish: Boolean
         get() = predicate(this)
 
     override fun update() {
-        update?.invoke()
+        update.invoke(this)
     }
 
     override fun stop() {
-        stop?.invoke()
+        stop.invoke(this)
     }
 
-    override fun onStart(block: () -> Unit) {
-        if (start != null) throw IllegalStateException()
-        else start = block
+    override fun onStart(block: ActionState.() -> Unit) {
+        start = block
     }
 
     override fun finishWhen(block: ActionState.() -> Boolean) {
         predicate = block
     }
 
-    override fun onUpdate(block: () -> Unit) {
-        if (update != null) throw IllegalStateException()
-        else update = block
+    override fun onUpdate(block: ActionState.() -> Unit) {
+        update = block
     }
 
-    override fun onStop(block: () -> Unit) {
-        if (stop != null) throw IllegalArgumentException()
-        else stop = block
+    override fun onStop(block: ActionState.() -> Unit) {
+        stop = block
     }
 }
