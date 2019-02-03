@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.Timer
 
 object GoToPositionMotionPlanning : Action {
     var heightInputAbsoluteInches = 0.0
-    var heightFromHome = 0.0
+    var targetHeightFromHome = 0.0
     var tragectory = LiftTragectory
     var timeStarted = 0.0
 
     fun generateTragectory(targetHeightAbsolute: Double){
         timeStarted = Lift.time
         heightInputAbsoluteInches = targetHeightAbsolute - LiftConstants.kHomeHeightInches
-        tragectory.generateTragectory(heightFromHome)
+        tragectory.generateTragectory(targetHeightFromHome)
     }
     override fun update(){
         Lift.demandedVelocity = tragectory.desiredVelocoity(Lift.time)
