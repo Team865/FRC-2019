@@ -18,8 +18,6 @@
       <module name="FRC-2019.MiniPID.test" target="1.8" />
       <module name="FRC-2019.Robot-2019.main" target="11" />
       <module name="FRC-2019.Robot-2019.test" target="11" />
-      <module name="FRC-2019.Robot-Tests.main" target="11" />
-      <module name="FRC-2019.Robot-Tests.test" target="11" />
       <module name="FRC-2019.Robot.main" target="11" />
       <module name="FRC-2019.Robot.test" target="11" />
       <module name="FRC-2019.Team865-2019-Robot.main" target="11" />

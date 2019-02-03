@@ -15,9 +15,10 @@ object GoToPosition: Action {
         Lift.demandedHeightFromHome = heightFromHome
     }
 
-    override fun shouldFinish(): Boolean {
-        return heightInputAbsoluteInches == Lift.positionFromHome
-    }
+    override val shouldFinish: Boolean
+        get() {
+            return heightInputAbsoluteInches == Lift.positionFromHome
+        }
 
     override fun stop() {
         Lift.set(LiftState.kHoldPosition)
