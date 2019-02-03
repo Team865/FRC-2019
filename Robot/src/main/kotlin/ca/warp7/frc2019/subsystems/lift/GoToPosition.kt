@@ -10,8 +10,11 @@ object GoToPosition: Action {
     var heightInputAbsoluteInches = 0.0
     var heightFromHome = 0.0
 
+    fun setHeightAbsoluteInches(height : Double) {
+        heightFromHome = height - kHomeHeightInches
+    }
+
     override fun update(){
-        heightFromHome = heightInputAbsoluteInches - kHomeHeightInches
         Lift.demandedHeightFromHome = heightFromHome
     }
 
