@@ -22,4 +22,6 @@ object LiftConstants {
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
+
+    // TODO  configure victor and talon
 }
