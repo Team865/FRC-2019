@@ -6,7 +6,7 @@ import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.LiftState
 
 
-object GoToPosition: Action {
+object GoToPosition : Action {
     var heightInputAbsoluteInches = 0.0
     var targetHeightFromHome = 0.0
 
