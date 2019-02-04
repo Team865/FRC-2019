@@ -51,10 +51,9 @@ fun <T> T.periodic(block: T.() -> Unit) = object : Action {
 
 fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action { onStart(block) }
 
-fun ActionDSL.periodic(block: () -> Unit) = object : Action {
-    override fun update() = block()
-    override val shouldFinish: Boolean
-        get() = false
+fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
+    onUpdate(block)
+    finishWhen { false }
 }
 
 fun <T : Action> ASM.future(wantedState: T, block: T.() -> Unit = {}) = runOnce { set(wantedState, block) }

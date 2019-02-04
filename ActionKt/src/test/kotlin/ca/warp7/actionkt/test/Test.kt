@@ -42,3 +42,8 @@ fun test2(): Action {
         }
     }
 }
+
+fun test3(): Action {
+    return async {
+    }
+}
