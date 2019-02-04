@@ -32,9 +32,10 @@ fun test2(): Action {
         }
 
         +wait(1)
+        +waitUntil { true }
 
         +async {
-            failFast()
+            endOnAnyFinished = true
             +runOnce {
 
             }
