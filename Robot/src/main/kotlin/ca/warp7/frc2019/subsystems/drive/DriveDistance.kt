@@ -12,12 +12,8 @@ object DriveDistance : Action {
     }
 
     override fun update() {
-        Drive
+        TODO()
     }
 
-    override val shouldFinish get() = false
-
-    override fun stop() {
-        Drive.set(DriveState.kNeutralOutput)
-    }
+    override val shouldFinish get() = TODO()
 }

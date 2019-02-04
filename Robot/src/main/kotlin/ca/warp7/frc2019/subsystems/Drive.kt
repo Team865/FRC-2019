@@ -79,8 +79,8 @@ object Drive : Subsystem() {
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
         OutputMode.Position -> {
-            leftMaster.set(ControlMode.Position, 0.0)
-            rightMaster.set(ControlMode.Position, 0.0)
+            leftMaster.set(ControlMode.Position, TODO())
+            rightMaster.set(ControlMode.Position, TODO())
         }
         OutputMode.WPILibControlled -> TODO()
     }
