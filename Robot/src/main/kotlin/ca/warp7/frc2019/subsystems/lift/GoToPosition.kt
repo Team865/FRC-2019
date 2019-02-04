@@ -6,11 +6,11 @@ import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.LiftState
 
 
-object GoToPosition: Action {
+object GoToPosition : Action {
     var heightInputAbsoluteInches = 0.0
     var heightFromHome = 0.0
 
-    override fun update(){
+    override fun update() {
         heightFromHome = heightInputAbsoluteInches - kHomeHeightInches
         Lift.demandedHeightFromHome = heightFromHome
     }
