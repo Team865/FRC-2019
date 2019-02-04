@@ -45,3 +45,6 @@ fun ActionDSL.periodic(block: () -> Unit) = object : Action {
 fun wait(seconds: Int) = wait(seconds.toDouble())
 
 fun wait(seconds: Double) = action { finishWhen { elapsed > seconds } }
+
+fun <T : Action> ActionStateMachine.future(wantedState: T, block: T.() -> Unit = {}) =
+        runOnce { set(wantedState, block) }
