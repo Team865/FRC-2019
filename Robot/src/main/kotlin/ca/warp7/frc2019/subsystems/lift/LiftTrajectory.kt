@@ -17,10 +17,10 @@ object LiftTrajectory {
         val dtFromZeroVelocity = Lift.currentVelocity / LiftConstants.kMaxBaseAcceleration
         val dxFromZeroVelocity = (Lift.currentVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
-        val maximumTheorecticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
-        if (LiftConstants.kMaxVelocityInchesPerSecond >= maximumTheorecticallyReachableVelocity) {
+        val maxTheoreticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
+        if (LiftConstants.kMaxVelocityInchesPerSecond >= maxTheoreticallyReachableVelocity) {
             isTriangle = true
-            maxReachedVelocity = maximumTheorecticallyReachableVelocity
+            maxReachedVelocity = maxTheoreticallyReachableVelocity
         } else {
             isTriangle = false
             maxReachedVelocity = LiftConstants.kMaxVelocityInchesPerSecond
