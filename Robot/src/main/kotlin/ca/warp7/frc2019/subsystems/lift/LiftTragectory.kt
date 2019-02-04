@@ -5,7 +5,6 @@ import ca.warp7.frc2019.subsystems.Lift
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-// TODO add catch case for needing to accelerate to opposite signed currentVelocity to reach setpoint with zero currentVelocity
 object LiftTragectory {
     var relativeTargetHeight = 0.0
     var isTriange = false
@@ -19,7 +18,6 @@ object LiftTragectory {
         val dxFromZeroVelocity = (Lift.currentVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
         val maximumTheorecticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
-        val relativeHeightAtMaxTheoreticalVelocity = //TODO / 2
         if (LiftConstants.kMaxVelocityInchesPerSecond >= maximumTheorecticallyReachableVelocity) {
             isTriange = true
             maxReachedVelocity = maximumTheorecticallyReachableVelocity
