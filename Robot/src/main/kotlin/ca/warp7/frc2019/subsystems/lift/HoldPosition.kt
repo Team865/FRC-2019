@@ -13,7 +13,8 @@ object HoldPosition : Action{
         Lift.demandedHeightFromHome = positionToHold
     }
 
-    override fun shouldFinish(): Boolean {
-        return false
-    }
+    override val shouldFinish: Boolean
+        get() {
+            return false
+        }
 }
