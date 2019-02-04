@@ -3,6 +3,7 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.action
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc2019.subsystems.drive.CurvatureDrive
 
@@ -16,5 +17,11 @@ object DriveState {
 
     val kCurvature = CurvatureDrive
 
-    val kFollowingPath: Action = TODO("implement path following")
+    val kLinearPID = action {
+        var distance = 0.0
+
+
+    }
+
+    val kFollowingTrajectory: Action = TODO()
 }

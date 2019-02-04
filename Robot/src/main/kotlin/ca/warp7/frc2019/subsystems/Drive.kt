@@ -43,7 +43,7 @@ object Drive : Subsystem() {
     }
 
     enum class OutputMode {
-        Percent, Velocity, WPILibControlled
+        Percent, Velocity, Distance, WPILibControlled
     }
 
     var outputMode: OutputMode = OutputMode.Percent
@@ -78,8 +78,12 @@ object Drive : Subsystem() {
             leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        OutputMode.WPILibControlled -> {
+        OutputMode.Distance -> {
+            TODO()
+            //leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+            //rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
+        OutputMode.WPILibControlled -> TODO()
     }
 
     override fun onMeasure(dt: Double) {
