@@ -96,29 +96,15 @@ internal object CommonRobot {
             // Update the control loop
             controlLoop?.periodic()
             // Update subsystem state and do output, stopping the state if it wants to
-            subsystems.forEach {
-                it.apply {
-                    // Check if the current state wants to finish before updating
-                    if (currentState?.shouldFinish == true) {
-                        // Stop and remove the current state
-                        currentState?.stop()
-                        currentState = null
-                    } else {
-                        // Update the current state
-                        currentState?.update()
-                    }
-                    // To subsystem output
-                    onOutput()
-                }
-            }
+            subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
         subsystems.forEach {
             Shuffleboard.getTab(it::class.java.simpleName).apply {
                 // Show the current state in the appropriate tab
-                add("Current State",
-                        if (it.currentState != null) it.currentState!!::class.java.simpleName else "None")
-                        .withWidget(BuiltInWidgets.kTextView).withPosition(0, 0)
+                add("Current State", it.stateName)
+                        .withWidget(BuiltInWidgets.kTextView)
+                        .withPosition(0, 0)
                 // Update the rest to shuffleboard
                 it.onUpdateShuffleboard(this)
             }
