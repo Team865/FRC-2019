@@ -99,7 +99,7 @@ internal object CommonRobot {
             subsystems.forEach {
                 it.apply {
                     // Check if the current state wants to finish before updating
-                    if (currentState?.shouldFinish() == true) {
+                    if (currentState?.shouldFinish == true) {
                         // Stop and remove the current state
                         currentState?.stop()
                         currentState = null
