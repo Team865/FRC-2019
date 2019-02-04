@@ -16,7 +16,7 @@ object SuperstructureState {
     }
 
     val kDefending = runOnce {
-        Lift.set(LiftState.kGoToPosition) { heightFromHome = 0.0 }
+        Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
         Intake.set(IntakeState.kUp)
         Outtake.set(OuttakeState.kIdle)
     }
@@ -26,12 +26,12 @@ object SuperstructureState {
     val kIntakeCargoMode = runOnce {
         Intake.set(IntakeState.kStartOpenLoop)
         Lift.set(LiftState.kGoToPosition) {
-            heightFromHome = 0.0 // TODO("loading station cargo height")
+            heightInputAbsoluteInches = 0.0 // TODO("loading station cargo height")
         }
     }
 
     val kIntakeHatchMode = runOnce {
-        Lift.set(LiftState.kGoToPosition) { heightFromHome = 0.0 }
+        Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
         Intake.set(IntakeState.kUp)
     }
 

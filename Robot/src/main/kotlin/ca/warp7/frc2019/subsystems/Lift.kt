@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
+import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Lift : Subsystem() {
@@ -17,9 +18,10 @@ object Lift : Subsystem() {
 
     var percentOutput = 0.0
     var demandedHeightFromHome = 0.0
-    var positionFromHome = 0.0
-    var velocity = 0.0
+    var currentPositionFromHome = 0.0
+    var currentVelocity = 0.0
     var demandedVelocity = 0.0
+    var time = 0.0
 
     var outputMode: OutputType = OutputType.Percent
 
@@ -40,10 +42,11 @@ object Lift : Subsystem() {
                 master.set(ControlMode.PercentOutput, percentOutput)
             }
             OutputType.LinearPID ->{
-                master.set(ControlMode.Position, demandedHeightFromHome)
+                master.set(ControlMode.Position, demandedHeightFromHome * LiftConstants.kInchesPerTick)
             }
+            // TODO remove inches to ticks calculation from onOutput
             OutputType.Velocity ->{
-                master.set(ControlMode.Velocity, demandedVelocity)
+                master.set(ControlMode.Velocity, demandedVelocity * LiftConstants.kInchesPerTick)
             }
             OutputType.Hold ->
             {
@@ -54,8 +57,9 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        positionFromHome = master.selectedSensorPosition / LiftConstants.kInchesPerTick
-        velocity = master.selectedSensorVelocity / LiftConstants.kInchesPerTick
+        currentPositionFromHome = master.selectedSensorPosition / LiftConstants.kInchesPerTick
+        currentVelocity = master.selectedSensorVelocity / LiftConstants.kInchesPerTick
+        time = Timer.getFPGATimestamp()
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {

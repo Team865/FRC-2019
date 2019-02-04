@@ -1,11 +1,12 @@
 package ca.warp7.frc2019.constants
 
+
 @Suppress("unused")
 object LiftConstants {
     const val kMaster = ElectricalConstants.kLiftMasterTalonId
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
 
-    const val kUsesMotionPlanning = false
+    const val kUsesMotionPlanning = false //TODO stop using this
 
     private const val kRotationsPerTick = 4096
     private const val kDrumRadiusInches = 1.5
@@ -18,4 +19,6 @@ object LiftConstants {
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
+
+    // TODO  configure victor and talon
 }

@@ -8,17 +8,15 @@ import ca.warp7.frc2019.subsystems.LiftState
 
 object GoToPosition : Action {
     var heightInputAbsoluteInches = 0.0
-    var heightFromHome = 0.0
+    var targetHeightFromHome = 0.0
 
-    override fun update() {
-        heightFromHome = heightInputAbsoluteInches - kHomeHeightInches
-        Lift.demandedHeightFromHome = heightFromHome
+    fun setHeightAbsoluteInches(height : Double) {
+        targetHeightFromHome = height - kHomeHeightInches
     }
 
-    override val shouldFinish: Boolean
-        get() {
-            return heightInputAbsoluteInches == Lift.positionFromHome
-        }
+    override fun update(){
+        Lift.demandedHeightFromHome = targetHeightFromHome
+    }
 
     override fun stop() {
         Lift.set(LiftState.kHoldPosition)
