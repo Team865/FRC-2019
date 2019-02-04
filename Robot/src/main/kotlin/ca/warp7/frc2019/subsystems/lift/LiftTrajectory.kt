@@ -5,30 +5,30 @@ import ca.warp7.frc2019.subsystems.Lift
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-object LiftTragectory {
+object LiftTrajectory {
     var relativeTargetHeight = 0.0
-    var isTriange = false
+    var isTriangle = false
     var maxReachedVelocity = 0.0
     var totalTimeEstimate = 0.0
     var timeUntilMaxVelocityReachedEstimate = 0.0
 
-    fun generateTragectory(relativeHeight: Double) {
+    fun generateTrajectory(relativeHeight: Double) {
         relativeTargetHeight = relativeHeight
         val dtFromZeroVelocity = Lift.currentVelocity / LiftConstants.kMaxBaseAcceleration
         val dxFromZeroVelocity = (Lift.currentVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
         val maximumTheorecticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
         if (LiftConstants.kMaxVelocityInchesPerSecond >= maximumTheorecticallyReachableVelocity) {
-            isTriange = true
+            isTriangle = true
             maxReachedVelocity = maximumTheorecticallyReachableVelocity
         } else {
-            isTriange = false
+            isTriangle = false
             maxReachedVelocity = LiftConstants.kMaxVelocityInchesPerSecond
         }
 
         timeUntilMaxVelocityReachedEstimate = maxReachedVelocity / LiftConstants.kMaxBaseAcceleration
 
-        if (isTriange) {
+        if (isTriangle) {
             totalTimeEstimate = 2 * timeUntilMaxVelocityReachedEstimate
         } else {
             val dxtomaxV = maxReachedVelocity / 2 * timeUntilMaxVelocityReachedEstimate
@@ -46,7 +46,7 @@ object LiftTragectory {
             return 0.0
         }
 
-        if (isTriange) {
+        if (isTriangle) {
             if (timeSinceStart <= timeUntilMaxVelocityReachedEstimate) {
                 return timeSinceStart * LiftConstants.kMaxBaseAcceleration
             } else {
