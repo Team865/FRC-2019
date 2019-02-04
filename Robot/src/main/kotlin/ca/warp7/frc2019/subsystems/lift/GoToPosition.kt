@@ -18,10 +18,6 @@ object GoToPosition: Action {
         Lift.demandedHeightFromHome = targetHeightFromHome
     }
 
-    override fun shouldFinish(): Boolean {
-        return heightInputAbsoluteInches == Lift.currentPositionFromHome
-    }
-
     override fun stop() {
         Lift.set(LiftState.kHoldPosition)
     }

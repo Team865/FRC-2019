@@ -27,4 +27,7 @@ object GoToPositionBase : Action {
             liftMotionType.OptimisedMotion -> TODO()
         }
     }
+
+    override val shouldFinish: Boolean
+        get() = super.shouldFinish
 }
