@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.constants
 
-import ca.warp7.frc2019.subsystems.lift.liftMotionType
 
 @Suppress("unused")
 object LiftConstants {
@@ -8,8 +7,6 @@ object LiftConstants {
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
 
     const val kUsesMotionPlanning = false //TODO stop using this
-
-    val kType = liftMotionType.LinearPID
 
     private const val kRotationsPerTick = 4096
     private const val kDrumRadiusInches = 1.5

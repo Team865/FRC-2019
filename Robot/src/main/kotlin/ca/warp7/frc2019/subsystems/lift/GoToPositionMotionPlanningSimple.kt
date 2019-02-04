@@ -19,7 +19,8 @@ object GoToPositionMotionPlanningSimple : Action {
         }
     }
 
-    override fun shouldFinish(): Boolean {
-        return Lift.currentPositionFromHome == targetHeightFromHome && Lift.currentVelocity == Lift.demandedVelocity
-    }
+    override val shouldFinish: Boolean
+        get() {
+            return Lift.currentPositionFromHome == targetHeightFromHome && Lift.currentVelocity == Lift.demandedVelocity
+        }
 }

@@ -9,21 +9,7 @@ import ca.warp7.frc2019.subsystems.lift.*
 object LiftState {
     val kIdle = runOnce { }
     val kOpenLoop = OpenLoopState { Lift.percentOutput = it }
-    val kGoToPosition = GoToPosition
-
-    val kToPositionBase = runOnce {
-        when (LiftConstants.kType){
-            liftMotionType.LinearPID -> {
-                kGoToPosition
-            }
-            liftMotionType.OptimisedMotion ->{
-                kGoToPositionPlanned
-            }
-            liftMotionType.PlannedMotion ->{
-                kGoToPositionOptimisedNotPlanned
-            }
-        }
-    }
+    val kGoToPosition = GoToPosition // this cal be relaced with motion planning or motion planning simple
     val kGoToPositionPlanned = GoToPositionMotionPlanning
     val kGoToPositionOptimisedNotPlanned = GoToPositionMotionPlanningSimple
     val kHoldPosition = HoldPosition

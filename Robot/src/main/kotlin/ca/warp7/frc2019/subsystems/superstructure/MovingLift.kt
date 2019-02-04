@@ -19,9 +19,10 @@ object MovingLift : Action {
         Lift.set(LiftState.kGoToPosition){setHeightAbsoluteInches(setpoint)}
     }
 
-    override fun shouldFinish(): Boolean {
-        return !(outputMode == Lift.OutputType.LinearPID)
-    }
+    override val shouldFinish: Boolean
+        get() {
+            return !(outputMode == Lift.OutputType.LinearPID)
+        }
 
     override fun stop() {
         Superstructure.set(SuperstructureState.kHoldingPosition)

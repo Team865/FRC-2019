@@ -19,7 +19,8 @@ object GoToPositionMotionPlanning : Action {
         Lift.demandedVelocity = tragectory.desiredVelocoity(Lift.time - timeStarted)
     }
 
-    override fun shouldFinish(): Boolean {
-        return Lift.currentPositionFromHome == targetHeightFromHome && Lift.currentVelocity == Lift.demandedVelocity
-    }
+    override val shouldFinish: Boolean
+        get() {
+            return Lift.currentPositionFromHome == targetHeightFromHome && Lift.currentVelocity == Lift.demandedVelocity
+        }
 }
