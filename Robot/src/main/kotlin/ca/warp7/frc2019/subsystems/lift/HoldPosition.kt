@@ -7,7 +7,7 @@ import ca.warp7.frc2019.subsystems.lift.planner.LiftMotionPlanner
 object HoldPosition : Action{
     var positionToHold = 0.0
     override fun start() {
-        positionToHold = LiftMotionPlanner.position
+        positionToHold = LiftMotionPlanner.positionInches
     }
 
     override fun update() {

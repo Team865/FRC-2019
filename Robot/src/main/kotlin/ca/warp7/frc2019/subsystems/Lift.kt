@@ -33,8 +33,6 @@ object Lift : Subsystem() {
     var hallEffectTriggered = false
     var outputType = OutputType.PercentOutput
 
-    val velocityInchesPerSecond get() = velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
-
     init {
         master.setNeutralMode(NeutralMode.Brake)
         master.selectedSensorPosition = 0
@@ -64,8 +62,8 @@ object Lift : Subsystem() {
             add("Output Percent", outputPercent)
             add("Demand", demand)
             add("Feedforward", feedForward)
-            add("Height (in)", LiftMotionPlanner.position)
-            add("Velocity (in/s)", velocityInchesPerSecond)
+            add("Height (in)", LiftMotionPlanner.positionInches)
+            add("Velocity (in/s)", LiftMotionPlanner.velocityInchesPerSecond)
             add(hallEffect)
         }
     }
