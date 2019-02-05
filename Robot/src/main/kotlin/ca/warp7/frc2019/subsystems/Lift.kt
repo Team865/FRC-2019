@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 object Lift : Subsystem() {
 
     private val master = TalonSRX(LiftConstants.kMaster).also {
+        it.configAllSettings(LiftConstants.kMasterTalonConfiguration)
         VictorSPX(LiftConstants.kFollower).follow(it)
     }
 
@@ -31,7 +32,16 @@ object Lift : Subsystem() {
     var velocityTicksPer100ms = 0
     var outputPercent = 0.0
     var hallEffectTriggered = false
+
     var outputType = OutputType.PercentOutput
+        set(value) {
+            when (value) {
+                OutputType.PercentOutput -> Unit
+                OutputType.Position -> master.selectProfileSlot(0, 0)
+                OutputType.Velocity -> master.selectProfileSlot(1, 0)
+            }
+            field = value
+        }
 
     init {
         master.setNeutralMode(NeutralMode.Brake)

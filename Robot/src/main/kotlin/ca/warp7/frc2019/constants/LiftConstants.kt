@@ -1,12 +1,13 @@
 package ca.warp7.frc2019.constants
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
+
 
 @Suppress("unused")
 object LiftConstants {
     const val kMaster = ElectricalConstants.kLiftMasterTalonId
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
-
-    const val kUsesMotionPlanning = false //TODO stop using this
 
     private const val kRotationsPerTick = 4096
     private const val kDrumRadiusInches = 1.5
@@ -20,5 +21,48 @@ object LiftConstants {
 
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
-    // TODO  configure victor and talon
+    val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
+
+        // TODO Position PID slot
+        slot0.apply {
+            kP = 0.0
+            kI = 0.0
+            kD = 0.0
+            kF = 0.0
+            integralZone = 0
+            allowableClosedloopError = 0
+            maxIntegralAccumulator = 0.0
+            closedLoopPeakOutput = 1.0
+            closedLoopPeriod = 1
+        }
+
+        // TODO Velocity PID slot
+        slot1.apply {
+            kP = 0.0
+            kI = 0.0
+            kD = 0.0
+            kF = 0.0
+            integralZone = 0
+            allowableClosedloopError = 0
+            maxIntegralAccumulator = 0.0
+            closedLoopPeakOutput = 1.0
+            closedLoopPeriod = 1
+        }
+
+        openloopRamp = 0.0
+        closedloopRamp = 0.0
+
+        neutralDeadband = 0.04
+
+        voltageCompSaturation = 0.0
+
+        // TalonSRXConfiguration
+
+        primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
+        primaryPID.selectedFeedbackCoefficient = 1.0
+
+        peakCurrentLimit = 1
+        peakCurrentDuration = 1
+        continuousCurrentLimit = 1
+    }
 }
