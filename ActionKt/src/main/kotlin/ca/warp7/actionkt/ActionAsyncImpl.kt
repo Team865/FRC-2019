@@ -4,7 +4,5 @@ class ActionAsyncImpl : ActionDSLImpl(), ActionAsyncGroup {
     override fun Action.unaryPlus() {
     }
 
-    override fun failFast() {
-
-    }
+    override var endOnAnyFinished: Boolean = false
 }

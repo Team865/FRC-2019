@@ -32,12 +32,18 @@ fun test2(): Action {
         }
 
         +wait(1)
+        +waitUntil { true }
 
         +async {
-            failFast()
+            endOnAnyFinished = true
             +runOnce {
 
             }
         }
+    }
+}
+
+fun test3(): Action {
+    return async {
     }
 }

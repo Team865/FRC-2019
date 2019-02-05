@@ -79,10 +79,10 @@ object Drive : Subsystem() {
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
         OutputMode.Position -> {
-            leftMaster.set(ControlMode.Position, TODO())
-            rightMaster.set(ControlMode.Position, TODO())
+            leftMaster.set(ControlMode.Position, leftDemand)
+            rightMaster.set(ControlMode.Position, leftDemand)
         }
-        OutputMode.WPILibControlled -> TODO()
+        OutputMode.WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {

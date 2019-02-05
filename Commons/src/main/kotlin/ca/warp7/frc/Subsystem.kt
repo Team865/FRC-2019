@@ -1,6 +1,7 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.ActionStateMachine
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 /**
@@ -36,9 +37,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
  * that the periodic functions are not blocking operations as to prevent leaking.
  */
 
-abstract class Subsystem {
+abstract class Subsystem : ActionStateMachine() {
 
-    internal var currentState: Action? = null
+
     private var initialized = false
 
     /**
@@ -61,21 +62,18 @@ abstract class Subsystem {
     /**
      * Sets the current state of the subsystem
      */
-    fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
+    override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
         if (!initialized) {
             initialized = true
             CommonRobot.subsystems.add(this)
         }
-        // Check if there is a new wanted state that is not the same as the current state
-        if (wantedState != currentState) {
-            // Change to the new state
-            currentState = wantedState
-            // Start the new state
-            currentState?.start()
-        }
-        block(wantedState)
+        super.set(wantedState, block)
     }
 
+    override fun updateState() {
+        super.updateState()
+        onOutput()
+    }
 
     /**
      *
