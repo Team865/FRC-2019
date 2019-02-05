@@ -14,7 +14,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 object Lift : Subsystem() {
 
     private val master = TalonSRX(LiftConstants.kMaster).also {
+        it.setNeutralMode(NeutralMode.Brake)
         it.configAllSettings(LiftConstants.kMasterTalonConfiguration)
+        it.enableVoltageCompensation(false)
+        it.enableCurrentLimit(false)
         VictorSPX(LiftConstants.kFollower).follow(it)
     }
 
@@ -42,12 +45,6 @@ object Lift : Subsystem() {
             }
             field = value
         }
-
-    init {
-        master.setNeutralMode(NeutralMode.Brake)
-        master.selectedSensorPosition = 0
-        VictorSPX(LiftConstants.kFollower).follow(master)
-    }
 
     override fun onDisabled() {
         master.neutralOutput()
