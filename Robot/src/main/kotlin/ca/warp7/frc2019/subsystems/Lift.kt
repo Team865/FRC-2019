@@ -2,6 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.subsystems.lift.planner.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -28,10 +29,10 @@ object Lift : Subsystem() {
     var feedForward = 0.0
     var positionTicks = 0
     var velocityTicksPer100ms = 0
+    var outputPercent = 0.0
     var hallEffectTriggered = false
     var outputType = OutputType.PercentOutput
 
-    val positionInches get() = positionTicks / LiftConstants.kInchesPerTick
     val velocityInchesPerSecond get() = velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
 
     init {
@@ -53,10 +54,19 @@ object Lift : Subsystem() {
     override fun onMeasure(dt: Double) {
         positionTicks = master.selectedSensorPosition
         velocityTicksPer100ms = master.selectedSensorVelocity
+        outputPercent = master.motorOutputPercent
         hallEffectTriggered = hallEffect.get()
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.add(hallEffect)
+        container.apply {
+            add("OutputType", outputType.name)
+            add("Output Percent", outputPercent)
+            add("Demand", demand)
+            add("Feedforward", feedForward)
+            add("Height (in)", LiftMotionPlanner.position)
+            add("Velocity (in/s)", velocityInchesPerSecond)
+            add(hallEffect)
+        }
     }
 }

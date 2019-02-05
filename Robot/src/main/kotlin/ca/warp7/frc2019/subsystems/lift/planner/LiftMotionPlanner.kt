@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.subsystems.lift.planner
 
-class LiftMotionPlanner {
-
+object LiftMotionPlanner {
+    val position = 0.0
+    val velocity = 0.0
 }

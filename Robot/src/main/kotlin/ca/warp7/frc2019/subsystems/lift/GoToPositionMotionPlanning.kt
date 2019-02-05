@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.lift
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
+import ca.warp7.frc2019.subsystems.lift.planner.LiftMotionPlanner
 import edu.wpi.first.wpilibj.Timer
 
 object GoToPositionMotionPlanning : Action {
@@ -27,6 +28,6 @@ object GoToPositionMotionPlanning : Action {
 
     override val shouldFinish: Boolean
         get() {
-            return Lift.positionInches == targetHeightFromHome && Lift.velocityInchesPerSecond == Lift.demand
+            return LiftMotionPlanner.position == targetHeightFromHome && Lift.velocityInchesPerSecond == Lift.demand
         }
 }

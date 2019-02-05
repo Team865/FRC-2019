@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.lift
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
+import ca.warp7.frc2019.subsystems.lift.planner.LiftMotionPlanner
 import java.lang.Math.signum
 
 object GoToPositionMotionPlanningSimple : Action {
@@ -15,7 +16,7 @@ object GoToPositionMotionPlanningSimple : Action {
 
     override fun update() {
         targetHeightFromHome = heightInputAbsoluteInches - LiftConstants.kHomeHeightInches
-        val relativeDistanceToTarget = targetHeightFromHome - Lift.positionInches
+        val relativeDistanceToTarget = targetHeightFromHome - LiftMotionPlanner.position
         if (shouldDecelerate(Lift.velocityInchesPerSecond, relativeDistanceToTarget)) {
             Lift.demand = LiftConstants.kMaxVelocityInchesPerSecond * signum(relativeDistanceToTarget)
         } else {
@@ -25,6 +26,6 @@ object GoToPositionMotionPlanningSimple : Action {
 
     override val shouldFinish: Boolean
         get() {
-            return Lift.positionInches == targetHeightFromHome && Lift.velocityInchesPerSecond == Lift.demand
+            return LiftMotionPlanner.position == targetHeightFromHome && Lift.velocityInchesPerSecond == Lift.demand
         }
 }
