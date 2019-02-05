@@ -14,8 +14,8 @@ object LiftTrajectory {
 
     fun generateTrajectory(relativeHeight: Double) {
         relativeTargetHeight = relativeHeight
-        val dtFromZeroVelocity = Lift.measuredVelocity / LiftConstants.kMaxBaseAcceleration
-        val dxFromZeroVelocity = (Lift.measuredVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
+        val dtFromZeroVelocity = Lift.velocityInchesPerSecond / LiftConstants.kMaxBaseAcceleration
+        val dxFromZeroVelocity = (Lift.velocityInchesPerSecond / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
         val maxTheoreticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
         if (LiftConstants.kMaxVelocityInchesPerSecond >= maxTheoreticallyReachableVelocity) {

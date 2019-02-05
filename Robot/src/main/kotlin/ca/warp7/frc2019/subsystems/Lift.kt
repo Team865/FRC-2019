@@ -15,6 +15,7 @@ object Lift : Subsystem() {
     private val master = TalonSRX(LiftConstants.kMaster).also {
         VictorSPX(LiftConstants.kFollower).follow(it)
     }
+
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     enum class OutputType {
@@ -25,12 +26,17 @@ object Lift : Subsystem() {
 
     var demand = 0.0
     var feedForward = 0.0
-    var measuredPosition = 0.0
-    var measuredVelocity = 0.0
+    var positionTicks = 0
+    var velocityTicksPer100ms = 0
+    var hallEffectTriggered = false
     var outputType = OutputType.PercentOutput
+
+    val positionInches get() = positionTicks / LiftConstants.kInchesPerTick
+    val velocityInchesPerSecond get() = velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
 
     init {
         master.setNeutralMode(NeutralMode.Brake)
+        master.selectedSensorPosition = 0
         VictorSPX(LiftConstants.kFollower).follow(master)
     }
 
@@ -45,8 +51,9 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        measuredPosition = master.selectedSensorPosition / LiftConstants.kInchesPerTick
-        measuredVelocity = master.selectedSensorVelocity / LiftConstants.kInchesPerTick
+        positionTicks = master.selectedSensorPosition
+        velocityTicksPer100ms = master.selectedSensorVelocity
+        hallEffectTriggered = hallEffect.get()
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {

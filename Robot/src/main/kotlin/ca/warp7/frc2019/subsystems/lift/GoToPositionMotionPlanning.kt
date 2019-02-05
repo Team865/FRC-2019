@@ -27,6 +27,6 @@ object GoToPositionMotionPlanning : Action {
 
     override val shouldFinish: Boolean
         get() {
-            return Lift.measuredPosition == targetHeightFromHome && Lift.measuredVelocity == Lift.demand
+            return Lift.positionInches == targetHeightFromHome && Lift.velocityInchesPerSecond == Lift.demand
         }
 }
