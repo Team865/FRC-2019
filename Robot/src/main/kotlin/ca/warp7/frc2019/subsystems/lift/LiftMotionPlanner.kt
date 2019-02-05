@@ -1,11 +1,11 @@
-package ca.warp7.frc2019.subsystems.lift.planner
+package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
 
 object LiftMotionPlanner {
-    val currentHeight get() = Lift.positionTicks / LiftConstants.kInchesPerTick
+    val currentHeight get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
     val currentVelocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
 
     var nominalZero = 0

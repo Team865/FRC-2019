@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.subsystems.lift.planner.LiftMotionPlanner
 import kotlin.math.sign
 import kotlin.math.sqrt
 
