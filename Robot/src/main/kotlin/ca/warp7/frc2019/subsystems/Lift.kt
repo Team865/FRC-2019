@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Lift : Subsystem() {
 
-    enum class OutputType{
-        Percent, Velocity, LinearPID, Hold
+    enum class OutputType {
+        Percent, Velocity, LinearPID, MotionProfiling, Hold
     }
 
     var percentOutput = 0.0
@@ -37,20 +37,22 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
-        when (outputMode){
+        when (outputMode) {
             OutputType.Percent -> {
                 master.set(ControlMode.PercentOutput, percentOutput)
             }
-            OutputType.LinearPID ->{
+            OutputType.LinearPID -> {
                 master.set(ControlMode.Position, demandedHeightFromHome * LiftConstants.kInchesPerTick)
             }
             // TODO remove inches to ticks calculation from onOutput
-            OutputType.Velocity ->{
+            OutputType.Velocity -> {
                 master.set(ControlMode.Velocity, demandedVelocity * LiftConstants.kInchesPerTick)
             }
-            OutputType.Hold ->
-            {
+            OutputType.Hold -> {
                 master.setNeutralMode(NeutralMode.Brake)
+            }
+            OutputType.MotionProfiling -> {
+                master.set(ControlMode.MotionProfile, demandedHeightFromHome * LiftConstants.kInchesPerTick)
             }
         }
 
