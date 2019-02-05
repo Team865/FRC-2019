@@ -39,14 +39,13 @@ fun wait(seconds: Double) = waitUntil { elapsed > seconds }
 
 fun cleanup(block: ActionState.() -> Unit) = action { onStop(block) }
 
-fun <T> T.runOnce(block: T.() -> Unit) = object : Action {
+fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = object : Action {
     override fun start() = block(this@runOnce)
 }
 
-fun <T> T.periodic(block: T.() -> Unit) = object : Action {
+fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = object : Action {
     override fun update() = block(this@periodic)
-    override val shouldFinish: Boolean
-        get() = false
+    override val shouldFinish: Boolean get() = false
 }
 
 fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action { onStart(block) }
@@ -54,6 +53,15 @@ fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action { onStart(block) }
 fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
     onUpdate(block)
     finishWhen { false }
+}
+
+fun runOnce(block: () -> Unit) = object : Action {
+    override fun start() = block()
+}
+
+fun periodic(block: () -> Unit) = object : Action {
+    override fun update() = block()
+    override val shouldFinish: Boolean get() = false
 }
 
 fun <T : Action> ASM.future(wantedState: T, block: T.() -> Unit = {}) = runOnce { set(wantedState, block) }
