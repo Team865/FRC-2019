@@ -28,9 +28,9 @@ object ElectricalConstants {
     const val kConveyorRightVictorId = 11
 
     const val kIntakeVictorId = 10
-    // 5 is not connected to anything
+    const val kOuttakeLeftVictorId = 5
 
-    const val kOuttakeLeftVictorId = 6
+    // 6 is not connected to anything
     const val kOuttakeRightVictorId = 9
 
     /*
