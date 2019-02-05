@@ -82,8 +82,4 @@ object Lift : Subsystem() {
             add(hallEffect)
         }
     }
-
-    override fun onZeroSensors() {
-        LiftMotionPlanner.zeroLiftHeight()
-    }
 }

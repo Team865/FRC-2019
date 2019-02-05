@@ -14,15 +14,18 @@ object LiftConstants {
     private const val kDrumCircumfrence = 2 * kDrumRadiusInches * Math.PI
     const val kInchesPerTick = kRotationsPerTick * kDrumCircumfrence
 
+    const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
+
     const val kHomeHeightInches = 0.0 //TODO fix this value
 
     const val kMaxBaseAcceleration = 1.0 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
-
-    const val kStoppedVelocityThreshold = 64
-    const val kCurrentEpsilon = 0.1
+    const val kStoppedVelocityThreshold = 64 // TODO
+    const val kStoppedCurrentEpsilon = 0.1 // TODO
+    const val kPrimaryFeedforward = 0.15 // TODO
+    const val kSecondaryStageLiftedSetpoint = 36 // TODO
+    const val kSecondaryStageFeedforward = 0.3 // TODO
 
     val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
 

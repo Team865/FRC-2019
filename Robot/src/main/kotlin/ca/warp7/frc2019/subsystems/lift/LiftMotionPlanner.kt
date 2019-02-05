@@ -13,18 +13,14 @@ object LiftMotionPlanner {
     var nominalZero = 0
     var setpoint = 0.0
 
-    val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
+    private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
 
     fun updateMeasurements() {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
-                && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kCurrentEpsilon)
+                && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
                 && Lift.hallEffectTriggered) {
-            zeroLiftHeight()
+            nominalZero = Lift.positionTicks
         }
-    }
-
-    fun zeroLiftHeight() {
-        nominalZero = Lift.positionTicks
     }
 
     fun computePosition() {
@@ -36,7 +32,10 @@ object LiftMotionPlanner {
     }
 
     private fun primaryFeedforward(): Double {
-        var feedforward = 0.0
+        var feedforward = LiftConstants.kPrimaryFeedforward
+        if (currentHeight > LiftConstants.kSecondaryStageLiftedSetpoint) {
+            feedforward += LiftConstants.kSecondaryStageFeedforward
+        }
         if (Infrastructure.calibrated) {
             feedforward *= Math.cos(Infrastructure.pitch)
         }
