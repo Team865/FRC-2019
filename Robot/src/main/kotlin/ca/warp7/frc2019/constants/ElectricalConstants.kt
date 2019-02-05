@@ -40,8 +40,8 @@ object ElectricalConstants {
     ===============================================
     */
 
-    const val kIntakeSolenoidPort = 0
-    const val kOuttakeSolenoidPort = 1
+    const val kIntakeSolenoidPort = 0 // TODO
+    const val kOuttakeSolenoidPort = 1 // TODO
 
 
     /*
@@ -51,5 +51,5 @@ object ElectricalConstants {
     ===============================================
      */
 
-    const val kLiftHallEffectSensorDIO = 0
+    const val kLiftHallEffectSensorDIO = 0 // TODO
 }
