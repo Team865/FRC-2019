@@ -33,7 +33,9 @@ object Lift : Subsystem() {
     var feedForward = 0.0
     var positionTicks = 0
     var velocityTicksPer100ms = 0
-    var outputPercent = 0.0
+    var actualPercent = 0.0
+    var actualCurrent = 0.0
+    var actualVoltage = 0.0
     var hallEffectTriggered = false
 
     var outputType = OutputType.PercentOutput
@@ -59,19 +61,28 @@ object Lift : Subsystem() {
     override fun onMeasure(dt: Double) {
         positionTicks = master.selectedSensorPosition
         velocityTicksPer100ms = master.selectedSensorVelocity
-        outputPercent = master.motorOutputPercent
+        actualPercent = master.motorOutputPercent
+        actualCurrent = master.outputCurrent
+        actualVoltage = master.busVoltage * actualPercent
         hallEffectTriggered = hallEffect.get()
+        LiftMotionPlanner.updateMeasurements()
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
         container.apply {
             add("OutputType", outputType.name)
-            add("Output Percent", outputPercent)
+            add("Actual Percent", actualPercent)
+            add("Actual Current", actualCurrent)
+            add("Actual Voltage", actualVoltage)
             add("Demand", demand)
             add("Feedforward", feedForward)
             add("Height (in)", LiftMotionPlanner.positionInches)
             add("Velocity (in/s)", LiftMotionPlanner.velocityInchesPerSecond)
             add(hallEffect)
         }
+    }
+
+    override fun onZeroSensors() {
+        LiftMotionPlanner.zeroHeight()
     }
 }
