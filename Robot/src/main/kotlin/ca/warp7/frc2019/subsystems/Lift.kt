@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
+@Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
     private val master = TalonSRX(LiftConstants.kMaster).also {
@@ -76,13 +77,13 @@ object Lift : Subsystem() {
             add("Actual Voltage", actualVoltage)
             add("Demand", demand)
             add("Feedforward", feedForward)
-            add("Height (in)", LiftMotionPlanner.positionInches)
-            add("Velocity (in/s)", LiftMotionPlanner.velocityInchesPerSecond)
+            add("Height (in)", LiftMotionPlanner.currentHeight)
+            add("Velocity (in/s)", LiftMotionPlanner.currentVelocity)
             add(hallEffect)
         }
     }
 
     override fun onZeroSensors() {
-        LiftMotionPlanner.zeroHeight()
+        LiftMotionPlanner.zeroLiftHeight()
     }
 }

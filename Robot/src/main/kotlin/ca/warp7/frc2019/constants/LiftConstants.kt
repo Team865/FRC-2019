@@ -21,6 +21,9 @@ object LiftConstants {
 
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
+    const val kStoppedVelocityThreshold = 64
+    const val kCurrentEpsilon = 0.1
+
     val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot
