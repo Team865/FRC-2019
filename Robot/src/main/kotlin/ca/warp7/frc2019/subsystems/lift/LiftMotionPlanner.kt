@@ -25,7 +25,7 @@ object LiftMotionPlanner {
     private var setpointInches = 0.0
     private var previousVelocityTicks = 0
     private var accelerationTicksPer100ms2 = 0.0
-    private var reachableVelocity = 0.0
+    private var vMax = 0.0
     private var startHeight = 0.0
     private var dyTotal = 0.0
     private val dvBuffer = mutableListOf<Int>()
@@ -68,7 +68,7 @@ object LiftMotionPlanner {
         startHeight = height - dySinceStart
         dyTotal = dySinceStart + dyToGo
         val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
-        reachableVelocity = min(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
+        vMax = min(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
     }
 
     private val currentMotionState get() = LiftMotionState(height, velocity)
@@ -79,17 +79,14 @@ object LiftMotionPlanner {
             if (state.height !in startHeight..setpointInches
                     && !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)) generateTrajectory()
             val nextDt = dtBuffer.average()
-            val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration) // TODO account for direction
-            val v2 = sqrt(2 * (setpointInches - state.height) * LiftConstants.kMaxAcceleration)
-            val nextVelocity: Double
-            if (v1 < reachableVelocity && v1 < v2) {
-                nextVelocity = state.velocity + nextDt * LiftConstants.kMaxAcceleration
-            } else if (v2 < reachableVelocity && v2 < v1) {
-                nextVelocity = state.velocity - nextDt * LiftConstants.kMaxAcceleration
-            } else if (reachableVelocity < v1 && reachableVelocity < v2) {
-                nextVelocity = reachableVelocity
-            } else {
-                nextVelocity = 0.0
+            val sign = dyTotal.sign
+            val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration * sign)
+            val v2 = sqrt(2 * (state.height - setpointInches) * LiftConstants.kMaxAcceleration * sign)
+            val nextVelocity = when {
+                v1 < vMax && v1 < v2 -> state.velocity + nextDt * LiftConstants.kMaxAcceleration * sign
+                v2 < vMax && v2 < v1 -> state.velocity - nextDt * LiftConstants.kMaxAcceleration * sign
+                vMax < v1 && vMax < v2 -> vMax
+                else -> 0.0
             }
             val nextPosition = state.height + nextDt * nextVelocity
             return LiftMotionState(nextPosition, nextVelocity)
