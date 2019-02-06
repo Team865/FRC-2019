@@ -8,16 +8,14 @@ import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sqrt
 
-@Suppress("unused")
 object LiftMotionPlanner {
 
-    private const val kInchesPerTick = LiftConstants.kInchesPerTick
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val height get() = (Lift.positionTicks - nominalZero) / kInchesPerTick
-    val velocity get() = Lift.velocityTicksPer100ms / kInchesPerTick * measurementFrequency
-    val acceleration get() = accelerationTicksPer100ms2 / kInchesPerTick * squaredFrequency
+    val height get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
+    val velocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * measurementFrequency
+    val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kInchesPerTick * squaredFrequency
 
     private var motionPlanningEnabled = false
     private var nominalZero = 0
@@ -113,7 +111,7 @@ object LiftMotionPlanner {
             }
         } else {
             outputType = Lift.OutputType.Position
-            demand = setpointInches * kInchesPerTick + nominalZero
+            demand = setpointInches * LiftConstants.kInchesPerTick + nominalZero
             feedForward = baseFeedForward
         }
     }

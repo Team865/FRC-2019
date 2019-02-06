@@ -2,10 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.OpenLoopState
-import ca.warp7.frc2019.subsystems.lift.GoToPosition
-import ca.warp7.frc2019.subsystems.lift.GoToPositionMotionPlanning
-import ca.warp7.frc2019.subsystems.lift.GoToPositionMotionPlanningSimple
-import ca.warp7.frc2019.subsystems.lift.HoldPosition
+import ca.warp7.frc2019.subsystems.lift.*
 
 
 object LiftState {
@@ -18,4 +15,5 @@ object LiftState {
     val kGoToPositionPlanned = GoToPositionMotionPlanning
     val kGoToPositionOptimisedNotPlanned = GoToPositionMotionPlanningSimple
     val kHoldPosition = HoldPosition
+    val kFollowTrajectory = FollowTrajectory
 }
