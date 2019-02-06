@@ -15,8 +15,15 @@ object LiftMotionPlanner {
     private var setpoint = 0.0
 
     private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
-
     var motionPlanningEnabled = false
+
+    fun updateMeasurements() {
+        if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
+                && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
+                && Lift.hallEffectTriggered) {
+            nominalZero = Lift.positionTicks
+        }
+    }
 
     fun setSetpoint(newSetpoint: Double) {
         if (newSetpoint < 0 || newSetpoint > LiftConstants.kMaximumSetpoint) return
@@ -41,29 +48,20 @@ object LiftMotionPlanner {
                     it.velocity * LiftConstants.kInchesPerTick / 10)
         }
 
-    fun updateMeasurements() {
-        if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
-                && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
-                && Lift.hallEffectTriggered) {
-            nominalZero = Lift.positionTicks
-        }
-    }
-
-    fun computePositionPID() {
+    fun compute() {
         Lift.apply {
-            outputType = Lift.OutputType.Position
-            demand = setpointTicks
-            feedForward = primaryFeedforward()
-        }
-    }
+            if (motionPlanningEnabled) {
+                val state = nextAdjustedMotionState
+                outputType = Lift.OutputType.Velocity
+                demand = state.velocity
+                val error = state.position - currentHeight
+                feedForward = primaryFeedforward() + error * LiftConstants.kPurePursuitPositionGain
+            } else {
 
-    fun computePurePursuitVelocity() {
-        val state = nextAdjustedMotionState
-        Lift.apply {
-            outputType = Lift.OutputType.Velocity
-            demand = state.velocity
-            val error = state.position - currentHeight
-            feedForward = primaryFeedforward() + error * LiftConstants.kPurePursuitPositionGain
+                outputType = Lift.OutputType.Position
+                demand = setpointTicks
+                feedForward = primaryFeedforward()
+            }
         }
     }
 
