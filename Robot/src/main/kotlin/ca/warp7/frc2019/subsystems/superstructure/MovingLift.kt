@@ -2,7 +2,7 @@ package ca.warp7.frc2019.subsystems.superstructure
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.subsystems.Lift
-import ca.warp7.frc2019.subsystems.Lift.outputMode
+import ca.warp7.frc2019.subsystems.Lift.outputType
 import ca.warp7.frc2019.subsystems.LiftState
 import ca.warp7.frc2019.subsystems.Superstructure
 import ca.warp7.frc2019.subsystems.SuperstructureState
@@ -21,7 +21,7 @@ object MovingLift : Action {
 
     override val shouldFinish: Boolean
         get() {
-            return !(outputMode == Lift.OutputType.LinearPID)
+            return !(outputType == Lift.OutputType.Position)
         }
 
     override fun stop() {

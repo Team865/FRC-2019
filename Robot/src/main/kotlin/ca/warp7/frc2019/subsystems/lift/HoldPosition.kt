@@ -6,11 +6,11 @@ import ca.warp7.frc2019.subsystems.Lift
 object HoldPosition : Action{
     var positionToHold = 0.0
     override fun start() {
-        positionToHold = Lift.currentPositionFromHome
+        positionToHold = LiftMotionPlanner.height
     }
 
     override fun update() {
-        Lift.demandedHeightFromHome = positionToHold
+        Lift.demand = positionToHold
     }
 
     override val shouldFinish: Boolean
