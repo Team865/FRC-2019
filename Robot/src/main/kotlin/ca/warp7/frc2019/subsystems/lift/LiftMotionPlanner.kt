@@ -82,10 +82,19 @@ object LiftMotionPlanner {
             val dyToGo = setpointInches - state.height
             val dtSinceStart = state.velocity / LiftConstants.kMaxAcceleration
             val dySinceStart = sign(dyToGo) * (0 + state.velocity) / 2 * dtSinceStart
-            val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration)
-            val v2 = sqrt(-1 * 2 * (setpointInches - state.height) * LiftConstants.kMaxAcceleration)
-            val expectedVelocity = min(v1, min(v2, reachableVelocity))
-            return LiftMotionState(0.0, expectedVelocity)
+            val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration) // TODO account for direction
+            val v2 = sqrt(2 * (setpointInches - state.height) * LiftConstants.kMaxAcceleration)
+            val nextVelocity: Double
+            if (v1 < reachableVelocity && v1 < v2) {
+                nextVelocity = state.velocity + nextDt * LiftConstants.kMaxAcceleration
+            } else if (v2 < reachableVelocity && v2 < v1) {
+                nextVelocity = state.velocity - nextDt * LiftConstants.kMaxAcceleration
+            } else if (reachableVelocity < v1 && reachableVelocity < v2) {
+                nextVelocity = reachableVelocity
+            } else {
+                nextVelocity = 0.0
+            }
+            return LiftMotionState(0.0, nextVelocity)
         }
 
     private val baseFeedForward: Double
