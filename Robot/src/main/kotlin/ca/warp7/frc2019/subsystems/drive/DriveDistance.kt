@@ -7,16 +7,20 @@ import kotlin.math.abs
 
 object DriveDistance : Action {
     var distance = 0.0 // distance in inches
-    var closeEnough = 1E-2
+    var tolerance = 1E-2 //distance
+
+    private var initialDistance: Double = 0.0
 
     override fun start() {
         Drive.outputMode = Drive.OutputMode.Position
-        Drive.onZeroSensors()
+        val leftInitialSensorTicks = Drive.leftMaster.selectedSensorPosition
+        val rightInitialSensorTicks = Drive.rightMaster.selectedSensorPosition
+        initialDistance = DriveConstants.kWheelCircumference * ((leftInitialSensorTicks + rightInitialSensorTicks) / 2.0) / 1024
 
-        Drive.leftDemand = 1024 * distance / DriveConstants.kWheelCircumference
-        Drive.rightDemand = 1024 * distance / DriveConstants.kWheelCircumference
+        Drive.leftDemand = 1024 * distance / DriveConstants.kWheelCircumference + leftInitialSensorTicks
+        Drive.rightDemand = 1024 * distance / DriveConstants.kWheelCircumference + rightInitialSensorTicks
     }
 
     override val shouldFinish
-        get() = abs(distance - Drive.distanceFromZero) <= closeEnough
+        get() = abs(distance - (Drive.totalDistance - initialDistance)) <= tolerance
 }
