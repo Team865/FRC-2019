@@ -10,8 +10,8 @@ import java.util.*
  * @param <V> The type of the value (must implement Interpolator)
 </V></K> */
 @Suppress("unused")
-class InterpolatingTreeMap<K, V : Interpolator<V>>(private val max: Int) : TreeMap<K, V>()
-        where K : InverseInterpolator<K>, K : Comparable<K> {
+class InterpolatingTreeMap<K, V>(private val maxElements: Int) : TreeMap<K, V>()
+        where K : InverseInterpolator<K>, V : Interpolator<V> {
 
     /**
      * Inserts a key value pair, and trims the tree if a max size is specified
@@ -21,7 +21,7 @@ class InterpolatingTreeMap<K, V : Interpolator<V>>(private val max: Int) : TreeM
      * @return the value
      */
     override fun put(key: K, value: V): V? {
-        if (max in 1..size) {
+        if (maxElements in 1..size) {
             // "Prune" the tree if it is oversize
             val first = firstKey()
             remove(first)

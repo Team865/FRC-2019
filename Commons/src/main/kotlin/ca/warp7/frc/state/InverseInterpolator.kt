@@ -8,7 +8,7 @@ package ca.warp7.frc.state
  * @param <T> The Type of InverseInterpolator
  * @see InterpolatingTreeMap
 </T> */
-interface InverseInterpolator<T> {
+interface InverseInterpolator<T> : Comparable<T> {
     /**
      * Given this point (lower), a query point (query), and an upper point (upper), estimate how far (on [0, 1]) between
      * 'lower' and 'upper' the query point lies.

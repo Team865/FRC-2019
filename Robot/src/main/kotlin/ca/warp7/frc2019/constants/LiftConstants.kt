@@ -26,6 +26,7 @@ object LiftConstants {
     const val kPrimaryFeedforward = 0.15 // TODO
     const val kSecondaryStageLiftedSetpoint = 36 // TODO
     const val kSecondaryStageFeedforward = 0.3 // TODO
+    const val kPurePursuitPositionGain = 0.4
 
     const val kEpsilon = 1E-9
 

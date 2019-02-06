@@ -20,11 +20,24 @@ object LiftMotionPlanner {
         if (!newSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             previousSetpoint = setpoint
             setpoint = newSetpoint
+            generateTrajectory()
         }
     }
 
     fun generateTrajectory() {
     }
+
+    private val nextMotionState: LiftMotionState
+        get() {
+            return LiftMotionState(0.0, 0.0)
+        }
+
+    private val nextAdjustedMotionState
+        get() = nextMotionState.let {
+            LiftMotionState(
+                    it.position * LiftConstants.kInchesPerTick + nominalZero,
+                    it.velocity * LiftConstants.kInchesPerTick / 10)
+        }
 
     fun updateMeasurements() {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
@@ -43,10 +56,12 @@ object LiftMotionPlanner {
     }
 
     fun computePurePursuitVelocity() {
+        val state = nextAdjustedMotionState
         Lift.apply {
             outputType = Lift.OutputType.Velocity
-            demand = 0.0
-            feedForward = primaryFeedforward()
+            demand = state.velocity
+            val error = state.position - currentHeight
+            feedForward = primaryFeedforward() + error * LiftConstants.kPurePursuitPositionGain
         }
     }
 
