@@ -51,8 +51,10 @@ object MainLoop : RobotControlLoop {
                 yButton -> Superstructure.set(SuperstructureState.kMovingLift) {
                     wantedPosition.setpointType = LiftSetpointType.Cargo
                 }
-                bButton -> Superstructure.set(SuperstructureState.kMovingLift) {
-                    wantedPosition.setpointType = LiftSetpointType.Hatch
+                bButton -> {
+                    Superstructure.set(SuperstructureState.kMovingLift) {
+                        wantedPosition.setpointType = LiftSetpointType.Hatch
+                    }
                 }
                 else -> Unit
             }

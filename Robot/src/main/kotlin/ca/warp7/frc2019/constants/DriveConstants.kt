@@ -7,6 +7,24 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
 object DriveConstants {
 
+    /*
+    ==================
+    Physical constants
+    ==================
+    */
+
+    const val kWheelDiameter = 6.0 // Inches
+    const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
+
+    const val kWheelBase = 12.0 // Distance between left and right wheels in inches TODO
+    const val kTurningCircumference = kWheelBase * Math.PI // The circumference the wheel base turns across in inches
+
+    /*
+    ======================
+    Non-physical constants
+    ======================
+     */
+
     const val kLeftMaster = ElectricalConstants.kDriveLeftMasterTalonId
     const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerAVictorId
     const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBVictorId

@@ -60,6 +60,11 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
+    val totalDistance
+        get() = (leftMaster.selectedSensorPosition + rightMaster.selectedSensorPosition) / 2.0
+    val totalAngle
+        get() = 360 * (leftMaster.selectedSensorPosition - rightMaster.selectedSensorPosition) / (1024 * 2 * DriveConstants.kWheelCircumference)
+
     fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
         if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
     }
