@@ -11,7 +11,7 @@ import ca.warp7.frc2019.subsystems.lift.HoldPosition
 object LiftState {
     val kIdle = runOnce { }
     val kOpenLoop = OpenLoopState {
-        Lift.outputType = Lift.OutputType.PercentOutput
+        Lift.outputType = Lift.OutputType.Percent
         Lift.demand = it
     }
     val kGoToPosition = GoToPosition // this cal be relaced with motion planning or motion planning simple

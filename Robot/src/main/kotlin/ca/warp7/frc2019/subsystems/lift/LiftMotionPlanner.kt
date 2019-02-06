@@ -4,7 +4,9 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.Lift
+import kotlin.math.max
 import kotlin.math.sign
+import kotlin.math.sqrt
 
 @Suppress("unused")
 object LiftMotionPlanner {
@@ -23,6 +25,8 @@ object LiftMotionPlanner {
     private var setpoint = 0.0
     private var previousVelocity = 0
     private var accelerationTicksPer100ms2 = 0.0
+    private var reachableVelocity = 0.0
+    private var profileStartHeight = 0.0
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
 
@@ -52,17 +56,22 @@ object LiftMotionPlanner {
             previousSetpoint = setpoint
             setpoint = adjustedSetpoint
             if (motionPlanningEnabled) {
+                val height = height
                 val dyToGo = setpoint - height
                 val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
-                val dySinceStart = sign(dyToGo) * (0/*Vi*/ + velocity/*Vf*/) / 2 * dtSinceStart
+                val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
+                profileStartHeight = height - dySinceStart
                 val dyTotal = dySinceStart + dyToGo
-                val dyForMaxVelocity = dyTotal / 2
+                val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
+                reachableVelocity = max(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
             }
         }
     }
 
     private val nextMotionState: LiftMotionState
-        get() = LiftMotionState(0.0, 0.0)
+        get() {
+            return LiftMotionState(0.0, 0.0)
+        }
 
     private val nextAdjustedMotionState
         get() = nextMotionState.let {

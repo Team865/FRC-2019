@@ -25,7 +25,7 @@ object Lift : Subsystem() {
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     enum class OutputType {
-        PercentOutput,
+        Percent,
         Position,
         Velocity
     }
@@ -39,10 +39,10 @@ object Lift : Subsystem() {
     var actualVoltage = 0.0
     var hallEffectTriggered = false
 
-    var outputType = OutputType.PercentOutput
+    var outputType = OutputType.Percent
         set(value) {
             when (value) {
-                OutputType.PercentOutput -> Unit
+                OutputType.Percent -> Unit
                 OutputType.Position -> master.selectProfileSlot(0, 0)
                 OutputType.Velocity -> master.selectProfileSlot(1, 0)
             }
@@ -54,7 +54,7 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() = when (outputType) {
-        OutputType.PercentOutput -> master.set(ControlMode.PercentOutput, demand)
+        OutputType.Percent -> master.set(ControlMode.PercentOutput, demand)
         OutputType.Position -> master.set(ControlMode.Position, demand, DemandType.ArbitraryFeedForward, feedForward)
         OutputType.Velocity -> master.set(ControlMode.Velocity, demand, DemandType.ArbitraryFeedForward, feedForward)
     }
@@ -71,7 +71,7 @@ object Lift : Subsystem() {
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
         container.apply {
-            add("OutputType", outputType.name)
+            add("Output Type", outputType.name)
             add("Actual Percent", actualPercent)
             add("Actual Current", actualCurrent)
             add("Actual Voltage", actualVoltage)
