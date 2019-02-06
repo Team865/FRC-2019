@@ -15,7 +15,7 @@ object GoToPosition : Action {
     }
 
     override fun update(){
-        Lift.demandedHeightFromHome = targetHeightFromHome
+        Lift.demand = targetHeightFromHome
     }
 
     override fun stop() {

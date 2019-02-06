@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
 
+@Suppress("unused")
 object DefaultConstants {
     val kDefaultVictorSPX = VictorSPXConfiguration().apply {
 

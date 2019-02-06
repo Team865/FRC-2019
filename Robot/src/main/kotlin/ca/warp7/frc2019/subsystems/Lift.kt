@@ -2,69 +2,85 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
+@Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    enum class OutputType {
-        Percent, Velocity, LinearPID, MotionProfiling, Hold
+    private val master = TalonSRX(LiftConstants.kMaster).also {
+        it.setNeutralMode(NeutralMode.Brake)
+        it.configAllSettings(LiftConstants.kMasterTalonConfig)
+        it.enableVoltageCompensation(false)
+        it.enableCurrentLimit(false)
+        VictorSPX(LiftConstants.kFollower).follow(it)
     }
 
-    var percentOutput = 0.0
-    var demandedHeightFromHome = 0.0
-    var currentPositionFromHome = 0.0
-    var currentVelocity = 0.0
-    var demandedVelocity = 0.0
-    var time = 0.0
-
-    var outputMode: OutputType = OutputType.Percent
-
-    private val master = TalonSRX(LiftConstants.kMaster)
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
-    init {
-        VictorSPX(LiftConstants.kFollower).follow(master)
+    enum class OutputType {
+        Percent,
+        Position,
+        Velocity
     }
+
+    var demand = 0.0
+    var feedForward = 0.0
+    var positionTicks = 0
+    var velocityTicksPer100ms = 0
+    var actualPercent = 0.0
+    var actualCurrent = 0.0
+    var actualVoltage = 0.0
+    var hallEffectTriggered = false
+
+    var outputType = OutputType.Percent
+        set(value) {
+            when (value) {
+                OutputType.Percent -> Unit
+                OutputType.Position -> master.selectProfileSlot(0, 0)
+                OutputType.Velocity -> master.selectProfileSlot(1, 0)
+            }
+            field = value
+        }
 
     override fun onDisabled() {
         master.neutralOutput()
     }
 
-    override fun onOutput() {
-        when (outputMode) {
-            OutputType.Percent -> {
-                master.set(ControlMode.PercentOutput, percentOutput)
-            }
-            OutputType.LinearPID -> {
-                master.set(ControlMode.Position, demandedHeightFromHome * LiftConstants.kInchesPerTick)
-            }
-            // TODO remove inches to ticks calculation from onOutput
-            OutputType.Velocity -> {
-                master.set(ControlMode.Velocity, demandedVelocity * LiftConstants.kInchesPerTick)
-            }
-            OutputType.Hold -> {
-                master.setNeutralMode(NeutralMode.Brake)
-            }
-            OutputType.MotionProfiling -> {
-                master.set(ControlMode.MotionProfile, demandedHeightFromHome * LiftConstants.kInchesPerTick)
-            }
-        }
-
+    override fun onOutput() = when (outputType) {
+        OutputType.Percent -> master.set(ControlMode.PercentOutput, demand)
+        OutputType.Position -> master.set(ControlMode.Position, demand, DemandType.ArbitraryFeedForward, feedForward)
+        OutputType.Velocity -> master.set(ControlMode.Velocity, demand, DemandType.ArbitraryFeedForward, feedForward)
     }
 
     override fun onMeasure(dt: Double) {
-        currentPositionFromHome = master.selectedSensorPosition / LiftConstants.kInchesPerTick
-        currentVelocity = master.selectedSensorVelocity / LiftConstants.kInchesPerTick
-        time = Timer.getFPGATimestamp()
+        positionTicks = master.selectedSensorPosition
+        velocityTicksPer100ms = master.selectedSensorVelocity
+        actualPercent = master.motorOutputPercent
+        actualCurrent = master.outputCurrent
+        actualVoltage = master.busVoltage * actualPercent
+        hallEffectTriggered = hallEffect.get()
+        LiftMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.add(hallEffect)
+        container.apply {
+            add("Output Type", outputType.name)
+            add("Actual Percent", actualPercent)
+            add("Actual Current", actualCurrent)
+            add("Actual Voltage", actualVoltage)
+            add("Demand", demand)
+            add("Feedforward", feedForward)
+            add("Height (in)", LiftMotionPlanner.height)
+            add("Velocity (in/s)", LiftMotionPlanner.velocity)
+            add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
+            add(hallEffect)
+        }
     }
 }

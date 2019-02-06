@@ -16,6 +16,7 @@ object Infrastructure : Subsystem() {
 
     var calibrated = false
     var yaw = 0.0
+    var pitch = 0.0
 
     override fun onDisabled() {
         compressor.closedLoopControl = false
@@ -24,6 +25,7 @@ object Infrastructure : Subsystem() {
     override fun onMeasure(dt: Double) {
         if (calibrated) {
             yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
+            pitch = Math.toRadians(ahrs.pitch.toDouble())
         }
     }
 
@@ -31,6 +33,10 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.add("pdp", powerDistributionPanel).withWidget(BuiltInWidgets.kPowerDistributionPanel)
+        container.apply {
+            add("pdp", powerDistributionPanel).withWidget(BuiltInWidgets.kPowerDistributionPanel)
+            add("Yaw", yaw)
+            add("Pitch", pitch)
+        }
     }
 }

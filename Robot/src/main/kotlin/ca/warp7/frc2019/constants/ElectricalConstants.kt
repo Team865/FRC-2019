@@ -28,9 +28,9 @@ object ElectricalConstants {
     const val kConveyorRightVictorId = 11
 
     const val kIntakeVictorId = 10
-    // 5 is not connected to anything
+    const val kOuttakeLeftVictorId = 5
 
-    const val kOuttakeLeftVictorId = 6
+    // 6 is not connected to anything
     const val kOuttakeRightVictorId = 9
 
     /*
@@ -40,8 +40,8 @@ object ElectricalConstants {
     ===============================================
     */
 
-    const val kIntakeSolenoidPort = 0
-    const val kOuttakeSolenoidPort = 1
+    const val kIntakeSolenoidPort = 0 // TODO
+    const val kOuttakeSolenoidPort = 1 // TODO
 
 
     /*
@@ -51,5 +51,5 @@ object ElectricalConstants {
     ===============================================
      */
 
-    const val kLiftHallEffectSensorDIO = 0
+    const val kLiftHallEffectSensorDIO = 0 // TODO
 }
