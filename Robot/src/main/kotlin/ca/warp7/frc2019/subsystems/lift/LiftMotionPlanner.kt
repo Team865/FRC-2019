@@ -4,7 +4,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.Lift
-import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sqrt
 
@@ -27,6 +27,7 @@ object LiftMotionPlanner {
     private var accelerationTicksPer100ms2 = 0.0
     private var reachableVelocity = 0.0
     private var profileStartHeight = 0.0
+    private var profileDirection = 1.0
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
 
@@ -66,24 +67,33 @@ object LiftMotionPlanner {
         val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
         profileStartHeight = height - dySinceStart
         val dyTotal = dySinceStart + dyToGo
+        profileDirection = sign(dyTotal)
         val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
-        reachableVelocity = max(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
+        reachableVelocity = min(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
     }
+
+    private val currentMotionState get() = LiftMotionState(height, velocity)
 
     private val nextMotionState: LiftMotionState
         get() {
-            val nextDt = dtBuffer.sum()
             val height = height
+            if (height < profileStartHeight) {
+
+            }
+            val nextDt = dtBuffer.sum() / LiftConstants.kAccelerationMeasurementFrames
             val dyToGo = setpoint - height
             val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
             val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
-            return LiftMotionState(0.0, 0.0)
+            val v1 = 0.0
+            val v2 = 0.0
+            val nextVelocity = min(v1, min(v2, LiftConstants.kMaxVelocityInchesPerSecond))
+            return LiftMotionState(0.0, nextVelocity)
         }
 
     private val nextAdjustedMotionState
         get() = nextMotionState.let {
             LiftMotionState(
-                    it.position * kInchesPerTick + nominalZero,
+                    it.height * kInchesPerTick + nominalZero,
                     it.velocity * kInchesPerTick / measurementFrequency)
         }
 
@@ -104,7 +114,7 @@ object LiftMotionPlanner {
             val state = nextAdjustedMotionState
             outputType = Lift.OutputType.Velocity
             demand = state.velocity
-            feedForward = baseFeedForward + (state.position - height) * LiftConstants.kPurePursuitPositionGain
+            feedForward = baseFeedForward + (state.height - height) * LiftConstants.kPurePursuitPositionGain
         } else {
             outputType = Lift.OutputType.Position
             demand = setpoint * kInchesPerTick + nominalZero
@@ -114,7 +124,7 @@ object LiftMotionPlanner {
 
 
     data class LiftMotionState(
-            val position: Double,
+            val height: Double,
             val velocity: Double
     )
 }
