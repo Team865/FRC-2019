@@ -22,11 +22,11 @@ object LiftMotionPlanner {
     private var motionPlanningEnabled = false
     private var nominalZero = 0
     private var previousSetpoint = 0.0
-    private var setpoint = 0.0
-    private var previousVelocity = 0
+    private var setpointInches = 0.0
+    private var previousVelocityTicks = 0
     private var accelerationTicksPer100ms2 = 0.0
     private var reachableVelocity = 0.0
-    private var profileStartHeight = 0.0
+    private var startHeight = 0.0
     private var dyTotal = 0.0
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
@@ -38,14 +38,14 @@ object LiftMotionPlanner {
             nominalZero = Lift.positionTicks
         }
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
-            dvBuffer.add(Lift.velocityTicksPer100ms - previousVelocity)
+            dvBuffer.add(Lift.velocityTicksPer100ms - previousVelocityTicks)
             dtBuffer.add(dt)
             if (dvBuffer.size > LiftConstants.kAccelerationMeasurementFrames) {
                 dvBuffer.removeAt(0)
                 dtBuffer.removeAt(0)
             }
             accelerationTicksPer100ms2 = dvBuffer.sum() / dtBuffer.sum()
-            previousVelocity = Lift.velocityTicksPer100ms
+            previousVelocityTicks = Lift.velocityTicksPer100ms
         }
     }
 
@@ -54,18 +54,18 @@ object LiftMotionPlanner {
         if (newSetpoint < 0 || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
-            previousSetpoint = setpoint
-            setpoint = adjustedSetpoint
+            previousSetpoint = setpointInches
+            setpointInches = adjustedSetpoint
             if (motionPlanningEnabled) generateTrajectory()
         }
     }
 
     private fun generateTrajectory() {
         val height = height
-        val dyToGo = setpoint - height
+        val dyToGo = setpointInches - height
         val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
         val dySinceStart = dyToGo.sign * (0 + velocity) / 2 * dtSinceStart
-        profileStartHeight = height - dySinceStart
+        startHeight = height - dySinceStart
         dyTotal = dySinceStart + dyToGo
         val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
         reachableVelocity = min(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
@@ -75,24 +75,17 @@ object LiftMotionPlanner {
 
     private val nextMotionState: LiftMotionState
         get() {
-            val height = height
-            if (height !in profileStartHeight..setpoint
-                    && !height.epsilonEquals(setpoint, LiftConstants.kEpsilon)) generateTrajectory()
+            val state = currentMotionState
+            if (state.height !in startHeight..setpointInches
+                    && !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)) generateTrajectory()
             val nextDt = dtBuffer.average()
-            val dyToGo = setpoint - height
-            val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
-            val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
-            val v1 = 0.0
-            val v2 = 0.0
-            val nextVelocity = min(v1, min(v2, LiftConstants.kMaxVelocityInchesPerSecond))
-            return LiftMotionState(0.0, nextVelocity)
-        }
-
-    private val nextAdjustedMotionState
-        get() = nextMotionState.let {
-            LiftMotionState(
-                    it.height * kInchesPerTick + nominalZero,
-                    it.velocity * kInchesPerTick / measurementFrequency)
+            val dyToGo = setpointInches - state.height
+            val dtSinceStart = state.velocity / LiftConstants.kMaxAcceleration
+            val dySinceStart = sign(dyToGo) * (0 + state.velocity) / 2 * dtSinceStart
+            val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration)
+            val v2 = sqrt(-1 * 2 * (setpointInches - state.height) * LiftConstants.kMaxAcceleration)
+            val expectedVelocity = min(v1, min(v2, reachableVelocity))
+            return LiftMotionState(0.0, expectedVelocity)
         }
 
     private val baseFeedForward: Double
@@ -109,13 +102,14 @@ object LiftMotionPlanner {
 
     fun compute() = Lift.apply {
         if (motionPlanningEnabled) {
-            val state = nextAdjustedMotionState
-            outputType = Lift.OutputType.Velocity
-            demand = state.velocity
-            feedForward = baseFeedForward + (state.height - height) * LiftConstants.kPurePursuitPositionGain
+            nextMotionState.let {
+                outputType = Lift.OutputType.Velocity
+                demand = it.velocity
+                feedForward = baseFeedForward + (it.height - height) * LiftConstants.kPurePursuitPositionGain
+            }
         } else {
             outputType = Lift.OutputType.Position
-            demand = setpoint * kInchesPerTick + nominalZero
+            demand = setpointInches * kInchesPerTick + nominalZero
             feedForward = baseFeedForward
         }
     }
