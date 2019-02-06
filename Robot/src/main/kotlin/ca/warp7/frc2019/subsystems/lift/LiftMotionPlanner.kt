@@ -4,6 +4,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.Lift
+import kotlin.math.sign
 
 @Suppress("unused")
 object LiftMotionPlanner {
@@ -12,19 +13,18 @@ object LiftMotionPlanner {
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val currentHeight get() = (Lift.positionTicks - nominalZero) / kInchesPerTick
-    val currentVelocity get() = Lift.velocityTicksPer100ms / kInchesPerTick * measurementFrequency
-    val currentAcceleration get() = acceleration / kInchesPerTick * squaredFrequency
+    val height get() = (Lift.positionTicks - nominalZero) / kInchesPerTick
+    val velocity get() = Lift.velocityTicksPer100ms / kInchesPerTick * measurementFrequency
+    val acceleration get() = accelerationTicksPer100ms2 / kInchesPerTick * squaredFrequency
 
     private var motionPlanningEnabled = false
     private var nominalZero = 0
     private var previousSetpoint = 0.0
     private var setpoint = 0.0
     private var previousVelocity = 0
-    private var acceleration = 0.0
+    private var accelerationTicksPer100ms2 = 0.0
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
-    private val setpointTicks get() = setpoint * kInchesPerTick + nominalZero
 
     fun updateMeasurements(dt: Double) {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
@@ -32,16 +32,15 @@ object LiftMotionPlanner {
                 && Lift.hallEffectTriggered) {
             nominalZero = Lift.positionTicks
         }
-        val dv = Lift.velocityTicksPer100ms - previousVelocity
-        previousVelocity = Lift.velocityTicksPer100ms
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
-            dvBuffer.add(dv)
+            dvBuffer.add(Lift.velocityTicksPer100ms - previousVelocity)
             dtBuffer.add(dt)
             if (dvBuffer.size > LiftConstants.kAccelerationMeasurementFrames) {
                 dvBuffer.removeAt(0)
                 dtBuffer.removeAt(0)
             }
-            acceleration = dvBuffer.sum() / dtBuffer.sum()
+            accelerationTicksPer100ms2 = dvBuffer.sum() / dtBuffer.sum()
+            previousVelocity = Lift.velocityTicksPer100ms
         }
     }
 
@@ -53,6 +52,11 @@ object LiftMotionPlanner {
             previousSetpoint = setpoint
             setpoint = adjustedSetpoint
             if (motionPlanningEnabled) {
+                val dyToGo = setpoint - height
+                val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
+                val dySinceStart = sign(dyToGo) * (0/*Vi*/ + velocity/*Vf*/) / 2 * dtSinceStart
+                val dyTotal = dySinceStart + dyToGo
+                val dyForMaxVelocity = dyTotal / 2
             }
         }
     }
@@ -64,34 +68,37 @@ object LiftMotionPlanner {
         get() = nextMotionState.let {
             LiftMotionState(
                     it.position * kInchesPerTick + nominalZero,
-                    it.velocity * kInchesPerTick / 10)
+                    it.velocity * kInchesPerTick / measurementFrequency)
         }
 
-    fun compute() {
-        Lift.apply {
-            if (motionPlanningEnabled) {
-                val state = nextAdjustedMotionState
-                outputType = Lift.OutputType.Velocity
-                demand = state.velocity
-                val error = state.position - currentHeight
-                feedForward = primaryFeedforward() + error * LiftConstants.kPurePursuitPositionGain
-            } else {
-
-                outputType = Lift.OutputType.Position
-                demand = setpointTicks
-                feedForward = primaryFeedforward()
+    private val baseFeedForward: Double
+        get() {
+            var feedforward = LiftConstants.kPrimaryFeedforward
+            if (height > LiftConstants.kSecondaryStageLiftedSetpoint) {
+                feedforward += LiftConstants.kSecondaryStageFeedforward
             }
+            if (Infrastructure.calibrated) {
+                feedforward *= Math.cos(Infrastructure.pitch)
+            }
+            return feedforward
+        }
+
+    fun compute() = Lift.apply {
+        if (motionPlanningEnabled) {
+            val state = nextAdjustedMotionState
+            outputType = Lift.OutputType.Velocity
+            demand = state.velocity
+            feedForward = baseFeedForward + (state.position - height) * LiftConstants.kPurePursuitPositionGain
+        } else {
+            outputType = Lift.OutputType.Position
+            demand = setpoint * kInchesPerTick + nominalZero
+            feedForward = baseFeedForward
         }
     }
 
-    private fun primaryFeedforward(): Double {
-        var feedforward = LiftConstants.kPrimaryFeedforward
-        if (currentHeight > LiftConstants.kSecondaryStageLiftedSetpoint) {
-            feedforward += LiftConstants.kSecondaryStageFeedforward
-        }
-        if (Infrastructure.calibrated) {
-            feedforward *= Math.cos(Infrastructure.pitch)
-        }
-        return feedforward
-    }
+
+    data class LiftMotionState(
+            val position: Double,
+            val velocity: Double
+    )
 }

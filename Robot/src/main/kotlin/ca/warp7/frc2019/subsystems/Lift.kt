@@ -77,8 +77,9 @@ object Lift : Subsystem() {
             add("Actual Voltage", actualVoltage)
             add("Demand", demand)
             add("Feedforward", feedForward)
-            add("Height (in)", LiftMotionPlanner.currentHeight)
-            add("Velocity (in/s)", LiftMotionPlanner.currentVelocity)
+            add("Height (in)", LiftMotionPlanner.height)
+            add("Velocity (in/s)", LiftMotionPlanner.velocity)
+            add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
             add(hallEffect)
         }
     }

@@ -28,9 +28,9 @@ object LiftConstants {
     const val kSecondaryStageFeedforward = 0.3 // TODO
     const val kPurePursuitPositionGain = 0.4 // TODO
     const val kMaximumSetpoint = 80.0 // TODO
-
     const val kEpsilon = 1E-9
     const val kAccelerationMeasurementFrames = 5
+    const val kMaxAcceleration = kMaxBaseAcceleration
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
@@ -70,7 +70,6 @@ object LiftConstants {
         // TalonSRXConfiguration
 
         primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-        primaryPID.selectedFeedbackCoefficient = 1.0
 
         peakCurrentLimit = 1
         peakCurrentDuration = 1

@@ -15,8 +15,8 @@ object GoToPositionMotionPlanningSimple : Action {
 
     override fun update() {
         targetHeightFromHome = heightInputAbsoluteInches - LiftConstants.kHomeHeightInches
-        val relativeDistanceToTarget = targetHeightFromHome - LiftMotionPlanner.currentHeight
-        if (shouldDecelerate(LiftMotionPlanner.currentVelocity, relativeDistanceToTarget)) {
+        val relativeDistanceToTarget = targetHeightFromHome - LiftMotionPlanner.height
+        if (shouldDecelerate(LiftMotionPlanner.velocity, relativeDistanceToTarget)) {
             Lift.demand = LiftConstants.kMaxVelocityInchesPerSecond * signum(relativeDistanceToTarget)
         } else {
             Lift.demand = 0.0
@@ -25,6 +25,6 @@ object GoToPositionMotionPlanningSimple : Action {
 
     override val shouldFinish: Boolean
         get() {
-            return LiftMotionPlanner.currentHeight == targetHeightFromHome && LiftMotionPlanner.currentVelocity == Lift.demand
+            return LiftMotionPlanner.height == targetHeightFromHome && LiftMotionPlanner.velocity == Lift.demand
         }
 }
