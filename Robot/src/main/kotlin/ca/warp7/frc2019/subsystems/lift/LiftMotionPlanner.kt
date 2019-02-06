@@ -79,9 +79,6 @@ object LiftMotionPlanner {
             if (state.height !in startHeight..setpointInches
                     && !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)) generateTrajectory()
             val nextDt = dtBuffer.average()
-            val dyToGo = setpointInches - state.height
-            val dtSinceStart = state.velocity / LiftConstants.kMaxAcceleration
-            val dySinceStart = sign(dyToGo) * (0 + state.velocity) / 2 * dtSinceStart
             val v1 = sqrt(2 * state.height * LiftConstants.kMaxAcceleration) // TODO account for direction
             val v2 = sqrt(2 * (setpointInches - state.height) * LiftConstants.kMaxAcceleration)
             val nextVelocity: Double
@@ -94,7 +91,8 @@ object LiftMotionPlanner {
             } else {
                 nextVelocity = 0.0
             }
-            return LiftMotionState(0.0, nextVelocity)
+            val nextPosition = state.height + nextDt * nextVelocity
+            return LiftMotionState(nextPosition, nextVelocity)
         }
 
     private val baseFeedForward: Double
