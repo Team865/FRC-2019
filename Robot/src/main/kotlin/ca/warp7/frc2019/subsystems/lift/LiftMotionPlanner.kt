@@ -55,21 +55,28 @@ object LiftMotionPlanner {
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             previousSetpoint = setpoint
             setpoint = adjustedSetpoint
-            if (motionPlanningEnabled) {
-                val height = height
-                val dyToGo = setpoint - height
-                val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
-                val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
-                profileStartHeight = height - dySinceStart
-                val dyTotal = dySinceStart + dyToGo
-                val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
-                reachableVelocity = max(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
-            }
+            if (motionPlanningEnabled) computeTrajectory()
         }
+    }
+
+    private fun computeTrajectory() {
+        val height = height
+        val dyToGo = setpoint - height
+        val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
+        val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
+        profileStartHeight = height - dySinceStart
+        val dyTotal = dySinceStart + dyToGo
+        val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
+        reachableVelocity = max(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
     }
 
     private val nextMotionState: LiftMotionState
         get() {
+            val nextDt = dtBuffer.sum()
+            val height = height
+            val dyToGo = setpoint - height
+            val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
+            val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
             return LiftMotionState(0.0, 0.0)
         }
 
