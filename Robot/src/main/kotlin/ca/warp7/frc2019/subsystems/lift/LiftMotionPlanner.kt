@@ -16,15 +16,17 @@ object LiftMotionPlanner {
 
     private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
 
-    fun setSetpoint(newSetpoint: Double) {
-        if (!newSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
-            previousSetpoint = setpoint
-            setpoint = newSetpoint
-            generateTrajectory()
-        }
-    }
+    var motionPlanningEnabled = false
 
-    fun generateTrajectory() {
+    fun setSetpoint(newSetpoint: Double) {
+        if (newSetpoint < 0 || newSetpoint > LiftConstants.kMaximumSetpoint) return
+        val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
+        if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
+            previousSetpoint = setpoint
+            setpoint = adjustedSetpoint
+            if (motionPlanningEnabled) {
+            }
+        }
     }
 
     private val nextMotionState: LiftMotionState
