@@ -1,9 +1,6 @@
-package ca.warp7.frc.Motion
+package ca.warp7.frc.motion
 
 import java.lang.Math.pow
-import java.util.function.Function
-import kotlin.math.abs
-import kotlin.math.absoluteValue
 import kotlin.math.atan
 import kotlin.math.sqrt
 
@@ -25,7 +22,4 @@ data class Point2D(var x: Double, var y: Double) {
 
     // scale down point
     operator fun div(b: Double) = Point2D(x / b, y / b)
-
-    // distance to another point
-    operator fun rangeTo(b: Point2D) = minus(b).mag
 }

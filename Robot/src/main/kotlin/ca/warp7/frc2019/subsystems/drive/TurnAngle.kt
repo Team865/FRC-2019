@@ -3,7 +3,6 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.Infrastructure
 import kotlin.math.abs
 
 object TurnAngle : Action {

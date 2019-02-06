@@ -16,7 +16,7 @@ object DriveConstants {
     const val kWheelDiameter = 6.0 // Inches
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
-    const val kWheelBase = 12.0 // Distance between left and right wheels in inches
+    const val kWheelBase = 12.0 // Distance between left and right wheels in inches TODO
     const val kTurningCircumference = kWheelBase * Math.PI // The circumference the wheel base turns across in inches
 
     /*
