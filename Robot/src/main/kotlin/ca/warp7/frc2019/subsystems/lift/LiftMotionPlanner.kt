@@ -20,7 +20,7 @@ object LiftMotionPlanner {
     private var previousVelocity = 0
     private var acceleration = 0.0
 
-    private val accBuffer = mutableListOf<Double>()
+    private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
 
     private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
@@ -34,7 +34,13 @@ object LiftMotionPlanner {
         val dv = Lift.velocityTicksPer100ms - previousVelocity
         previousVelocity = Lift.velocityTicksPer100ms
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
-            acceleration = dv / dt
+            dvBuffer.add(dv)
+            dtBuffer.add(dt)
+            if (dvBuffer.size > LiftConstants.kAccelerationMeasurementFrames) {
+                dvBuffer.removeAt(0)
+                dtBuffer.removeAt(0)
+            }
+            acceleration = dvBuffer.sum() / dtBuffer.sum()
         }
     }
 

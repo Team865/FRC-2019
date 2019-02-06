@@ -30,6 +30,7 @@ object LiftConstants {
     const val kMaximumSetpoint = 80.0 // TODO
 
     const val kEpsilon = 1E-9
+    const val kAccelerationMeasurementFrames = 5
 
     val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
 
