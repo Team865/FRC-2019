@@ -27,6 +27,8 @@ object LiftConstants {
     const val kSecondaryStageLiftedSetpoint = 36 // TODO
     const val kSecondaryStageFeedforward = 0.3 // TODO
 
+    const val kEpsilon = 1E-9
+
     val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot

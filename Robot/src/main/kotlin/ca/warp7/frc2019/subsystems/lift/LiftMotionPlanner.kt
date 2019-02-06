@@ -10,10 +10,18 @@ object LiftMotionPlanner {
     val currentHeight get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
     val currentVelocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
 
-    var nominalZero = 0
-    var setpoint = 0.0
+    private var nominalZero = 0
+    private var previousSetpoint = 0.0
+    private var setpoint = 0.0
 
     private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
+
+    fun setSetpoint(newSetpoint: Double) {
+        if (!newSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
+            previousSetpoint = setpoint
+            setpoint = newSetpoint
+        }
+    }
 
     fun updateMeasurements() {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
@@ -23,10 +31,18 @@ object LiftMotionPlanner {
         }
     }
 
-    fun computePosition() {
+    fun computePositionPID() {
         Lift.apply {
             outputType = Lift.OutputType.Position
             demand = setpointTicks
+            feedForward = primaryFeedforward()
+        }
+    }
+
+    fun computePurePursuitVelocity() {
+        Lift.apply {
+            outputType = Lift.OutputType.Velocity
+            demand = 0.0
             feedForward = primaryFeedforward()
         }
     }
