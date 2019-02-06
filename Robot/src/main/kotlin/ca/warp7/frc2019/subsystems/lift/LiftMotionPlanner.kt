@@ -23,6 +23,9 @@ object LiftMotionPlanner {
         }
     }
 
+    fun generateTrajectory() {
+    }
+
     fun updateMeasurements() {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
                 && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
