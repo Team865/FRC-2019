@@ -7,21 +7,34 @@ import ca.warp7.frc2019.subsystems.Lift
 
 @Suppress("unused")
 object LiftMotionPlanner {
+
     val currentHeight get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
     val currentVelocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
+    val currentAcceleration get() = acceleration / LiftConstants.kInchesPerTick * 100
+
+    var motionPlanningEnabled = false
 
     private var nominalZero = 0
     private var previousSetpoint = 0.0
     private var setpoint = 0.0
+    private var previousVelocity = 0
+    private var acceleration = 0.0
+
+    private val accBuffer = mutableListOf<Double>()
+    private val dtBuffer = mutableListOf<Double>()
 
     private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
-    var motionPlanningEnabled = false
 
-    fun updateMeasurements() {
+    fun updateMeasurements(dt: Double) {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
                 && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
                 && Lift.hallEffectTriggered) {
             nominalZero = Lift.positionTicks
+        }
+        val dv = Lift.velocityTicksPer100ms - previousVelocity
+        previousVelocity = Lift.velocityTicksPer100ms
+        if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
+            acceleration = dv / dt
         }
     }
 
@@ -37,9 +50,7 @@ object LiftMotionPlanner {
     }
 
     private val nextMotionState: LiftMotionState
-        get() {
-            return LiftMotionState(0.0, 0.0)
-        }
+        get() = LiftMotionState(0.0, 0.0)
 
     private val nextAdjustedMotionState
         get() = nextMotionState.let {

@@ -66,7 +66,7 @@ object Lift : Subsystem() {
         actualCurrent = master.outputCurrent
         actualVoltage = master.busVoltage * actualPercent
         hallEffectTriggered = hallEffect.get()
-        LiftMotionPlanner.updateMeasurements()
+        LiftMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
