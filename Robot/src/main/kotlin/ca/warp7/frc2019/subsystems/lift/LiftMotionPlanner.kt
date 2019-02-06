@@ -27,7 +27,7 @@ object LiftMotionPlanner {
     private var accelerationTicksPer100ms2 = 0.0
     private var reachableVelocity = 0.0
     private var profileStartHeight = 0.0
-    private var profileDirection = 1.0
+    private var dyTotal = 0.0
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
 
@@ -56,18 +56,17 @@ object LiftMotionPlanner {
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             previousSetpoint = setpoint
             setpoint = adjustedSetpoint
-            if (motionPlanningEnabled) computeTrajectory()
+            if (motionPlanningEnabled) generateTrajectory()
         }
     }
 
-    private fun computeTrajectory() {
+    private fun generateTrajectory() {
         val height = height
         val dyToGo = setpoint - height
         val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
-        val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
+        val dySinceStart = dyToGo.sign * (0 + velocity) / 2 * dtSinceStart
         profileStartHeight = height - dySinceStart
-        val dyTotal = dySinceStart + dyToGo
-        profileDirection = sign(dyTotal)
+        dyTotal = dySinceStart + dyToGo
         val maxProfileVelocity = sqrt(LiftConstants.kMaxAcceleration * dyTotal)
         reachableVelocity = min(LiftConstants.kMaxVelocityInchesPerSecond, maxProfileVelocity)
     }
@@ -77,10 +76,9 @@ object LiftMotionPlanner {
     private val nextMotionState: LiftMotionState
         get() {
             val height = height
-            if (height < profileStartHeight) {
-
-            }
-            val nextDt = dtBuffer.sum() / LiftConstants.kAccelerationMeasurementFrames
+            if (height !in profileStartHeight..setpoint
+                    && !height.epsilonEquals(setpoint, LiftConstants.kEpsilon)) generateTrajectory()
+            val nextDt = dtBuffer.average()
             val dyToGo = setpoint - height
             val dtSinceStart = velocity / LiftConstants.kMaxAcceleration
             val dySinceStart = sign(dyToGo) * (0 + velocity) / 2 * dtSinceStart
