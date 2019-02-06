@@ -32,7 +32,7 @@ object LiftConstants {
     const val kEpsilon = 1E-9
     const val kAccelerationMeasurementFrames = 5
 
-    val kMasterTalonConfiguration = TalonSRXConfiguration().apply {
+    val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot
         slot0.apply {

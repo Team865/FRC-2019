@@ -16,7 +16,7 @@ object Lift : Subsystem() {
 
     private val master = TalonSRX(LiftConstants.kMaster).also {
         it.setNeutralMode(NeutralMode.Brake)
-        it.configAllSettings(LiftConstants.kMasterTalonConfiguration)
+        it.configAllSettings(LiftConstants.kMasterTalonConfig)
         it.enableVoltageCompensation(false)
         it.enableCurrentLimit(false)
         VictorSPX(LiftConstants.kFollower).follow(it)

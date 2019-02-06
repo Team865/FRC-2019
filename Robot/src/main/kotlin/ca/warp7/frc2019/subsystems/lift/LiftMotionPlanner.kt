@@ -8,22 +8,23 @@ import ca.warp7.frc2019.subsystems.Lift
 @Suppress("unused")
 object LiftMotionPlanner {
 
-    val currentHeight get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
-    val currentVelocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * 10
-    val currentAcceleration get() = acceleration / LiftConstants.kInchesPerTick * 100
+    private const val kInchesPerTick = LiftConstants.kInchesPerTick
+    private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
+    private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    var motionPlanningEnabled = false
+    val currentHeight get() = (Lift.positionTicks - nominalZero) / kInchesPerTick
+    val currentVelocity get() = Lift.velocityTicksPer100ms / kInchesPerTick * measurementFrequency
+    val currentAcceleration get() = acceleration / kInchesPerTick * squaredFrequency
 
+    private var motionPlanningEnabled = false
     private var nominalZero = 0
     private var previousSetpoint = 0.0
     private var setpoint = 0.0
     private var previousVelocity = 0
     private var acceleration = 0.0
-
     private val dvBuffer = mutableListOf<Int>()
     private val dtBuffer = mutableListOf<Double>()
-
-    private val setpointTicks get() = setpoint * LiftConstants.kInchesPerTick + nominalZero
+    private val setpointTicks get() = setpoint * kInchesPerTick + nominalZero
 
     fun updateMeasurements(dt: Double) {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
@@ -44,7 +45,8 @@ object LiftMotionPlanner {
         }
     }
 
-    fun setSetpoint(newSetpoint: Double) {
+    fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean = false) {
+        motionPlanningEnabled = isMotionPlanningEnabled
         if (newSetpoint < 0 || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
@@ -61,8 +63,8 @@ object LiftMotionPlanner {
     private val nextAdjustedMotionState
         get() = nextMotionState.let {
             LiftMotionState(
-                    it.position * LiftConstants.kInchesPerTick + nominalZero,
-                    it.velocity * LiftConstants.kInchesPerTick / 10)
+                    it.position * kInchesPerTick + nominalZero,
+                    it.velocity * kInchesPerTick / 10)
         }
 
     fun compute() {
