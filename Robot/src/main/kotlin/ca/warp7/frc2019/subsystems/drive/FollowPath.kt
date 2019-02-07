@@ -17,11 +17,10 @@ object FollowPath : Action {
 
         var previousPoint = startPos
         var previousAngle = startAngle
-        var i = 0
-        for (waypoint in path.waypoints) {
-            !i.toString()
+        for ((i, waypoint) in path.waypoints.withIndex()) {
             val relativeAngle = previousAngle - (previousPoint - waypoint.point).angle
             val relativeDistance = (waypoint.point - previousPoint).mag
+
             !"turn angle"
             +TurnAngle
             angle = relativeAngle
@@ -33,14 +32,12 @@ object FollowPath : Action {
             previousPoint = waypoint.point
             previousAngle = angle
 
-            i++
         }
     }
 
     override fun start() = queue.start()
 
     override fun update() = queue.update()
-
 
     override val shouldFinish: Boolean get() = queue.shouldFinish
 
