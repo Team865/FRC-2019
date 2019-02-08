@@ -17,7 +17,7 @@ object MainLoop : RobotControlLoop {
 
     override fun periodic() {
 
-        Controls.robotDriver.apply {
+        Controls.withDriver {
 
             Drive.set(DriveState.kCurvature) {
                 xSpeed = leftYAxis
@@ -36,7 +36,8 @@ object MainLoop : RobotControlLoop {
             }
         }
 
-        Controls.robotOperator.apply {
+        Controls.withOperator {
+
             when {
                 leftTriggerAxis > ControlConstants.kAxisDeadband ->
                     Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis) }
