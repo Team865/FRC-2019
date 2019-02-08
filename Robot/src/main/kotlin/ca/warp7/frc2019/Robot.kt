@@ -18,7 +18,6 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Drive.set(DriveState.kNeutralOutput)
         Infrastructure.set(InfrastructureState.kInfrastructureSetup)
-        Localization.set(LocalizationState.kDisplacementOnly)
         Superstructure.set(SuperstructureState.kStartingConfiguration)
     }
 
