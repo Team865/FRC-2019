@@ -23,15 +23,12 @@ object Drive : Subsystem() {
     }
 
     val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
-        it.inverted = true
         it.configAllSettings(DriveConstants.kDefaultTalonSRX)
         VictorSPX(DriveConstants.kRightFollowerA).apply {
             configAllSettings(DriveConstants.kDefaultVictorSPX)
-            inverted = true
         }.follow(it)
         VictorSPX(DriveConstants.kRightFollowerB).apply {
             configAllSettings(DriveConstants.kDefaultVictorSPX)
-            inverted = true
         }.follow(it)
     }
 
@@ -76,16 +73,16 @@ object Drive : Subsystem() {
 
     override fun onOutput() = when (outputMode) {
         OutputMode.Percent -> {
-            leftMaster.set(ControlMode.PercentOutput, leftDemand)
+            leftMaster.set(ControlMode.PercentOutput, -leftDemand)
             rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
         OutputMode.Velocity -> {
-            leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+            leftMaster.set(ControlMode.Velocity, -leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
         OutputMode.Position -> {
-            leftMaster.set(ControlMode.Position, leftDemand)
-            rightMaster.set(ControlMode.Position, leftDemand)
+            leftMaster.set(ControlMode.Position, -leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+            rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
         OutputMode.WPILibControlled -> Unit
     }
