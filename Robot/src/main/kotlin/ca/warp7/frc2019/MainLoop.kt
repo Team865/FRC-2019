@@ -56,6 +56,7 @@ object MainLoop : RobotControlLoop {
                         wantedPosition.setpointType = LiftSetpointType.Hatch
                     }
                 }
+                aButton -> Hatch.set(HatchState.kPushing)
                 else -> Unit
             }
 
