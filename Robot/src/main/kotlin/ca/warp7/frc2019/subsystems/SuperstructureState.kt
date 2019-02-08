@@ -13,6 +13,7 @@ object SuperstructureState {
         Lift.set(LiftState.kIdle)
         Intake.set(IntakeState.kUp)
         Conveyor.set(ConveyorState.kIdle)
+        Hatch.set(HatchState.kIdle)
     }
 
     val kDefending = runOnce {
