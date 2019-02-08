@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 
-class DriveOnly : TimedRobot() {
+class DriveTest : TimedRobot() {
 
     lateinit var differentialDrive: DifferentialDrive
     lateinit var xboxController: XboxController
