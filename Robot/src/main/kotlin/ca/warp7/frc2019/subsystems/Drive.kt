@@ -17,14 +17,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 object Drive : Subsystem() {
 
     val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster)
-            .config(DriveConstants.kDefaultTalonSRX)
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kDefaultVictorSPX))
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kDefaultVictorSPX))
+            .config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kFollowerVictorConfig))
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kFollowerVictorConfig))
 
     val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster)
-            .config(DriveConstants.kDefaultTalonSRX)
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kDefaultVictorSPX))
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kDefaultVictorSPX))
+            .config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kFollowerVictorConfig))
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kFollowerVictorConfig))
 
     private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
         isRightSideInverted = false
