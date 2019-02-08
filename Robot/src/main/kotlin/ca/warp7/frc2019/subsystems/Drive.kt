@@ -3,6 +3,8 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc.config
+import ca.warp7.frc.followedBy
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -14,23 +16,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster = WPI_TalonSRX(DriveConstants.kLeftMaster).also {
-        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kLeftFollowerA)
-                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
-        VictorSPX(DriveConstants.kLeftFollowerB)
-                .apply { configAllSettings(DriveConstants.kDefaultVictorSPX) }.follow(it)
-    }
+    val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster)
+            .config(DriveConstants.kDefaultTalonSRX)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kDefaultVictorSPX))
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kDefaultVictorSPX))
 
-    val rightMaster = WPI_TalonSRX(DriveConstants.kRightMaster).also {
-        it.configAllSettings(DriveConstants.kDefaultTalonSRX)
-        VictorSPX(DriveConstants.kRightFollowerA).apply {
-            configAllSettings(DriveConstants.kDefaultVictorSPX)
-        }.follow(it)
-        VictorSPX(DriveConstants.kRightFollowerB).apply {
-            configAllSettings(DriveConstants.kDefaultVictorSPX)
-        }.follow(it)
-    }
+    val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster)
+            .config(DriveConstants.kDefaultTalonSRX)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kDefaultVictorSPX))
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kDefaultVictorSPX))
 
     private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
         isRightSideInverted = false
@@ -58,9 +52,9 @@ object Drive : Subsystem() {
     var rightVelocityTicks = 0
 
     val totalDistance
-        get() = (leftMaster.selectedSensorPosition + rightMaster.selectedSensorPosition) / 2.0
+        get() = (leftPositionTicks + rightPositionTicks) / 2.0
     val totalAngle
-        get() = 360 * (leftMaster.selectedSensorPosition - rightMaster.selectedSensorPosition) / (1024 * 2 * DriveConstants.kWheelCircumference)
+        get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
     fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
         if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
