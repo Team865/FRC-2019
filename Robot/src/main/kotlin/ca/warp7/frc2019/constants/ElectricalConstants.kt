@@ -12,8 +12,8 @@ object ElectricalConstants {
     =====================================================
      */
 
-    const val kLiftFollowerVictorId = 0
-    const val kLiftMasterTalonId = 15
+    const val kLiftMasterTalonId = 0
+    const val kLiftFollowerVictorId = 15
 
     const val kDriveLeftMasterTalonId = 1
     const val kDriveRightMasterTalonId = 14
@@ -24,14 +24,13 @@ object ElectricalConstants {
     const val kDriveLeftFollowerBVictorId = 3
     const val kDriveRightFollowerBVictorId = 12
 
-    const val kConveyorLeftVictorId = 4
-    const val kConveyorRightVictorId = 11
+    const val kOuttakeLeftVictorId = 4
+    const val kOuttakeRightVictorId = 11
 
-    const val kIntakeVictorId = 10
-    const val kOuttakeLeftVictorId = 5
+    const val kConveyorLeftVictorId = 5
+    const val kConveyorRightVictorId = 10
 
-    // 6 is not connected to anything
-    const val kOuttakeRightVictorId = 9
+    const val kIntakeVictorId = 9
 
     /*
     ===============================================
