@@ -7,24 +7,31 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
-class TestConveyor : TimedRobot(){
+class TestConveyor : TimedRobot() {
     lateinit var controller: XboxController
-    lateinit var leftConveyor : VictorSPX
-    lateinit var rightConveyor : VictorSPX
+    lateinit var leftConveyor: VictorSPX
+    lateinit var rightConveyor: VictorSPX
     override fun robotInit() {
-        leftConveyor = VictorSPX (ConveyorConstants.kLeft)
+        leftConveyor = VictorSPX(ConveyorConstants.kLeft)
         rightConveyor = VictorSPX(ConveyorConstants.kRight)
-        controller = XboxController(0 )
+        controller = XboxController(0)
     }
-    override fun teleopPeriodic() {
-        val input = controller.getTriggerAxis(GenericHID.Hand.kLeft)
-        if (input>0.1){
-            rightConveyor.set (ControlMode.PercentOutput,input)
-            leftConveyor.set (ControlMode.PercentOutput,input*-1)
-        }else{
-            rightConveyor.set (ControlMode.PercentOutput,controller.getTriggerAxis(GenericHID.Hand.kRight))
-            leftConveyor.set (ControlMode.PercentOutput,(controller.getTriggerAxis(GenericHID.Hand.kRight))*-1)
 
+    override fun disabledInit() {
+        leftConveyor.neutralOutput()
+        rightConveyor.neutralOutput()
+    }
+
+    override fun teleopPeriodic() {
+        val left = controller.getTriggerAxis(GenericHID.Hand.kLeft)
+        val right = controller.getTriggerAxis(GenericHID.Hand.kRight)
+        var speed = 0.0
+        if (left > 0.1) {
+            speed = left
+        } else if (right > 0.1) {
+            speed = right * -1
         }
+        rightConveyor.set(ControlMode.PercentOutput, speed)
+        leftConveyor.set(ControlMode.PercentOutput, speed)
     }
 }
