@@ -5,29 +5,42 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
+import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
+import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kFollowerVictorConfig))
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kFollowerVictorConfig))
+    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
+        selectedSensorPosition = 0
+    }
 
-    val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kFollowerVictorConfig))
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kFollowerVictorConfig))
+    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kRightFollowerA))
+        followedBy(VictorSPX(DriveConstants.kRightFollowerB))
+        selectedSensorPosition = 0
+    }
 
-    private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
-        isRightSideInverted = false
+    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
         setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
@@ -37,7 +50,21 @@ object Drive : Subsystem() {
         Percent, Velocity, Position, WPILibControlled
     }
 
-    var outputMode: OutputMode = OutputMode.Percent
+    var outputMode = Percent
+        set(value) {
+            if (field != value) when (value) {
+                Position -> {
+                    leftMaster.selectProfileSlot(0, 0)
+                    rightMaster.selectProfileSlot(0, 0)
+                }
+                Velocity -> {
+                    leftMaster.selectProfileSlot(1, 0)
+                    rightMaster.selectProfileSlot(1, 0)
+                }
+                else -> Unit
+            }
+            field = value
+        }
 
     var leftDemand = 0.0
     var rightDemand = 0.0
@@ -46,8 +73,6 @@ object Drive : Subsystem() {
 
     var leftPositionTicks = 0
     var rightPositionTicks = 0
-    var prevLeftPositionTicks = 0
-    var prevRightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
@@ -56,9 +81,8 @@ object Drive : Subsystem() {
     val totalAngle
         get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
-    fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
-        if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
-    }
+    private val leftDemand1 get() = leftDemand * -1
+    private val leftFeedForward1 get() = leftFeedForward * -1
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
@@ -66,38 +90,41 @@ object Drive : Subsystem() {
     }
 
     override fun onOutput() = when (outputMode) {
-        OutputMode.Percent -> {
-            leftMaster.set(ControlMode.PercentOutput, -leftDemand)
+        Percent -> {
+            leftMaster.set(ControlMode.PercentOutput, leftDemand1)
             rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
-        OutputMode.Velocity -> {
-            leftMaster.set(ControlMode.Velocity, -leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+        Velocity -> {
+            leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        OutputMode.Position -> {
-            leftMaster.set(ControlMode.Position, -leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+        Position -> {
+            leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        OutputMode.WPILibControlled -> Unit
+        WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {
-        prevLeftPositionTicks = leftPositionTicks
-        prevRightPositionTicks = rightPositionTicks
         leftPositionTicks = leftMaster.selectedSensorPosition
         rightPositionTicks = rightMaster.selectedSensorPosition
         leftVelocityTicks = leftMaster.selectedSensorVelocity
         rightVelocityTicks = rightMaster.selectedSensorVelocity
-    }
-
-    override fun onZeroSensors() {
-        leftMaster.selectedSensorPosition = 0
-        rightMaster.selectedSensorPosition = 0
+        DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container
-                .add(differentialDrive)
-                .withWidget(BuiltInWidgets.kDifferentialDrive)
+        container.apply {
+            add("Output Mode", outputMode.name)
+            add("Left Demand", leftDemand)
+            add("Left Feedforward", leftFeedForward)
+            add("Right Demand", rightDemand)
+            add("Right Feedforward", rightFeedForward)
+            add("Left Position", leftPositionTicks)
+            add("Right Position", rightPositionTicks)
+            add("Left Velocity", leftVelocityTicks)
+            add("Right Velocity", rightVelocityTicks)
+            add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
+        }
     }
 }

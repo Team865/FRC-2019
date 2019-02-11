@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test
+package ca.warp7.frc2019.test.intake_simple
 
 import ca.warp7.frc2019.constants.IntakeConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
-class TestIntake : TimedRobot() {
+class IntakeSimple : TimedRobot() {
     lateinit var victor : VictorSPX
     lateinit var controller : XboxController
     lateinit var solenoid : Solenoid

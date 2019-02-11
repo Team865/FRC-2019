@@ -25,9 +25,7 @@ object Lift : Subsystem() {
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     enum class OutputType {
-        Percent,
-        Position,
-        Velocity
+        Percent, Position, Velocity
     }
 
     var demand = 0.0
@@ -41,7 +39,7 @@ object Lift : Subsystem() {
 
     var outputType = OutputType.Percent
         set(value) {
-            when (value) {
+            if (field != value) when (value) {
                 OutputType.Percent -> Unit
                 OutputType.Position -> master.selectProfileSlot(0, 0)
                 OutputType.Velocity -> master.selectProfileSlot(1, 0)

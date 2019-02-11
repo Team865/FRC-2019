@@ -4,7 +4,7 @@ abstract class ActionStateMachine {
 
     private var currentState: Action? = null
 
-    val stateName get() = currentState?.let { it::class.java.simpleName } ?: "None"
+    var stateName: String = "None"
 
     open fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         block(wantedState)
@@ -12,6 +12,8 @@ abstract class ActionStateMachine {
         if (wantedState != currentState) {
             // Change to the new state
             currentState = wantedState
+            // get the name of the state
+            stateName = wantedState::class.java.simpleName
             // Start the new state
             currentState?.start()
         }

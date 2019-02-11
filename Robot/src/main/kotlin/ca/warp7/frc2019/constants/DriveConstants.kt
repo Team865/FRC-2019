@@ -1,8 +1,7 @@
 package ca.warp7.frc2019.constants
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
 
 object DriveConstants {
@@ -13,10 +12,10 @@ object DriveConstants {
     ==================
     */
 
-    const val kWheelDiameter = 6.0 // Inches
+    private const val kWheelDiameter = 6.0 // Inches
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
-    const val kWheelBase = 12.0 // Distance between left and right wheels in inches TODO
+    private const val kWheelBase = 12.0 // Distance between left and right wheels in inches TODO
     const val kTurningCircumference = kWheelBase * Math.PI // The circumference the wheel base turns across in inches
 
     /*
@@ -34,24 +33,10 @@ object DriveConstants {
 
     const val kDifferentialDeadband = 0.2
 
-    val kFollowerVictorConfig = VictorSPXConfiguration()
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
-        // CustomParamsConfiguration
-
-        customParam0 = 0
-        customParam1 = 0
-        enableOptimizations = true
-
-        // BaseMotorControllerConfiguration
-
-        remoteFilter0.remoteSensorDeviceID = 0
-        remoteFilter0.remoteSensorSource = RemoteSensorSource.Off
-
-        remoteFilter1.remoteSensorDeviceID = 0
-        remoteFilter1.remoteSensorSource = RemoteSensorSource.Off
-
+        // TODO Position PID slot
         slot0.apply {
             kP = 0.0
             kI = 0.0
@@ -64,6 +49,7 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
+        // TODO Velocity PID slot
         slot1.apply {
             kP = 0.0
             kI = 0.0
@@ -76,97 +62,16 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        slot2.apply {
-            kP = 0.0
-            kI = 0.0
-            kD = 0.0
-            kF = 0.0
-            integralZone = 0
-            allowableClosedloopError = 0
-            maxIntegralAccumulator = 0.0
-            closedLoopPeakOutput = 1.0
-            closedLoopPeriod = 1
-        }
-
-        slot3.apply {
-            kP = 0.0
-            kI = 0.0
-            kD = 0.0
-            kF = 0.0
-            integralZone = 0
-            allowableClosedloopError = 0
-            maxIntegralAccumulator = 0.0
-            closedLoopPeakOutput = 1.0
-            closedLoopPeriod = 1
-        }
-
-        openloopRamp = 0.0
+        openloopRamp = 1.0
         closedloopRamp = 0.0
-
-        peakOutputForward = 1.0
-        peakOutputReverse = -1.0
-
-        nominalOutputForward = 0.0
-        nominalOutputReverse = 0.0
 
         neutralDeadband = 0.04
 
-        voltageCompSaturation = 0.0
-        voltageMeasurementFilter = 32
-
-        velocityMeasurementPeriod = VelocityMeasPeriod.Period_100Ms
-        velocityMeasurementWindow = 64
-
-        forwardSoftLimitThreshold = 0
-        reverseSoftLimitThreshold = 0
-
-        forwardSoftLimitEnable = false
-        reverseSoftLimitEnable = false
-
-        auxPIDPolarity = false
-
-        motionCruiseVelocity = 0
-        motionAcceleration = 0
-        motionProfileTrajectoryPeriod = 0
-
-        feedbackNotContinuous = false
-
-        remoteSensorClosedLoopDisableNeutralOnLOS = false
-
-        clearPositionOnLimitF = false
-        clearPositionOnLimitR = false
-        clearPositionOnQuadIdx = false
-
-        limitSwitchDisableNeutralOnLOS = false
-        softLimitDisableNeutralOnLOS = false
-
-        pulseWidthPeriod_EdgesPerRot = 1
-        pulseWidthPeriod_FilterWindowSz = 1
-
-        trajectoryInterpolationEnable = true
+        voltageCompSaturation = 12.0 // Max voltage
 
         // TalonSRXConfiguration
 
         primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-        primaryPID.selectedFeedbackCoefficient = 1.0
-
-        auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-        auxiliaryPID.selectedFeedbackCoefficient = 1.0
-
-        forwardLimitSwitchSource = LimitSwitchSource.FeedbackConnector
-        reverseLimitSwitchSource = LimitSwitchSource.FeedbackConnector
-
-        forwardLimitSwitchDeviceID = 0
-        reverseLimitSwitchDeviceID = 0
-
-        forwardLimitSwitchNormal = LimitSwitchNormal.NormallyOpen
-        reverseLimitSwitchNormal = LimitSwitchNormal.NormallyOpen
-
-        sum0Term = FeedbackDevice.QuadEncoder
-        sum1Term = FeedbackDevice.QuadEncoder
-
-        diff0Term = FeedbackDevice.QuadEncoder
-        diff1Term = FeedbackDevice.QuadEncoder
 
         peakCurrentLimit = 1
         peakCurrentDuration = 1
