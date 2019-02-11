@@ -7,6 +7,7 @@ import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -94,6 +95,7 @@ object Drive : Subsystem() {
         rightPositionTicks = rightMaster.selectedSensorPosition
         leftVelocityTicks = leftMaster.selectedSensorVelocity
         rightVelocityTicks = rightMaster.selectedSensorVelocity
+        DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
