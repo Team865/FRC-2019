@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -100,14 +99,13 @@ internal object CommonRobot {
         }
         // Send data to Shuffleboard
         subsystems.forEach {
-            Shuffleboard.getTab(it::class.java.simpleName).apply {
+            it.shuffleboard {
                 // Show the current state in the appropriate tab
                 add("Current State", it.stateName)
                         .withWidget(BuiltInWidgets.kTextView)
                         .withPosition(0, 0)
-                // Update the rest to shuffleboard
-                it.onUpdateShuffleboard(this)
             }
+            it.onPostUpdate()
         }
         // Flush the standard output
         outContent.apply {

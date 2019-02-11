@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.PowerDistributionPanel
 import edu.wpi.first.wpilibj.SPI
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Infrastructure : Subsystem() {
     val compressor = Compressor(InfrastructureConstants.kCompressorModule)
@@ -29,15 +28,10 @@ object Infrastructure : Subsystem() {
         }
     }
 
-    override fun onOutput() {
-    }
-
-    override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.apply {
-            add("pdp", powerDistributionPanel).withWidget(BuiltInWidgets.kPowerDistributionPanel)
-            add("ahrsCalibrated", ahrsCalibrated)
-            add("Yaw", yaw)
-            add("Pitch", pitch)
-        }
+    override fun onPostUpdate() = shuffleboard {
+        add("pdp", powerDistributionPanel).withWidget(BuiltInWidgets.kPowerDistributionPanel)
+        add("ahrsCalibrated", ahrsCalibrated)
+        add("Yaw", yaw)
+        add("Pitch", pitch)
     }
 }

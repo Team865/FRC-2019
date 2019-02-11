@@ -2,6 +2,7 @@ package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionStateMachine
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 /**
@@ -75,6 +76,9 @@ abstract class Subsystem : ActionStateMachine() {
         onOutput()
     }
 
+    private val tab: ShuffleboardContainer by lazy { Shuffleboard.getTab(this::class.java.simpleName) }
+    fun shuffleboard(block: ShuffleboardContainer.() -> Unit) = tab.run(block)
+
     /**
      *
      * Called periodically for the subsystem to get measurements from its input devices.
@@ -94,5 +98,5 @@ abstract class Subsystem : ActionStateMachine() {
     /**
      * Send values to shuffleboard
      */
-    open fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
+    open fun onPostUpdate() {}
 }
