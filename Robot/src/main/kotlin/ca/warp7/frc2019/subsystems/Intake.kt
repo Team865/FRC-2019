@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Solenoid
 
 object Intake : Subsystem() {
 
-    val victor = VictorSPX(IntakeConstants.kVictor)
-    val solenoid = Solenoid(IntakeConstants.kSolenoid)
+    private val victor = VictorSPX(IntakeConstants.kVictor)
+    private val solenoid = Solenoid(IntakeConstants.kSolenoid)
 
     var extended = false
     var speed = 0.0

@@ -27,7 +27,7 @@ object Drive : Subsystem() {
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kFollowerVictorConfig))
             .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kFollowerVictorConfig))
 
-    private val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
+    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
         setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
@@ -56,29 +56,25 @@ object Drive : Subsystem() {
     val totalAngle
         get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
-    fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
-        if (outputMode == OutputMode.WPILibControlled) block(wpiDrive)
-    }
-
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
     }
 
     override fun onOutput() {
-        val leftDemand = leftDemand * -1
-        val leftFeedForward = leftFeedForward * -1
+        val leftDemand1 = leftDemand * -1
+        val leftFeedForward1 = leftFeedForward * -1
         return when (outputMode) {
             OutputMode.Percent -> {
-                leftMaster.set(ControlMode.PercentOutput, leftDemand)
+                leftMaster.set(ControlMode.PercentOutput, leftDemand1)
                 rightMaster.set(ControlMode.PercentOutput, rightDemand)
             }
             OutputMode.Velocity -> {
-                leftMaster.set(ControlMode.Velocity, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+                leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
                 rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
             }
             OutputMode.Position -> {
-                leftMaster.set(ControlMode.Position, leftDemand, DemandType.ArbitraryFeedForward, leftFeedForward)
+                leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
                 rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
             }
             OutputMode.WPILibControlled -> Unit
