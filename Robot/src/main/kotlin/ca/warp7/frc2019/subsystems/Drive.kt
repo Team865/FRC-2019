@@ -5,28 +5,29 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
+import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster)
+    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster)
             .config(DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kFollowerVictorConfig))
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kFollowerVictorConfig))
 
-    val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster)
+    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster)
             .config(DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kFollowerVictorConfig))
             .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kFollowerVictorConfig))
 
-    private val differentialDrive = DifferentialDrive(leftMaster, rightMaster).apply {
+    private val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
         setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
@@ -56,7 +57,7 @@ object Drive : Subsystem() {
         get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
     fun doWithCheckedWPIState(block: DifferentialDrive.() -> Unit) {
-        if (outputMode == OutputMode.WPILibControlled) block(differentialDrive)
+        if (outputMode == OutputMode.WPILibControlled) block(wpiDrive)
     }
 
     override fun onDisabled() {
@@ -100,7 +101,7 @@ object Drive : Subsystem() {
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
         container
-                .add(differentialDrive)
+                .add(wpiDrive)
                 .withWidget(BuiltInWidgets.kDifferentialDrive)
     }
 }
