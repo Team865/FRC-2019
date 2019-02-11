@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 
 @Suppress("unused")
-class DriveTest : TimedRobot() {
+class CurvatureTest : TimedRobot() {
 
     lateinit var differentialDrive: DifferentialDrive
     lateinit var xboxController: XboxController

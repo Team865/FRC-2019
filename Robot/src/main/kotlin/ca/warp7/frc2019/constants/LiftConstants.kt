@@ -6,15 +6,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
 @Suppress("unused")
 object LiftConstants {
+
     const val kMaster = ElectricalConstants.kLiftMasterTalonId
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
-
-    private const val kTicksPerRevolution = COTSConstants.MagEncoder.kTicksPerRevolution
-    private const val kDrumRadiusInches = 1.5
-    private const val kDrumCircumference = 2 * kDrumRadiusInches * Math.PI
-    const val kInchesPerTick = kTicksPerRevolution * kDrumCircumference
-
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
+
+    private const val kDrumRadius = 1.5 // Inches
+    private const val kDrumCircumference = 2 * kDrumRadius * Math.PI
+    const val kInchesPerTick = COTSConstants.MagEncoder.kTicksPerRevolution * kDrumCircumference
+
 
     const val kHomeHeightInches = 0.0 //TODO fix this value
 
@@ -65,7 +65,7 @@ object LiftConstants {
 
         neutralDeadband = 0.04
 
-        voltageCompSaturation = 0.0
+        voltageCompSaturation = 12.0
 
         // TalonSRXConfiguration
 
