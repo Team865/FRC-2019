@@ -13,25 +13,25 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 @Suppress("unused")
 class DriveLinearPID : TimedRobot() {
 
-    private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .apply {
-                setNeutralMode(NeutralMode.Brake)
-                enableVoltageCompensation(true)
-                enableCurrentLimit(false)
-            }
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
+    private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
+        selectedSensorPosition = 0
+    }
 
-    private val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .apply {
-                setNeutralMode(NeutralMode.Brake)
-                enableVoltageCompensation(true)
-                enableCurrentLimit(false)
-            }
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA))
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB))
+    private val rightMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kRightMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kRightFollowerA))
+        followedBy(VictorSPX(DriveConstants.kRightFollowerB))
+        selectedSensorPosition = 0
+    }
 
     private val target = 256 * 10.0 // 60 inches
 
