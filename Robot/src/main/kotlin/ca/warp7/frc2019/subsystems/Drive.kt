@@ -7,6 +7,7 @@ import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -19,25 +20,25 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .apply {
-                setNeutralMode(NeutralMode.Brake)
-                enableVoltageCompensation(true)
-                enableCurrentLimit(false)
-            }
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
+    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
+        followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
+        selectedSensorPosition = 0
+    }
 
-    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .apply {
-                setNeutralMode(NeutralMode.Brake)
-                enableVoltageCompensation(true)
-                enableCurrentLimit(false)
-            }
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA))
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB))
+    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster).apply {
+        config(DriveConstants.kMasterTalonConfig)
+        setNeutralMode(NeutralMode.Brake)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+        followedBy(VictorSPX(DriveConstants.kRightFollowerA))
+        followedBy(VictorSPX(DriveConstants.kRightFollowerB))
+        selectedSensorPosition = 0
+    }
 
     val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
@@ -49,7 +50,21 @@ object Drive : Subsystem() {
         Percent, Velocity, Position, WPILibControlled
     }
 
-    var outputMode = OutputMode.Percent
+    var outputMode = Percent
+        set(value) {
+            if (field != value) when (value) {
+                Position -> {
+                    leftMaster.selectProfileSlot(0, 0)
+                    rightMaster.selectProfileSlot(0, 0)
+                }
+                Velocity -> {
+                    leftMaster.selectProfileSlot(1, 0)
+                    rightMaster.selectProfileSlot(1, 0)
+                }
+                else -> Unit
+            }
+            field = value
+        }
 
     var leftDemand = 0.0
     var rightDemand = 0.0
@@ -75,19 +90,19 @@ object Drive : Subsystem() {
     }
 
     override fun onOutput() = when (outputMode) {
-        OutputMode.Percent -> {
+        Percent -> {
             leftMaster.set(ControlMode.PercentOutput, leftDemand1)
             rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
-        OutputMode.Velocity -> {
+        Velocity -> {
             leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        OutputMode.Position -> {
+        Position -> {
             leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        OutputMode.WPILibControlled -> Unit
+        WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {
