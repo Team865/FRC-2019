@@ -2,7 +2,10 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.*
+import ca.warp7.frc.Subsystem
+import ca.warp7.frc.config
+import ca.warp7.frc.followedBy
+import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -14,13 +17,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster).config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).reset())
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).reset())
+    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster)
+            .config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
 
-    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster).config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).reset())
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).reset())
+    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster)
+            .config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA))
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerB))
 
     val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
@@ -86,8 +91,17 @@ object Drive : Subsystem() {
     }
 
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container
-                .add(wpiDrive)
-                .withWidget(BuiltInWidgets.kDifferentialDrive)
+        container.apply {
+            add("Output Mode", outputMode.name)
+            add("Left Demand", leftDemand)
+            add("Left Feedforward", leftFeedForward)
+            add("Right Demand", rightDemand)
+            add("Right Feedforward", rightFeedForward)
+            add("Left Position", leftPositionTicks)
+            add("Right Position", rightPositionTicks)
+            add("Left Velocity", leftVelocityTicks)
+            add("Right Velocity", rightVelocityTicks)
+            add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
+        }
     }
 }
