@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test
+package ca.warp7.frc2019.test.intake_simple
 
 import ca.warp7.frc2019.constants.IntakeConstants
 import com.ctre.phoenix.motorcontrol.ControlMode

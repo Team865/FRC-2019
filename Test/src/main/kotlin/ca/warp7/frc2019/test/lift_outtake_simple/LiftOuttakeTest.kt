@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test
+package ca.warp7.frc2019.test.lift_outtake_simple
 
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.OuttakeConstants
