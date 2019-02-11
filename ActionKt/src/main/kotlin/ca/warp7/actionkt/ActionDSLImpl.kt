@@ -2,6 +2,7 @@ package ca.warp7.actionkt
 
 @ActionDSLMarker
 open class ActionDSLImpl : ActionDSL, Action, ActionState {
+
     override fun String.not() {
         name = this
     }
@@ -12,9 +13,12 @@ open class ActionDSLImpl : ActionDSL, Action, ActionState {
     private var predicate: ActionState.() -> Boolean = { true }
 
     override var name = ""
-    override var elapsed: Double = 0.0
+    var startTime = 0.0
+
+    override val elapsed get() = System.nanoTime() / 1e9 - startTime
 
     override fun start() {
+        startTime = System.nanoTime() / 1e9
         start.invoke(this)
     }
 
