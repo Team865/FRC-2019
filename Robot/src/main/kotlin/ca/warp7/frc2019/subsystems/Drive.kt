@@ -85,11 +85,6 @@ object Drive : Subsystem() {
         rightVelocityTicks = rightMaster.selectedSensorVelocity
     }
 
-    override fun onZeroSensors() {
-        leftMaster.selectedSensorPosition = 0
-        rightMaster.selectedSensorPosition = 0
-    }
-
     override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
         container.apply {
             add("Output Mode", outputMode.name)

@@ -92,13 +92,6 @@ abstract class Subsystem : ActionStateMachine() {
     open fun onMeasure(dt: Double) {}
 
     /**
-     *
-     * Called at the start for the subsystem to zero its sensors.
-     * In addition, this method may by called by autonomous actions
-     */
-    open fun onZeroSensors() {}
-
-    /**
      * Send values to shuffleboard
      */
     open fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
