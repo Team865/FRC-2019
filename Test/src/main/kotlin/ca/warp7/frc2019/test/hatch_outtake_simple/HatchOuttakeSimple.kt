@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
 @Suppress("unused")
-class HatchOuttake : TimedRobot () {
+class HatchOuttakeSimple : TimedRobot() {
     lateinit var solenoid: Solenoid
     lateinit var controller: XboxController
     override fun robotInit() {

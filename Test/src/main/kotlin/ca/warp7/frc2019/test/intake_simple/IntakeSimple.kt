@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
-class TestIntake : TimedRobot() {
+class IntakeSimple : TimedRobot() {
     lateinit var victor : VictorSPX
     lateinit var controller : XboxController
     lateinit var solenoid : Solenoid

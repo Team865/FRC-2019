@@ -12,7 +12,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
 @Suppress("unused")
-class LiftOuttakeTest : TimedRobot() {
+class LiftOuttakeSimple : TimedRobot() {
 
     lateinit var liftMaster: TalonSRX
     lateinit var xboxController: XboxController
