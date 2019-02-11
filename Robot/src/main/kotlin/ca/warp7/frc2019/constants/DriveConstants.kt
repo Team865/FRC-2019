@@ -2,7 +2,6 @@ package ca.warp7.frc2019.constants
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration
 
 
 object DriveConstants {
@@ -34,7 +33,6 @@ object DriveConstants {
 
     const val kDifferentialDeadband = 0.2
 
-    val kFollowerVictorConfig = VictorSPXConfiguration()
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 

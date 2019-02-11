@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package ca.warp7.frc
 
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -7,6 +9,7 @@ import edu.wpi.first.wpilibj.SpeedController
 fun <T : TalonSRX> T.config(config: TalonSRXConfiguration) = apply { configAllSettings(config) }
 fun <T : VictorSPX> T.config(config: VictorSPXConfiguration) = apply { configAllSettings(config) }
 fun <T : BaseMotorController> T.followedBy(other: BaseMotorController) = apply { other.follow(this) }
+fun <T : BaseMotorController> T.reset() = apply { configFactoryDefault() }
 
 private class WPISpeedController(val base: BaseMotorController) : SpeedController {
     var lastSpeed = 0.0

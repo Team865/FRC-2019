@@ -2,10 +2,7 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
-import ca.warp7.frc.config
-import ca.warp7.frc.followedBy
-import ca.warp7.frc.wpi
+import ca.warp7.frc.*
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -17,15 +14,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
-    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).config(DriveConstants.kFollowerVictorConfig))
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).config(DriveConstants.kFollowerVictorConfig))
+    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster).config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA).reset())
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerB).reset())
 
-    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster)
-            .config(DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).config(DriveConstants.kFollowerVictorConfig))
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).config(DriveConstants.kFollowerVictorConfig))
+    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster).config(DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA).reset())
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerB).reset())
 
     val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
@@ -46,8 +41,6 @@ object Drive : Subsystem() {
 
     var leftPositionTicks = 0
     var rightPositionTicks = 0
-    var prevLeftPositionTicks = 0
-    var prevRightPositionTicks = 0
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
@@ -56,34 +49,31 @@ object Drive : Subsystem() {
     val totalAngle
         get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
+    private val leftDemand1 get() = leftDemand * -1
+    private val leftFeedForward1 get() = leftFeedForward * -1
+
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
     }
 
-    override fun onOutput() {
-        val leftDemand1 = leftDemand * -1
-        val leftFeedForward1 = leftFeedForward * -1
-        return when (outputMode) {
-            OutputMode.Percent -> {
-                leftMaster.set(ControlMode.PercentOutput, leftDemand1)
-                rightMaster.set(ControlMode.PercentOutput, rightDemand)
-            }
-            OutputMode.Velocity -> {
-                leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
-                rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
-            }
-            OutputMode.Position -> {
-                leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
-                rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
-            }
-            OutputMode.WPILibControlled -> Unit
+    override fun onOutput() = when (outputMode) {
+        OutputMode.Percent -> {
+            leftMaster.set(ControlMode.PercentOutput, leftDemand1)
+            rightMaster.set(ControlMode.PercentOutput, rightDemand)
         }
+        OutputMode.Velocity -> {
+            leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
+            rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
+        }
+        OutputMode.Position -> {
+            leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
+            rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
+        }
+        OutputMode.WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {
-        prevLeftPositionTicks = leftPositionTicks
-        prevRightPositionTicks = rightPositionTicks
         leftPositionTicks = leftMaster.selectedSensorPosition
         rightPositionTicks = rightMaster.selectedSensorPosition
         leftVelocityTicks = leftMaster.selectedSensorVelocity
