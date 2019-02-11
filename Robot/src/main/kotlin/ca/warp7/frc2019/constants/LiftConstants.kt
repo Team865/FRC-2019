@@ -9,10 +9,10 @@ object LiftConstants {
     const val kMaster = ElectricalConstants.kLiftMasterTalonId
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
 
-    private const val kRotationsPerTick = 4096
+    private const val kTicksPerRevolution = COTSConstants.MagEncoder.kTicksPerRevolution
     private const val kDrumRadiusInches = 1.5
-    private const val kDrumCircumfrence = 2 * kDrumRadiusInches * Math.PI
-    const val kInchesPerTick = kRotationsPerTick * kDrumCircumfrence
+    private const val kDrumCircumference = 2 * kDrumRadiusInches * Math.PI
+    const val kInchesPerTick = kTicksPerRevolution * kDrumCircumference
 
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
