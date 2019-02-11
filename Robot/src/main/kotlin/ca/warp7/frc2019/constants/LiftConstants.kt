@@ -69,7 +69,7 @@ object LiftConstants {
 
         // TalonSRXConfiguration
 
-        primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
+        primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative
 
         peakCurrentLimit = 1
         peakCurrentDuration = 1
