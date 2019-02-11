@@ -62,12 +62,12 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 0.0
+        openloopRamp = 1.0
         closedloopRamp = 0.0
 
         neutralDeadband = 0.04
 
-        voltageCompSaturation = 0.0
+        voltageCompSaturation = 12.0 // Max voltage
 
         // TalonSRXConfiguration
 

@@ -9,6 +9,7 @@ import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
@@ -19,11 +20,21 @@ object Drive : Subsystem() {
 
     val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster)
             .config(DriveConstants.kMasterTalonConfig)
+            .apply {
+                setNeutralMode(NeutralMode.Brake)
+                enableVoltageCompensation(true)
+                enableCurrentLimit(false)
+            }
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
 
     val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster)
             .config(DriveConstants.kMasterTalonConfig)
+            .apply {
+                setNeutralMode(NeutralMode.Brake)
+                enableVoltageCompensation(true)
+                enableCurrentLimit(false)
+            }
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA))
             .followedBy(VictorSPX(DriveConstants.kRightFollowerB))
 
@@ -37,7 +48,7 @@ object Drive : Subsystem() {
         Percent, Velocity, Position, WPILibControlled
     }
 
-    var outputMode: OutputMode = OutputMode.Percent
+    var outputMode = OutputMode.Percent
 
     var leftDemand = 0.0
     var rightDemand = 0.0
