@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.subsystems.drive
 
+@Suppress("unused")
 fun calcDifferentialSpeeds(xSpeed: Double, zRotation: Double): Pair<Double, Double> {
     val angularPower: Double = Math.abs(xSpeed) * zRotation
 
