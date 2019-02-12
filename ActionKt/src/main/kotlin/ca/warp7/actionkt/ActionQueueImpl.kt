@@ -3,7 +3,8 @@ package ca.warp7.actionkt
 class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
 
     private val queue: MutableList<NameableAction> = mutableListOf()
-    var currentAction: NameableAction? = null
+    var currentName: String? = null
+    var currentAction: Action? = null
     var started = false
 
     override operator fun Action.unaryPlus() {
@@ -22,18 +23,20 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
         super.update()
         if (currentAction == null) {
             if (queue.isEmpty()) return
-            currentAction = queue.removeAt(0)
-            currentAction?.action?.start()
+            val (action, name) = queue.removeAt(0)
+            action.start()
+            currentAction = action
+            currentName = name
         }
-        currentAction?.action?.update()
-        if (currentAction?.action?.shouldFinish == true) {
-            currentAction?.action?.stop()
+        currentAction?.update()
+        if (currentAction?.shouldFinish != false) {
+            currentAction?.stop()
             currentAction = null
         }
     }
 
     override fun stop() {
-        currentAction?.action?.stop()
+        currentAction?.stop()
         super.stop()
     }
 

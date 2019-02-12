@@ -18,7 +18,6 @@ private class WPISpeedController(val base: BaseMotorController) : SpeedControlle
     override fun stopMotor() = base.neutralOutput()
     override fun get(): Double = lastSpeed
     override fun disable() = base.neutralOutput()
-
     override fun set(speed: Double) {
         lastSpeed = speed
         base.set(ControlMode.PercentOutput, speed)
@@ -29,4 +28,4 @@ private class WPISpeedController(val base: BaseMotorController) : SpeedControlle
     }
 }
 
-val <T : BaseMotorController> T.wpi: SpeedController get() = WPISpeedController(this)
+fun <T : BaseMotorController> T.wpi(): SpeedController = WPISpeedController(this)
