@@ -3,10 +3,6 @@ package ca.warp7.actionkt
 @ActionDSLMarker
 open class ActionDSLImpl : ActionDSL, Action, ActionState {
 
-    override fun String.not() {
-        name = this
-    }
-
     private var start: ActionState.() -> Unit = {}
     private var update: ActionState.() -> Unit = {}
     private var stop: ActionState.() -> Unit = {}
@@ -47,5 +43,14 @@ open class ActionDSLImpl : ActionDSL, Action, ActionState {
 
     override fun onStop(block: ActionState.() -> Unit) {
         stop = block
+    }
+
+
+    override fun String.not() {
+        name = this
+    }
+
+
+    override fun printTaskGraph() {
     }
 }

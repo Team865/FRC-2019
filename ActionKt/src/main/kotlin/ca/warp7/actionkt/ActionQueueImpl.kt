@@ -36,4 +36,10 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
         currentAction?.action?.stop()
         super.stop()
     }
+
+    override fun printTaskGraph() {
+        for ((index, task) in queue.withIndex()) {
+            print("--" + (task.name ?: task::class.java.simpleName + index))
+        }
+    }
 }
