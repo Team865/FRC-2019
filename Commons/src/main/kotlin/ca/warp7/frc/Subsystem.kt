@@ -76,7 +76,11 @@ abstract class Subsystem : ActionStateMachine() {
         onOutput()
     }
 
-    private val tab: ShuffleboardContainer by lazy { Shuffleboard.getTab(this::class.java.simpleName) }
+    private val tab = Shuffleboard.getTab(this::class.java.simpleName)
+
+    /**
+     * Function to be called in onPostUpdate to report to Shuffleboard
+     */
     fun shuffleboard(block: ShuffleboardContainer.() -> Unit) = tab.run(block)
 
     /**
