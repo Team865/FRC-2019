@@ -13,7 +13,7 @@ object SuperstructureState {
         Lift.set(LiftState.kIdle)
         Intake.set(IntakeState.kUp)
         Conveyor.set(ConveyorState.kIdle)
-        Hatch.set(HatchState.kIdle)
+        Hatch.set(Hatch.runOnce { pushing = false })
         Climber.set(Climber.runOnce { climbing = false })
     }
 

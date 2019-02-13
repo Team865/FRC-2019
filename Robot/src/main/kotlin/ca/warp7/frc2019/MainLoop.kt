@@ -1,5 +1,6 @@
 package ca.warp7.frc2019
 
+import ca.warp7.actionkt.action
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
@@ -52,7 +53,11 @@ object MainLoop : RobotControlLoop {
                         wantedPosition.setpointType = LiftSetpointType.Hatch
                     }
                 }
-                aButton -> Hatch.set(HatchState.kPushing)
+                aButton -> Hatch.set(action {
+                    onStart { Hatch.pushing = true }
+                    finishWhen { elapsed > 0.5 }
+                    onStop { Hatch.pushing = false }
+                })
                 else -> Unit
             }
             if (rightStickButton == HeldDown) {
