@@ -1,5 +1,6 @@
 package ca.warp7.frc2019
 
+import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
 import ca.warp7.frc.setLoop
@@ -18,6 +19,12 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
         println("Hello me is robit!")
         Drive.set(DriveState.kNeutralMotionState)
         Infrastructure.set(InfrastructureState.kStateMonitor)
+        Climber.set(Climber.runOnce { climbing = false })
+        Intake.set(IntakeState.kUp)
+        Conveyor.set(ConveyorState.kIdle)
+        Lift.set(LiftState.kIdle)
+        Outtake.set(OuttakeState.kIdle)
+        Hatch.set(Hatch.runOnce { pushing = false })
         Superstructure.set(SuperstructureState.kStartingConfiguration)
     }
 

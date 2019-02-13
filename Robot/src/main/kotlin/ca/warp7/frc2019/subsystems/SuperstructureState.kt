@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
+import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.superstructure.IndexingCargo
 import ca.warp7.frc2019.subsystems.superstructure.MovingLift
 
@@ -9,12 +10,7 @@ object SuperstructureState {
     val kIdle = runOnce {}
 
     val kStartingConfiguration = runOnce {
-        Outtake.set(OuttakeState.kIdle)
-        Lift.set(LiftState.kIdle)
-        Intake.set(IntakeState.kUp)
-        Conveyor.set(ConveyorState.kIdle)
-        Hatch.set(Hatch.runOnce { pushing = false })
-        Climber.set(Climber.runOnce { climbing = false })
+        LiftMotionPlanner.updateMeasurements(0.0)
     }
 
     val kDefending = runOnce {

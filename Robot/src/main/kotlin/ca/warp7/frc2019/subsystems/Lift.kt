@@ -34,7 +34,7 @@ object Lift : Subsystem() {
     var actualPercent = 0.0
     var actualCurrent = 0.0
     var actualVoltage = 0.0
-    var hallEffectTriggered = false
+    var hallEffectTriggered = true
 
     var outputType = OutputType.Percent
         set(value) {
