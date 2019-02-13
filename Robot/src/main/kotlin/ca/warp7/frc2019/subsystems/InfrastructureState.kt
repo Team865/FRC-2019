@@ -4,6 +4,6 @@ import ca.warp7.actionkt.periodic
 
 object InfrastructureState {
     val kStateMonitor = Infrastructure.periodic {
-        if (compressor.pressureSwitchValue && !compressor.enabled()) compressor.start()
+        if (compressor.pressureSwitchValue && !compressor.enabled()) startCompressor = true
     }
 }

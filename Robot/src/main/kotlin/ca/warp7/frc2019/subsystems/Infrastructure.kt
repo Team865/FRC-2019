@@ -17,8 +17,17 @@ object Infrastructure : Subsystem() {
     var yaw = 0.0
     var pitch = 0.0
 
+    var startCompressor = false
+
     override fun onDisabled() {
         compressor.stop()
+    }
+
+    override fun onOutput() {
+        if (startCompressor) {
+            compressor.start()
+            startCompressor = false
+        }
     }
 
     override fun onMeasure(dt: Double) {
