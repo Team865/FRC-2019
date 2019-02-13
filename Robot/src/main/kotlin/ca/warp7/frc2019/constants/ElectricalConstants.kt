@@ -41,6 +41,7 @@ internal object ElectricalConstants {
 
     const val kIntakeSolenoidPort = 0 // TODO
     const val kOuttakeSolenoidPort = 1 // TODO
+    const val kClimberSolenoidPort = 2 // TODO
 
 
     /*
