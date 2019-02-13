@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
@@ -67,18 +66,16 @@ object Lift : Subsystem() {
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.apply {
-            add("Output Type", outputType.name)
-            add("Actual Percent", actualPercent)
-            add("Actual Current", actualCurrent)
-            add("Actual Voltage", actualVoltage)
-            add("Demand", demand)
-            add("Feedforward", feedForward)
-            add("Height (in)", LiftMotionPlanner.height)
-            add("Velocity (in/s)", LiftMotionPlanner.velocity)
-            add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
-            add(hallEffect)
-        }
+    override fun onPostUpdate() = shuffleboard {
+        add("Output Type", outputType.name)
+        add("Actual Percent", actualPercent)
+        add("Actual Current", actualCurrent)
+        add("Actual Voltage", actualVoltage)
+        add("Demand", demand)
+        add("Feedforward", feedForward)
+        add("Height (in)", LiftMotionPlanner.height)
+        add("Velocity (in/s)", LiftMotionPlanner.velocity)
+        add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
+        add(hallEffect)
     }
 }

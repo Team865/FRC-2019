@@ -2,6 +2,7 @@ package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionStateMachine
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 /**
@@ -75,16 +76,12 @@ abstract class Subsystem : ActionStateMachine() {
         onOutput()
     }
 
+    private val tab: ShuffleboardContainer by lazy { Shuffleboard.getTab(this::class.java.simpleName) }
+    fun shuffleboard(block: ShuffleboardContainer.() -> Unit) = tab.run(block)
+
     /**
      *
      * Called periodically for the subsystem to get measurements from its input devices.
-     * This method is called from the Input Looper. All sensor reading should be done
-     * in this method.
-     *
-     *
-     * When using input/current states, the measured values here should change
-     * the subsystem's current state
-     *
      *
      * Note that this method may still be called while the robot is disabled, so
      * extra care should be made that it performs no outputting
@@ -94,5 +91,5 @@ abstract class Subsystem : ActionStateMachine() {
     /**
      * Send values to shuffleboard
      */
-    open fun onUpdateShuffleboard(container: ShuffleboardContainer) {}
+    open fun onPostUpdate() {}
 }

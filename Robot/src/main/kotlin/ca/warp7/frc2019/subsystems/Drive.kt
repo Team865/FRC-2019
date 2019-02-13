@@ -16,7 +16,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 object Drive : Subsystem() {
 
@@ -40,7 +39,7 @@ object Drive : Subsystem() {
         selectedSensorPosition = 0
     }
 
-    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi, rightMaster.wpi).apply {
+    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi(), rightMaster.wpi()).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
         setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
         setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
@@ -113,18 +112,16 @@ object Drive : Subsystem() {
         DriveMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.apply {
-            add("Output Mode", outputMode.name)
-            add("Left Demand", leftDemand)
-            add("Left Feedforward", leftFeedForward)
-            add("Right Demand", rightDemand)
-            add("Right Feedforward", rightFeedForward)
-            add("Left Position", leftPositionTicks)
-            add("Right Position", rightPositionTicks)
-            add("Left Velocity", leftVelocityTicks)
-            add("Right Velocity", rightVelocityTicks)
-            add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
-        }
+    override fun onPostUpdate() = shuffleboard {
+        add("Output Mode", outputMode.name)
+        add("Left Demand", leftDemand)
+        add("Left Feedforward", leftFeedForward)
+        add("Right Demand", rightDemand)
+        add("Right Feedforward", rightFeedForward)
+        add("Left Position", leftPositionTicks)
+        add("Right Position", rightPositionTicks)
+        add("Left Velocity", leftVelocityTicks)
+        add("Right Velocity", rightVelocityTicks)
+        add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
     }
 }
