@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.IntakeConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.Solenoid
 
@@ -10,6 +11,10 @@ object Intake : Subsystem() {
 
     private val victor = VictorSPX(IntakeConstants.kVictor)
     private val solenoid = Solenoid(IntakeConstants.kSolenoid)
+
+    init {
+        victor.setNeutralMode(NeutralMode.Coast)
+    }
 
     var extended = false
     var speed = 0.0

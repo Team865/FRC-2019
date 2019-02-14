@@ -4,6 +4,7 @@ import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionStateMachine
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab
 
 /**
  * Subsystem defines a robot subsystem. A good example of a subsystem is the drive train or
@@ -76,7 +77,7 @@ abstract class Subsystem : ActionStateMachine() {
         onOutput()
     }
 
-    private val tab = Shuffleboard.getTab(this::class.java.simpleName)
+    private val tab: ShuffleboardTab by lazy { Shuffleboard.getTab(this::class.java.simpleName) }
 
     /**
      * Function to be called in onPostUpdate to report to Shuffleboard

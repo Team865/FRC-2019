@@ -13,12 +13,18 @@ import edu.wpi.first.wpilibj.DigitalInput
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    private val master = TalonSRX(LiftConstants.kMaster).also {
-        it.setNeutralMode(NeutralMode.Brake)
-        it.configAllSettings(LiftConstants.kMasterTalonConfig)
-        it.enableVoltageCompensation(false)
-        it.enableCurrentLimit(false)
-        VictorSPX(LiftConstants.kFollower).follow(it)
+    private val master = TalonSRX(LiftConstants.kMaster).apply {
+        setNeutralMode(NeutralMode.Brake)
+        configAllSettings(LiftConstants.kMasterTalonConfig)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+    }
+
+    init {
+        val victor = VictorSPX(LiftConstants.kFollower)
+        victor.setNeutralMode(NeutralMode.Coast)
+        victor.inverted = true
+        victor.follow(master)
     }
 
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
@@ -51,9 +57,9 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() = when (outputType) {
-        OutputType.Percent -> master.set(ControlMode.PercentOutput, demand)
-        OutputType.Position -> master.set(ControlMode.Position, demand, DemandType.ArbitraryFeedForward, feedForward)
-        OutputType.Velocity -> master.set(ControlMode.Velocity, demand, DemandType.ArbitraryFeedForward, feedForward)
+        OutputType.Percent -> master.set(ControlMode.PercentOutput, -demand)
+        OutputType.Position -> master.set(ControlMode.Position, -demand, DemandType.ArbitraryFeedForward, feedForward)
+        OutputType.Velocity -> master.set(ControlMode.Velocity, -demand, DemandType.ArbitraryFeedForward, feedForward)
     }
 
     override fun onMeasure(dt: Double) {
