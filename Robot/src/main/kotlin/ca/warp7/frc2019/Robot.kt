@@ -23,7 +23,7 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
         Hatch.set { pushing = false }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
-        Intake.set(IntakeState.kUp)
+        Intake.set { extended = false }
         Lift.set(LiftState.kIdle)
         Superstructure.set(SuperstructureState.kStartingConfiguration)
     }

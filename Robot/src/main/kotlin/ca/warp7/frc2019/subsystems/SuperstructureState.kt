@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.actionkt.runOnce
+import ca.warp7.frc.set
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.superstructure.IndexingCargo
 import ca.warp7.frc2019.subsystems.superstructure.MovingLift
@@ -15,7 +16,7 @@ object SuperstructureState {
 
     val kDefending = runOnce {
         Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
-        Intake.set(IntakeState.kUp)
+        Intake.set { extended = false }
         Outtake.set(OuttakeState.kIdle)
     }
 
@@ -30,7 +31,7 @@ object SuperstructureState {
 
     val kIntakeHatchMode = runOnce {
         Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
-        Intake.set(IntakeState.kUp)
+        Intake.set { extended = false }
     }
 
     val kMovingLift = MovingLift
