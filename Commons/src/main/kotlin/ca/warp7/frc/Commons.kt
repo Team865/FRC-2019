@@ -3,6 +3,7 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.runOnce
 
 fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
@@ -13,5 +14,9 @@ fun RobotControlLoop.start() {
 }
 
 fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)
+
 fun limit(value: Double, lim: Double): Double = Math.max(-1 * Math.abs(lim), Math.min(value, Math.abs(lim)))
+
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
+
+fun <T : Subsystem> T.set(block: T.() -> Unit) = set(runOnce(block))
