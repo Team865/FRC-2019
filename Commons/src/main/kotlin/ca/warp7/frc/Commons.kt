@@ -8,8 +8,8 @@ fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun setLoop(loop: RobotControlLoop?) {
-    CommonRobot.controlLoop = loop
+fun RobotControlLoop.start() {
+    CommonRobot.controlLoop = this
 }
 
 fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)

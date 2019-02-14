@@ -3,7 +3,7 @@ package ca.warp7.frc2019
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.setLoop
+import ca.warp7.frc.start
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
@@ -18,7 +18,7 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
     override fun robotInit() {
         println("Hello me is robit!")
         Drive.set(DriveState.kNeutralMotionState)
-        Infrastructure.set(InfrastructureState.kStateMonitor)
+        Infrastructure.set(Infrastructure.runOnce { startCompressor = true })
         Climber.set(Climber.runOnce { climbing = false })
         Intake.set(IntakeState.kUp)
         Conveyor.set(ConveyorState.kIdle)
@@ -47,9 +47,9 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
     =====================================================
      */
 
-    override fun autonomousInit() = setLoop(SandstormLoop)
-    override fun teleopInit() = setLoop(MainLoop)
-    override fun testInit() = setLoop(MainLoop)
+    override fun autonomousInit() = SandstormLoop.start()
+    override fun teleopInit() = MainLoop.start()
+    override fun testInit() = MainLoop.start()
 
     /*
     =====================================================
