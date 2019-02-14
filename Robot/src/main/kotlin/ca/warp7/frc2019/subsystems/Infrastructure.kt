@@ -10,18 +10,28 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 object Infrastructure : Subsystem() {
     val compressor = Compressor(InfrastructureConstants.kCompressorModule)
-    val ahrs = AHRS(SPI.Port.kMXP)
-    private val powerDistributionPanel = PowerDistributionPanel(InfrastructureConstants.kPDPModule)
+    private val ahrs = AHRS(SPI.Port.kMXP)
+    private val pdp = PowerDistributionPanel(InfrastructureConstants.kPDPModule)
 
     var ahrsCalibrated = false
     var yaw = 0.0
     var pitch = 0.0
 
+    var startCompressor = false
+
     override fun onDisabled() {
         compressor.stop()
     }
 
+    override fun onOutput() {
+        if (startCompressor) {
+            compressor.start()
+            startCompressor = false
+        }
+    }
+
     override fun onMeasure(dt: Double) {
+        if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
         if (ahrsCalibrated) {
             yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
             pitch = Math.toRadians(ahrs.pitch.toDouble())
@@ -29,7 +39,8 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onPostUpdate() = shuffleboard {
-        add("pdp", powerDistributionPanel).withWidget(BuiltInWidgets.kPowerDistributionPanel)
+        add("Compressor", compressor)
+        add("pdp", pdp).withWidget(BuiltInWidgets.kPowerDistributionPanel)
         add("ahrsCalibrated", ahrsCalibrated)
         add("Yaw", yaw)
         add("Pitch", pitch)

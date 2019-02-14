@@ -1,5 +1,7 @@
 package ca.warp7.frc2019
 
+import ca.warp7.actionkt.action
+import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.RobotControlLoop
@@ -28,8 +30,8 @@ object MainLoop : RobotControlLoop {
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
                 Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis * -1 }
             }
-            if (startButton == Pressed) {
-                // TODO Reserved for climbing mechanism
+            if (aButton == Pressed) {
+                Climber.set(Climber.runOnce { climbing = !climbing })
             }
         }
         withOperator {
@@ -51,7 +53,11 @@ object MainLoop : RobotControlLoop {
                         wantedPosition.setpointType = LiftSetpointType.Hatch
                     }
                 }
-                aButton -> Hatch.set(HatchState.kPushing)
+                aButton -> Hatch.set(action {
+                    onStart { Hatch.pushing = true }
+                    finishWhen { elapsed > 0.5 }
+                    onStop { Hatch.pushing = false }
+                })
                 else -> Unit
             }
             if (rightStickButton == HeldDown) {
