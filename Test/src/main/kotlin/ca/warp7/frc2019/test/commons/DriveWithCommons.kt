@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.drive_with_commons
+package ca.warp7.frc2019.test.commons
 
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop

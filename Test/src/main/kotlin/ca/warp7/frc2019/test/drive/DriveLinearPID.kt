@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.drive_characterization
+package ca.warp7.frc2019.test.drive
 
 import ca.warp7.frc.config
 import ca.warp7.frc.epsilonEquals
@@ -60,17 +60,20 @@ class DriveLinearPID : TimedRobot() {
         val newP = p.getDouble(0.0)
         if (!newP.epsilonEquals(lastP, 1E-9)) {
             lastP = newP
-            leftMaster.config_kP(0, newP)
+            leftMaster.config_kP(0, newP, 0)
+            rightMaster.config_kP(0, newP, 0)
         }
         val newI = i.getDouble(0.0)
         if (!newI.epsilonEquals(lastI, 1E-9)) {
             lastI = newI
-            leftMaster.config_kI(0, newI)
+            leftMaster.config_kI(0, newI, 0)
+            rightMaster.config_kI(0, newI, 0)
         }
         val newD = d.getDouble(0.0)
         if (!newD.epsilonEquals(lastD, 1E-9)) {
             lastD = newP
-            leftMaster.config_kD(0, newD)
+            leftMaster.config_kD(0, newD, 0)
+            rightMaster.config_kD(0, newD, 0)
         }
     }
 
