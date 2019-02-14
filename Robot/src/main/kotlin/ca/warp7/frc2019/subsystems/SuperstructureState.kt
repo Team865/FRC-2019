@@ -22,7 +22,7 @@ object SuperstructureState {
     val kIndexingCargo = IndexingCargo
 
     val kIntakeCargoMode = runOnce {
-        Intake.set(IntakeState.kStartOpenLoop)
+        Intake.set(IntakeState.kExtendedOpenLoop)
         Lift.set(LiftState.kGoToPosition) {
             heightInputAbsoluteInches = 0.0 // TODO("loading station cargo height")
         }
