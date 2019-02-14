@@ -17,7 +17,7 @@ object SuperstructureState {
     val kDefending = runOnce {
         Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
         Intake.set { extended = false }
-        Outtake.set(OuttakeState.kIdle)
+        Outtake.set { speed = 0.0 }
     }
 
     val kIndexingCargo = IndexingCargo
