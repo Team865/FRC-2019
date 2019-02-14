@@ -16,12 +16,13 @@ object Lift : Subsystem() {
     private val master = TalonSRX(LiftConstants.kMaster).apply {
         setNeutralMode(NeutralMode.Brake)
         configAllSettings(LiftConstants.kMasterTalonConfig)
-        enableVoltageCompensation(false)
+        enableVoltageCompensation(true)
         enableCurrentLimit(false)
     }
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)
+        victor.setNeutralMode(NeutralMode.Coast)
         victor.inverted = true
         victor.follow(master)
     }
