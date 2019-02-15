@@ -21,9 +21,11 @@ class LiftFeedforward : TimedRobot() {
 
     private var feedforward = 0.05
     private var olr = 0.5
+    private var scale = 0.5
 
     private lateinit var olrEntry: NetworkTableEntry
     private lateinit var ffEntry: NetworkTableEntry
+    private lateinit var scaleEntry: NetworkTableEntry
 
     private var leftPressed = false
     private var rightPressed = false
@@ -61,7 +63,7 @@ class LiftFeedforward : TimedRobot() {
             liftMaster.configOpenloopRamp(newOLR, 0)
             olr = newOLR
         }
-        if (xboxController.yButton) {
+        if (xboxController.startButton) {
             feedforward = 0.05
             olr = 0.0
             liftMaster.configOpenloopRamp(olr, 0)
