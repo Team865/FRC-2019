@@ -5,7 +5,6 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
-import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
@@ -14,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import edu.wpi.first.wpilibj.drive.DifferentialDrive
 
 object Drive : Subsystem() {
 
@@ -38,13 +36,8 @@ object Drive : Subsystem() {
         selectedSensorPosition = 0
     }
 
-    val wpiDrive: DifferentialDrive = DifferentialDrive(rightMaster.wpi(), leftMaster.wpi()).apply {
-        setDeadband(DriveConstants.kDifferentialDeadband)
-        isSafetyEnabled = false
-    }
-
     enum class OutputMode {
-        Percent, Velocity, Position, WPILibControlled
+        Percent, Velocity, Position
     }
 
     var outputMode = Percent
@@ -99,7 +92,6 @@ object Drive : Subsystem() {
             leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {
@@ -120,6 +112,5 @@ object Drive : Subsystem() {
         put("Right Position", rightPositionTicks)
         put("Left Velocity", leftVelocityTicks)
         put("Right Velocity", rightVelocityTicks)
-        put(wpiDrive)
     }
 }

@@ -33,6 +33,8 @@ object DriveConstants {
 
     const val kDifferentialDeadband = 0.2
 
+    const val kRampSecondsFromNeutralToFull = 1.0
+
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
