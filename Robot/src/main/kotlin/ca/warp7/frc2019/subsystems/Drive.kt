@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 object Drive : Subsystem() {
 
@@ -104,23 +103,23 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-//        leftPositionTicks = leftMaster.selectedSensorPosition
-//        rightPositionTicks = rightMaster.selectedSensorPosition
-//        leftVelocityTicks = leftMaster.selectedSensorVelocity
-//        rightVelocityTicks = rightMaster.selectedSensorVelocity
+        leftPositionTicks = leftMaster.selectedSensorPosition
+        rightPositionTicks = rightMaster.selectedSensorPosition
+        leftVelocityTicks = leftMaster.selectedSensorVelocity
+        rightVelocityTicks = rightMaster.selectedSensorVelocity
         DriveMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onPostUpdate() = shuffleboard {
-        add("Output Mode", outputMode.name)
-        add("Left Demand", leftDemand)
-        add("Left Feedforward", leftFeedForward)
-        add("Right Demand", rightDemand)
-        add("Right Feedforward", rightFeedForward)
-        add("Left Position", leftPositionTicks)
-        add("Right Position", rightPositionTicks)
-        add("Left Velocity", leftVelocityTicks)
-        add("Right Velocity", rightVelocityTicks)
-        add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
+    override fun onPostUpdate() {
+        put("Output Mode", outputMode.name)
+        put("Left Demand", leftDemand)
+        put("Left Feedforward", leftFeedForward)
+        put("Right Demand", rightDemand)
+        put("Right Feedforward", rightFeedForward)
+        put("Left Position", leftPositionTicks)
+        put("Right Position", rightPositionTicks)
+        put("Left Velocity", leftVelocityTicks)
+        put("Right Velocity", rightVelocityTicks)
+        put(wpiDrive)
     }
 }
