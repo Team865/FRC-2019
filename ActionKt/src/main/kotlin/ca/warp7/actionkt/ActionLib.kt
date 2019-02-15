@@ -39,12 +39,12 @@ fun wait(seconds: Double) = waitUntil { elapsed > seconds }
 
 fun cleanup(block: ActionState.() -> Unit) = action { onStop(block) }
 
-fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = object : Action {
+inline fun <T : ActionStateMachine> T.runOnce(crossinline block: T.() -> Unit) = object : Action {
     override fun start() = block(this@runOnce)
     override val shouldFinish: Boolean get() = false
 }
 
-fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = object : Action {
+inline fun <T : ActionStateMachine> T.periodic(crossinline block: T.() -> Unit) = object : Action {
     override fun update() = block(this@periodic)
     override val shouldFinish: Boolean get() = false
 }
@@ -59,12 +59,12 @@ fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
     finishWhen { false }
 }
 
-fun runOnce(block: () -> Unit) = object : Action {
+inline fun runOnce(crossinline block: () -> Unit) = object : Action {
     override fun start() = block()
     override val shouldFinish: Boolean get() = false
 }
 
-fun periodic(block: () -> Unit) = object : Action {
+inline fun periodic(crossinline block: () -> Unit) = object : Action {
     override fun update() = block()
     override val shouldFinish: Boolean get() = false
 }

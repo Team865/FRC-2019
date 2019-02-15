@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.XboxController
 internal fun u(old: ControllerState, _new: Boolean): ControllerState {
     return if (_new)
         if (old == Pressed || old == HeldDown) HeldDown else Pressed
-    else if (old == Released || old == KeptUp) KeptUp else Released
+    else if (old == Released || old == None) None else Released
 }
 
 internal fun collectControllerData(s: RobotControllerImpl, c: XboxController) {
@@ -41,15 +41,15 @@ internal fun resetControllerData(s: RobotControllerImpl) {
         leftYAxis = 0.0
         rightXAxis = 0.0
         rightYAxis = 0.0
-        aButton = KeptUp
-        bButton = KeptUp
-        xButton = KeptUp
-        yButton = KeptUp
-        leftBumper = KeptUp
-        rightBumper = KeptUp
-        leftStickButton = KeptUp
-        rightStickButton = KeptUp
-        startButton = KeptUp
-        backButton = KeptUp
+        aButton = None
+        bButton = None
+        xButton = None
+        yButton = None
+        leftBumper = None
+        rightBumper = None
+        leftStickButton = None
+        rightStickButton = None
+        startButton = None
+        backButton = None
     }
 }
