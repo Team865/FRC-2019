@@ -1,10 +1,10 @@
-package ca.warp7.frc2019
+package ca.warp7.frc2019.test.lift.feedforward
 
 import ca.warp7.frc.*
-import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot : TimedRobot() {
+@Suppress("unused")
+class LiftFeedforward2 : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -13,16 +13,8 @@ class Robot : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        setControllerMode(ControllerMode.DriverAndOperator)
-        Drive.set(DriveState.kNeutralMotionState)
-        Infrastructure.set { startCompressor = true }
-        Climber.set { climbing = false }
-        Hatch.set { pushing = false }
-        Conveyor.set { speed = 0.0 }
-        Outtake.set { speed = 0.0 }
-        Intake.set { extended = false }
-        Lift.set(LiftState.kIdle)
-        Superstructure.set(SuperstructureState.kStartingConfiguration)
+        setControllerMode(ControllerMode.DriverOnly)
+        LiftSubsystem.set { }
     }
 
     /**
@@ -44,9 +36,9 @@ class Robot : TimedRobot() {
     =====================================================
      */
 
-    override fun autonomousInit() = SandstormLoop.start()
-    override fun teleopInit() = MainLoop.start()
-    override fun testInit() = MainLoop.start()
+    override fun autonomousInit() = Unit
+    override fun teleopInit() = LiftFeedforwardLoop.start()
+    override fun testInit() = LiftFeedforwardLoop.start()
 
     /*
     =====================================================
@@ -59,15 +51,4 @@ class Robot : TimedRobot() {
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit
     override fun testPeriodic() = Unit
-
-    /**
-     * The main function that is executed from the `Main-Class` of the jar file.
-     * It calls on RobotBase to initialize system hardware and start the main
-     * loop that calls the other functions
-     */
-    @Suppress("UnusedMainParameter")
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Robot() }
-    }
 }

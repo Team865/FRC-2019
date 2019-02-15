@@ -41,6 +41,7 @@ fun cleanup(block: ActionState.() -> Unit) = action { onStop(block) }
 
 fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = object : Action {
     override fun start() = block(this@runOnce)
+    override val shouldFinish: Boolean get() = false
 }
 
 fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = object : Action {
@@ -48,7 +49,10 @@ fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = object : Action {
     override val shouldFinish: Boolean get() = false
 }
 
-fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action { onStart(block) }
+fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action {
+    onStart(block)
+    finishWhen { false }
+}
 
 fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
     onUpdate(block)
@@ -57,6 +61,7 @@ fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
 
 fun runOnce(block: () -> Unit) = object : Action {
     override fun start() = block()
+    override val shouldFinish: Boolean get() = false
 }
 
 fun periodic(block: () -> Unit) = object : Action {

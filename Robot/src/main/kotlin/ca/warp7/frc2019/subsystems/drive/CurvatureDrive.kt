@@ -9,6 +9,12 @@ object CurvatureDrive : Action {
     var zRotation = 0.0
     var isQuickTurn = false
 
+    override fun start() {
+        xSpeed = 0.0
+        zRotation = 0.0
+        isQuickTurn = false
+    }
+
     override fun update() {
         Drive.outputMode = Drive.OutputMode.WPILibControlled
         Drive.wpiDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)

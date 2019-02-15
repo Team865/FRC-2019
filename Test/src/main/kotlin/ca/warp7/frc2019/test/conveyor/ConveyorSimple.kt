@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.conveyor_simple
+package ca.warp7.frc2019.test.conveyor
 
 import ca.warp7.frc2019.constants.ConveyorConstants
 import com.ctre.phoenix.motorcontrol.ControlMode

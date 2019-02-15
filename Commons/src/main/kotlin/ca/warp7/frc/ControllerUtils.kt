@@ -12,7 +12,7 @@ internal fun u(old: ControllerState, _new: Boolean): ControllerState {
     else if (old == Released || old == KeptUp) KeptUp else Released
 }
 
-internal fun collectControllerData(s: ControllerData, c: XboxController) {
+internal fun collectControllerData(s: RobotControllerImpl, c: XboxController) {
     with(s) {
         leftTriggerAxis = c.getTriggerAxis(kLeft)
         rightTriggerAxis = c.getTriggerAxis(kRight)
@@ -33,7 +33,7 @@ internal fun collectControllerData(s: ControllerData, c: XboxController) {
     }
 }
 
-internal fun resetControllerData(s: ControllerData) {
+internal fun resetControllerData(s: RobotControllerImpl) {
     with(s) {
         leftTriggerAxis = 0.0
         rightTriggerAxis = 0.0
@@ -53,6 +53,3 @@ internal fun resetControllerData(s: ControllerData) {
         backButton = KeptUp
     }
 }
-
-fun withDriver(block: RobotController.() -> Unit) = block(CommonRobot.robotDriver)
-fun withOperator(block: RobotController.() -> Unit) = block(CommonRobot.robotOperator)

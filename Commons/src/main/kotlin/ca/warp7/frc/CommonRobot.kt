@@ -5,7 +5,6 @@ import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -17,14 +16,14 @@ internal object CommonRobot {
 
     val subsystems: MutableSet<Subsystem> = mutableSetOf()
 
-    val robotDriver = RobotController()
-    val robotOperator = RobotController()
+    val robotDriver = RobotControllerImpl()
+    val robotOperator = RobotControllerImpl()
+    var controllerMode = 0
 
     private val xboxDriver = XboxController(0)
     private val xboxOperator = XboxController(1)
 
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-    private var controllerMode = 0
 
     private val originalOut = System.out
     private val originalErr = System.err
@@ -68,20 +67,20 @@ internal object CommonRobot {
         // Collect controller data
         when (controllerMode) {
             0 -> {
-                collectControllerData(robotDriver.data, xboxDriver)
-                collectControllerData(robotOperator.data, xboxOperator)
+                collectControllerData(robotDriver, xboxDriver)
+                collectControllerData(robotOperator, xboxOperator)
             }
             1 -> {
-                collectControllerData(robotDriver.data, xboxDriver)
-                resetControllerData(robotOperator.data)
+                collectControllerData(robotDriver, xboxDriver)
+                resetControllerData(robotOperator)
             }
             2 -> {
-                resetControllerData(robotDriver.data)
-                collectControllerData(robotOperator.data, xboxDriver)
+                resetControllerData(robotDriver)
+                collectControllerData(robotOperator, xboxDriver)
             }
         }
         // Check to switch controllers
-        if (!fmsAttached || robotDriver.data.backButton == ControllerState.Pressed) {
+        if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed) {
             controllerMode = (controllerMode + 1) % 3
         }
         // Calculate exact loop period for measurements
@@ -98,15 +97,15 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-        subsystems.forEach {
-            it.shuffleboard {
-                // Show the current state in the appropriate tab
-                add("Current State", it.stateName)
-                        .withWidget(BuiltInWidgets.kTextView)
-                        .withPosition(0, 0)
-            }
-            it.onPostUpdate()
-        }
+//        subsystems.forEach {
+//            it.shuffleboard {
+//                // Show the current state in the appropriate tab
+//                add("Current State", it.stateName)
+//                        .withWidget(BuiltInWidgets.kTextView)
+//                        .withPosition(0, 0)
+//            }
+//            it.onPostUpdate()
+//        }
         // Flush the standard output
         outContent.apply {
             toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
@@ -122,7 +121,10 @@ internal object CommonRobot {
     fun disableOutputs() {
         autoRunner.stop()
         robotEnabled = false
-        subsystems.forEach { it.onDisabled() }
+        subsystems.forEach {
+            it.stopState()
+            it.onDisabled()
+        }
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(

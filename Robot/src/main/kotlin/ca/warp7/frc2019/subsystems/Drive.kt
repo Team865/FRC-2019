@@ -39,10 +39,9 @@ object Drive : Subsystem() {
         selectedSensorPosition = 0
     }
 
-    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi(), rightMaster.wpi()).apply {
+    val wpiDrive: DifferentialDrive = DifferentialDrive(rightMaster.wpi(), leftMaster.wpi()).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
-        setQuickStopAlpha(DifferentialDrive.kDefaultQuickStopAlpha)
-        setQuickStopThreshold(DifferentialDrive.kDefaultQuickStopThreshold)
+        isSafetyEnabled = false
     }
 
     enum class OutputMode {
@@ -105,10 +104,10 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        leftPositionTicks = leftMaster.selectedSensorPosition
-        rightPositionTicks = rightMaster.selectedSensorPosition
-        leftVelocityTicks = leftMaster.selectedSensorVelocity
-        rightVelocityTicks = rightMaster.selectedSensorVelocity
+//        leftPositionTicks = leftMaster.selectedSensorPosition
+//        rightPositionTicks = rightMaster.selectedSensorPosition
+//        leftVelocityTicks = leftMaster.selectedSensorVelocity
+//        rightVelocityTicks = rightMaster.selectedSensorVelocity
         DriveMotionPlanner.updateMeasurements(dt)
     }
 

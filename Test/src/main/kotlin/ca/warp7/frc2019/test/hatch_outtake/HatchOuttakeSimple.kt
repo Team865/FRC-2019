@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.hatch_outtake_simple
+package ca.warp7.frc2019.test.hatch_outtake
 
 import ca.warp7.frc2019.constants.HatchConstants
 import edu.wpi.first.wpilibj.Solenoid
