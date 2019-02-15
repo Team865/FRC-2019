@@ -96,12 +96,12 @@ abstract class Subsystem : ActionStateMachine() {
 
     private val entries: MutableMap<String, NetworkTableEntry> = mutableMapOf()
 
-    protected fun get(name: String) = entries[name]
+    fun get(name: String) = entries[name]
 
     /**
      * Put data into shuffleboard
      */
-    protected fun put(
+    fun put(
             name: String,
             value: Any,
             x: Int = 0,
@@ -124,7 +124,7 @@ abstract class Subsystem : ActionStateMachine() {
     /**
      * Put data into shuffleboard
      */
-    protected fun put(
+    fun put(
             value: Sendable,
             x: Int = 0,
             y: Int = 0,

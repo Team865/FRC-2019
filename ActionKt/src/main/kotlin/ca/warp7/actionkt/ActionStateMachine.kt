@@ -5,6 +5,7 @@ abstract class ActionStateMachine {
     private var currentState: Action? = null
 
     var stateName: String = "None"
+        internal set
 
     open fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         block(wantedState)
