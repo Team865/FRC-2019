@@ -18,12 +18,12 @@ internal object CommonRobot {
 
     val robotDriver = RobotController()
     val robotOperator = RobotController()
+    var controllerMode = 0
 
     private val xboxDriver = XboxController(0)
     private val xboxOperator = XboxController(1)
 
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-    private var controllerMode = 0
 
     private val originalOut = System.out
     private val originalErr = System.err

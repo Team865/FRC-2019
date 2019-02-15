@@ -56,3 +56,7 @@ internal fun resetControllerData(s: ControllerData) {
 
 fun withDriver(block: RobotController.() -> Unit) = block(CommonRobot.robotDriver)
 fun withOperator(block: RobotController.() -> Unit) = block(CommonRobot.robotOperator)
+
+fun setControllerMode(controllerMode: ControllerMode) {
+    CommonRobot.controllerMode = controllerMode.value
+}

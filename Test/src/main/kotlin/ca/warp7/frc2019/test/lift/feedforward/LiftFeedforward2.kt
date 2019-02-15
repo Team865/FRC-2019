@@ -1,9 +1,6 @@
 package ca.warp7.frc2019.test.lift.feedforward
 
-import ca.warp7.frc.disableRobot
-import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.set
-import ca.warp7.frc.start
+import ca.warp7.frc.*
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
@@ -16,6 +13,7 @@ class LiftFeedforward2 : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+        setControllerMode(ControllerMode.DriverOnly)
         LiftSubsystem.set { }
     }
 

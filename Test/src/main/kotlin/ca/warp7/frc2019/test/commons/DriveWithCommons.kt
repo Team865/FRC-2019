@@ -1,8 +1,6 @@
 package ca.warp7.frc2019.test.commons
 
-import ca.warp7.frc.disableRobot
-import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.start
+import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
 import edu.wpi.first.wpilibj.TimedRobot
@@ -17,6 +15,7 @@ class DriveWithCommons : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+        setControllerMode(ControllerMode.DriverOnly)
         Drive.set(DriveState.kNeutralOutput)
     }
 
