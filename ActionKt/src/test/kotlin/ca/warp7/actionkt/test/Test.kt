@@ -25,6 +25,7 @@ fun test2(): Action {
         }
 
         +action {
+            printTaskGraph()
             onStart { }
             finishWhen { true }
             onUpdate { }

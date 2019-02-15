@@ -5,8 +5,6 @@ import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -82,7 +80,7 @@ internal object CommonRobot {
             }
         }
         // Check to switch controllers
-        if (!fmsAttached || robotDriver.data.backButton == ControllerState.Pressed) {
+        if (!fmsAttached && robotDriver.data.backButton == ControllerState.Pressed) {
             controllerMode = (controllerMode + 1) % 3
         }
         // Calculate exact loop period for measurements
@@ -99,16 +97,15 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-        subsystems.forEach {
-            Shuffleboard.getTab(it::class.java.simpleName).apply {
-                // Show the current state in the appropriate tab
-                add("Current State", it.stateName)
-                        .withWidget(BuiltInWidgets.kTextView)
-                        .withPosition(0, 0)
-                // Update the rest to shuffleboard
-                it.onUpdateShuffleboard(this)
-            }
-        }
+//        subsystems.forEach {
+//            it.shuffleboard {
+//                // Show the current state in the appropriate tab
+//                add("Current State", it.stateName)
+//                        .withWidget(BuiltInWidgets.kTextView)
+//                        .withPosition(0, 0)
+//            }
+//            it.onPostUpdate()
+//        }
         // Flush the standard output
         outContent.apply {
             toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
@@ -124,7 +121,10 @@ internal object CommonRobot {
     fun disableOutputs() {
         autoRunner.stop()
         robotEnabled = false
-        subsystems.forEach { it.onDisabled() }
+        subsystems.forEach {
+            it.stopState()
+            it.onDisabled()
+        }
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(

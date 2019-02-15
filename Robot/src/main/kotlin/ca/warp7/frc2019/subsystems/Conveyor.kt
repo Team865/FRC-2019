@@ -3,11 +3,17 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.ConveyorConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Conveyor : Subsystem() {
     private val leftConveyor = VictorSPX(ConveyorConstants.kLeft)
     private val rightConveyor = VictorSPX(ConveyorConstants.kRight)
+
+    init {
+        leftConveyor.setNeutralMode(NeutralMode.Brake)
+        rightConveyor.setNeutralMode(NeutralMode.Brake)
+    }
 
     var speed = 0.0
 

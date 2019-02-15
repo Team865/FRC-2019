@@ -9,25 +9,28 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DigitalInput
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    private val master = TalonSRX(LiftConstants.kMaster).also {
-        it.setNeutralMode(NeutralMode.Brake)
-        it.configAllSettings(LiftConstants.kMasterTalonConfig)
-        it.enableVoltageCompensation(false)
-        it.enableCurrentLimit(false)
-        VictorSPX(LiftConstants.kFollower).follow(it)
+    private val master = TalonSRX(LiftConstants.kMaster).apply {
+        setNeutralMode(NeutralMode.Brake)
+        configAllSettings(LiftConstants.kMasterTalonConfig)
+        enableVoltageCompensation(true)
+        enableCurrentLimit(false)
+    }
+
+    init {
+        val victor = VictorSPX(LiftConstants.kFollower)
+        victor.setNeutralMode(NeutralMode.Coast)
+        victor.inverted = true
+        victor.follow(master)
     }
 
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     enum class OutputType {
-        Percent,
-        Position,
-        Velocity
+        Percent, Position, Velocity
     }
 
     var demand = 0.0
@@ -37,11 +40,11 @@ object Lift : Subsystem() {
     var actualPercent = 0.0
     var actualCurrent = 0.0
     var actualVoltage = 0.0
-    var hallEffectTriggered = false
+    var hallEffectTriggered = true
 
     var outputType = OutputType.Percent
         set(value) {
-            when (value) {
+            if (field != value) when (value) {
                 OutputType.Percent -> Unit
                 OutputType.Position -> master.selectProfileSlot(0, 0)
                 OutputType.Velocity -> master.selectProfileSlot(1, 0)
@@ -54,9 +57,9 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() = when (outputType) {
-        OutputType.Percent -> master.set(ControlMode.PercentOutput, demand)
-        OutputType.Position -> master.set(ControlMode.Position, demand, DemandType.ArbitraryFeedForward, feedForward)
-        OutputType.Velocity -> master.set(ControlMode.Velocity, demand, DemandType.ArbitraryFeedForward, feedForward)
+        OutputType.Percent -> master.set(ControlMode.PercentOutput, -demand)
+        OutputType.Position -> master.set(ControlMode.Position, -demand, DemandType.ArbitraryFeedForward, feedForward)
+        OutputType.Velocity -> master.set(ControlMode.Velocity, -demand, DemandType.ArbitraryFeedForward, feedForward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -69,18 +72,16 @@ object Lift : Subsystem() {
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onUpdateShuffleboard(container: ShuffleboardContainer) {
-        container.apply {
-            add("Output Type", outputType.name)
-            add("Actual Percent", actualPercent)
-            add("Actual Current", actualCurrent)
-            add("Actual Voltage", actualVoltage)
-            add("Demand", demand)
-            add("Feedforward", feedForward)
-            add("Height (in)", LiftMotionPlanner.height)
-            add("Velocity (in/s)", LiftMotionPlanner.velocity)
-            add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
-            add(hallEffect)
-        }
+    override fun onPostUpdate() = shuffleboard {
+        add("Output Type", outputType.name)
+        add("Actual Percent", actualPercent)
+        add("Actual Current", actualCurrent)
+        add("Actual Voltage", actualVoltage)
+        add("Demand", demand)
+        add("Feedforward", feedForward)
+        add("Height (in)", LiftMotionPlanner.height)
+        add("Velocity (in/s)", LiftMotionPlanner.velocity)
+        add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
+        add(hallEffect)
     }
 }

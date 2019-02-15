@@ -2,12 +2,12 @@ package ca.warp7.frc2019
 
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.setLoop
-import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc.set
+import ca.warp7.frc.start
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
+class Robot : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -16,8 +16,14 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        Drive.set(DriveState.kNeutralOutput)
-        Infrastructure.set(InfrastructureState.kStateMonitor)
+        Drive.set(DriveState.kNeutralMotionState)
+        Infrastructure.set { startCompressor = true }
+        Climber.set { climbing = false }
+        Hatch.set { pushing = false }
+        Conveyor.set { speed = 0.0 }
+        Outtake.set { speed = 0.0 }
+        Intake.set { extended = false }
+        Lift.set(LiftState.kIdle)
         Superstructure.set(SuperstructureState.kStartingConfiguration)
     }
 
@@ -40,9 +46,9 @@ class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
     =====================================================
      */
 
-    override fun autonomousInit() = setLoop(SandstormLoop)
-    override fun teleopInit() = setLoop(MainLoop)
-    override fun testInit() = setLoop(MainLoop)
+    override fun autonomousInit() = SandstormLoop.start()
+    override fun teleopInit() = MainLoop.start()
+    override fun testInit() = MainLoop.start()
 
     /*
     =====================================================

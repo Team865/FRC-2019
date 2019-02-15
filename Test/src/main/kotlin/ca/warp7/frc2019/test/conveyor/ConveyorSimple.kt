@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test
+package ca.warp7.frc2019.test.conveyor
 
 import ca.warp7.frc2019.constants.ConveyorConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
-class TestConveyor : TimedRobot() {
+class ConveyorSimple : TimedRobot() {
     lateinit var controller: XboxController
     lateinit var leftConveyor: VictorSPX
     lateinit var rightConveyor: VictorSPX

@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.constants
 
-object ElectricalConstants {
+internal object ElectricalConstants {
     const val kCompressorModule = 0
     const val kPDPModule = 0
 
@@ -41,6 +41,7 @@ object ElectricalConstants {
 
     const val kIntakeSolenoidPort = 0 // TODO
     const val kOuttakeSolenoidPort = 1 // TODO
+    const val kClimberSolenoidPort = 2 // TODO
 
 
     /*

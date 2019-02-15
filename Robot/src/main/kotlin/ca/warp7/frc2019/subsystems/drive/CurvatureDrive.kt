@@ -10,11 +10,14 @@ object CurvatureDrive : Action {
     var isQuickTurn = false
 
     override fun start() {
-        Drive.outputMode = Drive.OutputMode.WPILibControlled
+        xSpeed = 0.0
+        zRotation = 0.0
+        isQuickTurn = false
     }
 
     override fun update() {
-        Drive.doWithCheckedWPIState { curvatureDrive(xSpeed, zRotation, isQuickTurn) }
+        Drive.outputMode = Drive.OutputMode.WPILibControlled
+        Drive.wpiDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
     }
 
     override val shouldFinish get() = false

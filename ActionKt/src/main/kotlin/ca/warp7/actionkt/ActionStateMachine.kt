@@ -4,14 +4,18 @@ abstract class ActionStateMachine {
 
     private var currentState: Action? = null
 
-    val stateName get() = currentState?.let { it::class.java.simpleName } ?: "None"
+    var stateName: String = "None"
 
     open fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         block(wantedState)
         // Check if there is a new wanted state that is not the same as the current state
         if (wantedState != currentState) {
+            // stop the current state
+            currentState?.stop()
             // Change to the new state
             currentState = wantedState
+            // get the name of the state
+            stateName = wantedState::class.java.simpleName
             // Start the new state
             currentState?.start()
         }
@@ -19,13 +23,17 @@ abstract class ActionStateMachine {
 
     open fun updateState() {
         // Check if the current state wants to finish before updating
-        if (currentState?.shouldFinish == true) {
+        if (currentState?.shouldFinish != false) {
             // Stop and remove the current state
-            currentState?.stop()
-            currentState = null
+            stopState()
         } else {
             // Update the current state
             currentState?.update()
         }
+    }
+
+    fun stopState() {
+        currentState?.stop()
+        currentState = null
     }
 }

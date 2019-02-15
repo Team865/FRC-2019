@@ -1,15 +1,14 @@
-package ca.warp7.frc2019.test.drive_with_commons
+package ca.warp7.frc2019.test.commons
 
 import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.setLoop
-import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc.start
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
-class DriveWithCommons : TimedRobot(ControlConstants.kLoopPeriod) {
+class DriveWithCommons : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -41,8 +40,8 @@ class DriveWithCommons : TimedRobot(ControlConstants.kLoopPeriod) {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = setLoop(DriveWithCommonsLoop)
-    override fun testInit() = setLoop(DriveWithCommonsLoop)
+    override fun teleopInit() = DriveWithCommonsLoop.start()
+    override fun testInit() = DriveWithCommonsLoop.start()
 
     /*
     =====================================================
