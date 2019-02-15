@@ -1,9 +1,6 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.disableRobot
-import ca.warp7.frc.runPeriodicLoop
-import ca.warp7.frc.set
-import ca.warp7.frc.start
+import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
@@ -16,6 +13,7 @@ class Robot : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
+        setControllerMode(ControllerMode.DriverAndOperator)
         Drive.set(DriveState.kNeutralMotionState)
         Infrastructure.set { startCompressor = true }
         Climber.set { climbing = false }

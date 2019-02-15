@@ -16,14 +16,14 @@ internal object CommonRobot {
 
     val subsystems: MutableSet<Subsystem> = mutableSetOf()
 
-    val robotDriver = RobotController()
-    val robotOperator = RobotController()
+    val robotDriver = RobotControllerImpl()
+    val robotOperator = RobotControllerImpl()
+    var controllerMode = 0
 
     private val xboxDriver = XboxController(0)
     private val xboxOperator = XboxController(1)
 
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-    private var controllerMode = 0
 
     private val originalOut = System.out
     private val originalErr = System.err
@@ -67,20 +67,20 @@ internal object CommonRobot {
         // Collect controller data
         when (controllerMode) {
             0 -> {
-                collectControllerData(robotDriver.data, xboxDriver)
-                collectControllerData(robotOperator.data, xboxOperator)
+                collectControllerData(robotDriver, xboxDriver)
+                collectControllerData(robotOperator, xboxOperator)
             }
             1 -> {
-                collectControllerData(robotDriver.data, xboxDriver)
-                resetControllerData(robotOperator.data)
+                collectControllerData(robotDriver, xboxDriver)
+                resetControllerData(robotOperator)
             }
             2 -> {
-                resetControllerData(robotDriver.data)
-                collectControllerData(robotOperator.data, xboxDriver)
+                resetControllerData(robotDriver)
+                collectControllerData(robotOperator, xboxDriver)
             }
         }
         // Check to switch controllers
-        if (!fmsAttached && robotDriver.data.backButton == ControllerState.Pressed) {
+        if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed) {
             controllerMode = (controllerMode + 1) % 3
         }
         // Calculate exact loop period for measurements

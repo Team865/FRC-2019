@@ -11,7 +11,7 @@ fun <T : VictorSPX> T.config(config: VictorSPXConfiguration) = apply { configAll
 fun <T : BaseMotorController> T.followedBy(other: BaseMotorController) = apply { other.follow(this.reset()) }
 fun <T : BaseMotorController> T.reset() = apply { configFactoryDefault() }
 
-private class WPISpeedController(val base: BaseMotorController) : SpeedController {
+private class UnsafeSpeedController(val base: BaseMotorController) : SpeedController {
     var lastSpeed = 0.0
     override fun getInverted(): Boolean = base.inverted
     override fun pidWrite(output: Double) = set(output)
@@ -28,7 +28,7 @@ private class WPISpeedController(val base: BaseMotorController) : SpeedControlle
     }
 }
 
-fun <T : BaseMotorController> T.wpi(): SpeedController = WPISpeedController(this)
+fun <T : BaseMotorController> T.wpi(): SpeedController = UnsafeSpeedController(this)
 
 val kDefaultVictorSPX
     get() = VictorSPXConfiguration().apply {

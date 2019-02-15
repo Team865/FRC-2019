@@ -1,12 +1,10 @@
-package ca.warp7.frc2019.test.commons
+package ca.warp7.frc2019.test.lift.feedforward
 
 import ca.warp7.frc.*
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.DriveState
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
-class DriveWithCommons : TimedRobot() {
+class LiftFeedforward2 : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -16,7 +14,7 @@ class DriveWithCommons : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         setControllerMode(ControllerMode.DriverOnly)
-        Drive.set(DriveState.kNeutralOutput)
+        LiftSubsystem.set { }
     }
 
     /**
@@ -39,8 +37,8 @@ class DriveWithCommons : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = DriveWithCommonsLoop.start()
-    override fun testInit() = DriveWithCommonsLoop.start()
+    override fun teleopInit() = LiftFeedforwardLoop.start()
+    override fun testInit() = LiftFeedforwardLoop.start()
 
     /*
     =====================================================
