@@ -43,9 +43,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab
 
 abstract class Subsystem : ActionStateMachine() {
 
-
-    private var initialized = false
-
     /**
      * Called when the robot is disabled
      *
@@ -62,6 +59,8 @@ abstract class Subsystem : ActionStateMachine() {
      * Any output limits should be applied here for safety reasons.
      */
     open fun onOutput() {}
+
+    private var initialized = false
 
     /**
      * Sets the current state of the subsystem
@@ -95,23 +94,51 @@ abstract class Subsystem : ActionStateMachine() {
      */
     open fun onPostUpdate() {}
 
-    protected fun get(name: String): NetworkTableEntry {
-        TODO()
-    }
+    private val entries: MutableMap<String, NetworkTableEntry> = mutableMapOf()
+
+    protected fun get(name: String) = entries[name]
 
     /**
      * Put data into shuffleboard
      */
-    protected fun put(name: String, value: Any, x: Int = 0, y: Int = 0, width: Int = 0, height: Int = 0,
-                      widget: BuiltInWidgets? = null, extras: Map<String, String>? = null) {
-        TODO()
+    protected fun put(
+            name: String,
+            value: Any,
+            x: Int = 0,
+            y: Int = 0,
+            width: Int = 0,
+            height: Int = 0,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, Any>? = null
+    ) {
+        if (name in entries) entries[name]?.setValue(value) else {
+            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+            entries[name] = w.entry
+        }
     }
+
+    private val sent: MutableList<String> = mutableListOf()
 
     /**
      * Put data into shuffleboard
      */
-    protected fun put(value: Sendable, x: Int = 0, y: Int = 0, width: Int = 0, height: Int = 0,
-                      widget: BuiltInWidgets? = null, extras: Map<String, String>? = null) {
-        TODO()
+    protected fun put(
+            value: Sendable,
+            x: Int = 0,
+            y: Int = 0,
+            width: Int = 0,
+            height: Int = 0,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, String>? = null
+    ) {
+        val name = value.name
+        if (name !in sent) {
+            sent.add(name)
+            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+        }
     }
 }
