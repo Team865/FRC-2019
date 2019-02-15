@@ -53,10 +53,3 @@ internal fun resetControllerData(s: RobotControllerImpl) {
         backButton = KeptUp
     }
 }
-
-fun withDriver(block: RobotController.() -> Unit) = block(CommonRobot.robotDriver)
-fun withOperator(block: RobotController.() -> Unit) = block(CommonRobot.robotOperator)
-
-fun setControllerMode(controllerMode: ControllerMode) {
-    CommonRobot.controllerMode = controllerMode.value
-}

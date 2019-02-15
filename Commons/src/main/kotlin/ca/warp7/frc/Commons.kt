@@ -16,3 +16,13 @@ fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRo
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
 fun <T : Subsystem> T.set(block: T.() -> Unit) = set(runOnce(block))
+
+fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab
+
+fun withDriver(block: RobotController.() -> Unit) = block(CommonRobot.robotDriver)
+
+fun withOperator(block: RobotController.() -> Unit) = block(CommonRobot.robotOperator)
+
+fun setControllerMode(controllerMode: ControllerMode) {
+    CommonRobot.controllerMode = controllerMode.value
+}
