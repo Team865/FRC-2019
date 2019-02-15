@@ -25,11 +25,15 @@ abstract class ActionStateMachine {
         // Check if the current state wants to finish before updating
         if (currentState?.shouldFinish != false) {
             // Stop and remove the current state
-            currentState?.stop()
-            currentState = null
+            stopState()
         } else {
             // Update the current state
             currentState?.update()
         }
+    }
+
+    fun stopState() {
+        currentState?.stop()
+        currentState = null
     }
 }

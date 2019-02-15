@@ -39,7 +39,7 @@ object Drive : Subsystem() {
         selectedSensorPosition = 0
     }
 
-    val wpiDrive: DifferentialDrive = DifferentialDrive(leftMaster.wpi(), rightMaster.wpi()).apply {
+    val wpiDrive: DifferentialDrive = DifferentialDrive(rightMaster.wpi(), leftMaster.wpi()).apply {
         setDeadband(DriveConstants.kDifferentialDeadband)
         isSafetyEnabled = false
     }

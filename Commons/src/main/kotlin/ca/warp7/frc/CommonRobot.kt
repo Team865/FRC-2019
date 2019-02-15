@@ -121,7 +121,10 @@ internal object CommonRobot {
     fun disableOutputs() {
         autoRunner.stop()
         robotEnabled = false
-        subsystems.forEach { it.onDisabled() }
+        subsystems.forEach {
+            it.stopState()
+            it.onDisabled()
+        }
     }
 
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
