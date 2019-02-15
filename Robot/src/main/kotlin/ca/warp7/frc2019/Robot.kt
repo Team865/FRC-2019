@@ -4,11 +4,10 @@ import ca.warp7.frc.disableRobot
 import ca.warp7.frc.runPeriodicLoop
 import ca.warp7.frc.set
 import ca.warp7.frc.start
-import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot : TimedRobot(ControlConstants.kLoopPeriod) {
+class Robot : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems

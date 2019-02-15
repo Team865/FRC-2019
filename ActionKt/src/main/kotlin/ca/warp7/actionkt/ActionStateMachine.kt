@@ -10,6 +10,8 @@ abstract class ActionStateMachine {
         block(wantedState)
         // Check if there is a new wanted state that is not the same as the current state
         if (wantedState != currentState) {
+            // stop the current state
+            currentState?.stop()
             // Change to the new state
             currentState = wantedState
             // get the name of the state
@@ -21,7 +23,7 @@ abstract class ActionStateMachine {
 
     open fun updateState() {
         // Check if the current state wants to finish before updating
-        if (currentState?.shouldFinish == true) {
+        if (currentState?.shouldFinish != false) {
             // Stop and remove the current state
             currentState?.stop()
             currentState = null
