@@ -22,7 +22,7 @@ object Lift : Subsystem() {
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)
-        victor.setNeutralMode(NeutralMode.Coast)
+        victor.setNeutralMode(NeutralMode.Brake)
         victor.inverted = true
         victor.follow(master)
     }
