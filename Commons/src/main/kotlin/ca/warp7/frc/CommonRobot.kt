@@ -5,6 +5,7 @@ import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
@@ -97,15 +98,10 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-//        subsystems.forEach {
-//            it.shuffleboard {
-//                // Show the current state in the appropriate tab
-//                add("Current State", it.stateName)
-//                        .withWidget(BuiltInWidgets.kTextView)
-//                        .withPosition(0, 0)
-//            }
-//            it.onPostUpdate()
-//        }
+        subsystems.forEach {
+            it.put("Current State", it.stateName, 0, 0, 2, 2, BuiltInWidgets.kTextView)
+            it.onPostUpdate()
+        }
         // Flush the standard output
         outContent.apply {
             toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }

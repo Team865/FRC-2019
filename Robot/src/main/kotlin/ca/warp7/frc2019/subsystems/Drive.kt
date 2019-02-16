@@ -5,7 +5,6 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
-import ca.warp7.frc.wpi
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
@@ -14,8 +13,6 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 object Drive : Subsystem() {
 
@@ -39,13 +36,8 @@ object Drive : Subsystem() {
         selectedSensorPosition = 0
     }
 
-    val wpiDrive: DifferentialDrive = DifferentialDrive(rightMaster.wpi(), leftMaster.wpi()).apply {
-        setDeadband(DriveConstants.kDifferentialDeadband)
-        isSafetyEnabled = false
-    }
-
     enum class OutputMode {
-        Percent, Velocity, Position, WPILibControlled
+        Percent, Velocity, Position
     }
 
     var outputMode = Percent
@@ -100,27 +92,25 @@ object Drive : Subsystem() {
             leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
             rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
         }
-        WPILibControlled -> Unit
     }
 
     override fun onMeasure(dt: Double) {
-//        leftPositionTicks = leftMaster.selectedSensorPosition
-//        rightPositionTicks = rightMaster.selectedSensorPosition
-//        leftVelocityTicks = leftMaster.selectedSensorVelocity
-//        rightVelocityTicks = rightMaster.selectedSensorVelocity
+        leftPositionTicks = leftMaster.selectedSensorPosition
+        rightPositionTicks = rightMaster.selectedSensorPosition
+        leftVelocityTicks = leftMaster.selectedSensorVelocity
+        rightVelocityTicks = rightMaster.selectedSensorVelocity
         DriveMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onPostUpdate() = shuffleboard {
-        add("Output Mode", outputMode.name)
-        add("Left Demand", leftDemand)
-        add("Left Feedforward", leftFeedForward)
-        add("Right Demand", rightDemand)
-        add("Right Feedforward", rightFeedForward)
-        add("Left Position", leftPositionTicks)
-        add("Right Position", rightPositionTicks)
-        add("Left Velocity", leftVelocityTicks)
-        add("Right Velocity", rightVelocityTicks)
-        add(wpiDrive).withWidget(BuiltInWidgets.kDifferentialDrive)
+    override fun onPostUpdate() {
+        put("Output Mode", outputMode.name)
+        put("Left Demand", leftDemand)
+        put("Left Feedforward", leftFeedForward)
+        put("Right Demand", rightDemand)
+        put("Right Feedforward", rightFeedForward)
+        put("Left Position", leftPositionTicks)
+        put("Right Position", rightPositionTicks)
+        put("Left Velocity", leftVelocityTicks)
+        put("Right Velocity", rightVelocityTicks)
     }
 }

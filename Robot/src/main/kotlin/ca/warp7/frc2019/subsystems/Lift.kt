@@ -72,16 +72,16 @@ object Lift : Subsystem() {
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onPostUpdate() = shuffleboard {
-        add("Output Type", outputType.name)
-        add("Actual Percent", actualPercent)
-        add("Actual Current", actualCurrent)
-        add("Actual Voltage", actualVoltage)
-        add("Demand", demand)
-        add("Feedforward", feedForward)
-        add("Height (in)", LiftMotionPlanner.height)
-        add("Velocity (in/s)", LiftMotionPlanner.velocity)
-        add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
-        add(hallEffect)
+    override fun onPostUpdate() {
+        put("Output Type", outputType.name)
+        put("Actual Percent", actualPercent)
+        put("Actual Current", actualCurrent)
+        put("Actual Voltage", actualVoltage)
+        put("Demand", demand)
+        put("Feedforward", feedForward)
+        put("Height (in)", LiftMotionPlanner.height)
+        put("Velocity (in/s)", LiftMotionPlanner.velocity)
+        put("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
+        put(hallEffect)
     }
 }

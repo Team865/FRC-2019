@@ -2,8 +2,10 @@ package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionStateMachine
+import edu.wpi.first.networktables.NetworkTableEntry
+import edu.wpi.first.wpilibj.Sendable
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab
 
 /**
@@ -41,9 +43,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab
 
 abstract class Subsystem : ActionStateMachine() {
 
-
-    private var initialized = false
-
     /**
      * Called when the robot is disabled
      *
@@ -60,6 +59,8 @@ abstract class Subsystem : ActionStateMachine() {
      * Any output limits should be applied here for safety reasons.
      */
     open fun onOutput() {}
+
+    private var initialized = false
 
     /**
      * Sets the current state of the subsystem
@@ -80,11 +81,6 @@ abstract class Subsystem : ActionStateMachine() {
     internal val tab: ShuffleboardTab by lazy { Shuffleboard.getTab(this::class.java.simpleName) }
 
     /**
-     * Function to be called in onPostUpdate to report to Shuffleboard
-     */
-    fun shuffleboard(block: ShuffleboardContainer.() -> Unit) = tab.run(block)
-
-    /**
      *
      * Called periodically for the subsystem to get measurements from its input devices.
      *
@@ -97,4 +93,52 @@ abstract class Subsystem : ActionStateMachine() {
      * Send values to shuffleboard
      */
     open fun onPostUpdate() {}
+
+    private val entries: MutableMap<String, NetworkTableEntry> = mutableMapOf()
+
+    fun get(name: String) = entries[name]
+
+    /**
+     * Put data into shuffleboard
+     */
+    fun put(
+            name: String,
+            value: Any,
+            x: Int = 0,
+            y: Int = 0,
+            width: Int = 0,
+            height: Int = 0,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, Any>? = null
+    ) {
+        if (name in entries) entries[name]?.setValue(value) else {
+            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+            entries[name] = w.entry
+        }
+    }
+
+    private val sent: MutableList<String> = mutableListOf()
+
+    /**
+     * Put data into shuffleboard
+     */
+    fun put(
+            value: Sendable,
+            x: Int = 0,
+            y: Int = 0,
+            width: Int = 0,
+            height: Int = 0,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, String>? = null
+    ) {
+        val name = value.name
+        if (name !in sent) {
+            sent.add(name)
+            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+        }
+    }
 }
