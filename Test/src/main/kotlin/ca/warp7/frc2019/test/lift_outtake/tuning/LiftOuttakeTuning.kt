@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.lift.feedforward
+package ca.warp7.frc2019.test.lift_outtake.tuning
 
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.Conveyor
@@ -6,7 +6,7 @@ import ca.warp7.frc2019.subsystems.Outtake
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
-class LiftFeedforward2 : TimedRobot() {
+class LiftOuttakeTuning : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -41,8 +41,8 @@ class LiftFeedforward2 : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = LiftFeedforwardLoop.start()
-    override fun testInit() = LiftFeedforwardLoop.start()
+    override fun teleopInit() = LiftOuttakeLoop.start()
+    override fun testInit() = LiftOuttakeLoop.start()
 
     /*
     =====================================================

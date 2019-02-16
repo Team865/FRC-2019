@@ -105,8 +105,7 @@ fun lazyVictorSPX(
         id: Int,
         config: VictorSPXConfiguration? = null,
         neutralMode: NeutralMode = NeutralMode.Brake,
-        voltageCompensation: Boolean = false,
-        currentLimit: Boolean = false
+        voltageCompensation: Boolean = false
 ): VictorSPX = LazyVictorSPX(id).apply {
     if (config == null) configFactoryDefault()
     else configAllSettings(config)

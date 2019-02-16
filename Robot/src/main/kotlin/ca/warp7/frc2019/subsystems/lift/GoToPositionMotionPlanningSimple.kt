@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.lift
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
+import com.ctre.phoenix.motorcontrol.ControlMode
 import java.lang.Math.signum
 
 object GoToPositionMotionPlanningSimple : Action {
@@ -10,7 +11,7 @@ object GoToPositionMotionPlanningSimple : Action {
     var targetHeightFromHome = 0.0
 
     override fun start() {
-        Lift.outputType = Lift.OutputType.Velocity
+        Lift.controlMode = ControlMode.Velocity
     }
 
     override fun update() {

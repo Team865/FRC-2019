@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.lift
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
 object GoToPositionMotionPlanning : Action {
@@ -12,7 +13,7 @@ object GoToPositionMotionPlanning : Action {
     var timeStarted = 0.0
 
     override fun start() {
-        Lift.outputType = Lift.OutputType.Velocity
+        Lift.controlMode = ControlMode.Velocity
     }
 
     fun generateTragectory(targetHeightAbsolute: Double) {

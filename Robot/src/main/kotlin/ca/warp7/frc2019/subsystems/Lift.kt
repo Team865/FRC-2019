@@ -2,6 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.lazyTalonSRX
+import ca.warp7.frc.reset
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -23,16 +24,13 @@ object Lift : Subsystem() {
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)
+        victor.reset()
         victor.setNeutralMode(NeutralMode.Brake)
         victor.inverted = true
         victor.follow(master)
     }
 
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
-
-    enum class OutputType {
-        Percent, Position, Velocity
-    }
 
     var demand = 0.0
     var feedForward = 0.0
@@ -43,12 +41,12 @@ object Lift : Subsystem() {
     var actualVoltage = 0.0
     var hallEffectTriggered = true
 
-    var outputType = OutputType.Percent
+    var controlMode = ControlMode.PercentOutput
         set(value) {
             if (field != value) when (value) {
-                OutputType.Percent -> Unit
-                OutputType.Position -> master.selectProfileSlot(0, 0)
-                OutputType.Velocity -> master.selectProfileSlot(1, 0)
+                ControlMode.Position -> master.selectProfileSlot(0, 0)
+                ControlMode.Velocity -> master.selectProfileSlot(1, 0)
+                else -> Unit
             }
             field = value
         }
@@ -57,10 +55,8 @@ object Lift : Subsystem() {
         master.neutralOutput()
     }
 
-    override fun onOutput() = when (outputType) {
-        OutputType.Percent -> master.set(ControlMode.PercentOutput, -demand)
-        OutputType.Position -> master.set(ControlMode.Position, -demand, DemandType.ArbitraryFeedForward, feedForward)
-        OutputType.Velocity -> master.set(ControlMode.Velocity, -demand, DemandType.ArbitraryFeedForward, feedForward)
+    override fun onOutput() {
+        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedForward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -74,7 +70,7 @@ object Lift : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("Output Type", outputType.name)
+        put("Output Type", controlMode.name)
         put("Actual Percent", actualPercent)
         put("Actual Current", actualCurrent)
         put("Actual Voltage", actualVoltage)

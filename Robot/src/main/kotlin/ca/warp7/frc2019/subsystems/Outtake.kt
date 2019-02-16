@@ -25,6 +25,6 @@ object Outtake : Subsystem() {
 
     override fun onOutput() {
         left.set(ControlMode.PercentOutput, speed)
-        right.set(ControlMode.PercentOutput, speed)
+        right.set(ControlMode.PercentOutput, -speed)
     }
 }
