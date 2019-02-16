@@ -25,7 +25,7 @@ object MainLoop : RobotControlLoop {
                 isQuickTurn = leftBumper == HeldDown
             }
             when {
-                leftTriggerAxis > ControlConstants.kAxisDeadband -> {
+                leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
                         outtaking = rightBumper == HeldDown
@@ -35,7 +35,7 @@ object MainLoop : RobotControlLoop {
                         extended = true
                     }
                 }
-                rightTriggerAxis > ControlConstants.kAxisDeadband -> {
+                rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
                         outtaking = false
@@ -54,18 +54,22 @@ object MainLoop : RobotControlLoop {
         }
         withOperator {
             when {
-                leftTriggerAxis > ControlConstants.kAxisDeadband ->
+                leftTriggerAxis > ControlConstants.kControlDeadband ->
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
-                        outtaking = aButton == HeldDown
+                        outtaking = true // TODO use aButton
                     }
-                rightTriggerAxis > ControlConstants.kAxisDeadband ->
+                rightTriggerAxis > ControlConstants.kControlDeadband ->
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
                         outtaking = false
                     }
             }
             when (Pressed) {
+                leftBumper -> Unit // TODO Increase setpoint
+                rightBumper -> Unit // TODO Decrease setpoint
+                bButton -> Unit // TODO Go to cargo setpoint
+                yButton -> Unit // TODO Go to hatch setpoint
                 aButton -> Hatch.set(action {
                     onStart { Hatch.pushing = true }
                     finishWhen { elapsed > 0.5 }

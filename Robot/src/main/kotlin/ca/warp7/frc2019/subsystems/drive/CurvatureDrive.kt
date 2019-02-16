@@ -43,7 +43,7 @@ object CurvatureDrive : Action {
     override fun update() {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
-        if (xSpeed < -ControlConstants.kAxisDeadband || isQuickTurn) zRotation *= -1
+        if (xSpeed < -ControlConstants.kControlDeadband || isQuickTurn) zRotation *= -1
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
         Drive.leftDemand = left
         Drive.rightDemand = right
