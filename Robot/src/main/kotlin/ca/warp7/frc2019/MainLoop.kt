@@ -71,12 +71,12 @@ object MainLoop : RobotControlLoop {
             when (Pressed) {
                 leftBumper -> Unit // TODO Increase setpoint
                 rightBumper -> Unit // TODO Decrease setpoint
-                bButton -> Unit // TODO Go to cargo setpoint
-                yButton -> Unit // TODO Go to hatch setpoint
-                aButton -> Hatch.set(action {
-                    onStart { Hatch.pushing = true }
+                bButton -> Unit // TODO Go to hatch setpoint
+                yButton -> Unit // TODO Go to cargo setpoint
+                aButton -> Outtake.set(action {
+                    onStart { Outtake.hatchState = HatchState(true, false) }
                     finishWhen { elapsed > 0.5 }
-                    onStop { Hatch.pushing = false }
+                    onStop { Outtake.hatchState.pushing = false }
                 })
                 else -> Unit
             }
