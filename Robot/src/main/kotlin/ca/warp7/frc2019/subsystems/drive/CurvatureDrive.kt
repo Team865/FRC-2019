@@ -5,7 +5,6 @@ import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.DriveState
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 

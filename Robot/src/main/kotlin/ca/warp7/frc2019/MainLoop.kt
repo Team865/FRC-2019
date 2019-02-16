@@ -9,6 +9,9 @@ import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.subsystems.drive.DriveState
+import ca.warp7.frc2019.subsystems.lift.LiftState
+import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 
 object MainLoop : RobotControlLoop {
 

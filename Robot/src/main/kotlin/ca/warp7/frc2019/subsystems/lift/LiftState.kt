@@ -1,8 +1,8 @@
-package ca.warp7.frc2019.subsystems
+package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.frc.OpenLoopState
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.subsystems.lift.*
+import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 
