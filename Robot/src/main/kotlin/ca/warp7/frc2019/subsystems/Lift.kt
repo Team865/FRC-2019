@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc.lazyTalonSRX
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -13,12 +14,12 @@ import edu.wpi.first.wpilibj.DigitalInput
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    private val master = TalonSRX(LiftConstants.kMaster).apply {
-        setNeutralMode(NeutralMode.Brake)
-        configAllSettings(LiftConstants.kMasterTalonConfig)
-        enableVoltageCompensation(true)
-        enableCurrentLimit(false)
-    }
+    private val master: TalonSRX = lazyTalonSRX(
+            id = LiftConstants.kMaster,
+            config = LiftConstants.kMasterTalonConfig,
+            voltageCompensation = true,
+            currentLimit = false
+    )
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)

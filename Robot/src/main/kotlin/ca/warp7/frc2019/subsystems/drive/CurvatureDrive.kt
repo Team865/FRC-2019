@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.linearRamp
+import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
@@ -18,8 +18,10 @@ object CurvatureDrive : Action {
     var right = 0.0
 
     private val differentialDrive = DifferentialDrive(
-            linearRamp(DriveConstants.kRampSecondsFromNeutralToFull) { left = it },
-            linearRamp(DriveConstants.kRampSecondsFromNeutralToFull) { right = it }
+            //linearRamp(DriveConstants.kRampSecondsFromNeutralToFull) { left = it },
+            //linearRamp(DriveConstants.kRampSecondsFromNeutralToFull) { right = it }
+            speedController { left = it },
+            speedController { right = it }
     )
 
     init {
