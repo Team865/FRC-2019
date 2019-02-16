@@ -3,6 +3,7 @@ package ca.warp7.frc2019.test.commons
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
+import ca.warp7.frc2019.subsystems.Infrastructure
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
@@ -17,6 +18,7 @@ class DriveWithCommons : TimedRobot() {
         println("Hello me is robit!")
         setControllerMode(ControllerMode.DriverOnly)
         Drive.set(DriveState.kNeutralOutput)
+        Infrastructure.set { startCompressor = true }
     }
 
     /**
@@ -30,7 +32,7 @@ class DriveWithCommons : TimedRobot() {
      * Disables the robot by disabling each subsystem and not calling
      * output methods. Stops the autonomous routine
      */
-    override fun disabledInit() = disableRobot()
+    override fun disabledInit() = println("Robot Disabled ------12345-------").also { disableRobot() }
 
     /*
     =====================================================
@@ -39,7 +41,7 @@ class DriveWithCommons : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = DriveWithCommonsLoop.start()
+    override fun teleopInit() = DriveWithCommonsLoop.start().also { println("Robot Enabled ------12345-------") }
     override fun testInit() = DriveWithCommonsLoop.start()
 
     /*

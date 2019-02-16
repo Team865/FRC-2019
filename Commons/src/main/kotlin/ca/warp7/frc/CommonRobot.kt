@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
 internal object CommonRobot {
 
@@ -25,11 +23,11 @@ internal object CommonRobot {
     private val xboxOperator = XboxController(1)
 
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-
-    private val originalOut = System.out
-    private val originalErr = System.err
-    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
-    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
+//
+//    private val originalOut = System.out
+//    private val originalErr = System.err
+//    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
+//    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
 
     private var previousTime = 0.0
     private var robotEnabled = false
@@ -54,7 +52,8 @@ internal object CommonRobot {
                 periodicLoop()
             } catch (e: Throwable) {
                 crashed = true
-                originalErr.println("ERROR LOOP ENDED\n${e.message}")
+                e.printStackTrace()
+                //originalErr.println("ERROR LOOP ENDED\n${e.message}")
             }
         }
     }
@@ -103,15 +102,15 @@ internal object CommonRobot {
             it.onPostUpdate()
         }
         // Flush the standard output
-        outContent.apply {
-            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
-        }.reset()
-        // Flush the standard error adding ERROR before it
-        errContent.apply {
-            toString().split(System.lineSeparator().toRegex()).forEach {
-                if (it.isNotEmpty()) originalErr.println("ERROR $it")
-            }
-        }.reset()
+//        outContent.apply {
+//            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
+//        }.reset()
+//        // Flush the standard error adding ERROR before it
+//        errContent.apply {
+//            toString().split(System.lineSeparator().toRegex()).forEach {
+//                if (it.isNotEmpty()) originalErr.println("ERROR $it")
+//            }
+//        }.reset()
     }
 
     fun disableOutputs() {

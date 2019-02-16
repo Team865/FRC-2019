@@ -54,6 +54,7 @@ private class SpeedControllerImpl(val setter: (Double) -> Unit) : SpeedControlle
     override fun get(): Double = lastSpeed * sign
 
     override fun set(speed: Double) {
+        lastSpeed = speed
         setter(lastSpeed * sign)
     }
 
