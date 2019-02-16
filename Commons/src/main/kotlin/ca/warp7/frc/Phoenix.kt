@@ -44,6 +44,23 @@ private class UnsafeSpeedController(val base: BaseMotorController) : SpeedContro
 
 private class LazyTalonSRX(deviceNumber: Int) : TalonSRX(deviceNumber) {
 
+    var previousMode = ControlMode.PercentOutput
+    var previousDemand0 = 0.0
+    var previousDemand1Type = DemandType.Neutral
+    var previousDemand1 = 0.0
+
+    override fun set(mode: ControlMode, demand0: Double, demand1Type: DemandType, demand1: Double) {
+        if (mode != previousMode
+                || !demand0.epsilonEquals(previousDemand0, 1E-12)
+                || demand1Type != previousDemand1Type
+                || !demand1.epsilonEquals(previousDemand1, 1E-12)) {
+            previousMode = mode
+            previousDemand0 = demand0
+            previousDemand1Type = demand1Type
+            previousDemand1 = demand1
+            super.set(mode, demand0, demand1Type, demand1)
+        }
+    }
 }
 
 fun lazyTalonSRX(
