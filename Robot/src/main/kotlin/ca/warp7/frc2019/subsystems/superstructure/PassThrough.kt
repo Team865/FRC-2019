@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems.superstructure
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 
 object PassThrough : Action {
 
@@ -10,5 +11,6 @@ object PassThrough : Action {
     var outtaking = false
 
     override fun start() {
+        LiftMotionPlanner.height
     }
 }

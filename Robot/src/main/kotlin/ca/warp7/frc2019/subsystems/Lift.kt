@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import edu.wpi.first.wpilibj.DigitalInput
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
@@ -30,7 +29,7 @@ object Lift : Subsystem() {
         victor.follow(master)
     }
 
-    private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
+    // private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     var demand = 0.0
     var feedforward = 0.0
@@ -65,7 +64,7 @@ object Lift : Subsystem() {
         actualPercent = master.motorOutputPercent
         actualCurrent = master.outputCurrent
         actualVoltage = master.busVoltage * actualPercent
-        hallEffectTriggered = hallEffect.get()
+        hallEffectTriggered = true // hallEffect.get()
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
@@ -79,6 +78,5 @@ object Lift : Subsystem() {
         put("Height (in)", LiftMotionPlanner.height)
         put("Velocity (in/s)", LiftMotionPlanner.velocity)
         put("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
-        put(hallEffect)
     }
 }
