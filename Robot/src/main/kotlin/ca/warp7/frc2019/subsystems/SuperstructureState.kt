@@ -6,9 +6,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.superstructure.MovingLift
 import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 
-@Suppress("unused")
 object SuperstructureState {
-    val kIdle = runOnce {}
 
     val kStartingConfiguration = runOnce {
         LiftMotionPlanner.updateMeasurements(0.0)
@@ -24,7 +22,6 @@ object SuperstructureState {
     val kPassThrough = PassThrough
 
     val kIntakeCargoMode = runOnce {
-        Intake.set(IntakeState.kExtendedOpenLoop)
         Lift.set(LiftState.kGoToPosition) {
             heightInputAbsoluteInches = 0.0 // TODO("loading station cargo height")
         }

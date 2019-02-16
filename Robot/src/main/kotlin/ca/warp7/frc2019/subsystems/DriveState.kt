@@ -11,10 +11,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 
 object DriveState {
 
-    val kNeutralMotionState = Drive.runOnce {
-        set(kNeutralOutput)
-    }
-
     val kNeutralOutput = Drive.runOnce {
         controlMode = ControlMode.PercentOutput
         leftDemand = 0.0

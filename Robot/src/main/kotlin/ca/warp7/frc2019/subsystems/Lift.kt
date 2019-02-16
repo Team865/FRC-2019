@@ -33,7 +33,7 @@ object Lift : Subsystem() {
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     var demand = 0.0
-    var feedForward = 0.0
+    var feedforward = 0.0
     var positionTicks = 0
     var velocityTicksPer100ms = 0
     var actualPercent = 0.0
@@ -56,7 +56,7 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
-        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedForward)
+        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -75,7 +75,7 @@ object Lift : Subsystem() {
         put("Actual Current", actualCurrent)
         put("Actual Voltage", actualVoltage)
         put("Demand", demand)
-        put("Feedforward", feedForward)
+        put("Feedforward", feedforward)
         put("Height (in)", LiftMotionPlanner.height)
         put("Velocity (in/s)", LiftMotionPlanner.velocity)
         put("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
