@@ -51,10 +51,10 @@ object MainLoop : RobotControlLoop {
                         wantedPosition.setpointType = LiftSetpointType.Hatch
                     }
                 }
-                aButton -> Hatch.set(action {
-                    onStart { Hatch.pushing = true }
+                aButton -> Outtake.set(action {
+                    onStart { Outtake.hatchState = HatchState(true, false) }
                     finishWhen { elapsed > 0.5 }
-                    onStop { Hatch.pushing = false }
+                    onStop { Outtake.hatchState.pushing = false }
                 })
                 else -> Unit
             }
