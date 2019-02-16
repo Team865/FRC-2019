@@ -9,7 +9,6 @@ import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.subsystems.*
-import ca.warp7.frc2019.subsystems.superstructure.LiftSetpointType
 
 object MainLoop : RobotControlLoop {
 
@@ -26,31 +25,21 @@ object MainLoop : RobotControlLoop {
                 isQuickTurn = leftBumper == HeldDown
             }
             if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis }
+                Superstructure.set(SuperstructureState.kPassThrough) { speed = leftTriggerAxis * forward }
             } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kIndexingCargo) { speedScale = leftTriggerAxis * -1 }
+                Superstructure.set(SuperstructureState.kPassThrough) { speed = rightTriggerAxis * reverse }
             }
+            SuperstructureState.kPassThrough.outtaking = rightBumper == HeldDown
             if (aButton == Pressed) Climber.set { climbing = !climbing }
         }
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kAxisDeadband ->
-                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis) }
+                    Superstructure.set(SuperstructureState.kPassThrough) { speed = leftTriggerAxis * forward }
                 rightTriggerAxis > ControlConstants.kAxisDeadband ->
-                    Superstructure.set(SuperstructureState.kIndexingCargo) { setOverride(leftTriggerAxis * -1) }
-                else -> SuperstructureState.kIndexingCargo.isOverride = false
+                    Superstructure.set(SuperstructureState.kPassThrough) { speed = rightTriggerAxis * reverse }
             }
             when (Pressed) {
-                leftBumper -> SuperstructureState.kMovingLift.wantedPosition.decreaseLiftSetpoint()
-                rightBumper -> SuperstructureState.kMovingLift.wantedPosition.increaseLiftSetpoint()
-                yButton -> Superstructure.set(SuperstructureState.kMovingLift) {
-                    wantedPosition.setpointType = LiftSetpointType.Cargo
-                }
-                bButton -> {
-                    Superstructure.set(SuperstructureState.kMovingLift) {
-                        wantedPosition.setpointType = LiftSetpointType.Hatch
-                    }
-                }
                 aButton -> Hatch.set(action {
                     onStart { Hatch.pushing = true }
                     finishWhen { elapsed > 0.5 }

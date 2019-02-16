@@ -3,8 +3,8 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.set
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
-import ca.warp7.frc2019.subsystems.superstructure.IndexingCargo
 import ca.warp7.frc2019.subsystems.superstructure.MovingLift
+import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 
 @Suppress("unused")
 object SuperstructureState {
@@ -15,12 +15,13 @@ object SuperstructureState {
     }
 
     val kDefending = runOnce {
-        Lift.set(LiftState.kGoToPosition) { heightInputAbsoluteInches = 0.0 }
         Intake.set { extended = false }
+        Lift.set(LiftState.kOpenLoop) { speed = 0.0 }
         Outtake.set { speed = 0.0 }
+        Conveyor.set { speed = 0.0 }
     }
 
-    val kIndexingCargo = IndexingCargo
+    val kPassThrough = PassThrough
 
     val kIntakeCargoMode = runOnce {
         Intake.set(IntakeState.kExtendedOpenLoop)
