@@ -13,8 +13,11 @@ private class LinearRampedSpeedController(ramp: Double, val setter: (Double) -> 
     val rate = TimedRobot.kDefaultPeriod / ramp
 
     override fun getInverted(): Boolean = sign > 0
+
     override fun pidWrite(output: Double) = set(output)
+
     override fun stopMotor() = disable()
+
     override fun get(): Double = lastSpeed * sign
 
     override fun set(speed: Double) {

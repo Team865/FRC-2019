@@ -10,17 +10,28 @@ fun <T : TalonSRX> T.config(config: TalonSRXConfiguration) = apply { configAllSe
 
 fun <T : VictorSPX> T.config(config: VictorSPXConfiguration) = apply { configAllSettings(config) }
 
-fun <T : BaseMotorController> T.followedBy(other: BaseMotorController) = apply { other.follow(this.reset()) }
+fun <T : BaseMotorController> T.followedBy(vararg other: BaseMotorController) = apply { other.forEach { it.reset().follow(this) } }
 
-fun <T : BaseMotorController> T.reset() = apply { configFactoryDefault() }
+fun <T : BaseMotorController> T.reset() = apply {
+    configFactoryDefault()
+    selectProfileSlot(0, 0)
+    setNeutralMode(NeutralMode.Brake)
+}
 
 private class UnsafeSpeedController(val base: BaseMotorController) : SpeedController {
+
     var lastSpeed = 0.0
+
     override fun getInverted(): Boolean = base.inverted
+
     override fun pidWrite(output: Double) = set(output)
+
     override fun stopMotor() = base.neutralOutput()
+
     override fun get(): Double = lastSpeed
+
     override fun disable() = base.neutralOutput()
+
     override fun set(speed: Double) {
         lastSpeed = speed
         base.set(ControlMode.PercentOutput, speed)
@@ -29,6 +40,26 @@ private class UnsafeSpeedController(val base: BaseMotorController) : SpeedContro
     override fun setInverted(isInverted: Boolean) {
         base.inverted = isInverted
     }
+}
+
+private class LazyTalonSRX(deviceNumber: Int) : TalonSRX(deviceNumber) {
+
+}
+
+fun lazyTalonSRX(
+        id: Int,
+        config: TalonSRXConfiguration? = null,
+        neutralMode: NeutralMode = NeutralMode.Brake,
+        voltageCompensation: Boolean = false,
+        currentLimit: Boolean = false
+): TalonSRX = LazyTalonSRX(id).apply {
+    if (config == null) configFactoryDefault()
+    else configAllSettings(config)
+    setNeutralMode(neutralMode)
+    enableVoltageCompensation(voltageCompensation)
+    enableCurrentLimit(currentLimit)
+    selectedSensorPosition = 0
+    selectProfileSlot(0, 0)
 }
 
 fun <T : BaseMotorController> T.wpi(): SpeedController = UnsafeSpeedController(this)

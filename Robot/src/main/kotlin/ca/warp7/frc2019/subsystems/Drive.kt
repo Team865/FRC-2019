@@ -3,38 +3,37 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
-import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
+import ca.warp7.frc.lazyTalonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    val leftMaster: TalonSRX = TalonSRX(DriveConstants.kLeftMaster).apply {
-        config(DriveConstants.kMasterTalonConfig)
-        setNeutralMode(NeutralMode.Brake)
-        enableVoltageCompensation(true)
-        enableCurrentLimit(false)
-        followedBy(VictorSPX(DriveConstants.kLeftFollowerA))
-        followedBy(VictorSPX(DriveConstants.kLeftFollowerB))
-        selectedSensorPosition = 0
-    }
+    val leftMaster: TalonSRX = lazyTalonSRX(
+            id = DriveConstants.kLeftMaster,
+            config = DriveConstants.kMasterTalonConfig,
+            voltageCompensation = true,
+            currentLimit = false
+    ).followedBy(
+            VictorSPX(DriveConstants.kLeftFollowerA),
+            VictorSPX(DriveConstants.kLeftFollowerB)
+    )
 
-    val rightMaster: TalonSRX = TalonSRX(DriveConstants.kRightMaster).apply {
-        config(DriveConstants.kMasterTalonConfig)
-        setNeutralMode(NeutralMode.Brake)
-        enableVoltageCompensation(true)
-        enableCurrentLimit(false)
-        followedBy(VictorSPX(DriveConstants.kRightFollowerA))
-        followedBy(VictorSPX(DriveConstants.kRightFollowerB))
-        selectedSensorPosition = 0
-    }
+    val rightMaster: TalonSRX = lazyTalonSRX(
+            id = DriveConstants.kRightMaster,
+            config = DriveConstants.kMasterTalonConfig,
+            voltageCompensation = true,
+            currentLimit = false
+    ).followedBy(
+            VictorSPX(DriveConstants.kRightFollowerA),
+            VictorSPX(DriveConstants.kRightFollowerB)
+    )
 
     enum class OutputMode {
         Percent, Velocity, Position
