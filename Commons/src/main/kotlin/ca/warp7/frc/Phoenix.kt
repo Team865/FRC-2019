@@ -7,8 +7,11 @@ import com.ctre.phoenix.motorcontrol.can.*
 import edu.wpi.first.wpilibj.SpeedController
 
 fun <T : TalonSRX> T.config(config: TalonSRXConfiguration) = apply { configAllSettings(config) }
+
 fun <T : VictorSPX> T.config(config: VictorSPXConfiguration) = apply { configAllSettings(config) }
+
 fun <T : BaseMotorController> T.followedBy(other: BaseMotorController) = apply { other.follow(this.reset()) }
+
 fun <T : BaseMotorController> T.reset() = apply { configFactoryDefault() }
 
 private class UnsafeSpeedController(val base: BaseMotorController) : SpeedController {
