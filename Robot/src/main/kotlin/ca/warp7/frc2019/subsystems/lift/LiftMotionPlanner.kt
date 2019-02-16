@@ -4,6 +4,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.Lift
+import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.min
 import kotlin.math.sign
 import kotlin.math.sqrt
@@ -100,17 +101,16 @@ object LiftMotionPlanner {
     fun compute() = Lift.apply {
         if (motionPlanningEnabled) {
             nextMotionState.let {
-                outputType = Lift.OutputType.Velocity
+                controlMode = ControlMode.Velocity
                 demand = it.velocity
                 feedForward = baseFeedForward + (it.height - height) * LiftConstants.kPurePursuitPositionGain
             }
         } else {
-            outputType = Lift.OutputType.Position
+            controlMode = ControlMode.Position
             demand = setpointInches * LiftConstants.kInchesPerTick + nominalZero
             feedForward = baseFeedForward
         }
     }
-
 
     data class LiftMotionState(
             val height: Double,

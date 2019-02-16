@@ -7,6 +7,7 @@ import ca.warp7.frc2019.subsystems.drive.CurvatureDrive
 import ca.warp7.frc2019.subsystems.drive.DriveDistance
 import ca.warp7.frc2019.subsystems.drive.FollowPath
 import ca.warp7.frc2019.subsystems.drive.TurnAngle
+import com.ctre.phoenix.motorcontrol.ControlMode
 
 object DriveState {
 
@@ -15,7 +16,7 @@ object DriveState {
     }
 
     val kNeutralOutput = Drive.runOnce {
-        outputMode = Drive.OutputMode.Percent
+        controlMode = ControlMode.PercentOutput
         leftDemand = 0.0
         rightDemand = 0.0
     }

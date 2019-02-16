@@ -3,12 +3,13 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.OpenLoopState
 import ca.warp7.frc2019.subsystems.lift.*
+import com.ctre.phoenix.motorcontrol.ControlMode
 
 
 object LiftState {
     val kIdle = runOnce { }
     val kOpenLoop = OpenLoopState {
-        Lift.outputType = Lift.OutputType.Percent
+        Lift.controlMode = ControlMode.PercentOutput
         Lift.demand = it
     }
     val kGoToPosition = GoToPosition // this cal be relaced with motion planning or motion planning simple

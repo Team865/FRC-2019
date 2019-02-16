@@ -6,6 +6,7 @@ import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 
 object CurvatureDrive : Action {
@@ -33,7 +34,7 @@ object CurvatureDrive : Action {
     }
 
     override fun start() {
-        Drive.outputMode = Drive.OutputMode.Percent
+        Drive.controlMode = ControlMode.PercentOutput
         xSpeed = 0.0
         zRotation = 0.0
         isQuickTurn = false

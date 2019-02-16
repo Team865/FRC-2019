@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
+import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
 object TurnAngle : Action {
@@ -12,7 +13,7 @@ object TurnAngle : Action {
     private var initialAngle = 0.0
 
     override fun start() {
-        Drive.outputMode = Drive.OutputMode.Position
+        Drive.controlMode = ControlMode.Position
         initialAngle = Drive.totalAngle
 
         val distance = DriveConstants.kTurningCircumference * angle / 360

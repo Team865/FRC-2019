@@ -6,7 +6,6 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.lazyTalonSRX
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive.OutputMode.*
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -35,18 +34,14 @@ object Drive : Subsystem() {
             VictorSPX(DriveConstants.kRightFollowerB)
     )
 
-    enum class OutputMode {
-        Percent, Velocity, Position
-    }
-
-    var outputMode = Percent
+    var controlMode = ControlMode.PercentOutput
         set(value) {
             if (field != value) when (value) {
-                Position -> {
+                ControlMode.Position -> {
                     leftMaster.selectProfileSlot(0, 0)
                     rightMaster.selectProfileSlot(0, 0)
                 }
-                Velocity -> {
+                ControlMode.Velocity -> {
                     leftMaster.selectProfileSlot(1, 0)
                     rightMaster.selectProfileSlot(1, 0)
                 }
@@ -57,8 +52,8 @@ object Drive : Subsystem() {
 
     var leftDemand = 0.0
     var rightDemand = 0.0
-    var leftFeedForward = 0.0
-    var rightFeedForward = 0.0
+    var leftFeedforward = 0.0
+    var rightFeedforward = 0.0
 
     var leftPositionTicks = 0
     var rightPositionTicks = 0
@@ -70,27 +65,17 @@ object Drive : Subsystem() {
     val totalAngle
         get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
 
-    private val leftDemand1 get() = leftDemand * -1
-    private val leftFeedForward1 get() = leftFeedForward * -1
+    private val inverseLeftDemand get() = leftDemand * -1
+    private val inverseLeftFeedforward get() = leftFeedforward * -1
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
     }
 
-    override fun onOutput() = when (outputMode) {
-        Percent -> {
-            leftMaster.set(ControlMode.PercentOutput, leftDemand1)
-            rightMaster.set(ControlMode.PercentOutput, rightDemand)
-        }
-        Velocity -> {
-            leftMaster.set(ControlMode.Velocity, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
-            rightMaster.set(ControlMode.Velocity, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
-        }
-        Position -> {
-            leftMaster.set(ControlMode.Position, leftDemand1, DemandType.ArbitraryFeedForward, leftFeedForward1)
-            rightMaster.set(ControlMode.Position, rightDemand, DemandType.ArbitraryFeedForward, rightFeedForward)
-        }
+    override fun onOutput() {
+        leftMaster.set(controlMode, inverseLeftDemand, DemandType.ArbitraryFeedForward, inverseLeftFeedforward)
+        rightMaster.set(controlMode, rightDemand, DemandType.ArbitraryFeedForward, rightFeedforward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -102,11 +87,11 @@ object Drive : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("Output Mode", outputMode.name)
+        put("Output Mode", controlMode.name)
         put("Left Demand", leftDemand)
-        put("Left Feedforward", leftFeedForward)
+        put("Left Feedforward", leftFeedforward)
         put("Right Demand", rightDemand)
-        put("Right Feedforward", rightFeedForward)
+        put("Right Feedforward", rightFeedforward)
         put("Left Position", leftPositionTicks)
         put("Right Position", rightPositionTicks)
         put("Left Velocity", leftVelocityTicks)

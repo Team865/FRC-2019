@@ -19,7 +19,7 @@ object FollowPath : Action {
 
         var previousPoint = startPos
         var previousAngle = startAngle
-        for ((i, waypoint) in path.waypoints.withIndex()) {
+            for (waypoint in path.waypoints) {
             val relativeAngle = previousAngle - (previousPoint - waypoint.point).angle
             val relativeDistance = (waypoint.point - previousPoint).mag
 
