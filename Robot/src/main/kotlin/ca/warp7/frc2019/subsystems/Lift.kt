@@ -2,6 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.lazyTalonSRX
+import ca.warp7.frc.reset
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -23,6 +24,7 @@ object Lift : Subsystem() {
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)
+        victor.reset()
         victor.setNeutralMode(NeutralMode.Brake)
         victor.inverted = true
         victor.follow(master)
