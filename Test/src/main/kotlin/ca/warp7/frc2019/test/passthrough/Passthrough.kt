@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.Passthrough
+package ca.warp7.frc2019.test.passthrough
 
 
 import ca.warp7.frc2019.constants.ConveyorConstants
