@@ -21,11 +21,11 @@ object LiftConstants {
     const val kMaxBaseAcceleration = 1.0 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
+    const val kPrimaryFeedforward = 0.08
+    const val kManualControlScale = 0.6
+
     const val kStoppedVelocityThreshold = 64 // TODO
     const val kStoppedCurrentEpsilon = 0.1 // TODO
-    const val kPrimaryFeedforward = 0.15 // TODO
-    const val kSecondaryStageLiftedSetpoint = 36 // TODO
-    const val kSecondaryStageFeedforward = 0.3 // TODO
     const val kPurePursuitPositionGain = 0.4 // TODO
     const val kMaximumSetpoint = 80.0 // TODO
     const val kEpsilon = 1E-9
@@ -60,7 +60,7 @@ object LiftConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 0.0
+        openloopRamp = 0.3
         closedloopRamp = 0.0
 
         neutralDeadband = 0.04

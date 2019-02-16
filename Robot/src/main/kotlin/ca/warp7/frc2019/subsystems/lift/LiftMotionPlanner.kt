@@ -93,9 +93,6 @@ object LiftMotionPlanner {
     private val baseFeedForward: Double
         get() {
             var feedforward = LiftConstants.kPrimaryFeedforward
-            if (height > LiftConstants.kSecondaryStageLiftedSetpoint) {
-                feedforward += LiftConstants.kSecondaryStageFeedforward
-            }
             if (Infrastructure.ahrsCalibrated) feedforward *= Math.cos(Infrastructure.pitch)
             return feedforward
         }
