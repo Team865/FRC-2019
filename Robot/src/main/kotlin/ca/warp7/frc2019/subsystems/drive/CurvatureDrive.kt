@@ -5,7 +5,6 @@ import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.DriveState
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 
@@ -43,7 +42,7 @@ object CurvatureDrive : Action {
     override fun update() {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
-        if (xSpeed < -ControlConstants.kAxisDeadband || isQuickTurn) zRotation *= -1
+        if (xSpeed < -ControlConstants.kControlDeadband || isQuickTurn) zRotation *= -1
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
         Drive.leftDemand = left
         Drive.rightDemand = right

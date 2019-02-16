@@ -1,19 +1,12 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc2019.subsystems
+package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc2019.subsystems.drive.CurvatureDrive
-import ca.warp7.frc2019.subsystems.drive.DriveDistance
-import ca.warp7.frc2019.subsystems.drive.FollowPath
-import ca.warp7.frc2019.subsystems.drive.TurnAngle
+import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 object DriveState {
-
-    val kNeutralMotionState = Drive.runOnce {
-        set(kNeutralOutput)
-    }
 
     val kNeutralOutput = Drive.runOnce {
         controlMode = ControlMode.PercentOutput

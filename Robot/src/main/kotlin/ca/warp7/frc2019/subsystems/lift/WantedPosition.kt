@@ -1,9 +1,10 @@
-package ca.warp7.frc2019.subsystems.superstructure
+package ca.warp7.frc2019.subsystems.lift
 
 import kotlin.math.max
 import kotlin.math.min
 
 
+@Suppress("unused")
 class WantedPosition {
 
     private var setpointLevel = 0

@@ -95,13 +95,13 @@ object LiftMotionPlanner {
             nextMotionState.let {
                 controlMode = ControlMode.Velocity
                 demand = it.velocity
-                feedForward = LiftConstants.kPrimaryFeedforward +
+                feedforward = LiftConstants.kPrimaryFeedforward +
                         (it.height - height) * LiftConstants.kPurePursuitPositionGain
             }
         } else {
             controlMode = ControlMode.Position
             demand = setpointInches * LiftConstants.kInchesPerTick + nominalZero
-            feedForward = LiftConstants.kPrimaryFeedforward
+            feedforward = LiftConstants.kPrimaryFeedforward
         }
     }
 
