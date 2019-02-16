@@ -2,6 +2,7 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.linearRamp
+import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.DriveState
@@ -22,8 +23,11 @@ object CurvatureDrive : Action {
     )
 
     init {
-        differentialDrive.setDeadband(DriveConstants.kDifferentialDeadband)
-        differentialDrive.isSafetyEnabled = false
+        differentialDrive.apply {
+            setDeadband(DriveConstants.kDifferentialDeadband)
+            isSafetyEnabled = false
+            isRightSideInverted = false
+        }
     }
 
     override fun start() {
@@ -34,6 +38,9 @@ object CurvatureDrive : Action {
     }
 
     override fun update() {
+        // Reverse the curvature direction when drive train is going in
+        // reverse or when it's quick turning
+        if (xSpeed < -ControlConstants.kAxisDeadband || isQuickTurn) zRotation *= -1
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
         Drive.leftDemand = left
         Drive.rightDemand = right
