@@ -1,16 +1,16 @@
 package ca.warp7.frc
 
 class RobotControllerImpl internal constructor() : RobotController {
-    var backButton = ControllerState.KeptUp
-    override var aButton = ControllerState.KeptUp
-    override var bButton = ControllerState.KeptUp
-    override var xButton = ControllerState.KeptUp
-    override var yButton = ControllerState.KeptUp
-    override var leftBumper = ControllerState.KeptUp
-    override var rightBumper = ControllerState.KeptUp
-    override var leftStickButton = ControllerState.KeptUp
-    override var rightStickButton = ControllerState.KeptUp
-    override var startButton = ControllerState.KeptUp
+    var backButton = ControllerState.None
+    override var aButton = ControllerState.None
+    override var bButton = ControllerState.None
+    override var xButton = ControllerState.None
+    override var yButton = ControllerState.None
+    override var leftBumper = ControllerState.None
+    override var rightBumper = ControllerState.None
+    override var leftStickButton = ControllerState.None
+    override var rightStickButton = ControllerState.None
+    override var startButton = ControllerState.None
     override var leftTriggerAxis = 0.0
     override var rightTriggerAxis = 0.0
     override var leftXAxis = 0.0

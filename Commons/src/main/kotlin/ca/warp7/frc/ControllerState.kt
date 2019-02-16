@@ -1,5 +1,5 @@
 package ca.warp7.frc
 
 enum class ControllerState {
-    Pressed, Released, HeldDown, KeptUp
+    Pressed, Released, HeldDown, None
 }

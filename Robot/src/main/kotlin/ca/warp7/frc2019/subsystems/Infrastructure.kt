@@ -6,7 +6,6 @@ import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.PowerDistributionPanel
 import edu.wpi.first.wpilibj.SPI
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 object Infrastructure : Subsystem() {
     private val compressor = Compressor(InfrastructureConstants.kCompressorModule)
@@ -39,11 +38,11 @@ object Infrastructure : Subsystem() {
         }
     }
 
-    override fun onPostUpdate() = shuffleboard {
-        add("Compressor", compressor)
-        add("pdp", pdp).withWidget(BuiltInWidgets.kPowerDistributionPanel)
-        add("ahrsCalibrated", ahrsCalibrated)
-        add("Yaw", yaw)
-        add("Pitch", pitch)
+    override fun onPostUpdate() {
+        put(compressor)
+        put(pdp)
+        put("ahrsCalibrated", ahrsCalibrated)
+        put("Yaw", yaw)
+        put("Pitch", pitch)
     }
 }

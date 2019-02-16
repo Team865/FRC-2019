@@ -5,8 +5,7 @@ import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 internal object CommonRobot {
 
@@ -24,11 +23,11 @@ internal object CommonRobot {
     private val xboxOperator = XboxController(1)
 
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-
-    private val originalOut = System.out
-    private val originalErr = System.err
-    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
-    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
+//
+//    private val originalOut = System.out
+//    private val originalErr = System.err
+//    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
+//    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
 
     private var previousTime = 0.0
     private var robotEnabled = false
@@ -53,7 +52,8 @@ internal object CommonRobot {
                 periodicLoop()
             } catch (e: Throwable) {
                 crashed = true
-                originalErr.println("ERROR LOOP ENDED\n${e.message}")
+                e.printStackTrace()
+                //originalErr.println("ERROR LOOP ENDED\n${e.message}")
             }
         }
     }
@@ -67,16 +67,16 @@ internal object CommonRobot {
         // Collect controller data
         when (controllerMode) {
             0 -> {
-                collectControllerData(robotDriver, xboxDriver)
-                collectControllerData(robotOperator, xboxOperator)
+                robotDriver.updateWith(xboxDriver)
+                robotOperator.updateWith(xboxOperator)
             }
             1 -> {
-                collectControllerData(robotDriver, xboxDriver)
-                resetControllerData(robotOperator)
+                robotDriver.updateWith(xboxDriver)
+                robotOperator.reset()
             }
             2 -> {
-                resetControllerData(robotDriver)
-                collectControllerData(robotOperator, xboxDriver)
+                robotDriver.reset()
+                robotOperator.updateWith(xboxDriver)
             }
         }
         // Check to switch controllers
@@ -97,25 +97,20 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-//        subsystems.forEach {
-//            it.shuffleboard {
-//                // Show the current state in the appropriate tab
-//                add("Current State", it.stateName)
-//                        .withWidget(BuiltInWidgets.kTextView)
-//                        .withPosition(0, 0)
-//            }
-//            it.onPostUpdate()
-//        }
+        subsystems.forEach {
+            it.put("Current State", it.stateName, 0, 0, 2, 2, BuiltInWidgets.kTextView)
+            it.onPostUpdate()
+        }
         // Flush the standard output
-        outContent.apply {
-            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
-        }.reset()
-        // Flush the standard error adding ERROR before it
-        errContent.apply {
-            toString().split(System.lineSeparator().toRegex()).forEach {
-                if (it.isNotEmpty()) originalErr.println("ERROR $it")
-            }
-        }.reset()
+//        outContent.apply {
+//            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
+//        }.reset()
+//        // Flush the standard error adding ERROR before it
+//        errContent.apply {
+//            toString().split(System.lineSeparator().toRegex()).forEach {
+//                if (it.isNotEmpty()) originalErr.println("ERROR $it")
+//            }
+//        }.reset()
     }
 
     fun disableOutputs() {

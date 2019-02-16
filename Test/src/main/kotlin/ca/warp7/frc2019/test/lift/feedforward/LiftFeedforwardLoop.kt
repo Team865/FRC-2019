@@ -4,6 +4,8 @@ import ca.warp7.frc.ControllerState
 import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc.getShuffleboardTab
 import ca.warp7.frc.withDriver
+import ca.warp7.frc2019.subsystems.Conveyor
+import ca.warp7.frc2019.subsystems.Outtake
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import edu.wpi.first.networktables.NetworkTableEntry
@@ -16,9 +18,9 @@ object LiftFeedforwardLoop : RobotControlLoop {
     override fun setup() {
     }
 
-    private var feedforward = 0.05
-    private var ramp = 0.5
-    private var scale = 0.5
+    private var feedforward = 0.08
+    private var ramp = 0.3
+    private var scale = 0.6
 
     private val master = LiftSubsystem.master
 
@@ -64,6 +66,17 @@ object LiftFeedforwardLoop : RobotControlLoop {
             master.set(ControlMode.PercentOutput,
                     if (y.absoluteValue > 0.2) -(y - 0.2.withSign(y)) / 0.8 * scale else 0.0,
                     DemandType.ArbitraryFeedForward, feedforward)
+
+            if (leftTriggerAxis > 0.2) {
+                Outtake.speed = leftTriggerAxis / 2
+                Conveyor.speed = -leftTriggerAxis / 2
+            } else if (rightTriggerAxis > 0.2) {
+                Outtake.speed = -rightTriggerAxis / 2
+                Conveyor.speed = -rightTriggerAxis / 2
+            } else {
+                Outtake.speed = 0.0
+                Conveyor.speed = 0.0
+            }
         }
         rampEntry.setDouble(ramp)
         feedforwardEntry.setDouble(feedforward)

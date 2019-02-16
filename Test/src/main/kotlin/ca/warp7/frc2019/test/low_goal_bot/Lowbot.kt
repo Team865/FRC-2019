@@ -1,6 +1,10 @@
 package ca.warp7.frc2019.test.low_goal_bot
 
 
+import ca.warp7.frc2019.constants.ConveyorConstants
+import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.constants.IntakeConstants
+import ca.warp7.frc2019.constants.OuttakeConstants
 
 import ca.warp7.frc2019.constants.*
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -18,7 +22,7 @@ class Lowbot : TimedRobot() {
     lateinit var controller: XboxController
     lateinit var leftConveyor: VictorSPX
     lateinit var rightConveyor: VictorSPX
-    lateinit var intake : VictorSPX
+    lateinit var intake: VictorSPX
     lateinit var differentialDrive: DifferentialDrive
     lateinit var leftOuttake: VictorSPX
     lateinit var rightOuttake: VictorSPX
@@ -40,7 +44,7 @@ class Lowbot : TimedRobot() {
         }
         leftOuttake = VictorSPX(OuttakeConstants.kLeft)
         rightOuttake = VictorSPX(OuttakeConstants.kRight)
-        differentialDrive = DifferentialDrive(rightMaster,leftMaster )
+        differentialDrive = DifferentialDrive(rightMaster, leftMaster)
         leftConveyor = VictorSPX(ConveyorConstants.kLeft)
         rightConveyor = VictorSPX(ConveyorConstants.kRight)
         intake = VictorSPX(IntakeConstants.kVictor)
@@ -56,6 +60,8 @@ class Lowbot : TimedRobot() {
 
     }
 
+    var xSpeed = 0.0
+    var zRotation = 0.0
     override fun teleopPeriodic() {
         val y = controller.y
         if (y.absoluteValue > 0.2) liftMaster.set(ControlMode.PercentOutput, (y - 0.2.withSign(y)) / 0.8 * 0.5)
@@ -69,12 +75,16 @@ class Lowbot : TimedRobot() {
         }
         speed *= 0.7
 
-        rightConveyor.set(ControlMode.PercentOutput, speed / 2 )
+        rightConveyor.set(ControlMode.PercentOutput, speed / 2)
         leftConveyor.set(ControlMode.PercentOutput, speed / 2)
         intake.set(ControlMode.PercentOutput, speed)
+
+        xSpeed += (controller.getY(GenericHID.Hand.kLeft) - xSpeed) / 6
+        zRotation += (controller.getX(GenericHID.Hand.kRight) - zRotation) / 6
+
         differentialDrive.curvatureDrive(
-                controller.getY(GenericHID.Hand.kLeft),
-                controller.getX(GenericHID.Hand.kRight),
+                xSpeed,
+                zRotation,
                 controller.getBumper(GenericHID.Hand.kLeft)
         )
         val lt = controller.getTriggerAxis(GenericHID.Hand.kLeft)

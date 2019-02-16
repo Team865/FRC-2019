@@ -14,15 +14,15 @@ class Robot : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         setControllerMode(ControllerMode.DriverAndOperator)
-        Drive.set(DriveState.kNeutralMotionState)
+        Drive.set { }
         Infrastructure.set { startCompressor = true }
         Climber.set { climbing = false }
         Hatch.set { pushing = false }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
         Intake.set { extended = false }
-        Lift.set(LiftState.kIdle)
-        Superstructure.set(SuperstructureState.kStartingConfiguration)
+        Lift.set { }
+        Superstructure.set { }
     }
 
     /**

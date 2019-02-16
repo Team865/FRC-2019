@@ -1,6 +1,8 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc.lazyTalonSRX
+import ca.warp7.frc.reset
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -8,33 +10,29 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import edu.wpi.first.wpilibj.DigitalInput
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    private val master = TalonSRX(LiftConstants.kMaster).apply {
-        setNeutralMode(NeutralMode.Brake)
-        configAllSettings(LiftConstants.kMasterTalonConfig)
-        enableVoltageCompensation(true)
-        enableCurrentLimit(false)
-    }
+    private val master: TalonSRX = lazyTalonSRX(
+            id = LiftConstants.kMaster,
+            config = LiftConstants.kMasterTalonConfig,
+            voltageCompensation = true,
+            currentLimit = false
+    )
 
     init {
         val victor = VictorSPX(LiftConstants.kFollower)
+        victor.reset()
         victor.setNeutralMode(NeutralMode.Brake)
         victor.inverted = true
         victor.follow(master)
     }
 
-    private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
-
-    enum class OutputType {
-        Percent, Position, Velocity
-    }
+    // private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     var demand = 0.0
-    var feedForward = 0.0
+    var feedforward = 0.0
     var positionTicks = 0
     var velocityTicksPer100ms = 0
     var actualPercent = 0.0
@@ -42,12 +40,12 @@ object Lift : Subsystem() {
     var actualVoltage = 0.0
     var hallEffectTriggered = true
 
-    var outputType = OutputType.Percent
+    var controlMode = ControlMode.PercentOutput
         set(value) {
             if (field != value) when (value) {
-                OutputType.Percent -> Unit
-                OutputType.Position -> master.selectProfileSlot(0, 0)
-                OutputType.Velocity -> master.selectProfileSlot(1, 0)
+                ControlMode.Position -> master.selectProfileSlot(0, 0)
+                ControlMode.Velocity -> master.selectProfileSlot(1, 0)
+                else -> Unit
             }
             field = value
         }
@@ -56,10 +54,8 @@ object Lift : Subsystem() {
         master.neutralOutput()
     }
 
-    override fun onOutput() = when (outputType) {
-        OutputType.Percent -> master.set(ControlMode.PercentOutput, -demand)
-        OutputType.Position -> master.set(ControlMode.Position, -demand, DemandType.ArbitraryFeedForward, feedForward)
-        OutputType.Velocity -> master.set(ControlMode.Velocity, -demand, DemandType.ArbitraryFeedForward, feedForward)
+    override fun onOutput() {
+        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -68,20 +64,19 @@ object Lift : Subsystem() {
         actualPercent = master.motorOutputPercent
         actualCurrent = master.outputCurrent
         actualVoltage = master.busVoltage * actualPercent
-        hallEffectTriggered = hallEffect.get()
+        hallEffectTriggered = true // hallEffect.get()
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
-    override fun onPostUpdate() = shuffleboard {
-        add("Output Type", outputType.name)
-        add("Actual Percent", actualPercent)
-        add("Actual Current", actualCurrent)
-        add("Actual Voltage", actualVoltage)
-        add("Demand", demand)
-        add("Feedforward", feedForward)
-        add("Height (in)", LiftMotionPlanner.height)
-        add("Velocity (in/s)", LiftMotionPlanner.velocity)
-        add("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
-        add(hallEffect)
+    override fun onPostUpdate() {
+        put("Output Type", controlMode.name)
+        put("Actual Percent", actualPercent)
+        put("Actual Current", actualCurrent)
+        put("Actual Voltage", actualVoltage)
+        put("Demand", demand)
+        put("Feedforward", feedforward)
+        put("Height (in)", LiftMotionPlanner.height)
+        put("Velocity (in/s)", LiftMotionPlanner.velocity)
+        put("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
     }
 }
