@@ -39,11 +39,11 @@ object LiftOuttakeLoop : RobotControlLoop {
 
     override fun periodic() {
         withDriver {
-            if (leftBumper == ControllerState.Pressed) outtake -= 0.01
-            if (rightBumper == ControllerState.Pressed) outtake += 0.01
+            if (leftBumper == ControllerState.Pressed) outtake -= 0.1
+            if (rightBumper == ControllerState.Pressed) outtake += 0.1
             outtake = outtake.coerceIn(0.0, 1.0)
-            if (xButton == ControllerState.Pressed) conveyor += 0.1
-            if (yButton == ControllerState.Pressed) conveyor -= 0.1
+            if (aButton == ControllerState.Pressed) conveyor += 0.1
+            if (bButton == ControllerState.Pressed) conveyor -= 0.1
             conveyor = conveyor.coerceIn(0.0, 1.0)
             val y = leftYAxis
             master.set(ControlMode.PercentOutput,
@@ -56,7 +56,7 @@ object LiftOuttakeLoop : RobotControlLoop {
                 }
                 rightTriggerAxis > 0.2 -> {
                     Outtake.speed = -rightTriggerAxis * outtake
-                    Conveyor.speed = -rightTriggerAxis * conveyor
+                    Conveyor.speed = rightTriggerAxis * conveyor
                 }
                 else -> {
                     Outtake.speed = 0.0
