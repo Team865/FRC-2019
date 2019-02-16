@@ -4,6 +4,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
+@Suppress("unused")
 class WantedPosition {
 
     private var setpointLevel = 0

@@ -67,16 +67,16 @@ internal object CommonRobot {
         // Collect controller data
         when (controllerMode) {
             0 -> {
-                collectControllerData(robotDriver, xboxDriver)
-                collectControllerData(robotOperator, xboxOperator)
+                robotDriver.updateWith(xboxDriver)
+                robotOperator.updateWith(xboxOperator)
             }
             1 -> {
-                collectControllerData(robotDriver, xboxDriver)
-                resetControllerData(robotOperator)
+                robotDriver.updateWith(xboxDriver)
+                robotOperator.reset()
             }
             2 -> {
-                resetControllerData(robotDriver)
-                collectControllerData(robotOperator, xboxDriver)
+                robotDriver.reset()
+                robotOperator.updateWith(xboxDriver)
             }
         }
         // Check to switch controllers

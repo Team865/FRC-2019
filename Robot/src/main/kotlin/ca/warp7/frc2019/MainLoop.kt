@@ -24,20 +24,46 @@ object MainLoop : RobotControlLoop {
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == HeldDown
             }
-            if (leftTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kPassThrough) { speed = leftTriggerAxis * forward }
-            } else if (rightTriggerAxis > ControlConstants.kAxisDeadband) {
-                Superstructure.set(SuperstructureState.kPassThrough) { speed = rightTriggerAxis * reverse }
+            when {
+                leftTriggerAxis > ControlConstants.kAxisDeadband -> {
+                    Superstructure.set(SuperstructureState.kPassThrough) {
+                        speed = leftTriggerAxis * forward
+                        outtaking = rightBumper == HeldDown
+                    }
+                    Intake.set {
+                        speed = leftTriggerAxis
+                        extended = true
+                    }
+                }
+                rightTriggerAxis > ControlConstants.kAxisDeadband -> {
+                    Superstructure.set(SuperstructureState.kPassThrough) {
+                        speed = rightTriggerAxis * reverse
+                        outtaking = false
+                    }
+                    Intake.set {
+                        speed = -rightTriggerAxis
+                        extended = true
+                    }
+                }
+                else -> Intake.set {
+                    speed = 0.0
+                    extended = false
+                }
             }
-            SuperstructureState.kPassThrough.outtaking = rightBumper == HeldDown
             if (aButton == Pressed) Climber.set { climbing = !climbing }
         }
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kAxisDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) { speed = leftTriggerAxis * forward }
+                    Superstructure.set(SuperstructureState.kPassThrough) {
+                        speed = leftTriggerAxis * forward
+                        outtaking = aButton == HeldDown
+                    }
                 rightTriggerAxis > ControlConstants.kAxisDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) { speed = rightTriggerAxis * reverse }
+                    Superstructure.set(SuperstructureState.kPassThrough) {
+                        speed = rightTriggerAxis * reverse
+                        outtaking = false
+                    }
             }
             when (Pressed) {
                 aButton -> Hatch.set(action {
