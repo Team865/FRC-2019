@@ -3,7 +3,6 @@ package ca.warp7.frc
 import ca.warp7.actionj.impl.ActionMode
 import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.*
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 internal object CommonRobot {
 
@@ -125,7 +124,7 @@ internal object CommonRobot {
         }
         // Send data to Shuffleboard
         subsystems.forEach {
-            it.put("Current State", it.stateName, 0, 0, 2, 2, BuiltInWidgets.kTextView)
+            it.put("Current State", it.stateName)
             it.onPostUpdate()
         }
         // Flush the standard output

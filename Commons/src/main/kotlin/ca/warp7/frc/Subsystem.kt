@@ -106,13 +106,14 @@ abstract class Subsystem : ActionStateMachine() {
             value: Any,
             x: Int = 0,
             y: Int = 0,
-            width: Int = 0,
-            height: Int = 0,
             widget: BuiltInWidgets? = null,
             extras: Map<String, Any>? = null
     ) {
         if (name in entries) entries[name]?.setValue(value) else {
-            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            val n = entries.size + sent.size
+            val row = n / 6
+            val col = n % 6
+            val w = tab.add(name, value).withPosition(row * 4, col * 4).withSize(4, 4)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -128,15 +129,16 @@ abstract class Subsystem : ActionStateMachine() {
             value: Sendable,
             x: Int = 0,
             y: Int = 0,
-            width: Int = 0,
-            height: Int = 0,
             widget: BuiltInWidgets? = null,
             extras: Map<String, String>? = null
     ) {
         val name = value.name
         if (name !in sent) {
+            val n = entries.size + sent.size
+            val row = n / 6
+            val col = n % 6
             sent.add(name)
-            val w = tab.add(name, value).withPosition(x, y).withSize(width, height)
+            val w = tab.add(name, value).withPosition(row * 4, col * 4).withSize(4, 4)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
         }
