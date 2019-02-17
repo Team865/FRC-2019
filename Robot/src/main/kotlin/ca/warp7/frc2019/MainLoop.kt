@@ -32,18 +32,18 @@ object MainLoop : RobotControlLoop {
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.forward
+                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
                     isOuttaking = rightBumper == HeldDown
                     Intake.set {
-                        speed = leftTriggerAxis * speedScale
+                        speed = -leftTriggerAxis * speedScale
                         extended = true
                     }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
+                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
                     isOuttaking = true
                     Intake.set {
-                        speed = -rightTriggerAxis * speedScale
+                        speed = rightTriggerAxis * speedScale
                         extended = true
                     }
                 }
@@ -59,11 +59,11 @@ object MainLoop : RobotControlLoop {
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.forward
+                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
                     isOuttaking = true
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.forward
+                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
                     isOuttaking = true
                 }
             }
