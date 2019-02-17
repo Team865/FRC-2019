@@ -49,7 +49,7 @@ class Lowbot : TimedRobot() {
         leftConveyor = VictorSPX(ConveyorConstants.kLeft)
         rightConveyor = VictorSPX(ConveyorConstants.kRight)
         intake = VictorSPX(IntakeConstants.kVictor)
-        operator = XboxController(0)
+        operator = XboxController(1)
         driver = XboxController(0)
     }
 
