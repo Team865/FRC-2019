@@ -55,7 +55,7 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
-        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedforward)
+        master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 
     override fun onMeasure(dt: Double) {

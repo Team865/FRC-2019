@@ -104,8 +104,6 @@ abstract class Subsystem : ActionStateMachine() {
     fun put(
             name: String,
             value: Any,
-            x: Int = 0,
-            y: Int = 0,
             widget: BuiltInWidgets? = null,
             extras: Map<String, Any>? = null
     ) {
@@ -127,8 +125,6 @@ abstract class Subsystem : ActionStateMachine() {
      */
     fun put(
             value: Sendable,
-            x: Int = 0,
-            y: Int = 0,
             widget: BuiltInWidgets? = null,
             extras: Map<String, String>? = null
     ) {

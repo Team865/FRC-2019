@@ -84,8 +84,7 @@ object MainLoop : RobotControlLoop {
                 }
                 else -> Unit
             }
-            if (xButton == HeldDown) Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            else Lift.set(LiftState.kIdle)
+            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
         }
         if (passThroughSpeed != 0.0) {
