@@ -40,7 +40,7 @@ object MainLoop : RobotControlLoop {
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
-                        outtaking = false
+                        outtaking = true
                     }
                     Intake.set {
                         speed = -rightTriggerAxis
@@ -53,18 +53,19 @@ object MainLoop : RobotControlLoop {
                 }
             }
             if (aButton == Pressed) Climber.set { climbing = !climbing }
+            if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
         }
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband ->
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
-                        outtaking = true // TODO use aButton
+                        outtaking = true
                     }
                 rightTriggerAxis > ControlConstants.kControlDeadband ->
                     Superstructure.set(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
-                        outtaking = false
+                        outtaking = true
                     }
             }
             when (Pressed) {

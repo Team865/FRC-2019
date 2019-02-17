@@ -17,9 +17,9 @@ fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= oth
 
 fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab
 
-fun withDriver(block: RobotController.() -> Unit) = block(CommonRobot.robotDriver)
+inline fun withDriver(block: RobotController.() -> Unit) = block(Controls.robotDriver)
 
-fun withOperator(block: RobotController.() -> Unit) = block(CommonRobot.robotOperator)
+inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robotOperator)
 
 fun setControllerMode(controllerMode: ControllerMode) {
     CommonRobot.controllerMode = controllerMode.value
