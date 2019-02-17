@@ -69,4 +69,11 @@ inline fun periodic(crossinline block: () -> Unit) = object : Action {
     override val shouldFinish: Boolean get() = false
 }
 
+fun runAfter(seconds: Int, block: ActionState.() -> Unit) = runAfter(seconds.toDouble(), block)
+
+fun runAfter(seconds: Double, block: ActionState.() -> Unit) = action {
+    finishWhen { elapsed > seconds }
+    onStop(block)
+}
+
 fun <T : Action> ASM.future(wantedState: T, block: T.() -> Unit = {}) = runOnce { set(wantedState, block) }

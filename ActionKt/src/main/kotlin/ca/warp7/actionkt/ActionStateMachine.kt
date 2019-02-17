@@ -7,6 +7,9 @@ abstract class ActionStateMachine {
     var stateName: String = "None"
         internal set
 
+    /**
+     * Sets the state machine to a wanted state
+     */
     open fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         block(wantedState)
         // Check if there is a new wanted state that is not the same as the current state
@@ -22,6 +25,21 @@ abstract class ActionStateMachine {
         }
     }
 
+    /**
+     * Tries to set the state machine to a wanted state if the current state can finish
+     */
+    open fun <T : Action> trySet(wantedState: T, block: T.() -> Unit = {}) {
+        val currentState = currentState
+        if (wantedState == currentState) {
+            block(wantedState)
+        } else if (currentState == null || currentState.shouldFinish) {
+            set(wantedState, block)
+        }
+    }
+
+    /**
+     * Update the current state
+     */
     open fun updateState() {
         // Check if the current state wants to finish before updating
         if (currentState?.shouldFinish != false) {
@@ -33,6 +51,9 @@ abstract class ActionStateMachine {
         }
     }
 
+    /**
+     * Stop the current state
+     */
     fun stopState() {
         currentState?.stop()
         currentState = null

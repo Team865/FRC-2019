@@ -17,7 +17,6 @@ class Robot : TimedRobot() {
         Drive.set { }
         Infrastructure.set { startCompressor = true }
         Climber.set { climbing = false }
-        Hatch.set { pushing = false }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
         Intake.set { extended = false }

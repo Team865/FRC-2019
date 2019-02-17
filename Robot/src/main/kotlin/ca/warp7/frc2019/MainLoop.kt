@@ -1,6 +1,6 @@
 package ca.warp7.frc2019
 
-import ca.warp7.actionkt.action
+import ca.warp7.actionkt.runAfter
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.RobotControlLoop
@@ -29,22 +29,22 @@ object MainLoop : RobotControlLoop {
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
                         outtaking = rightBumper == HeldDown
                     }
                     Intake.set {
-                        speed = leftTriggerAxis
+                        speed = leftTriggerAxis * speedScale
                         extended = true
                     }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
-                        outtaking = false
+                        outtaking = true
                     }
                     Intake.set {
-                        speed = -rightTriggerAxis
+                        speed = -rightTriggerAxis * speedScale
                         extended = true
                     }
                 }
@@ -54,18 +54,19 @@ object MainLoop : RobotControlLoop {
                 }
             }
             if (aButton == Pressed) Climber.set { climbing = !climbing }
+            if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
         }
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
-                        outtaking = true // TODO use aButton
+                        outtaking = true
                     }
                 rightTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
-                        outtaking = false
+                        outtaking = true
                     }
             }
             when (Pressed) {
@@ -73,11 +74,16 @@ object MainLoop : RobotControlLoop {
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
                 yButton -> Unit // TODO Go to cargo setpoint
-                aButton -> Outtake.set(action {
-                    onStart { Outtake.hatchState = HatchState(true, false) }
-                    finishWhen { elapsed > 0.5 }
-                    onStop { Outtake.hatchState.pushing = false }
-                })
+                aButton -> Outtake.set {
+                    if (grabbing) {
+                        grabbing = false
+                        pushing = true
+                        Outtake.set(runAfter(0.5) { pushing = false })
+                    } else {
+                        grabbing = true
+                        pushing = false
+                    }
+                }
                 else -> Unit
             }
             if (xButton == HeldDown) Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
