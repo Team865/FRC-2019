@@ -19,7 +19,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
 class Lowbot : TimedRobot() {
-    lateinit var controller: XboxController
+    lateinit var operator: XboxController
+    lateinit var driver: XboxController
     lateinit var leftConveyor: VictorSPX
     lateinit var rightConveyor: VictorSPX
     lateinit var intake: VictorSPX
@@ -48,7 +49,8 @@ class Lowbot : TimedRobot() {
         leftConveyor = VictorSPX(ConveyorConstants.kLeft)
         rightConveyor = VictorSPX(ConveyorConstants.kRight)
         intake = VictorSPX(IntakeConstants.kVictor)
-        controller = XboxController(0)
+        operator = XboxController(0)
+        driver = XboxController(0)
     }
 
     override fun disabledInit() {
@@ -63,10 +65,10 @@ class Lowbot : TimedRobot() {
     var xSpeed = 0.0
     var zRotation = 0.0
     override fun teleopPeriodic() {
-        val y = controller.y
+        val y = operator.y
         if (y.absoluteValue > 0.2) liftMaster.set(ControlMode.PercentOutput, (y - 0.2.withSign(y)) / 0.8 * 0.5)
-        val left = controller.getTriggerAxis(GenericHID.Hand.kLeft)
-        val right = controller.getTriggerAxis(GenericHID.Hand.kRight)
+        val left = operator.getTriggerAxis(GenericHID.Hand.kLeft)
+        val right = operator.getTriggerAxis(GenericHID.Hand.kRight)
         var speed = 0.0
         if (left > 0.1) {
             speed = left
@@ -78,16 +80,16 @@ class Lowbot : TimedRobot() {
         leftConveyor.set(ControlMode.PercentOutput, speed * 0.7 / 2)
         intake.set(ControlMode.PercentOutput, speed)
 
-        xSpeed += (controller.getY(GenericHID.Hand.kLeft) - xSpeed) / 6
-        zRotation += (controller.getX(GenericHID.Hand.kRight) - zRotation) / 6
+        xSpeed += (driver.getY(GenericHID.Hand.kLeft) - xSpeed) / 6
+        zRotation += (driver.getX(GenericHID.Hand.kRight) - zRotation) / 6
 
         differentialDrive.curvatureDrive(
                 xSpeed,
                 zRotation,
-                controller.getBumper(GenericHID.Hand.kLeft)
+                driver.getBumper(GenericHID.Hand.kLeft)
         )
-        val lt = controller.getTriggerAxis(GenericHID.Hand.kLeft)
-        val rt = controller.getTriggerAxis(GenericHID.Hand.kRight)
+        val lt = operator.getTriggerAxis(GenericHID.Hand.kLeft)
+        val rt = operator.getTriggerAxis(GenericHID.Hand.kRight)
         val outspeed = (if (lt > rt) lt else -rt) * 0.45 * 0.7
         leftOuttake.set(ControlMode.PercentOutput, outspeed * -1)
         rightOuttake.set(ControlMode.PercentOutput, outspeed)

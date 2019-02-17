@@ -11,7 +11,7 @@ class LiftOuttakeTuning : TimedRobot() {
     /**
      * Initializes the robot by setting the state of subsystems
      * directly or transitively and activating the controllers.
-     * Comment out the controller lines to disable them
+     * Comment out the operator lines to disable them
      */
     override fun robotInit() {
         println("Hello me is robit!")
@@ -23,7 +23,7 @@ class LiftOuttakeTuning : TimedRobot() {
 
     /**
      * Runs a periodic loop that collects inputs, update the autonomous
-     * routine and controller loop, process subsystem states, send output
+     * routine and operator loop, process subsystem states, send output
      * signals, and send telemetry data
      */
     override fun robotPeriodic() = runPeriodicLoop()
