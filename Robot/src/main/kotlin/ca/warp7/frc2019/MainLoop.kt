@@ -1,5 +1,6 @@
 package ca.warp7.frc2019
 
+import ca.warp7.actionkt.runAfter
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.RobotControlLoop
@@ -73,7 +74,16 @@ object MainLoop : RobotControlLoop {
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
                 yButton -> Unit // TODO Go to cargo setpoint
-                aButton -> Unit // TODO toggle hatch
+                aButton -> Outtake.set {
+                    if (grabbing) {
+                        grabbing = false
+                        pushing = true
+                        Outtake.set(runAfter(0.5) { pushing = false })
+                    } else {
+                        grabbing = true
+                        pushing = false
+                    }
+                }
                 else -> Unit
             }
             if (xButton == HeldDown) Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
