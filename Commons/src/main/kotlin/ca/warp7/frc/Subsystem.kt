@@ -68,7 +68,7 @@ abstract class Subsystem : ActionStateMachine() {
     override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
         if (!initialized) {
             initialized = true
-            CommonRobot.subsystems.add(this)
+            CommonRobot.addSubsystem(this)
         }
         super.set(wantedState, block)
     }

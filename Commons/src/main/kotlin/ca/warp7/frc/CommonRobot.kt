@@ -13,11 +13,15 @@ internal object CommonRobot {
         Thread.currentThread().name = "Robot"
     }
 
-    val subsystems: MutableSet<Subsystem> = mutableSetOf()
+    private val subsystems: MutableSet<Subsystem> = mutableSetOf()
 
     val robotDriver = RobotControllerImpl()
+        @Synchronized get
     val robotOperator = RobotControllerImpl()
+        @Synchronized get
     var controllerMode = 0
+        @Synchronized get
+        @Synchronized set
 
     private val xboxDriver = XboxController(0)
     private val xboxOperator = XboxController(1)
@@ -35,7 +39,12 @@ internal object CommonRobot {
 
     private var autoRunner: Action = runOnce { }
 
-    var controlLoop: RobotControlLoop? = null
+    private var controlLoop: RobotControlLoop? = null
+
+    @Synchronized
+    fun addSubsystem(subsystem: Subsystem) {
+        subsystems.add(subsystem)
+    }
 
     /**
      * Set the control loop
