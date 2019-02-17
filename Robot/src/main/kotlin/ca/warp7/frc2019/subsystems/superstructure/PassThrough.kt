@@ -6,6 +6,7 @@ import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.Climber
 import ca.warp7.frc2019.subsystems.Conveyor
 import ca.warp7.frc2019.subsystems.Outtake
+import kotlin.math.withSign
 
 object PassThrough : Action {
 
@@ -26,7 +27,7 @@ object PassThrough : Action {
             Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
         }
         Outtake.grabbing = outtaking
-        Outtake.speed = speed * SuperstructureConstants.kOuttakeSpeedScale
+        Outtake.speed = SuperstructureConstants.kOuttakeSpeed.withSign(speed)
         Outtake.pushing = false
     }
 

@@ -1,7 +1,7 @@
 package ca.warp7.frc
 
-class RobotControllerImpl internal constructor() : RobotController {
-    var backButton = ControllerState.None
+internal class RobotControllerImpl : RobotController, BackController {
+    override var backButton = ControllerState.None
     override var aButton = ControllerState.None
     override var bButton = ControllerState.None
     override var xButton = ControllerState.None
