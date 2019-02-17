@@ -13,9 +13,9 @@ object LiftMotionPlanner {
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val height get() = (Lift.positionTicks - nominalZero) / LiftConstants.kInchesPerTick
-    val velocity get() = Lift.velocityTicksPer100ms / LiftConstants.kInchesPerTick * measurementFrequency
-    val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kInchesPerTick * squaredFrequency
+    val height get() = (Lift.positionTicks - nominalZero) / LiftConstants.kTicksPerInch
+    val velocity get() = Lift.velocityTicksPer100ms / LiftConstants.kTicksPerInch * measurementFrequency
+    val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kTicksPerInch * squaredFrequency
 
     private var motionPlanningEnabled = false
     private var nominalZero = 0
@@ -33,7 +33,7 @@ object LiftMotionPlanner {
         if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
                 && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
                 && Lift.hallEffectTriggered) {
-            nominalZero = Lift.positionTicks
+            //nominalZero = Lift.positionTicks
         }
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
             dvBuffer.add(Lift.velocityTicksPer100ms - previousVelocityTicks)
@@ -100,7 +100,7 @@ object LiftMotionPlanner {
             }
         } else {
             controlMode = ControlMode.Position
-            demand = setpointInches * LiftConstants.kInchesPerTick + nominalZero
+            demand = setpointInches * LiftConstants.kTicksPerInch + nominalZero
             feedforward = LiftConstants.kPrimaryFeedforward
         }
     }

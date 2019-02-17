@@ -111,7 +111,7 @@ abstract class Subsystem : ActionStateMachine() {
             val n = entries.size + sent.size
             val row = n / 6
             val col = n % 6
-            val w = tab.add(name, value).withPosition(row * 4, col * 4).withSize(4, 4)
+            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -134,7 +134,7 @@ abstract class Subsystem : ActionStateMachine() {
             val row = n / 6
             val col = n % 6
             sent.add(name)
-            val w = tab.add(name, value).withPosition(row * 4, col * 4).withSize(4, 4)
+            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
         }

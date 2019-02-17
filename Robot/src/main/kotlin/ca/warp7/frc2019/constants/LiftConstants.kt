@@ -11,9 +11,9 @@ object LiftConstants {
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
-    private const val kDrumRadius = 1.5 // Inches
+    private const val kDrumRadius = 2.0 // Inches
     private const val kDrumCircumference = 2 * kDrumRadius * Math.PI
-    const val kInchesPerTick = COTSConstants.MagEncoder.kTicksPerRevolution * kDrumCircumference
+    const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
 
 
     const val kHomeHeightInches = 0.0 //TODO fix this value
