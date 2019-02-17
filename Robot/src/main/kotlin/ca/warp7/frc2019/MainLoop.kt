@@ -33,7 +33,7 @@ object MainLoop : RobotControlLoop {
                         outtaking = rightBumper == HeldDown
                     }
                     Intake.set {
-                        speed = leftTriggerAxis
+                        speed = leftTriggerAxis * speedScale
                         extended = true
                     }
                 }
@@ -43,7 +43,7 @@ object MainLoop : RobotControlLoop {
                         outtaking = true
                     }
                     Intake.set {
-                        speed = -rightTriggerAxis
+                        speed = -rightTriggerAxis * speedScale
                         extended = true
                     }
                 }

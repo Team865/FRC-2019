@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems.superstructure
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.Conveyor
 import ca.warp7.frc2019.subsystems.Outtake
 
@@ -19,10 +20,10 @@ object PassThrough : Action {
 
     override fun update() {
         if (isLiftAtPositionForPassThrough) {
-            Conveyor.speed = speed * 0.5
+            Conveyor.speed = speed * SuperstructureConstants.kConveyorSpeedScale
         }
         Outtake.grabbing = outtaking
-        Outtake.speed = speed * 0.45
+        Outtake.speed = speed * SuperstructureConstants.kOuttakeSpeedScale
         Outtake.pushing = false
     }
 
