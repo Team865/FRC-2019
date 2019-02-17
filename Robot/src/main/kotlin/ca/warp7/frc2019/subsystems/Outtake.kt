@@ -23,7 +23,8 @@ object Outtake : Subsystem() {
     }
 
     var speed = 0.0
-    var hatchState = HatchState(false, true)
+    var pushing = false
+    var grabbing = false
 
     override fun onDisabled() {
         left.neutralOutput()
@@ -36,8 +37,7 @@ object Outtake : Subsystem() {
     override fun onOutput() {
         left.set(ControlMode.PercentOutput, speed)
         right.set(ControlMode.PercentOutput, -speed)
-
-        pusher.set(hatchState.pushing)
-        grabber.set(hatchState.grabbing)
+        pusher.set(pushing)
+        grabber.set(grabbing)
     }
 }
