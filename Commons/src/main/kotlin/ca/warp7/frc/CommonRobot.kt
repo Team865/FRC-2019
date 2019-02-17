@@ -2,9 +2,7 @@ package ca.warp7.frc
 
 import ca.warp7.actionj.impl.ActionMode
 import ca.warp7.actionkt.*
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 internal object CommonRobot {
@@ -40,6 +38,20 @@ internal object CommonRobot {
     private var autoRunner: Action = runOnce { }
 
     private var controlLoop: RobotControlLoop? = null
+
+    private var notifierStarted = false
+
+    @Synchronized
+    fun setControllerMode(mode: ControllerMode) {
+        controllerMode = mode.value
+    }
+
+    @Synchronized
+    fun startNotifier() {
+        if (notifierStarted) return
+        Notifier(this::pauseOnCrashPeriodicLoop).startPeriodic(TimedRobot.kDefaultPeriod)
+        notifierStarted = true
+    }
 
     @Synchronized
     fun addSubsystem(subsystem: Subsystem) {

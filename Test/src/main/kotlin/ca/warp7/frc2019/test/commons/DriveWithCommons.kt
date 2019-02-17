@@ -19,6 +19,7 @@ class DriveWithCommons : TimedRobot() {
         setControllerMode(ControllerMode.DriverOnly)
         Drive.set(DriveState.kNeutralOutput)
         Infrastructure.set { startCompressor = true }
+        startNotifier()
     }
 
     /**
@@ -26,7 +27,7 @@ class DriveWithCommons : TimedRobot() {
      * routine and controller loop, process subsystem states, send output
      * signals, and send telemetry data
      */
-    override fun robotPeriodic() = runPeriodicLoop()
+    override fun robotPeriodic() = Unit
 
     /**
      * Disables the robot by disabling each subsystem and not calling
