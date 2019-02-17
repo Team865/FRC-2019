@@ -32,9 +32,7 @@ object DriveConstants {
     const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBVictorId
 
     const val kDifferentialDeadband = 0.2
-
-    const val kRampSecondsFromNeutralToFull = 0.5
-
+    const val kQuickTurnMultiplier = 0.7
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
@@ -64,7 +62,7 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 0.5
+        openloopRamp = 0.3
         closedloopRamp = 0.0
 
         neutralDeadband = 0.04
