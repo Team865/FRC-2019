@@ -64,7 +64,7 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 1.0
+        openloopRamp = 0.5
         closedloopRamp = 0.0
 
         neutralDeadband = 0.04

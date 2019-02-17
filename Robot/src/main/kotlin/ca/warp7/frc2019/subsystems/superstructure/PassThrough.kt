@@ -23,7 +23,7 @@ object PassThrough : Action {
 
     override fun update() {
         if (isLiftAtPositionForPassThrough) {
-            Conveyor.speed = speed * SuperstructureConstants.kConveyorSpeedScale
+            Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
         }
         Outtake.grabbing = outtaking
         Outtake.speed = speed * SuperstructureConstants.kOuttakeSpeedScale

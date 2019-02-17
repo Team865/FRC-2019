@@ -16,4 +16,13 @@ object SuperstructureState {
     }
 
     val kPassThrough = PassThrough
+
+    val kIdle = runOnce {
+        Outtake.set {
+            speed = 0.0
+            grabbing = false
+            pushing = false
+        }
+        Conveyor.set { speed = 0.0 }
+    }
 }
