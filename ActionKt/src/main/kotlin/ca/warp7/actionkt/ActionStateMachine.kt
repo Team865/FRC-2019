@@ -30,7 +30,9 @@ abstract class ActionStateMachine {
      */
     open fun <T : Action> trySet(wantedState: T, block: T.() -> Unit = {}) {
         val currentState = currentState
-        if (wantedState != currentState && (currentState == null || currentState.shouldFinish)) {
+        if (wantedState == currentState) {
+            block(wantedState)
+        } else if (currentState == null || currentState.shouldFinish) {
             set(wantedState, block)
         }
     }

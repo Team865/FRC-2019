@@ -28,7 +28,7 @@ object MainLoop : RobotControlLoop {
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
                         outtaking = rightBumper == HeldDown
                     }
@@ -38,7 +38,7 @@ object MainLoop : RobotControlLoop {
                     }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
                         outtaking = true
                     }
@@ -58,12 +58,12 @@ object MainLoop : RobotControlLoop {
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = leftTriggerAxis * forward
                         outtaking = true
                     }
                 rightTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.set(SuperstructureState.kPassThrough) {
+                    Superstructure.trySet(SuperstructureState.kPassThrough) {
                         speed = rightTriggerAxis * reverse
                         outtaking = true
                     }
