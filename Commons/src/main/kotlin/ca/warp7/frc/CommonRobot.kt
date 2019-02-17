@@ -36,16 +36,22 @@ internal object CommonRobot {
     private var autoRunner: Action = runOnce { }
 
     var controlLoop: RobotControlLoop? = null
-        set(value) {
-            autoRunner.stop()
-            robotEnabled = true
-            value?.setup()
-            field = value
-        }
+
+    /**
+     * Set the control loop
+     */
+    @Synchronized
+    fun setLoop(loop: RobotControlLoop) {
+        autoRunner.stop()
+        robotEnabled = true
+        loop.setup()
+        controlLoop = loop
+    }
 
     /**
      * Runs the loop with a try-catch statement
      */
+    @Synchronized
     fun pauseOnCrashPeriodicLoop() {
         if (!crashed) {
             try {
@@ -113,6 +119,7 @@ internal object CommonRobot {
 //        }.reset()
     }
 
+    @Synchronized
     fun disableOutputs() {
         autoRunner.stop()
         robotEnabled = false
@@ -122,6 +129,7 @@ internal object CommonRobot {
         }
     }
 
+    @Synchronized
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
             actionTimer { Timer.getFPGATimestamp() }, 20.0, timeout, mode().javaAction, true)
             .ktAction.also {
