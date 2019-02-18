@@ -16,7 +16,7 @@ object LiftConstants {
     const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
 
 
-    const val kHomeHeightInches = 20.0 // FIXME
+    const val kHomeHeightInches = 18.5
 
     const val kMaxBaseAcceleration = 1.0 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
@@ -36,7 +36,7 @@ object LiftConstants {
 
         // TODO Position PID slot
         slot0.apply {
-            kP = 0.0
+            kP = 1 / 40.0 * kTicksPerInch
             kI = 0.0
             kD = 0.0
             kF = 0.0
