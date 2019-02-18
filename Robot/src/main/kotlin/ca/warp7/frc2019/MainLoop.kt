@@ -8,9 +8,11 @@ import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
+import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 
 object MainLoop : RobotControlLoop {
@@ -21,6 +23,8 @@ object MainLoop : RobotControlLoop {
     }
 
     override fun periodic() {
+        var passThroughSpeed = 0.0
+        var isOuttaking = false
         withDriver {
             Drive.set(DriveState.kCurvature) {
                 xSpeed = leftYAxis
@@ -29,56 +33,53 @@ object MainLoop : RobotControlLoop {
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.trySet(SuperstructureState.kPassThrough) {
-                        speed = leftTriggerAxis * forward
-                        outtaking = rightBumper == HeldDown
-                    }
+                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
+                    isOuttaking = true
                     Intake.set {
-                        speed = leftTriggerAxis * speedScale
+                        speed = -leftTriggerAxis * speedScale
                         extended = true
                     }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    Superstructure.trySet(SuperstructureState.kPassThrough) {
-                        speed = rightTriggerAxis * reverse
-                        outtaking = true
-                    }
+                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
+                    isOuttaking = rightBumper == HeldDown
                     Intake.set {
-                        speed = -rightTriggerAxis * speedScale
+                        speed = rightTriggerAxis * speedScale
                         extended = true
                     }
                 }
-                else -> Intake.set {
-                    speed = 0.0
-                    extended = false
+                else -> {
+                    Intake.set {
+                        speed = 0.0
+                        extended = false
+                    }
                 }
             }
-            if (aButton == Pressed) Climber.set { climbing = !climbing }
-            if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
+            if (startButton == Pressed) Climber.set { climbing = !climbing }
         }
         withOperator {
             when {
-                leftTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.trySet(SuperstructureState.kPassThrough) {
-                        speed = leftTriggerAxis * forward
-                        outtaking = true
-                    }
-                rightTriggerAxis > ControlConstants.kControlDeadband ->
-                    Superstructure.trySet(SuperstructureState.kPassThrough) {
-                        speed = rightTriggerAxis * reverse
-                        outtaking = true
-                    }
+                leftTriggerAxis > ControlConstants.kControlDeadband -> {
+                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
+                    isOuttaking = true
+                }
+                rightTriggerAxis > ControlConstants.kControlDeadband -> {
+                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
+                    isOuttaking = true
+                }
             }
             when (Pressed) {
                 leftBumper -> Unit // TODO Increase setpoint
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
-                yButton -> Unit // TODO Go to cargo setpoint
+                yButton -> Lift.set(LiftState.kPositionOnly) {
+                    setpoint = FieldConstants.secondCargoBayCenterHeightInches
+                }
                 aButton -> Outtake.set {
                     if (grabbing) {
                         grabbing = false
                         pushing = true
-                        Outtake.set(runAfter(0.5) { pushing = false })
+                        set(runAfter(0.5) { pushing = false })
                     } else {
                         grabbing = true
                         pushing = false
@@ -86,8 +87,21 @@ object MainLoop : RobotControlLoop {
                 }
                 else -> Unit
             }
-            if (xButton == HeldDown) Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
+//            if (xButton == HeldDown) {
+                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+//                if (leftStickButton == Pressed) {
+//                    LiftMotionPlanner.zeroPosition()
+//                }
+//            }
+            if (startButton == Pressed) Climber.set { climbing = !climbing }
+        }
+        if (passThroughSpeed != 0.0) {
+            Superstructure.set(SuperstructureState.kPassThrough) {
+                speed = passThroughSpeed
+                outtaking = isOuttaking
+            }
+        } else {
+            Superstructure.set(SuperstructureState.kIdle)
         }
     }
 }

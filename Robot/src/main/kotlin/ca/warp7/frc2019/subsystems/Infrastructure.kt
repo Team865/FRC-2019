@@ -16,10 +16,11 @@ object Infrastructure : Subsystem() {
     var yaw = 0.0
     var pitch = 0.0
 
-    var startCompressor = false
+    var startCompressor = true
 
     override fun onDisabled() {
         compressor.stop()
+        startCompressor = true
     }
 
     override fun onOutput() {
@@ -31,7 +32,7 @@ object Infrastructure : Subsystem() {
 
     override fun onMeasure(dt: Double) {
         if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
-        if (compressor.pressureSwitchValue && !compressor.enabled()) startCompressor = true
+        //if (compressor.pressureSwitchValue && !compressor.enabled()) startCompressor = true
         if (ahrsCalibrated) {
             yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
             pitch = Math.toRadians(ahrs.pitch.toDouble())

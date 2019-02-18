@@ -55,7 +55,7 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
-        master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, feedforward)
+        master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 
     override fun onMeasure(dt: Double) {
@@ -76,7 +76,7 @@ object Lift : Subsystem() {
         put("Demand", demand)
         put("Feedforward", feedforward)
         put("Height (in)", LiftMotionPlanner.height)
-        put("Velocity (in/s)", LiftMotionPlanner.velocity)
-        put("Acceleration (in/s^2)", LiftMotionPlanner.acceleration)
+        put("Velocity (in per s)", LiftMotionPlanner.velocity)
+        put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
     }
 }

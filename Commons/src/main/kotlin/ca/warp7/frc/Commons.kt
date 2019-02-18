@@ -7,9 +7,7 @@ fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun RobotControlLoop.start() {
-    CommonRobot.controlLoop = this
-}
+fun RobotControlLoop.start() = CommonRobot.setLoop(this)
 
 fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)
 
@@ -23,6 +21,6 @@ inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robo
 
 inline fun <T : Subsystem> T.set(crossinline block: T.() -> Unit) = set(runOnce(block))
 
-fun setControllerMode(controllerMode: ControllerMode) {
-    CommonRobot.controllerMode = controllerMode.value
-}
+fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControllerMode(controllerMode)
+
+fun startNotifier() = CommonRobot.startNotifier()
