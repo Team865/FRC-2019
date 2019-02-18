@@ -27,7 +27,7 @@ object LiftState {
 
     val kGoToPositionOptimisedNotPlanned = GoToPositionMotionPlanningSimple
 
-    val kHoldPosition = HoldPosition
-
     val kFollowTrajectory = FollowTrajectory
+
+    val kPositionOnly = PositionOnly()
 }

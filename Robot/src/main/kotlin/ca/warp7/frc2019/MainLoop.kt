@@ -8,8 +8,10 @@ import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
+import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
@@ -71,7 +73,9 @@ object MainLoop : RobotControlLoop {
                 leftBumper -> Unit // TODO Increase setpoint
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
-                yButton -> Unit // TODO Go to cargo setpoint
+                yButton -> Lift.set(LiftState.kPositionOnly) {
+                    setpoint = FieldConstants.secondCargoBayCenterHeightInches
+                }
                 aButton -> Outtake.set {
                     if (grabbing) {
                         grabbing = false
@@ -84,7 +88,12 @@ object MainLoop : RobotControlLoop {
                 }
                 else -> Unit
             }
-            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+            if (xButton == HeldDown) {
+                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+                if (leftStickButton == Pressed) {
+                    LiftMotionPlanner.zeroPosition()
+                }
+            }
             if (startButton == Pressed) Climber.set { climbing = !climbing }
         }
         if (passThroughSpeed != 0.0) {

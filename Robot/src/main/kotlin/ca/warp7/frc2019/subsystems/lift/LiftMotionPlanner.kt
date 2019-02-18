@@ -49,7 +49,7 @@ object LiftMotionPlanner {
 
     fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean = false) {
         motionPlanningEnabled = isMotionPlanningEnabled
-        if (newSetpoint < 0 || newSetpoint > LiftConstants.kMaximumSetpoint) return
+        if (newSetpoint < LiftConstants.kHomeHeightInches || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             previousSetpoint = setpointInches
@@ -89,6 +89,10 @@ object LiftMotionPlanner {
             val nextPosition = state.height + nextDt * nextVelocity
             return LiftMotionState(nextPosition, nextVelocity)
         }
+
+    fun zeroPosition() {
+        nominalZero = Lift.positionTicks
+    }
 
     fun compute() = Lift.apply {
         if (motionPlanningEnabled) {
