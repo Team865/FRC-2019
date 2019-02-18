@@ -48,7 +48,7 @@ internal object CommonRobot {
     @Synchronized
     fun startNotifier() {
         if (notifierStarted) return
-        Notifier(this::pauseOnCrashPeriodicLoop).startPeriodic(TimedRobot.kDefaultPeriod)
+        Notifier(this::pauseOnCrashNotifiedPeriodicLoop).startPeriodic(TimedRobot.kDefaultPeriod)
         notifierStarted = true
     }
 
@@ -66,6 +66,73 @@ internal object CommonRobot {
         robotEnabled = true
         loop.setup()
         controlLoop = loop
+    }
+
+    private fun pauseOnCrashNotifiedPeriodicLoop() {
+        if (!crashed) {
+            try {
+                notifiedPeriodicLoop()
+            } catch (e: Throwable) {
+                crashed = true
+                e.printStackTrace()
+                //originalErr.println("ERROR LOOP ENDED\n${e.message}")
+            }
+        }
+    }
+
+    private fun notifiedPeriodicLoop() {
+        // Collect controller data
+        synchronized(this) {
+            when (controllerMode) {
+                0 -> {
+                    robotDriver.updateWith(xboxDriver)
+                    robotOperator.updateWith(xboxOperator)
+                }
+                1 -> {
+                    robotDriver.updateWith(xboxDriver)
+                    robotOperator.reset()
+                }
+                2 -> {
+                    robotDriver.reset()
+                    robotOperator.updateWith(xboxDriver)
+                }
+            }
+            // Check to switch controllers
+            if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed) {
+                controllerMode = (controllerMode + 1) % 3
+            }
+        }
+
+        // Calculate exact loop period for measurements
+        val time = Timer.getFPGATimestamp()
+        val dt = time - previousTime
+        previousTime = time
+        // Get inputs from sensors
+        subsystems.forEach {
+            synchronized(this) {
+                it.onMeasure(dt)
+            }
+        }
+        // Check for enabled state
+        if (robotEnabled) {
+            // Update the control loop
+            synchronized(this) {
+                controlLoop?.periodic()
+            }
+            // Update subsystem state and do output, stopping the state if it wants to
+            subsystems.forEach {
+                synchronized(this) {
+                    it.updateState()
+                }
+            }
+        }
+        // Send data to Shuffleboard
+        subsystems.forEach {
+            synchronized(this) {
+                it.put("Current State", it.stateName)
+                it.onPostUpdate()
+            }
+        }
     }
 
     /**
