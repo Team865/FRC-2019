@@ -7,6 +7,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 
 object SuperstructureState {
 
+    @Suppress("unused")
     val kDefending = runOnce {
         Intake.set { extended = false }
         Lift.set(LiftState.kOpenLoop) { speed = 0.0 }

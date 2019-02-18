@@ -85,7 +85,7 @@ object MainLoop : RobotControlLoop {
                 else -> Unit
             }
             Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            if (startButton == Pressed) Superstructure.set(SuperstructureState.kDefending)
+            if (startButton == Pressed) Climber.set { climbing = !climbing }
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {

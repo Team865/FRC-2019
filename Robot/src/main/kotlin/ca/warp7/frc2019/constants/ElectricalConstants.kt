@@ -39,10 +39,10 @@ internal object ElectricalConstants {
     ===============================================
     */
 
-    const val kIntakeSolenoidPort = 2 // TODO
-    const val kPusherSolenoid = 1 // TODO
-    const val kGrabberSolenoid = 0 // TODO
-    const val kClimberSolenoidPort = 3 // TODO
+    const val kIntakeSolenoidPort = 2
+    const val kPusherSolenoid = 1
+    const val kGrabberSolenoid = 0
+    const val kClimberSolenoidPort = 4
 
 
     /*
