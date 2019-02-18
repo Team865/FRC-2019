@@ -75,6 +75,7 @@ object Lift : Subsystem() {
         put("Actual Voltage", actualVoltage)
         put("Demand", demand)
         put("Feedforward", feedforward)
+        put("Height (encoder)", positionTicks)
         put("Height (in)", LiftMotionPlanner.height)
         put("Velocity (in per s)", LiftMotionPlanner.velocity)
         put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
