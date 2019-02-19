@@ -111,7 +111,11 @@ abstract class Subsystem : ActionStateMachine() {
             val n = entries.size + sent.size
             val row = n / 5
             val col = n % 5
-            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
+            when (value) {
+                is Int, is Long, is Double -> w.withWidget(BuiltInWidgets.kGraph)
+                is Float -> w.withWidget(BuiltInWidgets.kNumberSlider)
+            }
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -127,11 +131,11 @@ abstract class Subsystem : ActionStateMachine() {
             widget: BuiltInWidgets? = null,
             extras: Map<String, Any>? = null
     ) {
-        if (entries.isEmpty()) {
+        if (entries.isNotEmpty()) {
             val n = entries.size + sent.size
             val row = n / 5
             val col = n % 5
-            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -154,7 +158,7 @@ abstract class Subsystem : ActionStateMachine() {
             val row = n / 5
             val col = n % 5
             sent.add(name)
-            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
         }

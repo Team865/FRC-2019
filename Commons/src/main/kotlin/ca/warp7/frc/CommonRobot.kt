@@ -104,10 +104,7 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-        subsystems.forEach {
-            it.putIfNonEmpty("Current State", it.stateName)
-            it.onPostUpdate()
-        }
+        subsystems.forEach { it.onPostUpdate() }
     }
 
     fun disableOutputs() {
