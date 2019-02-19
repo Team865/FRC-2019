@@ -7,6 +7,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
 object TurnAngle : Action {
+    private val totalAngle
+        get() = 360 * (Drive.leftPositionTicks - Drive.rightPositionTicks) /
+                (1024 * 2 * DriveConstants.kWheelCircumference)
     var angle = 0.0 // angle in degrees
     var tolerance = 1E-1 // angle
 
@@ -14,7 +17,7 @@ object TurnAngle : Action {
 
     override fun start() {
         Drive.controlMode = ControlMode.Position
-        initialAngle = Drive.totalAngle
+        initialAngle = totalAngle
 
         val distance = DriveConstants.kTurningCircumference * angle / 360
         Drive.leftDemand = 1024 * distance
@@ -22,5 +25,5 @@ object TurnAngle : Action {
     }
 
     override val shouldFinish
-        get() = abs(angle - (Drive.totalAngle - initialAngle)) <= tolerance
+        get() = abs(angle - (totalAngle - initialAngle)) <= tolerance
 }

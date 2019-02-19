@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
+@Suppress("unused")
 class Passthrough : TimedRobot() {
     lateinit var controller: XboxController
     lateinit var leftConveyor: VictorSPX

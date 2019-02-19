@@ -6,6 +6,7 @@ import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
+@Suppress("unused")
 object GoToPositionMotionPlanning : Action {
     var heightInputAbsoluteInches = 0.0
     var targetHeightFromHome = 0.0

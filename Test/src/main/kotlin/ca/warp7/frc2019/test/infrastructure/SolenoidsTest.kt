@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
+@Suppress("unused")
 class SolenoidsTest : TimedRobot() {
     val xboxController = XboxController(0)
     val s0 = Solenoid(0)

@@ -60,11 +60,6 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
-    val totalDistance
-        get() = (leftPositionTicks + rightPositionTicks) / 2.0
-    val totalAngle
-        get() = 360 * (leftPositionTicks - rightPositionTicks) / (1024 * 2 * DriveConstants.kWheelCircumference)
-
     private val inverseLeftDemand get() = leftDemand * -1
     private val inverseLeftFeedforward get() = leftFeedforward * -1
 

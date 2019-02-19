@@ -1,11 +1,6 @@
 package ca.warp7.frc2019.test.low_goal_bot
 
 
-import ca.warp7.frc2019.constants.ConveyorConstants
-import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.constants.IntakeConstants
-import ca.warp7.frc2019.constants.OuttakeConstants
-
 import ca.warp7.frc2019.constants.*
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
@@ -18,6 +13,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
+@Suppress("unused")
 class Lowbot : TimedRobot() {
     lateinit var operator: XboxController
     lateinit var driver: XboxController

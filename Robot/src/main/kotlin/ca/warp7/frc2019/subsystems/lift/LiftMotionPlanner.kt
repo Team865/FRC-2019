@@ -90,6 +90,7 @@ object LiftMotionPlanner {
             return LiftMotionState(nextPosition, nextVelocity)
         }
 
+    @Suppress("unused")
     fun zeroPosition() {
         nominalZero = Lift.positionTicks
     }

@@ -17,10 +17,7 @@ object CurvatureDrive : Action {
     var left = 0.0
     var right = 0.0
 
-    private val differentialDrive = DifferentialDrive(
-            speedController { left = it },
-            speedController { right = it }
-    )
+    private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
     init {
         differentialDrive.apply {
