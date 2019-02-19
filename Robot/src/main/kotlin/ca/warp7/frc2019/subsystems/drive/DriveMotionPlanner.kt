@@ -3,7 +3,6 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.set
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import kotlin.math.cos
@@ -12,7 +11,7 @@ import kotlin.math.sin
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object DriveMotionPlanner : Subsystem() {
 
-    private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
+    private val measurementFrequency = 1000 / DriveConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
 
     var lastDt = 0.0
     private val motionState = DriveMotionState()

@@ -60,8 +60,8 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
-    private val inverseLeftDemand get() = leftDemand * -1
-    private val inverseLeftFeedforward get() = leftFeedforward * -1
+    private val reversedLeftDemand get() = leftDemand * -1
+    private val reversedLeftFeedforward get() = leftFeedforward * -1
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
@@ -69,7 +69,7 @@ object Drive : Subsystem() {
     }
 
     override fun onOutput() {
-        leftMaster.set(controlMode, inverseLeftDemand, DemandType.ArbitraryFeedForward, inverseLeftFeedforward)
+        leftMaster.set(controlMode, reversedLeftDemand, DemandType.ArbitraryFeedForward, reversedLeftFeedforward)
         rightMaster.set(controlMode, rightDemand, DemandType.ArbitraryFeedForward, rightFeedforward)
     }
 
