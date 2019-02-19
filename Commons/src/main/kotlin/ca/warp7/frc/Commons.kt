@@ -19,7 +19,7 @@ inline fun withDriver(block: RobotController.() -> Unit) = block(Controls.robotD
 
 inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robotOperator)
 
-inline fun <T : Subsystem> T.set(crossinline block: T.() -> Unit) = set(runOnce(block))
+fun <T : Subsystem> T.set(block: T.() -> Unit) = set(runOnce(block))
 
 fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControllerMode(controllerMode)
 
