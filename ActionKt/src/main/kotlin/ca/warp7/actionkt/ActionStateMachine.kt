@@ -15,20 +15,20 @@ abstract class ActionStateMachine {
         // Check if there is a new wanted state that is not the same as the current state
         if (wantedState != currentState) {
             // stop the current state
-            currentState?.stop()
-            // Change to the new state
-            currentState = wantedState
+            stopState()
             // get the name of the state
             stateName = wantedState::class.java.simpleName
             // Start the new state
-            currentState?.start()
+            wantedState.start()
+            // Change to the new state
+            currentState = wantedState
         }
     }
 
     /**
      * Tries to set the state machine to a wanted state if the current state can finish
      */
-    open fun <T : Action> trySet(wantedState: T, block: T.() -> Unit = {}) {
+    fun <T : Action> trySet(wantedState: T, block: T.() -> Unit = {}) {
         val currentState = currentState
         if (wantedState == currentState) {
             block(wantedState)
@@ -55,7 +55,10 @@ abstract class ActionStateMachine {
      * Stop the current state
      */
     fun stopState() {
-        currentState?.stop()
+        val unlockedState = currentState
+        // first set to no state
         currentState = null
+        // now stop. There shouldn't be a recursive issue now
+        unlockedState?.stop()
     }
 }
