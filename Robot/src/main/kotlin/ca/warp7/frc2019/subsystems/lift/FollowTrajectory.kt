@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc2019.subsystems.Lift
 
 object FollowTrajectory : Action {
 
@@ -19,8 +18,6 @@ object FollowTrajectory : Action {
     }
 
     override fun stop() {
-        Lift.set(LiftState.kOpenLoop) {
-            speed = 0.0
-        }
+        LiftState.kOpenLoop.speed = 0.0
     }
 }

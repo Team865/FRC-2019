@@ -50,6 +50,8 @@ object CurvatureDrive : Action {
     override val shouldFinish get() = false
 
     override fun stop() {
-        Drive.set(DriveState.kNeutralOutput)
+        Drive.controlMode = ControlMode.PercentOutput
+        Drive.leftDemand = 0.0
+        Drive.rightDemand = 0.0
     }
 }
