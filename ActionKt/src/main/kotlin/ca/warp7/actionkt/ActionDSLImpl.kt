@@ -9,7 +9,7 @@ open class ActionDSLImpl : ActionDSL, Action, ActionState {
     private var predicate: ActionState.() -> Boolean = { true }
 
     override var name = ""
-    var startTime = 0.0
+    private var startTime = 0.0
 
     override val elapsed get() = System.nanoTime() / 1e9 - startTime
 

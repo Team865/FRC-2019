@@ -22,5 +22,3 @@ inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robo
 fun <T : Subsystem> T.set(block: T.() -> Unit) = set(runOnce(block))
 
 fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControllerMode(controllerMode)
-
-fun startNotifier() = CommonRobot.startNotifier()
