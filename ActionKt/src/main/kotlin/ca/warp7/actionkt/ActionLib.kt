@@ -39,15 +39,9 @@ fun wait(seconds: Double) = waitUntil { elapsed > seconds }
 
 fun cleanup(block: ActionState.() -> Unit) = action { onStop(block) }
 
-inline fun <T : ActionStateMachine> T.runOnce(crossinline block: T.() -> Unit) = object : Action {
-    override fun start() = block(this@runOnce)
-    override val shouldFinish: Boolean get() = false
-}
+fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = ASMRunOnce(this, block)
 
-inline fun <T : ActionStateMachine> T.periodic(crossinline block: T.() -> Unit) = object : Action {
-    override fun update() = block(this@periodic)
-    override val shouldFinish: Boolean get() = false
-}
+fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = ASMPeriodic(this, block)
 
 fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action {
     onStart(block)
