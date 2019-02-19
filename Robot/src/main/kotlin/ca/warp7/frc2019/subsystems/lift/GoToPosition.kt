@@ -19,7 +19,4 @@ object GoToPosition : Action {
         Lift.demand = targetHeightFromHome - heightInputAbsoluteInches
         Lift.demand = targetHeightFromHome
     }
-
-    override fun stop() {
-    }
 }
