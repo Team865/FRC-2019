@@ -8,7 +8,7 @@ import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
@@ -36,7 +36,7 @@ object MainLoop : RobotControlLoop {
                     passThroughSpeed = leftTriggerAxis * PassThrough.reverse
                     isOuttaking = true
                     Intake.set {
-                        speed = -leftTriggerAxis * speedScale
+                        speed = -leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
                         extended = true
                     }
                 }
@@ -44,7 +44,7 @@ object MainLoop : RobotControlLoop {
                     passThroughSpeed = rightTriggerAxis * PassThrough.forward
                     isOuttaking = rightBumper == HeldDown
                     Intake.set {
-                        speed = rightTriggerAxis * speedScale
+                        speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
                         extended = true
                     }
                 }
@@ -72,10 +72,10 @@ object MainLoop : RobotControlLoop {
                 leftBumper -> Unit // TODO Increase setpoint
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
-                yButton -> Lift.set(LiftState.kPositionOnly) {
-                    setpoint = FieldConstants.secondCargoBayCenterHeightInches
-                }
-                aButton -> Outtake.set {
+//                yButton -> Lift.set(LiftState.kPositionOnly) {
+//                    setpoint = FieldConstants.secondCargoBayCenterHeightInches
+//                }
+                xButton -> Outtake.set {
                     if (grabbing) {
                         grabbing = false
                         pushing = true
@@ -88,7 +88,7 @@ object MainLoop : RobotControlLoop {
                 else -> Unit
             }
 //            if (xButton == HeldDown) {
-                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
 //                if (leftStickButton == Pressed) {
 //                    LiftMotionPlanner.zeroPosition()
 //                }

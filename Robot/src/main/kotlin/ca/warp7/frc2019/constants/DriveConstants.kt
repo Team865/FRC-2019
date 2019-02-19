@@ -62,7 +62,8 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 0.3
+        // 0.3 too high - can't overcome direction change
+        openloopRamp = 0.15
         closedloopRamp = 0.0
 
         neutralDeadband = 0.04

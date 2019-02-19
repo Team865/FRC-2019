@@ -11,8 +11,10 @@ object LiftConstants {
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
-    private const val kDrumRadius = 2.0 // Inches
-    private const val kDrumCircumference = 2 * kDrumRadius * Math.PI
+    private const val kRopeDiameter = 3 / 25.4
+
+    private const val kDrumDiameter = 2.0 + kRopeDiameter // Inches
+    private const val kDrumCircumference = kDrumDiameter * Math.PI
     const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
 
 
@@ -21,7 +23,7 @@ object LiftConstants {
     const val kMaxBaseAcceleration = 1.0 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kPrimaryFeedforward = -0.08
+    const val kPrimaryFeedforward = -0.1
     const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO
