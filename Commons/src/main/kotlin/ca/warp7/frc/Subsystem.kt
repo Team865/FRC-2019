@@ -62,14 +62,16 @@ abstract class Subsystem : ActionStateMachine() {
 
     private var initialized = false
 
+    private fun initialize() {
+        initialized = true
+        CommonRobot.addSubsystem(this)
+    }
+
     /**
      * Sets the current state of the subsystem
      */
     override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
-        if (!initialized) {
-            initialized = true
-            CommonRobot.addSubsystem(this)
-        }
+        if (!initialized) initialize()
         super.set(wantedState, block)
     }
 
