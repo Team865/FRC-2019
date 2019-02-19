@@ -23,11 +23,6 @@ internal object CommonRobot {
 
     private var controllerMode = 0
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-//
-//    private val originalOut = System.out
-//    private val originalErr = System.err
-//    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
-//    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
 
     private var previousTime = 0.0
     private var robotEnabled = false
@@ -110,19 +105,9 @@ internal object CommonRobot {
         }
         // Send data to Shuffleboard
         subsystems.forEach {
-            it.put("Current State", it.stateName)
+            it.putIfNonEmpty("Current State", it.stateName)
             it.onPostUpdate()
         }
-        // Flush the standard output
-//        outContent.apply {
-//            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
-//        }.reset()
-//        // Flush the standard error adding ERROR before it
-//        errContent.apply {
-//            toString().split(System.lineSeparator().toRegex()).forEach {
-//                if (it.isNotEmpty()) originalErr.println("ERROR $it")
-//            }
-//        }.reset()
     }
 
     fun disableOutputs() {

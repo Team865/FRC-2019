@@ -109,9 +109,29 @@ abstract class Subsystem : ActionStateMachine() {
     ) {
         if (name in entries) entries[name]?.setValue(value) else {
             val n = entries.size + sent.size
-            val row = n / 6
-            val col = n % 6
-            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
+            val row = n / 5
+            val col = n % 5
+            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+            entries[name] = w.entry
+        }
+    }
+
+    /**
+     * Put data into shuffleboard
+     */
+    fun putIfNonEmpty(
+            name: String,
+            value: Any,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, Any>? = null
+    ) {
+        if (entries.isEmpty()) {
+            val n = entries.size + sent.size
+            val row = n / 5
+            val col = n % 5
+            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -131,10 +151,10 @@ abstract class Subsystem : ActionStateMachine() {
         val name = value.name
         if (name !in sent) {
             val n = entries.size + sent.size
-            val row = n / 6
-            val col = n % 6
+            val row = n / 5
+            val col = n % 5
             sent.add(name)
-            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
+            val w = tab.add(name, value).withPosition(col * 6, row * 6).withSize(6, 6)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
         }
