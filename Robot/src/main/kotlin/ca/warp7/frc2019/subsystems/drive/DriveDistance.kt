@@ -23,5 +23,6 @@ object DriveDistance : Action {
     }
 
     override val shouldFinish
-        get() = abs(distance - (Drive.totalDistance - initialDistance)) <= tolerance
+        get() = abs(distance - ((Drive.leftPositionTicks + Drive.rightPositionTicks) / 2.0
+                - initialDistance)) <= tolerance
 }

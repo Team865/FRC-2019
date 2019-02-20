@@ -2,7 +2,10 @@ package ca.warp7.frc
 
 import ca.warp7.actionj.impl.ActionMode
 import ca.warp7.actionkt.*
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.XboxController
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 
 internal object CommonRobot {
 
@@ -12,23 +15,14 @@ internal object CommonRobot {
 
     private val subsystems: MutableSet<Subsystem> = mutableSetOf()
 
-    val robotDriver = RobotControllerImpl()
-        @Synchronized get
-    val robotOperator = RobotControllerImpl()
-        @Synchronized get
-    var controllerMode = 0
-        @Synchronized get
-        @Synchronized set
+    internal val robotDriver = RobotControllerImpl()
+    internal val robotOperator = RobotControllerImpl()
 
     private val xboxDriver = XboxController(0)
     private val xboxOperator = XboxController(1)
 
+    private var controllerMode = 0
     private val fmsAttached = DriverStation.getInstance().isFMSAttached
-//
-//    private val originalOut = System.out
-//    private val originalErr = System.err
-//    private val outContent = ByteArrayOutputStream().also { System.setOut(PrintStream(it)) }
-//    private val errContent = ByteArrayOutputStream().also { System.setErr(PrintStream(it)) }
 
     private var previousTime = 0.0
     private var robotEnabled = false
@@ -38,21 +32,10 @@ internal object CommonRobot {
 
     private var controlLoop: RobotControlLoop? = null
 
-    private var notifierStarted = false
-
-    @Synchronized
     fun setControllerMode(mode: ControllerMode) {
         controllerMode = mode.value
     }
 
-    @Synchronized
-    fun startNotifier() {
-        if (notifierStarted) return
-        Notifier(this::pauseOnCrashNotifiedPeriodicLoop).startPeriodic(TimedRobot.kDefaultPeriod)
-        notifierStarted = true
-    }
-
-    @Synchronized
     fun addSubsystem(subsystem: Subsystem) {
         subsystems.add(subsystem)
     }
@@ -60,7 +43,6 @@ internal object CommonRobot {
     /**
      * Set the control loop
      */
-    @Synchronized
     fun setLoop(loop: RobotControlLoop) {
         autoRunner.stop()
         robotEnabled = true
@@ -68,77 +50,9 @@ internal object CommonRobot {
         controlLoop = loop
     }
 
-    private fun pauseOnCrashNotifiedPeriodicLoop() {
-        if (!crashed) {
-            try {
-                notifiedPeriodicLoop()
-            } catch (e: Throwable) {
-                crashed = true
-                e.printStackTrace()
-                //originalErr.println("ERROR LOOP ENDED\n${e.message}")
-            }
-        }
-    }
-
-    private fun notifiedPeriodicLoop() {
-        // Collect controller data
-        synchronized(this) {
-            when (controllerMode) {
-                0 -> {
-                    robotDriver.updateWith(xboxDriver)
-                    robotOperator.updateWith(xboxOperator)
-                }
-                1 -> {
-                    robotDriver.updateWith(xboxDriver)
-                    robotOperator.reset()
-                }
-                2 -> {
-                    robotDriver.reset()
-                    robotOperator.updateWith(xboxDriver)
-                }
-            }
-            // Check to switch controllers
-            if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed) {
-                controllerMode = (controllerMode + 1) % 3
-            }
-        }
-
-        // Calculate exact loop period for measurements
-        val time = Timer.getFPGATimestamp()
-        val dt = time - previousTime
-        previousTime = time
-        // Get inputs from sensors
-        subsystems.forEach {
-            synchronized(this) {
-                it.onMeasure(dt)
-            }
-        }
-        // Check for enabled state
-        if (robotEnabled) {
-            // Update the control loop
-            synchronized(this) {
-                controlLoop?.periodic()
-            }
-            // Update subsystem state and do output, stopping the state if it wants to
-            subsystems.forEach {
-                synchronized(this) {
-                    it.updateState()
-                }
-            }
-        }
-        // Send data to Shuffleboard
-        subsystems.forEach {
-            synchronized(this) {
-                it.put("Current State", it.stateName)
-                it.onPostUpdate()
-            }
-        }
-    }
-
     /**
      * Runs the loop with a try-catch statement
      */
-    @Synchronized
     fun pauseOnCrashPeriodicLoop() {
         if (!crashed) {
             try {
@@ -190,24 +104,11 @@ internal object CommonRobot {
             subsystems.forEach { it.updateState() }
         }
         // Send data to Shuffleboard
-        subsystems.forEach {
-            it.put("Current State", it.stateName)
-            it.onPostUpdate()
-        }
-        // Flush the standard output
-//        outContent.apply {
-//            toString().trim().also { if (it.isNotEmpty()) originalOut.println(it) }
-//        }.reset()
-//        // Flush the standard error adding ERROR before it
-//        errContent.apply {
-//            toString().split(System.lineSeparator().toRegex()).forEach {
-//                if (it.isNotEmpty()) originalErr.println("ERROR $it")
-//            }
-//        }.reset()
+        subsystems.forEach { it.onPostUpdate() }
     }
 
-    @Synchronized
     fun disableOutputs() {
+        LiveWindow.disableAllTelemetry()
         autoRunner.stop()
         robotEnabled = false
         subsystems.forEach {
@@ -216,7 +117,6 @@ internal object CommonRobot {
         }
     }
 
-    @Synchronized
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
             actionTimer { Timer.getFPGATimestamp() }, 20.0, timeout, mode().javaAction, true)
             .ktAction.also {

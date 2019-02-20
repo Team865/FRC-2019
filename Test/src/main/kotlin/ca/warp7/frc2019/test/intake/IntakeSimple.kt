@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
+@Suppress("unused")
 class IntakeSimple : TimedRobot() {
     lateinit var victor : VictorSPX
     lateinit var controller : XboxController

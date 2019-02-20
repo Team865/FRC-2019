@@ -62,14 +62,16 @@ abstract class Subsystem : ActionStateMachine() {
 
     private var initialized = false
 
+    private fun initialize() {
+        initialized = true
+        CommonRobot.addSubsystem(this)
+    }
+
     /**
      * Sets the current state of the subsystem
      */
     override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
-        if (!initialized) {
-            initialized = true
-            CommonRobot.addSubsystem(this)
-        }
+        if (!initialized) initialize()
         super.set(wantedState, block)
     }
 
@@ -109,9 +111,33 @@ abstract class Subsystem : ActionStateMachine() {
     ) {
         if (name in entries) entries[name]?.setValue(value) else {
             val n = entries.size + sent.size
-            val row = n / 6
-            val col = n % 6
-            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
+            val row = n / 5
+            val col = n % 5
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
+            when (value) {
+                is Int, is Long, is Double -> w.withWidget(BuiltInWidgets.kGraph)
+                is Float -> w.withWidget(BuiltInWidgets.kNumberSlider)
+            }
+            widget?.also { w.withWidget(it) }
+            extras?.also { w.withProperties(it) }
+            entries[name] = w.entry
+        }
+    }
+
+    /**
+     * Put data into shuffleboard
+     */
+    fun putIfNonEmpty(
+            name: String,
+            value: Any,
+            widget: BuiltInWidgets? = null,
+            extras: Map<String, Any>? = null
+    ) {
+        if (entries.isNotEmpty()) {
+            val n = entries.size + sent.size
+            val row = n / 5
+            val col = n % 5
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
@@ -131,10 +157,10 @@ abstract class Subsystem : ActionStateMachine() {
         val name = value.name
         if (name !in sent) {
             val n = entries.size + sent.size
-            val row = n / 6
-            val col = n % 6
+            val row = n / 5
+            val col = n % 5
             sent.add(name)
-            val w = tab.add(name, value).withPosition(col * 4, row * 4).withSize(4, 4)
+            val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
         }

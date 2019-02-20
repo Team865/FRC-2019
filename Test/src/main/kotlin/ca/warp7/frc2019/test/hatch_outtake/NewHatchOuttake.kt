@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Solenoid
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.XboxController
 
+@Suppress("unused")
 class NewHatchOuttake : TimedRobot() {
     lateinit var arms : Solenoid
     lateinit var pusher : Solenoid

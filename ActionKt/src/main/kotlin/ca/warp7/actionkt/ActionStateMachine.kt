@@ -4,9 +4,6 @@ abstract class ActionStateMachine {
 
     private var currentState: Action? = null
 
-    var stateName: String = "None"
-        internal set
-
     /**
      * Sets the state machine to a wanted state
      */
@@ -16,8 +13,6 @@ abstract class ActionStateMachine {
         if (wantedState != currentState) {
             // stop the current state
             stopState()
-            // get the name of the state
-            stateName = wantedState::class.java.simpleName
             // Start the new state
             wantedState.start()
             // Change to the new state

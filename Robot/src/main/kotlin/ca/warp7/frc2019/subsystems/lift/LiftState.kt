@@ -7,6 +7,7 @@ import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 
+@Suppress("unused")
 object LiftState {
 
     val kIdle = runOnce {
@@ -20,8 +21,6 @@ object LiftState {
         Lift.demand = it
         Lift.feedforward = LiftConstants.kPrimaryFeedforward
     }
-
-    val kGoToPosition = GoToPosition // this cal be relaced with motion planning or motion planning simple
 
     val kGoToPositionPlanned = GoToPositionMotionPlanning
 

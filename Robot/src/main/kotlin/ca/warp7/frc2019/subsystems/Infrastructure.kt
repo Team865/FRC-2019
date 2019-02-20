@@ -40,10 +40,10 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put(compressor)
-        put(pdp)
         put("ahrsCalibrated", ahrsCalibrated)
         put("Yaw", yaw)
         put("Pitch", pitch)
+        put(compressor)
+        put(pdp)
     }
 }

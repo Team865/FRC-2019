@@ -6,11 +6,9 @@ import edu.wpi.first.wpilibj.GenericHID.Hand.kRight
 import edu.wpi.first.wpilibj.XboxController
 
 
-internal fun u(old: ControllerState, _new: Boolean): ControllerState {
-    return if (_new)
-        if (old == Pressed || old == HeldDown) HeldDown else Pressed
-    else if (old == Released || old == None) None else Released
-}
+internal fun u(old: ControllerState, _new: Boolean) =
+        if (_new) if (old == Pressed || old == HeldDown) HeldDown else Pressed
+        else if (old == Released || old == None) None else Released
 
 internal fun RobotControllerImpl.updateWith(c: XboxController) {
     leftTriggerAxis = c.getTriggerAxis(kLeft)
@@ -29,7 +27,6 @@ internal fun RobotControllerImpl.updateWith(c: XboxController) {
     rightStickButton = u(rightStickButton, c.getStickButton(kRight))
     startButton = u(startButton, c.startButton)
     backButton = u(backButton, c.backButton)
-
 }
 
 internal fun RobotControllerImpl.reset() {
@@ -49,5 +46,4 @@ internal fun RobotControllerImpl.reset() {
     rightStickButton = None
     startButton = None
     backButton = None
-
 }
