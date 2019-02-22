@@ -84,7 +84,6 @@ object Drive : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("Output Mode", controlMode.name)
         put("Left Demand", leftDemand)
         put("Left Feedforward", leftFeedforward)
         put("Right Demand", rightDemand)
