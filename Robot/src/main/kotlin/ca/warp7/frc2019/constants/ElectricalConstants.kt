@@ -42,7 +42,6 @@ internal object ElectricalConstants {
     const val kIntakeSolenoidPort = 2
     const val kPusherSolenoid = 1
     const val kGrabberSolenoid = 0
-    const val kClimberSolenoidPort = 4
 
 
     /*

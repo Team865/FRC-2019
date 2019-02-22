@@ -11,7 +11,6 @@ object Superstructure : Subsystem() {
         put("Outtake Pushing", Outtake.pushing)
         put("Intake Speed", Intake.speed)
         put("Intake Extended", Intake.extended)
-        put("Climber Climbing", Climber.climbing)
         put("PassThrough Speed", PassThrough.speed)
     }
 }
