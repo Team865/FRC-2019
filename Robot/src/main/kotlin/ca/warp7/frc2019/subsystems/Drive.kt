@@ -34,6 +34,8 @@ object Drive : Subsystem() {
             VictorSPX(DriveConstants.kRightFollowerB)
     )
 
+    val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
+
     var controlMode = ControlMode.PercentOutput
         set(value) {
             if (field != value) when (value) {
