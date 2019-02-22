@@ -55,7 +55,6 @@ object MainLoop : RobotControlLoop {
                     }
                 }
             }
-            if (startButton == Pressed) Climber.set { climbing = !climbing }
         }
         withOperator {
             when {
@@ -93,7 +92,6 @@ object MainLoop : RobotControlLoop {
 //                    LiftMotionPlanner.zeroPosition()
 //                }
 //            }
-            if (startButton == Pressed) Climber.set { climbing = !climbing }
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {

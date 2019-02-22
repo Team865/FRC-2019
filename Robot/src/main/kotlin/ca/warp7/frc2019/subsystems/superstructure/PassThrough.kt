@@ -1,9 +1,7 @@
 package ca.warp7.frc2019.subsystems.superstructure
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.set
 import ca.warp7.frc2019.constants.SuperstructureConstants
-import ca.warp7.frc2019.subsystems.Climber
 import ca.warp7.frc2019.subsystems.Conveyor
 import ca.warp7.frc2019.subsystems.Outtake
 import kotlin.math.withSign
@@ -17,10 +15,6 @@ object PassThrough : Action {
     var outtaking = false
 
     private val isLiftAtPositionForPassThrough get() = true // TODO use actual lift calculations
-
-    override fun start() {
-        Climber.set { climbing = false }
-    }
 
     override fun update() {
         if (isLiftAtPositionForPassThrough) {

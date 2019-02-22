@@ -15,8 +15,8 @@ object DriveConstants {
     private const val kWheelDiameter = 6.0 // Inches
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
-    // Distance between left and right wheels in inches TODO
-    const val kWheelBase = 12.0
+    // Distance between left and right wheels in inches
+    private const val kWheelBase = 24.75 // FIXME This is measured for traction wheels not Colsons
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kWheelBase * Math.PI
 
