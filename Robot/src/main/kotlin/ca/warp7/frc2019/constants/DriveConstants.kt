@@ -12,7 +12,7 @@ object DriveConstants {
     ==================
     */
 
-    private const val kWheelDiameter = 6.0 // Inches
+    private const val kWheelDiameter = 5.625 // Inches
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
