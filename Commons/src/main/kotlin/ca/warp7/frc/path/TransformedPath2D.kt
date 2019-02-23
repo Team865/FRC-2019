@@ -1,37 +1,37 @@
 package ca.warp7.frc.path
 
 @Suppress("unused")
-class TransformedPath2D(val p: Path2D) : Path2D {
+class TransformedPath2D(val path: Path2D, val transform: Pose2D) : Path2D {
     override fun px(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun py(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun vx(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun vy(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun ax(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun ay(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun jx(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override fun jy(t: Double): Double {
-        return p.px(t)
+        return path.px(t)
     }
 
     override val dx: Double
