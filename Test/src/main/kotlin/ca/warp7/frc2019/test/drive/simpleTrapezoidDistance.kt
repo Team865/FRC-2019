@@ -39,10 +39,12 @@ class simpleTrapezoidDistance : TimedRobot(){
     var lastTime = 0.0
     var velocity = 0.0
     val time=0.7
+    val startVelocity = 0.0
+    val demandedDistance = 3.0 // feet
+    val dtToMaxTheoV = (DriveConstants.kMaxVelocity - startVelocity) /  DriveConstants.kMaxAcceleration // seconds
+    val maxTheoV = 8 //TOdo
 
-    override fun robotInit(){
-        println("Hi, me robit")
-    }
+
 
     override fun autonomousInit() {
         startTime = 0.0
