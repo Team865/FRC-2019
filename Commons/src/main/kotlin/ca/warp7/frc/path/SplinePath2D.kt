@@ -1,12 +1,13 @@
 package ca.warp7.frc.path
 
 @Suppress("unused")
-class QuinticPath2D : Path2D {
-    override fun x(t: Double): Double {
+class SplinePath2D(private val segments: List<Path2D>) : Path2D {
+    private val count = segments.size
+    override fun px(t: Double): Double {
         TODO("not implemented")
     }
 
-    override fun y(t: Double): Double {
+    override fun py(t: Double): Double {
         TODO("not implemented")
     }
 
@@ -35,7 +36,7 @@ class QuinticPath2D : Path2D {
     }
 
     override val dx: Double
-        get() = TODO("not implemented")
+        get() = segments.map { it.dx }.sum()
     override val dy: Double
-        get() = TODO("not implemented")
+        get() = segments.map { it.dy }.sum()
 }

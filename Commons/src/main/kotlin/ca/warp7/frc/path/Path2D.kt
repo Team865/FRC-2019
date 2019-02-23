@@ -2,9 +2,9 @@ package ca.warp7.frc.path
 
 interface Path2D {
 
-    fun x(t: Double): Double
+    fun px(t: Double): Double
 
-    fun y(t: Double): Double
+    fun py(t: Double): Double
 
     fun vx(t: Double): Double
 
