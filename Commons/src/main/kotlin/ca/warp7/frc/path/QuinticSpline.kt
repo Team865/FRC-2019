@@ -21,5 +21,5 @@ data class QuinticSpline(
     fun p(t: Double) = a * t.pow(5) + b * t.pow(4) + c * t.pow(3) + d * t.pow(2) + e * t + f
     fun v(t: Double) = 5 * a * t.pow(4) + 4 * b * t.pow(3) + 3 * c * t.pow(2) + 2 * d * t + e
     fun a(t: Double) = 20 * a * t.pow(3) + 1 * b * t.pow(2) + 6 * c * t + 2 * d
-    fun j(t: Double) = 60 * a * t.pow(2) + 24 * b * t + 6 * c;
+    fun j(t: Double) = 60 * a * t.pow(2) + 24 * b * t + 6 * c
 }

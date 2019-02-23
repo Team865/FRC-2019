@@ -38,6 +38,10 @@ object DriveConstants {
 
     const val kTicksPerInch = COTSConstants.GrayHillEncoder.kTicksPerRevolution / kWheelCircumference
 
+    const val kMaxVelocity = 12.22 // ft/s TODO Re-tune after robot is done
+    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
+    const val kMaxAcceleration = 8.875 //  ft/s
+
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot
