@@ -12,7 +12,7 @@ import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.withSign
 
-class simpleTrapezoid : TimedRobot(){
+class simpleTrapezoidDistance : TimedRobot(){
     private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster).apply {
         config(DriveConstants.kMasterTalonConfig)
         setNeutralMode(NeutralMode.Brake)
