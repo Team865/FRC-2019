@@ -71,7 +71,7 @@ class DriveLinearPID : TimedRobot() {
         }
         val newD = d.getDouble(0.0)
         if (!newD.epsilonEquals(lastD, 1E-9)) {
-            lastD = newP
+            lastD = newD
             leftMaster.config_kD(0, newD, 0)
             rightMaster.config_kD(0, newD, 0)
         }

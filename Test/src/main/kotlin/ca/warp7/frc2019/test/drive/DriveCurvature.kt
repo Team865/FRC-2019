@@ -28,6 +28,7 @@ class DriveCurvature : TimedRobot() {
         }
 
         differentialDrive = DifferentialDrive(leftMaster, rightMaster)
+        differentialDrive.isSafetyEnabled = false
         xboxController = XboxController(0)
     }
 
