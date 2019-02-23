@@ -3,10 +3,10 @@ package ca.warp7.frc.path
 import kotlin.math.pow
 
 data class CubicSpline(
-        val p0: Double,
-        val m0: Double,
-        val p1: Double,
-        val m1: Double
+        private val p0: Double,
+        private val m0: Double,
+        private val p1: Double,
+        private val m1: Double
 ) {
 
     private val a: Double = 2 * p0 - 2 * p1 + m0 + m1

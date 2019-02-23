@@ -21,8 +21,4 @@ interface Path2D {
     val dx: Double
 
     val dy: Double
-
-    val curvature: Double
-
-    val distance: Double
 }

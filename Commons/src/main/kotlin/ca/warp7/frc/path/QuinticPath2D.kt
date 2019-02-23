@@ -38,8 +38,4 @@ class QuinticPath2D : Path2D {
         get() = TODO("not implemented")
     override val dy: Double
         get() = TODO("not implemented")
-    override val curvature: Double
-        get() = TODO("not implemented")
-    override val distance: Double
-        get() = TODO("not implemented")
 }
