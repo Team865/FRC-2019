@@ -3,6 +3,7 @@ package ca.warp7.frc2019.test.drive
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
@@ -48,19 +49,26 @@ abstract class simpleTrapezoidDistance : TimedRobot(){
     abstract var isTriangle : Boolean
     abstract var maxV : Double
     abstract var dtAtMaxV : Double
-    //TODO
-
+    abstract var dxAtMaxV: Double
+    abstract var dtInCruiseV: Double
+    abstract var totalDt: Double
     override fun autonomousInit() {
         if (maxTheoV >= DriveConstants.kMaxVelocity) {
             isTriangle = true
             maxV = maxTheoV
+            dtAtMaxV = (maxV - startVelocity)/DriveConstants.kMaxAcceleration
+            dxAtMaxV = dxAtMaxTheoV
+            dtInCruiseV = 0.0
         }
         else{
             isTriangle = false
             maxV = DriveConstants.kMaxVelocity
+            dtAtMaxV = (maxV - startVelocity)/DriveConstants.kMaxAcceleration
+            dxAtMaxV = (startVelocity + DriveConstants.kMaxVelocity) / 2 * dtAtMaxV
+            dtInCruiseV = demandedDistance - (2 * dxAtMaxV)
         }
-        dtAtMaxV = maxV - startVelocity
-        startTime = 0.0
+        totalDt = dtInCruiseV + dtAtMaxV * 2
+
         timeSinceStart = 0.0
         lastTime = 0.0
         velocity = 0.0
@@ -73,16 +81,24 @@ abstract class simpleTrapezoidDistance : TimedRobot(){
     override fun autonomousPeriodic() {
         timeSinceStart = Timer.getFPGATimestamp() - startTime
         val dt = timeSinceStart - lastTime
+
+
+
         println(timeSinceStart)
+
         when {
-            timeSinceStart < time/2 -> velocity += dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
-            timeSinceStart < time -> velocity -= dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+            timeSinceStart < dtAtMaxV -> velocity = timeSinceStart * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+            timeSinceStart < dtAtMaxV + dtInCruiseV -> velocity = maxV * DriveConstants.kTicksPerInch
+            timeSinceStart < totalDt -> velocity =  (totalDt - timeSinceStart) * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
             else -> velocity = 0.0
         }
 
         println(velocity)
         leftMaster.set(min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity))
         rightMaster.set(-1.0 * min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity))
+
+
+
         lastTime = timeSinceStart
     }
 }
