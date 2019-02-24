@@ -8,11 +8,13 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.Timer
+import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.sqrt
 import kotlin.math.withSign
 
-class simpleTrapezoidDistance : TimedRobot(){
+abstract class simpleTrapezoidDistance : TimedRobot(){
     private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster).apply {
         config(DriveConstants.kMasterTalonConfig)
         setNeutralMode(NeutralMode.Brake)
@@ -39,14 +41,25 @@ class simpleTrapezoidDistance : TimedRobot(){
     var lastTime = 0.0
     var velocity = 0.0
     val time=0.7
-    val startVelocity = 0.0
+    val startVelocity = 0.0 // feet per second squared
     val demandedDistance = 3.0 // feet
-    val dtToMaxTheoV = (DriveConstants.kMaxVelocity - startVelocity) /  DriveConstants.kMaxAcceleration // seconds
-    val maxTheoV = 8 //TOdo
-
-
+    val dxAtMaxTheoV = demandedDistance/ 2
+    val maxTheoV = sqrt(pow(startVelocity, 2.0) + 2 * DriveConstants.kMaxAcceleration * dxAtMaxTheoV) // feet per second
+    abstract var isTriangle : Boolean
+    abstract var maxV : Double
+    abstract var dtAtMaxV : Double
+    //TODO
 
     override fun autonomousInit() {
+        if (maxTheoV >= DriveConstants.kMaxVelocity) {
+            isTriangle = true
+            maxV = maxTheoV
+        }
+        else{
+            isTriangle = false
+            maxV = DriveConstants.kMaxVelocity
+        }
+        dtAtMaxV = maxV - startVelocity
         startTime = 0.0
         timeSinceStart = 0.0
         lastTime = 0.0
@@ -61,14 +74,10 @@ class simpleTrapezoidDistance : TimedRobot(){
         timeSinceStart = Timer.getFPGATimestamp() - startTime
         val dt = timeSinceStart - lastTime
         println(timeSinceStart)
-        if (timeSinceStart < time/2){
-            velocity += dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
-        }
-        else if (timeSinceStart < time){
-            velocity -= dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
-        }
-        else {
-            velocity = 0.0
+        when {
+            timeSinceStart < time/2 -> velocity += dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+            timeSinceStart < time -> velocity -= dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+            else -> velocity = 0.0
         }
 
         println(velocity)
