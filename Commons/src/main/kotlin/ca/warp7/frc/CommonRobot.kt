@@ -1,17 +1,11 @@
 package ca.warp7.frc
 
-import ca.warp7.actionj.impl.ActionMode
-import ca.warp7.actionkt.*
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 
 internal object CommonRobot {
-
-    init {
-        Thread.currentThread().name = "Robot"
-    }
 
     private val subsystems: MutableSet<Subsystem> = mutableSetOf()
 
@@ -28,8 +22,6 @@ internal object CommonRobot {
     private var robotEnabled = false
     private var crashed = false
 
-    private var autoRunner: Action = runOnce { }
-
     private var controlLoop: RobotControlLoop? = null
 
     fun setControllerMode(mode: ControllerMode) {
@@ -44,7 +36,6 @@ internal object CommonRobot {
      * Set the control loop
      */
     fun setLoop(loop: RobotControlLoop) {
-        autoRunner.stop()
         robotEnabled = true
         loop.setup()
         controlLoop = loop
@@ -109,7 +100,6 @@ internal object CommonRobot {
 
     fun disableOutputs() {
         LiveWindow.disableAllTelemetry()
-        autoRunner.stop()
         robotEnabled = false
         controlLoop = null
         subsystems.forEach {
@@ -119,16 +109,7 @@ internal object CommonRobot {
     }
 
     fun enable() {
-        autoRunner.stop()
         robotEnabled = true
-    }
-
-    fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
-            actionTimer { Timer.getFPGATimestamp() }, 20.0, timeout, mode().javaAction, true)
-            .ktAction.also {
-        autoRunner = it
-        robotEnabled = true
-        it.start()
     }
 }
 
