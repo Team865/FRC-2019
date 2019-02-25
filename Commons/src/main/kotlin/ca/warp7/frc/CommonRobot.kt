@@ -111,6 +111,7 @@ internal object CommonRobot {
         LiveWindow.disableAllTelemetry()
         autoRunner.stop()
         robotEnabled = false
+        controlLoop = null
         subsystems.forEach {
             it.stopState()
             it.onDisabled()
