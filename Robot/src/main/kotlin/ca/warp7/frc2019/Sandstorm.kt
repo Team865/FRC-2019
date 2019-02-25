@@ -16,6 +16,10 @@ object Sandstorm : Action {
         get() = auto.shouldFinish || Controls.robotDriver.leftXAxis > 0.8
                 || Controls.robotOperator.leftXAxis > 0.8
 
+    override fun update() {
+        auto.update()
+    }
+
     override fun stop() {
         auto.stop()
         MainLoop.start()

@@ -2,21 +2,6 @@
 
 package ca.warp7.actionkt
 
-import ca.warp7.actionj.IAction
-import ca.warp7.actionj.impl.Queue
-
-private typealias ASM = ActionStateMachine
-
-val Action.javaAction: IAction get() = JavaAction(this)
-
-val IAction.ktAction: Action get() = KotlinAction(this)
-
-fun actionTimer(timer: () -> Double) = IAction.ITimer { timer() }
-
-fun javaAction(factory: IAction.API.() -> IAction) = factory(Queue()).ktAction
-
-fun javaMode(factory: IAction.API.() -> IAction) = { javaAction(factory) }
-
 fun action(block: ActionDSL.() -> Unit): Action = ActionDSLImpl().apply(block)
 
 fun async(block: ActionAsyncGroup.() -> Unit): Action = ActionAsyncImpl().apply(block)
@@ -70,12 +55,13 @@ fun runAfter(seconds: Double, block: ActionState.() -> Unit) = action {
     onStop(block)
 }
 
-fun <T : Action> ASM.future(wantedState: T, block: T.() -> Unit = {}) = runOnce { set(wantedState, block) }
+fun <T : Action> ActionStateMachine.future(wantedState: T, block: T.() -> Unit = {}) =
+        runOnce { set(wantedState, block) }
 
 /**
  * Tries to set the state machine to a wanted state if the current state can finish
  */
-fun <T : Action> ASM.trySet(wantedState: T, block: T.() -> Unit = {}) {
+fun <T : Action> ActionStateMachine.trySet(wantedState: T, block: T.() -> Unit = {}) {
     val currentState = currentState
     if (wantedState == currentState) {
         block(wantedState)
