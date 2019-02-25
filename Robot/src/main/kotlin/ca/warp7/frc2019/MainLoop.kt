@@ -1,9 +1,9 @@
 package ca.warp7.frc2019
 
+import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.runAfter
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
-import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
@@ -15,14 +15,16 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 
-object MainLoop : RobotControlLoop {
+object MainLoop : Action {
 
-    override fun setup() {
+    override fun start() {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
     }
 
-    override fun periodic() {
+    override val shouldFinish: Boolean = false
+
+    override fun update() {
         var passThroughSpeed = 0.0
         var isOuttaking = false
         withDriver {

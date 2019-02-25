@@ -27,7 +27,7 @@ fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControlle
 object RobotControl : Subsystem() {
     var mode: ControllerMode = ControllerMode.DriverAndOperator
         set(value) {
-            setControllerMode(value)
+            CommonRobot.setControllerMode(value)
             field = value
         }
 }
