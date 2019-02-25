@@ -58,7 +58,7 @@ class simpleTrapezoid : TimedRobot(){
     override fun autonomousPeriodic() {
         timeSinceStart = Timer.getFPGATimestamp() - startTime
         val dt = timeSinceStart - lastTime
-        println(timeSinceStart)
+        println("time:" + timeSinceStart)
         if (timeSinceStart < time/2){
             velocity += dt * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
         }
@@ -69,7 +69,7 @@ class simpleTrapezoid : TimedRobot(){
             velocity = 0.0
         }
 
-        println(velocity)
+        println("vel" + velocity)
         leftMaster.set(min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity))
         rightMaster.set(-1.0 * min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity))
         lastTime = timeSinceStart
