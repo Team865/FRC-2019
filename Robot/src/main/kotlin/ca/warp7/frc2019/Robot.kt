@@ -13,10 +13,10 @@ class Robot : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        setControllerMode(ControllerMode.DriverAndOperator)
-        Infrastructure.set { startCompressor = true }
+        RobotControl.set { mode = ControllerMode.DriverAndOperator }
         Drive.set { }
         Drive.motionPlanner.set { }
+        Infrastructure.set { startCompressor = true }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
         Intake.set { extended = false }
@@ -43,7 +43,7 @@ class Robot : TimedRobot() {
     =====================================================
      */
 
-    override fun autonomousInit() = SandstormLoop.start()
+    override fun autonomousInit() = RobotControl.set(Sandstorm)
     override fun teleopInit() = MainLoop.start()
     override fun testInit() = MainLoop.start()
 
