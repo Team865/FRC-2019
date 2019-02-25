@@ -76,21 +76,21 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        leftPositionTicks = leftMaster.selectedSensorPosition
+        leftPositionTicks = -leftMaster.selectedSensorPosition * -1
         rightPositionTicks = rightMaster.selectedSensorPosition
-        leftVelocityTicks = leftMaster.selectedSensorVelocity
+        leftVelocityTicks = leftMaster.selectedSensorVelocity * -1
         rightVelocityTicks = rightMaster.selectedSensorVelocity
         DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {
-        put("Left Demand", leftDemand)
-        put("Left Feedforward", leftFeedforward)
-        put("Right Demand", rightDemand)
-        put("Right Feedforward", rightFeedforward)
+        graph("Left Demand", leftDemand)
+        graph("Left Feedforward", leftFeedforward)
+        graph("Right Demand", rightDemand)
+        graph("Right Feedforward", rightFeedforward)
+        graph("Left Velocity", leftVelocityTicks)
+        graph("Right Velocity", rightVelocityTicks)
         put("Left Position", leftPositionTicks)
         put("Right Position", rightPositionTicks)
-        put("Left Velocity", leftVelocityTicks)
-        put("Right Velocity", rightVelocityTicks)
     }
 }

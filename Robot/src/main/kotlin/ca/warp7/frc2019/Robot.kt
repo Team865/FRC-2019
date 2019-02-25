@@ -14,8 +14,7 @@ class Robot : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverAndOperator }
-        Drive.set { }
-        Drive.motionPlanner.set { }
+        Drive.set { motionPlanner.set { } }
         Infrastructure.set { startCompressor = true }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
