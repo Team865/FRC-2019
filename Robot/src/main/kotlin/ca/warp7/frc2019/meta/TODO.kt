@@ -16,5 +16,7 @@ TODO("TODO")
     - Implement async action
     - Indexing cargo state tuning
     - Add lazy actuators
+    - Add separate outtake speed for operator
+    - Implement awesome autonomous driving
 
  */

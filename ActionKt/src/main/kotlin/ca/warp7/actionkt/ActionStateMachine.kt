@@ -2,7 +2,8 @@ package ca.warp7.actionkt
 
 abstract class ActionStateMachine {
 
-    private var currentState: Action? = null
+    internal var currentState: Action? = null
+        private set
 
     /**
      * Sets the state machine to a wanted state
@@ -17,18 +18,6 @@ abstract class ActionStateMachine {
             wantedState.start()
             // Change to the new state
             currentState = wantedState
-        }
-    }
-
-    /**
-     * Tries to set the state machine to a wanted state if the current state can finish
-     */
-    fun <T : Action> trySet(wantedState: T, block: T.() -> Unit = {}) {
-        val currentState = currentState
-        if (wantedState == currentState) {
-            block(wantedState)
-        } else if (currentState == null || currentState.shouldFinish) {
-            set(wantedState, block)
         }
     }
 

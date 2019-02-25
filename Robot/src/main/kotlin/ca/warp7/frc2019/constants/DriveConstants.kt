@@ -12,7 +12,7 @@ object DriveConstants {
     ==================
     */
 
-    private const val kWheelDiameter = 6.0 // Inches
+    private const val kWheelDiameter = 5.625 // Inches
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
@@ -37,6 +37,10 @@ object DriveConstants {
     const val kQuickTurnMultiplier = 0.7
 
     const val kTicksPerInch = COTSConstants.GrayHillEncoder.kTicksPerRevolution / kWheelCircumference
+
+    const val kMaxVelocity = 12.22 // ft/s TODO Re-tune after robot is done
+    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
+    const val kMaxAcceleration = 8.875 //  ft/s
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
