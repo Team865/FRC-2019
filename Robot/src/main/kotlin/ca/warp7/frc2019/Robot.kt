@@ -45,7 +45,7 @@ class Robot : TimedRobot() {
 
     override fun autonomousInit() = RobotControl.set(Sandstorm)
     override fun teleopInit() = MainLoop.start()
-    override fun testInit() = MainLoop.start()
+    override fun testInit() = RobotControl.set(MainLoopAction)
 
     /*
     =====================================================
