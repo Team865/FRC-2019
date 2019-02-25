@@ -118,6 +118,11 @@ internal object CommonRobot {
         }
     }
 
+    fun enable() {
+        autoRunner.stop()
+        robotEnabled = true
+    }
+
     fun runAutonomous(mode: () -> Action, timeout: Double): Action = ActionMode.createRunner(
             actionTimer { Timer.getFPGATimestamp() }, 20.0, timeout, mode().javaAction, true)
             .ktAction.also {

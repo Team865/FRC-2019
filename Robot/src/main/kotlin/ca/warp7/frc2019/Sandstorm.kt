@@ -3,7 +3,6 @@ package ca.warp7.frc2019
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.Controls
 import ca.warp7.frc.runAutonomous
-import ca.warp7.frc.start
 
 object Sandstorm : Action {
 
@@ -19,6 +18,7 @@ object Sandstorm : Action {
                 || Controls.robotOperator.leftXAxis > 0.8
 
     override fun stop() {
+        autonomousAction.stop()
         MainLoop.start()
     }
 }

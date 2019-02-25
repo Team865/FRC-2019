@@ -30,4 +30,9 @@ object RobotControl : Subsystem() {
             CommonRobot.setControllerMode(value)
             field = value
         }
+
+    fun enable(wantedState: Action) {
+        CommonRobot.enable()
+        set(wantedState)
+    }
 }
