@@ -4,6 +4,7 @@ package ca.warp7.frc.path
 
 import kotlin.math.*
 
+
 /*
  * ROTATION FUNCTIONS
  */
@@ -29,6 +30,11 @@ val Rotation2D.inverse get() = Rotation2D(cos, -sin)
 
 val Rotation2D.normal: Rotation2D get() = Rotation2D(-sin, cos)
 
+operator fun Rotation2D.times(by: Double) = scaled(by)
+
+operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
+
+
 /*
  * TRANSLATION FUNCTIONS
  */
@@ -43,6 +49,11 @@ fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * 
 
 fun Translation2D.translate(by: Translation2D) = Translation2D(x + by.x, y + by.y)
 
+operator fun Translation2D.times(by: Double) = scaled(by)
+
+operator fun Translation2D.plus(by: Translation2D) = translate(by)
+
+
 /*
  * POSE FUNCTIONS
  */
@@ -52,3 +63,9 @@ fun Pose2D.transform(by: Pose2D) = Pose2D(translation.translate(by.translation),
 fun Pose2D.transform(by: Translation2D) = transform(by.pose)
 
 fun Pose2D.transform(by: Rotation2D) = transform(by.pose)
+
+operator fun Pose2D.plus(by: Pose2D) = transform(by)
+
+operator fun Pose2D.plus(by: Translation2D) = transform(by)
+
+operator fun Pose2D.plus(by: Rotation2D) = transform(by)
