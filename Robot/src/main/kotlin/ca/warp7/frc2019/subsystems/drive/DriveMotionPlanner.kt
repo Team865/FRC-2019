@@ -14,7 +14,7 @@ object DriveMotionPlanner : Subsystem() {
     private val measurementFrequency = 1000 / DriveConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
 
     var lastDt = 0.0
-    private val motionState = DriveMotionState()
+    val motionState = DriveMotionState()
     val leftPositionInches get() = Drive.leftPositionTicks / DriveConstants.kTicksPerInch
     val rightPositionInches get() = Drive.rightPositionTicks / DriveConstants.kTicksPerInch
     val leftVelocityInches
