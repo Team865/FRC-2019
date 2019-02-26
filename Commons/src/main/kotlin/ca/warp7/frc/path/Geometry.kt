@@ -11,18 +11,20 @@ fun radiansToRotation(radians: Double): Rotation2D = Rotation2D(cos(radians), si
 
 fun degreesToRotation(degrees: Double): Rotation2D = radiansToRotation(Math.toRadians(degrees))
 
-val Translation2D.pose: Pose2D get() = Pose2D(this, Rotation2D.identity)
+val Translation2D.pose: Pose2D get() = Pose2D(translation = this, rotation = Rotation2D.identity)
 
-val Rotation2D.pose: Pose2D get() = Pose2D(Translation2D.identity, this)
+val Rotation2D.pose: Pose2D get() = Pose2D(translation = Translation2D.identity, rotation = this)
 
-val Translation2D.distance: Double get() = sqrt(x * x + y * y)
+val Translation2D.dist: Double get() = sqrt(x * x + y * y)
 
-val Rotation2D.angle: Double get() = atan2(sin, cos)
+val Rotation2D.angle: Double get() = atan2(y = sin, x = cos)
 
 val Rotation2D.mag: Double get() = sqrt(cos * cos + sin * sin)
 
-val Rotation2D.normalized: Rotation2D
-    get() {
-        val mag = mag
-        return Rotation2D(cos / mag, sin / mag)
-    }
+val Rotation2D.normal: Rotation2D get() = scaled(by = 1 / mag)
+
+val Translation2D.normal: Translation2D get() = scaled(by = 1 / dist)
+
+fun Rotation2D.scaled(by: Double): Rotation2D = Rotation2D(cos * by, sin * by)
+
+fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * by)

@@ -27,7 +27,7 @@ object FollowPath : Action {
             +TurnAngle
             angle = relativeAngle
 
-            !"drive distance"
+                !"drive dist"
             +DriveDistance
             distance = relativeDistance
 

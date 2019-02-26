@@ -36,7 +36,7 @@ object LiftFeedforwardLoop : RobotControlLoop {
         feedforwardEntry = a.add("feedforward", 0.0)
                 .withPosition(0, 3).withSize(10, 3)
                 .withWidget(BuiltInWidgets.kNumberSlider).entry
-        scaleEntry = a.add("scale", 0.0)
+        scaleEntry = a.add("scaled", 0.0)
                 .withPosition(0, 6).withSize(10, 3)
                 .withWidget(BuiltInWidgets.kNumberSlider).entry
     }
