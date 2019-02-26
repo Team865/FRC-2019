@@ -5,7 +5,7 @@ package ca.warp7.frc.path
 import ca.warp7.actionkt.Creator
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Translation2D
-import ca.warp7.frc.geometry.degreesToRotation
+import ca.warp7.frc.geometry.rotationInDegrees
 import kotlin.math.pow
 
 operator fun Path2D.get(t: Double): Path2DState {
@@ -19,7 +19,7 @@ internal fun Double.checkBounds(): Double {
 }
 
 fun waypoint(x: Number, y: Number, angle: Number) =
-        Pose2D(Translation2D(x.toDouble(), y.toDouble()), degreesToRotation(angle.toDouble()))
+        Pose2D(Translation2D(x.toDouble(), y.toDouble()), rotationInDegrees(angle.toDouble()))
 
 fun path(block: Creator<Pose2D>.() -> Unit): Path2D {
     val s = block(PathCreator()).toString()

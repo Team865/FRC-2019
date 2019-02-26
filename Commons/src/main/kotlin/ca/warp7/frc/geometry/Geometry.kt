@@ -2,20 +2,24 @@
 
 package ca.warp7.frc.geometry
 
-import kotlin.math.*
+import ca.warp7.frc.epsilonEquals
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 
 /*
  * ROTATION FUNCTIONS
  */
 
-fun radiansToRotation(radians: Double): Rotation2D = Rotation2D(cos(radians), sin(radians))
+fun rotation(radians: Double): Rotation2D = Rotation2D(cos(radians), sin(radians))
 
-fun degreesToRotation(degrees: Double): Rotation2D = radiansToRotation(Math.toRadians(degrees))
+fun rotationInDegrees(degrees: Double): Rotation2D = rotation(Math.toRadians(degrees))
 
 val Rotation2D.pose: Pose2D get() = Pose2D(translation = Translation2D.identity, rotation = this)
 
-val Rotation2D.angle: Double get() = atan2(y = sin, x = cos)
+val Rotation2D.radians: Double get() = atan2(y = sin, x = cos)
 
 val Rotation2D.mag: Double get() = hypot(sin, cos)
 
@@ -39,19 +43,28 @@ operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
  * TRANSLATION FUNCTIONS
  */
 
-val Translation2D.pose: Pose2D get() = Pose2D(translation = this, rotation = Rotation2D.identity)
-
-val Translation2D.dist: Double get() = sqrt(x * x + y * y)
-
-val Translation2D.normal: Translation2D get() = scaled(by = 1 / dist)
-
 fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
 
 fun Translation2D.translate(by: Translation2D) = Translation2D(x + by.x, y + by.y)
 
+fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin, x * by.sin + y * by.cos)
+
+fun Translation2D.epsilonEquals(other: Translation2D, epsilon: Double) =
+        x.epsilonEquals(other.x, epsilon) && y.epsilonEquals(other.y, epsilon)
+
+infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
+
+infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
+
 operator fun Translation2D.times(by: Double) = scaled(by)
 
 operator fun Translation2D.plus(by: Translation2D) = translate(by)
+
+operator fun Translation2D.minus(by: Translation2D) = translate(by.inverse)
+
+operator fun Translation2D.unaryPlus() = copy
+
+operator fun Translation2D.unaryMinus() = inverse
 
 
 /*
@@ -60,7 +73,7 @@ operator fun Translation2D.plus(by: Translation2D) = translate(by)
 
 fun Pose2D.transform(by: Pose2D) = Pose2D(translation.translate(by.translation), rotation.rotate(by.rotation))
 
-fun Pose2D.transform(by: Translation2D) = transform(by.pose)
+fun Pose2D.transform(by: Translation2D) = transform(Pose2D(by, Rotation2D.identity))
 
 fun Pose2D.transform(by: Rotation2D) = transform(by.pose)
 

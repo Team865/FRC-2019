@@ -23,7 +23,7 @@ object FollowPath : Action {
             val relativeAngle = previousAngle - (previousPoint - waypoint.point).angle
             val relativeDistance = (waypoint.point - previousPoint).mag
 
-            !"turn angle"
+                !"turn radians"
             +TurnAngle
             angle = relativeAngle
 
