@@ -12,6 +12,7 @@ object Infrastructure : Subsystem() {
     private val ahrs = AHRS(SPI.Port.kMXP)
     private val pdp = PowerDistributionPanel(InfrastructureConstants.kPDPModule)
 
+
     var ahrsCalibrated = false
     var yaw = 0.0
     var pitch = 0.0
@@ -24,6 +25,7 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onOutput() {
+        compressor.closedLoopControl=true
         if (startCompressor) {
             compressor.start()
             startCompressor = false

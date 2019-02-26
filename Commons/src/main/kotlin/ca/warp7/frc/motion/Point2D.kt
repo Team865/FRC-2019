@@ -12,14 +12,17 @@ data class Point2D(var x: Double, var y: Double) {
     val angle get() = atan(y / x)
 
     // sum of 2 points
-    operator fun plus(b: Point2D) = Point2D(x + b.x, y + b.y)
+    operator fun plus(p2: Point2D) = Point2D(x + p2.x, y + p2.y)
 
     // relative point
-    operator fun minus(b: Point2D) = Point2D(x - b.x, y - b.y)
+    operator fun minus(p2: Point2D) = Point2D(x - p2.x, y - p2.y)
 
-    // scale up point
-    operator fun times(b: Double) = Point2D(x * b, y * b)
+    // sum of 2 points
+    operator fun times(k: Double) = Point2D(k*x, k*y)
 
-    // scale down point
-    operator fun div(b: Double) = Point2D(x / b, y / b)
+    // relative point
+    operator fun div(k: Double) = Point2D(x/k, y/k)
+
+    // distance between points
+    operator fun rangeTo(p2: Point2D) = minus(p2).mag
 }
