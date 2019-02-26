@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.test.lift.feedforward
 
+import ca.warp7.actionkt.Action
 import ca.warp7.frc.ControllerState
-import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc.getShuffleboardTab
 import ca.warp7.frc.withDriver
 import ca.warp7.frc2019.subsystems.Conveyor
@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
-object LiftFeedforwardLoop : RobotControlLoop {
-    override fun setup() {
-    }
+object LiftFeedforwardLoop : Action {
 
     private var feedforward = 0.08
     private var ramp = 0.3
@@ -36,12 +34,12 @@ object LiftFeedforwardLoop : RobotControlLoop {
         feedforwardEntry = a.add("feedforward", 0.0)
                 .withPosition(0, 3).withSize(10, 3)
                 .withWidget(BuiltInWidgets.kNumberSlider).entry
-        scaleEntry = a.add("scale", 0.0)
+        scaleEntry = a.add("scaled", 0.0)
                 .withPosition(0, 6).withSize(10, 3)
                 .withWidget(BuiltInWidgets.kNumberSlider).entry
     }
 
-    override fun periodic() {
+    override fun update() {
         withDriver {
             if (leftBumper == ControllerState.Pressed) feedforward -= 0.01
             if (rightBumper == ControllerState.Pressed) feedforward += 0.01

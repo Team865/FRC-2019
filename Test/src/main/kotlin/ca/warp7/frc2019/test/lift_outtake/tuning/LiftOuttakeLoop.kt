@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.test.lift_outtake.tuning
 
+import ca.warp7.actionkt.Action
 import ca.warp7.frc.ControllerState
-import ca.warp7.frc.RobotControlLoop
 import ca.warp7.frc.getShuffleboardTab
 import ca.warp7.frc.withDriver
 import ca.warp7.frc2019.subsystems.Conveyor
@@ -14,9 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer
 import kotlin.math.absoluteValue
 import kotlin.math.withSign
 
-object LiftOuttakeLoop : RobotControlLoop {
-    override fun setup() {
-    }
+object LiftOuttakeLoop : Action {
 
     private var outtake = 0.5
     private var conveyor = 0.5
@@ -37,7 +35,10 @@ object LiftOuttakeLoop : RobotControlLoop {
                 .withWidget(BuiltInWidgets.kNumberSlider).entry
     }
 
-    override fun periodic() {
+    override val shouldFinish: Boolean
+        get() = false
+
+    override fun update() {
         withDriver {
             if (leftBumper == ControllerState.Pressed) outtake -= 0.1
             if (rightBumper == ControllerState.Pressed) outtake += 0.1

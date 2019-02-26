@@ -1,5 +1,7 @@
 package ca.warp7.frc.path
 
+import ca.warp7.frc.geometry.Reflection2D
+
 @Suppress("unused")
 class MirroredPath2D(val path: Path2D, private val transform: Reflection2D) : Path2D {
     override fun px(t: Double) = if (transform.x) -path.px(t) else path.px(t)

@@ -1,5 +1,7 @@
 package ca.warp7.frc.path
 
+import ca.warp7.frc.geometry.Pose2D
+
 @Suppress("unused")
 class TransformedPath2D(val path: Path2D, val transform: Pose2D) : Path2D {
     override fun px(t: Double): Double {
