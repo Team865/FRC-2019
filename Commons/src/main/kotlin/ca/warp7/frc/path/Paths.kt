@@ -3,6 +3,9 @@
 package ca.warp7.frc.path
 
 import ca.warp7.actionkt.Creator
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Translation2D
+import ca.warp7.frc.geometry.degreesToRotation
 import kotlin.math.pow
 
 operator fun Path2D.get(t: Double): Path2DState {

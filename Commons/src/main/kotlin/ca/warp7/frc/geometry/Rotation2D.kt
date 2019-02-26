@@ -1,4 +1,4 @@
-package ca.warp7.frc.path
+package ca.warp7.frc.geometry
 
 data class Rotation2D(
         val cos: Double,

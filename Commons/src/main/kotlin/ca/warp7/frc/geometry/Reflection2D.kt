@@ -1,4 +1,4 @@
-package ca.warp7.frc.path
+package ca.warp7.frc.geometry
 
 data class Reflection2D(
         val x: Boolean,

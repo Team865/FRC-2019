@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc.path
+package ca.warp7.frc.geometry
 
 import kotlin.math.*
 
