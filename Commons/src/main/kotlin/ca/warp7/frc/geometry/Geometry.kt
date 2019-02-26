@@ -43,6 +43,10 @@ operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
  * TRANSLATION FUNCTIONS
  */
 
+val Translation2D.normal: Translation2D get() = scaled(by = 1 / mag)
+
+val Translation2D.direction: Rotation2D get() = Rotation2D(x, y).normalized
+
 fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
 
 fun Translation2D.translate(by: Translation2D) = Translation2D(x + by.x, y + by.y)
@@ -51,6 +55,19 @@ fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin
 
 fun Translation2D.epsilonEquals(other: Translation2D, epsilon: Double) =
         x.epsilonEquals(other.x, epsilon) && y.epsilonEquals(other.y, epsilon)
+
+fun Translation2D.extrapolate(other: Translation2D, n: Double) =
+        Translation2D(n * (other.x - x) + x, n * (other.y - y) + y)
+
+fun Translation2D.interpolate(other: Translation2D, n: Double) = when {
+    n <= 0 -> copy
+    n >= 1 -> other.copy
+    else -> extrapolate(other, n)
+}
+
+fun Translation2D.interpolator(other: Translation2D) = object : Interpolator<Translation2D> {
+    override fun get(n: Double) = interpolate(other, n)
+}
 
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
