@@ -9,6 +9,8 @@ fun disableRobot() = CommonRobot.disableOutputs()
 
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
+fun Double.epsilonEquals(other: Double) = epsilonEquals(other, 1E-12)
+
 fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab
 
 inline fun withDriver(block: RobotController.() -> Unit) = block(Controls.robotDriver)

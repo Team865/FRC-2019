@@ -21,31 +21,46 @@ val Rotation2D.pose: Pose2D get() = Pose2D(translation = Translation2D.identity,
 
 val Rotation2D.radians: Double get() = atan2(y = sin, x = cos)
 
+val Rotation2D.degrees: Double get() = Math.toDegrees(radians)
+
 val Rotation2D.mag: Double get() = hypot(sin, cos)
 
-val Rotation2D.normalized: Rotation2D get() = scaled(by = 1 / mag)
+val Rotation2D.norm: Rotation2D get() = scaled(by = 1 / mag)
+
+val Rotation2D.translation: Translation2D get() = Translation2D(cos, sin)
 
 fun Rotation2D.scaled(by: Double): Rotation2D = Rotation2D(cos * by, sin * by)
 
 fun Rotation2D.rotate(by: Rotation2D): Rotation2D =
-        Rotation2D(cos * by.cos - sin * by.sin, cos * by.sin + sin * by.cos).normalized
+        Rotation2D(cos * by.cos - sin * by.sin, cos * by.sin + sin * by.cos).norm
 
-val Rotation2D.inverse get() = Rotation2D(cos, -sin)
+fun Rotation2D.distance(other: Rotation2D) = inverse.rotate(other).radians
 
-val Rotation2D.normal: Rotation2D get() = Rotation2D(-sin, cos)
+fun Rotation2D.interpolate(other: Rotation2D, x: Double) = when {
+    x <= 0 -> copy
+    x >= 1 -> other.copy
+    else -> rotate(rotation(radians = distance(other) * x))
+}
+
+fun Rotation2D.interpolator(other: Rotation2D) = object : Interpolator<Rotation2D> {
+    override fun get(n: Double) = interpolate(other, n)
+}
+
+infix fun Rotation2D.parallelTo(other: Rotation2D) = (translation cross other.translation).epsilonEquals(0.0)
 
 operator fun Rotation2D.times(by: Double) = scaled(by)
 
 operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
 
+operator fun Rotation2D.unaryPlus() = copy
 
 /*
  * TRANSLATION FUNCTIONS
  */
 
-val Translation2D.normal: Translation2D get() = scaled(by = 1 / mag)
+val Translation2D.norm: Translation2D get() = scaled(by = 1 / mag)
 
-val Translation2D.direction: Rotation2D get() = Rotation2D(x, y).normalized
+val Translation2D.direction: Rotation2D get() = Rotation2D(x, y).norm
 
 fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
 
