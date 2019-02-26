@@ -17,8 +17,6 @@ fun rotation(radians: Double): Rotation2D = Rotation2D(cos(radians), sin(radians
 
 fun rotationInDegrees(degrees: Double): Rotation2D = rotation(Math.toRadians(degrees))
 
-val Rotation2D.pose: Pose2D get() = Pose2D(translation = Translation2D.identity, rotation = this)
-
 val Rotation2D.radians: Double get() = atan2(y = sin, x = cos)
 
 val Rotation2D.degrees: Double get() = Math.toDegrees(radians)
@@ -103,11 +101,12 @@ operator fun Translation2D.unaryMinus() = inverse
  * POSE FUNCTIONS
  */
 
-fun Pose2D.transform(by: Pose2D) = Pose2D(translation.translate(by.translation), rotation.rotate(by.rotation))
+fun Pose2D.transform(by: Pose2D) =
+        Pose2D(translation.translate(by.translation.rotate(by.rotation)), rotation.rotate(by.rotation))
 
 fun Pose2D.transform(by: Translation2D) = transform(Pose2D(by, Rotation2D.identity))
 
-fun Pose2D.transform(by: Rotation2D) = transform(by.pose)
+fun Pose2D.transform(by: Rotation2D) = transform(Pose2D(Translation2D.identity, by))
 
 operator fun Pose2D.plus(by: Pose2D) = transform(by)
 
