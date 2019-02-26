@@ -3,7 +3,6 @@ package ca.warp7.frc2019.test.drive
 import ca.warp7.frc.config
 import ca.warp7.frc.followedBy
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
@@ -53,7 +52,7 @@ class simpleTrapezoidDistance : TimedRobot(){
     var demandedDistance = 1.0 // feet
     var dxAtMaxTheoV = demandedDistance/ 2
     var maxTheoV = sqrt(pow(startVelocity, 2.0) + 2 * DriveConstants.kMaxAcceleration * dxAtMaxTheoV) // feet per second
-    var isTriangle = false
+    var isTriange = false
     var maxV = 0.0
     var dtAtMaxV = 0.0
     var dxAtMaxV= 0.0
@@ -61,11 +60,11 @@ class simpleTrapezoidDistance : TimedRobot(){
     var totalDt= 0.0
     override fun autonomousInit() {
         startVelocity = 0.0 // feet per second squared
-        demandedDistance = 1.0 // feet
+        demandedDistance = 12.0 // feet
         dxAtMaxTheoV = demandedDistance/ 2
-        maxTheoV = sqrt(pow(startVelocity, 2.0) + DriveConstants.kMaxAcceleration * dxAtMaxTheoV) // feet per second
+        maxTheoV = sqrt(pow(startVelocity, 2.0) + 2 * DriveConstants.kMaxAcceleration * dxAtMaxTheoV) // feet per second
         println("max theov" + maxTheoV)
-        isTriangle = false
+        isTriange = false
         maxV = 0.0
         dtAtMaxV = 0.0
         dxAtMaxV= 0.0
@@ -74,14 +73,14 @@ class simpleTrapezoidDistance : TimedRobot(){
 
         if (maxTheoV < DriveConstants.kMaxVelocity) {
             println("tri")
-            isTriangle = true
+            isTriange = true
             maxV = maxTheoV
             dtAtMaxV = (maxV - startVelocity)/DriveConstants.kMaxAcceleration
             dxAtMaxV = dxAtMaxTheoV
             dtInCruiseV = 0.0
         }
         else{
-            isTriangle = false
+            isTriange = false
             maxV = DriveConstants.kMaxVelocity
             dtAtMaxV = (maxV - startVelocity)/DriveConstants.kMaxAcceleration
             println("dtatmaxV" + dtAtMaxV)
@@ -103,27 +102,26 @@ class simpleTrapezoidDistance : TimedRobot(){
     override fun autonomousPeriodic() {
 
         timeSinceStart = Timer.getFPGATimestamp() - startTime
-        println("time" + timeSinceStart)
-        val dt = timeSinceStart - lastTime
+        //println("time" + timeSinceStart)
         when {
             timeSinceStart < dtAtMaxV -> {
-                velocity = timeSinceStart * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+                velocity = timeSinceStart * DriveConstants.kMaxAcceleration
                 println("velocity up" + velocity)
             }
             timeSinceStart < dtAtMaxV + dtInCruiseV -> {
-                velocity = maxV * DriveConstants.kTicksPerInch
+                velocity = maxV
                 println("velocity is" + velocity)
             }
             timeSinceStart < totalDt -> {
-                velocity =  (totalDt - timeSinceStart) * DriveConstants.kMaxAcceleration * DriveConstants.kTicksPerInch
+                velocity =  (totalDt - timeSinceStart) * DriveConstants.kMaxAcceleration
                 println("velocity down" + velocity)
             }
             else -> velocity = 0.0
         }
 
         v.setDouble(velocity)
-        leftMaster.set(min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity) * dt)
-        rightMaster.set(-1.0 * min(abs(velocity), DriveConstants.kMaxVelocity * DriveConstants.kTicksPerInch).withSign(velocity))
+        leftMaster.set(min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity))
+        rightMaster.set(-1.0 * min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity))
         lastTime = timeSinceStart
     }
 }
