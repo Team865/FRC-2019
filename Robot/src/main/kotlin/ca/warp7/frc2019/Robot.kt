@@ -5,7 +5,7 @@ import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
-class Robot : TimedRobot() {
+class Robot : TimedRobot(0.01) {
 
     /**
      * Initializes the robot by setting the state of subsystems

@@ -38,7 +38,7 @@ object MainLoop : Action {
                     passThroughSpeed = leftTriggerAxis * PassThrough.reverse
                     isOuttaking = true
                     Intake.set {
-                        speed = -leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
+                        speed = -1 * leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
                         extended = true
                     }
                 }
