@@ -71,3 +71,15 @@ fun runAfter(seconds: Double, block: ActionState.() -> Unit) = action {
 }
 
 fun <T : Action> ASM.future(wantedState: T, block: T.() -> Unit = {}) = runOnce { set(wantedState, block) }
+
+/**
+ * Tries to set the state machine to a wanted state if the current state can finish
+ */
+fun <T : Action> ASM.trySet(wantedState: T, block: T.() -> Unit = {}) {
+    val currentState = currentState
+    if (wantedState == currentState) {
+        block(wantedState)
+    } else if (currentState == null || currentState.shouldFinish) {
+        set(wantedState, block)
+    }
+}

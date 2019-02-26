@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    val leftMaster: TalonSRX = lazyTalonSRX(
+    private val leftMaster: TalonSRX = lazyTalonSRX(
             id = DriveConstants.kLeftMaster,
             config = DriveConstants.kMasterTalonConfig,
             voltageCompensation = true,
@@ -24,7 +24,7 @@ object Drive : Subsystem() {
             VictorSPX(DriveConstants.kLeftFollowerB)
     )
 
-    val rightMaster: TalonSRX = lazyTalonSRX(
+    private val rightMaster: TalonSRX = lazyTalonSRX(
             id = DriveConstants.kRightMaster,
             config = DriveConstants.kMasterTalonConfig,
             voltageCompensation = true,
@@ -33,6 +33,8 @@ object Drive : Subsystem() {
             VictorSPX(DriveConstants.kRightFollowerA),
             VictorSPX(DriveConstants.kRightFollowerB)
     )
+
+    val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
 
     var controlMode = ControlMode.PercentOutput
         set(value) {
@@ -60,8 +62,8 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
-    private val reversedLeftDemand get() = leftDemand * -1
-    private val reversedLeftFeedforward get() = leftFeedforward * -1
+    private val reversedLeftDemand: Double get() = leftDemand * -1
+    private val reversedLeftFeedforward: Double get() = leftFeedforward * -1
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
@@ -82,7 +84,6 @@ object Drive : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("Output Mode", controlMode.name)
         put("Left Demand", leftDemand)
         put("Left Feedforward", leftFeedforward)
         put("Right Demand", rightDemand)

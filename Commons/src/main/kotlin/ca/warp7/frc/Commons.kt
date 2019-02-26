@@ -1,6 +1,7 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.ActionStateMachine
 import ca.warp7.actionkt.runOnce
 
 fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
@@ -19,6 +20,14 @@ inline fun withDriver(block: RobotController.() -> Unit) = block(Controls.robotD
 
 inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robotOperator)
 
-fun <T : Subsystem> T.set(block: T.() -> Unit) = set(runOnce(block))
+fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
 
 fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControllerMode(controllerMode)
+
+object RobotControl : Subsystem() {
+    var mode: ControllerMode = ControllerMode.DriverAndOperator
+        set(value) {
+            setControllerMode(value)
+            field = value
+        }
+}

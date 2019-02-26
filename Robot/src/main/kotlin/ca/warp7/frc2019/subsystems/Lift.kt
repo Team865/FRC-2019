@@ -69,7 +69,6 @@ object  Lift : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("Output Type", controlMode.name)
         put("Actual Percent", actualPercent)
         put("Actual Current", actualCurrent)
         put("Actual Voltage", actualVoltage)
