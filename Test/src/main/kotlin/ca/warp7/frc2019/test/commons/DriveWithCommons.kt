@@ -16,7 +16,7 @@ class DriveWithCommons : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        setControllerMode(ControllerMode.DriverOnly)
+        RobotControl.set { mode = ControllerMode.DriverOnly }
         Drive.set(DriveState.kNeutralOutput)
         Infrastructure.set { startCompressor = true }
     }
@@ -32,7 +32,7 @@ class DriveWithCommons : TimedRobot() {
      * Disables the robot by disabling each subsystem and not calling
      * output methods. Stops the autonomous routine
      */
-    override fun disabledInit() = println("Robot Disabled ------12345-------").also { disableRobot() }
+    override fun disabledInit() = disableRobot()
 
     /*
     =====================================================
@@ -41,8 +41,8 @@ class DriveWithCommons : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = DriveWithCommonsLoop.start().also { println("Robot Enabled ------12345-------") }
-    override fun testInit() = DriveWithCommonsLoop.start()
+    override fun teleopInit() = RobotControl.set(DriveWithCommonsLoop)
+    override fun testInit() = RobotControl.set(DriveWithCommonsLoop)
 
     /*
     =====================================================

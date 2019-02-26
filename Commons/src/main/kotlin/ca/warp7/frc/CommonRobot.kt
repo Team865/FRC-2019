@@ -16,13 +16,12 @@ internal object CommonRobot {
     private val xboxOperator = XboxController(1)
 
     private var controllerMode = 0
-    private val fmsAttached = DriverStation.getInstance().isFMSAttached
+    private val driverStation: DriverStation = DriverStation.getInstance()
+    private val fmsAttached = driverStation.isFMSAttached
 
     private var previousTime = 0.0
     private var robotEnabled = false
     private var crashed = false
-
-    private var controlLoop: RobotControlLoop? = null
 
     fun setControllerMode(mode: ControllerMode) {
         controllerMode = mode.value
@@ -30,15 +29,6 @@ internal object CommonRobot {
 
     fun addSubsystem(subsystem: Subsystem) {
         subsystems.add(subsystem)
-    }
-
-    /**
-     * Set the control loop
-     */
-    fun setLoop(loop: RobotControlLoop) {
-        robotEnabled = true
-        loop.setup()
-        controlLoop = loop
     }
 
     /**
@@ -63,7 +53,7 @@ internal object CommonRobot {
      */
     private fun periodicLoop() {
         // Collect controller data
-        when (controllerMode) {
+        if (driverStation.isNewControlData) when (controllerMode) {
             0 -> {
                 robotDriver.updateWith(xboxDriver)
                 robotOperator.updateWith(xboxOperator)
@@ -78,22 +68,17 @@ internal object CommonRobot {
             }
         }
         // Check to switch controllers
-        if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed) {
+        if (!fmsAttached && robotDriver.backButton == ControllerState.Pressed)
             controllerMode = (controllerMode + 1) % 3
-        }
         // Calculate exact loop period for measurements
         val time = Timer.getFPGATimestamp()
         val dt = time - previousTime
         previousTime = time
         // Get inputs from sensors
         subsystems.forEach { it.onMeasure(dt) }
-        // Check for enabled state
-        if (robotEnabled) {
-            // Update the control loop
-            controlLoop?.periodic()
-            // Update subsystem state and do output, stopping the state if it wants to
-            subsystems.forEach { it.updateState() }
-        }
+        // Check for enabled state, and
+        // update subsystem state and do output, stopping the state if it wants to
+        if (robotEnabled) subsystems.forEach { it.updateState() }
         // Send data to Shuffleboard
         subsystems.forEach { it.onPostUpdate() }
     }
@@ -101,7 +86,6 @@ internal object CommonRobot {
     fun disableOutputs() {
         LiveWindow.disableAllTelemetry()
         robotEnabled = false
-        controlLoop = null
         subsystems.forEach {
             it.stopState()
             it.onDisabled()

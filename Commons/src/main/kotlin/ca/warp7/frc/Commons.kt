@@ -8,8 +8,6 @@ fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun RobotControlLoop.start() = CommonRobot.setLoop(this)
-
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
 fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab

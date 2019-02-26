@@ -15,7 +15,7 @@ class LiftOuttakeTuning : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        setControllerMode(ControllerMode.DriverOnly)
+        RobotControl.set { mode = ControllerMode.DriverOnly }
         LiftSubsystem.set { }
         Outtake.set { }
         Conveyor.set { }
@@ -41,8 +41,8 @@ class LiftOuttakeTuning : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = LiftOuttakeLoop.start()
-    override fun testInit() = LiftOuttakeLoop.start()
+    override fun teleopInit() = RobotControl.enable(LiftOuttakeLoop)
+    override fun testInit() = RobotControl.enable(LiftOuttakeLoop)
 
     /*
     =====================================================
