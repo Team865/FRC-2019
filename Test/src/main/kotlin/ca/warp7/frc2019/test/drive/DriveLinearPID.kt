@@ -38,7 +38,7 @@ class DriveLinearPID : TimedRobot() {
         selectedSensorPosition = 0
     }
 
-    private val target = 256 * 10.0 // 60 inches
+    private val target = 1787.0 // 33 inches -> robot length
 
     private val tab = Shuffleboard.getTab("Drive Linear PID")
 
@@ -46,17 +46,14 @@ class DriveLinearPID : TimedRobot() {
     val i: NetworkTableEntry = tab.add("I", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
     val d: NetworkTableEntry = tab.add("D", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
 
+    val leftPos = tab.add("Left", 0).withWidget(BuiltInWidgets.kGraph).entry
+    val rightPos = tab.add("Right", 0).withWidget(BuiltInWidgets.kGraph).entry
+
     var lastP = 0.0
     var lastI = 0.0
     var lastD = 0.0
 
     override fun robotPeriodic() {
-        tab.apply {
-            add(leftMaster)
-            add(rightMaster)
-            add("left pos", leftMaster.selectedSensorPosition)
-            add("right pos", rightMaster.selectedSensorPosition)
-        }
         val newP = p.getDouble(0.0)
         if (!newP.epsilonEquals(lastP, 1E-9)) {
             lastP = newP
@@ -75,10 +72,17 @@ class DriveLinearPID : TimedRobot() {
             leftMaster.config_kD(0, newD, 0)
             rightMaster.config_kD(0, newD, 0)
         }
+        leftPos.setDouble(leftMaster.selectedSensorPosition.toDouble())
+        rightPos.setDouble(rightMaster.selectedSensorPosition.toDouble())
+    }
+
+    override fun autonomousInit() {
+        leftMaster.selectedSensorPosition = -0
+        rightMaster.selectedSensorPosition = 0
     }
 
     override fun autonomousPeriodic() {
-        leftMaster.set(ControlMode.Position, target)
+        leftMaster.set(ControlMode.Position, -target)
         rightMaster.set(ControlMode.Position, target)
     }
 

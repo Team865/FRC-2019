@@ -15,27 +15,25 @@ object FollowPath : Action {
 
     private val queue
         get() = queue {
-        !"generate trajectory"
-
-        var previousPoint = startPos
-        var previousAngle = startAngle
+            var previousPoint = startPos
+            var previousAngle = startAngle
             for (waypoint in path.waypoints) {
-            val relativeAngle = previousAngle - (previousPoint - waypoint.point).angle
-            val relativeDistance = (waypoint.point - previousPoint).mag
+                val relativeAngle = previousAngle - (previousPoint - waypoint.point).angle
+                val relativeDistance = (waypoint.point - previousPoint).mag
 
-            !"turn angle"
-            +TurnAngle
-            angle = relativeAngle
+                !"turn angle"
+                +TurnAngle
+                angle = relativeAngle
 
-            !"drive distance"
-            +DriveDistance
-            distance = relativeDistance
+                !"drive distance"
+                +DriveDistance
+                distance = relativeDistance
 
-            previousPoint = waypoint.point
-            previousAngle = angle
+                previousPoint = waypoint.point
+                previousAngle = angle
 
+            }
         }
-    }
 
     override fun start() = queue.start()
 

@@ -12,7 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 @Suppress("MemberVisibilityCanBePrivate")
-object Lift : Subsystem() {
+object  Lift : Subsystem() {
 
     private val master: TalonSRX = lazyTalonSRX(
             id = LiftConstants.kMaster,

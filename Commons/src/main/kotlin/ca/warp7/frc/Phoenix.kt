@@ -71,12 +71,12 @@ fun lazyTalonSRX(
         voltageCompensation: Boolean = false,
         currentLimit: Boolean = false
 ): TalonSRX = LazyTalonSRX(id).apply {
-    if (config == null) configFactoryDefault(10)
-    else configAllSettings(config, 10)
+    if (config == null) configFactoryDefault(50)
+    else configAllSettings(config, 50)
     setNeutralMode(neutralMode)
     enableVoltageCompensation(voltageCompensation)
     enableCurrentLimit(currentLimit)
-    selectedSensorPosition = 0
+    selectedSensorPosition = 100
     selectProfileSlot(0, 0)
 }
 
@@ -107,8 +107,8 @@ fun lazyVictorSPX(
         neutralMode: NeutralMode = NeutralMode.Brake,
         voltageCompensation: Boolean = false
 ): VictorSPX = LazyVictorSPX(id).apply {
-    if (config == null) configFactoryDefault(10)
-    else configAllSettings(config, 10)
+    if (config == null) configFactoryDefault(50)
+    else configAllSettings(config, 50)
     setNeutralMode(neutralMode)
     enableVoltageCompensation(voltageCompensation)
     selectedSensorPosition = 0
