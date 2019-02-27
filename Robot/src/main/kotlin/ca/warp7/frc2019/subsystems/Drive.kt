@@ -14,10 +14,10 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    private val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
+    val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerA), VictorSPX(DriveConstants.kLeftFollowerB))
 
-    private val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
+    val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
 
     val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
@@ -52,6 +52,10 @@ object Drive : Subsystem() {
     private val reversedRightFeedforward: Double get() = rightFeedforward * -1
 
     override fun onDisabled() {
+        leftDemand = 0.0
+        rightDemand = 0.0
+        leftFeedforward = 0.0
+        rightFeedforward = 0.0
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
     }
