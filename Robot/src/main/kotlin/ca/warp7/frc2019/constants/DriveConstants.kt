@@ -43,7 +43,7 @@ object DriveConstants {
     const val kMaxFreeSpeedVelocity = 14.38 // ft/s
     const val kMaxAcceleration = 8.875 //  ft/s
 
-    const val kSegmentLength = 0.0254 // m
+    const val kSegmentLength = 0.254 // m
 
     const val kVIntercept = 0.0 // FIXME
 
