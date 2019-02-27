@@ -62,8 +62,8 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
-    private val reversedLeftDemand: Double get() = leftDemand * -1
-    private val reversedLeftFeedforward: Double get() = leftFeedforward * -1
+    private val reversedRightDemand: Double get() = rightDemand * -1
+    private val reversedRightFeedforward: Double get() = rightFeedforward * -1
 
     override fun onDisabled() {
         leftMaster.neutralOutput()
@@ -71,15 +71,15 @@ object Drive : Subsystem() {
     }
 
     override fun onOutput() {
-        leftMaster.set(controlMode, reversedLeftDemand, DemandType.ArbitraryFeedForward, reversedLeftFeedforward)
-        rightMaster.set(controlMode, rightDemand, DemandType.ArbitraryFeedForward, rightFeedforward)
+        leftMaster.set(controlMode, leftDemand, DemandType.ArbitraryFeedForward, leftFeedforward)
+        rightMaster.set(controlMode, reversedRightDemand, DemandType.ArbitraryFeedForward, reversedRightFeedforward)
     }
 
     override fun onMeasure(dt: Double) {
-        leftPositionTicks = -leftMaster.selectedSensorPosition * -1
-        rightPositionTicks = rightMaster.selectedSensorPosition
-        leftVelocityTicks = leftMaster.selectedSensorVelocity * -1
-        rightVelocityTicks = rightMaster.selectedSensorVelocity
+        leftPositionTicks = leftMaster.selectedSensorPosition
+        rightPositionTicks = rightMaster.selectedSensorPosition * -1
+        leftVelocityTicks = leftMaster.selectedSensorVelocity
+        rightVelocityTicks = rightMaster.selectedSensorVelocity * -1
         DriveMotionPlanner.updateMeasurements(dt)
     }
 

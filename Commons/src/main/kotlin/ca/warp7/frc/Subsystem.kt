@@ -24,21 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab
  * Each subsystem should have only one instance. They should use objects in Kotlin.
  *
  * This interface defines all the callbacks a subsystem should have, including handlers for
- * input, output, init, disabled, resetting, debugging, and state updating. It is managed by
- * {@link Components} and called periodically by the {@link LoopsManager} class during
- * different phases of robot runtime
- *
- * All the methods except onConstruct are empty default methods. Choose the appropriate one to
- * implement. They will be called properly by {@link Components} regardless which
- * methods are implemented
- *
- * A good implementation strategy is define specific object classes that holds the input state
- * and current state of the subsystem respectively. This interface defines some annotations
- * markers in order to make it clear about usage of this strategy
- *
- * Finally, it is very important that implementations of these methods are <b>synchronized</b>
- * because they are most often called from different threads. It's also important
- * that the periodic functions are not blocking operations as to prevent leaking.
+ * input, output, init, disabled, resetting, debugging, and state updating.
  */
 
 abstract class Subsystem : ActionStateMachine() {

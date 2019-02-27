@@ -17,7 +17,7 @@ object CurvatureDrive : Action {
     var left = 0.0
     var right = 0.0
 
-    private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
+    private val differentialDrive = DifferentialDrive(speedController { right = it }, speedController { left = it })
 
     init {
         differentialDrive.apply {
@@ -42,6 +42,8 @@ object CurvatureDrive : Action {
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
         Drive.leftDemand = left
         Drive.rightDemand = right
+        Drive.leftFeedforward = 0.0
+        Drive.rightFeedforward = 0.0
     }
 
     override val shouldFinish get() = false
