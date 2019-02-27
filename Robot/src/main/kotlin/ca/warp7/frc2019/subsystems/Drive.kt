@@ -4,7 +4,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
-import ca.warp7.frc.lazyTalonSRX
+import ca.warp7.frc.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -14,21 +14,11 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    private val leftMaster: TalonSRX = lazyTalonSRX(
-            id = DriveConstants.kLeftMaster,
-            config = DriveConstants.kMasterTalonConfig
-    ).followedBy(
-            VictorSPX(DriveConstants.kLeftFollowerA),
-            VictorSPX(DriveConstants.kLeftFollowerB)
-    )
+    private val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA), VictorSPX(DriveConstants.kLeftFollowerB))
 
-    private val rightMaster: TalonSRX = lazyTalonSRX(
-            id = DriveConstants.kRightMaster,
-            config = DriveConstants.kMasterTalonConfig
-    ).followedBy(
-            VictorSPX(DriveConstants.kRightFollowerA),
-            VictorSPX(DriveConstants.kRightFollowerB)
-    )
+    private val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
 
     val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
 

@@ -41,8 +41,8 @@ class DriveWithCommons : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = RobotControl.set(DriveWithCommonsLoop)
-    override fun testInit() = RobotControl.set(DriveWithCommonsLoop)
+    override fun teleopInit() = RobotControl.enable(DriveWithCommonsLoop)
+    override fun testInit() = RobotControl.enable(DriveWithCommonsLoop)
 
     /*
     =====================================================

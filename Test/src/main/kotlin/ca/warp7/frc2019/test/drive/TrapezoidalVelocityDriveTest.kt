@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.Timer
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.test.currentStackTrace
 
 
 class TrapezoidalVelocityDriveTest: TimedRobot() {

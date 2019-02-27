@@ -40,8 +40,8 @@ internal object CommonRobot {
                 periodicLoop()
             } catch (e: Throwable) {
                 crashed = true
+                print("ERROR LOOP ENDED")
                 e.printStackTrace()
-                //originalErr.println("ERROR LOOP ENDED\n${e.message}")
             }
         }
     }

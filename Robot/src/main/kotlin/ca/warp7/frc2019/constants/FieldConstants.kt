@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.constants
 
 @Suppress("unused")
-object FieldConstants{
+object FieldConstants {
     const val centerToCenterInches = 28
     const val firstCargoBayCenterHeightInches = 25.5
     const val secondCargoBayCenterHeightInches = firstCargoBayCenterHeightInches + centerToCenterInches
