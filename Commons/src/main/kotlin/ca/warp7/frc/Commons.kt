@@ -19,3 +19,4 @@ inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robo
 
 fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
 
+fun feetToMeters(feet: Double) = feet / 0.3048

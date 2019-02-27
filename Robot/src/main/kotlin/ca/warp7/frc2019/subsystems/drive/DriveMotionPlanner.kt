@@ -10,23 +10,24 @@ import kotlin.math.sin
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object DriveMotionPlanner : Subsystem() {
 
-    private val measurementFrequency = 1000 / DriveConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
+    private val velocityHz = 1000 / DriveConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
 
     var lastDt = 0.0
     val motionState = DriveMotionState()
     val leftPositionInches get() = Drive.leftPositionTicks / DriveConstants.kTicksPerInch
     val rightPositionInches get() = Drive.rightPositionTicks / DriveConstants.kTicksPerInch
-    val leftVelocityInches
-        get() =
-            Drive.leftVelocityTicks / DriveConstants.kTicksPerInch * measurementFrequency
-    val rightVelocityInches
-        get() =
-            Drive.rightVelocityTicks / DriveConstants.kTicksPerInch * measurementFrequency
+    val leftVelocityInches get() = (leftVelocity / 2) * DriveConstants.kWheelDiameter
+    val rightVelocityInches get() = (rightVelocity / 2) * DriveConstants.kWheelDiameter
+
+    var leftVelocity = 0.0 // rad/s
+    var rightVelocity = 0.0 // rad/s
 
     fun updateMeasurements(dt: Double) {
         lastDt = dt
+        leftVelocity = Drive.leftVelocityTicks / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
+        rightVelocity = Drive.rightVelocityTicks / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
         val measuredYaw = Infrastructure.yaw
-        val measuredVelocity = (leftVelocityInches + rightPositionInches) / 2
+        val measuredVelocity = (leftVelocityInches + rightVelocityInches) / 2
         motionState.apply {
             x += measuredVelocity * cos(measuredYaw) * dt
             y += measuredVelocity * sin(measuredYaw) * dt

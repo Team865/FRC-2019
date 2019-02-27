@@ -9,24 +9,16 @@ object VelocityControlLoop : Action {
     override fun start() {
         Drive.set {
             leftMaster.config_kP(1, 1.0)
-            leftMaster.config_kI(1, 1.0)
+            leftMaster.config_kI(1, 0.0)
             leftMaster.config_kD(1, 1.0)
-            leftMaster.config_kF(1, 1.0)
+            leftMaster.config_kF(1, 0.0)
             leftMaster.configOpenloopRamp(0.0)
             rightMaster.config_kP(1, 1.0)
-            rightMaster.config_kI(1, 1.0)
+            rightMaster.config_kI(1, 0.0)
             rightMaster.config_kD(1, 1.0)
-            rightMaster.config_kF(1, 1.0)
+            rightMaster.config_kF(1, 0.0)
             rightMaster.configOpenloopRamp(0.0)
         }
-        SimpleTrapezoid.start()
-    }
-
-    override fun update() {
-        SimpleTrapezoid.update()
-    }
-
-    override fun stop() {
-        SimpleTrapezoid.stop()
+        Drive.set(SimpleTrapezoid)
     }
 }
