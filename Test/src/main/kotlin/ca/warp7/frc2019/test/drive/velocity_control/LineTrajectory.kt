@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.test.drive.velocity_control
 
-import ca.warp7.actionkt.Action
+import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
@@ -10,9 +10,13 @@ import ca.warp7.frc.path.IsolatedConstraint
 import ca.warp7.frc.path.Moment
 import ca.warp7.frc.path.TimedState
 import ca.warp7.frc2019.constants.DriveConstants
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sqrt
+import kotlin.math.withSign
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class LineTrajectory : Action {
+class LineTrajectory {
     val maxVelocity = feetToMeters(DriveConstants.kMaxVelocity) * 0.8
     val maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration)
 
@@ -52,16 +56,32 @@ class LineTrajectory : Action {
             }
         }
         // Forward pass
-        var constrainedVelocity = 0.0
-        val forwardMoments = Array(segmentCount) { 0.0 }
+        val forwardMoments = Array(segmentCount - 1) { 0.0 }
         for (i in 0..segmentCount - 2) {
             val currentMoment = timedStates[i]
             val nextMoment = timedStates[i + 1]
-            if (currentMoment.constrained) {
-                constrainedVelocity = currentMoment.velocity
-            }
-            val translation = nextMoment.state - currentMoment.state
+            val vi = currentMoment.velocity
+            val vf = min(sqrt(vi.pow(2) + 2 * maxAcceleration *
+                    (nextMoment.state - currentMoment.state).mag), maxVelocity).withSign(vi)
+            val af = (if (vf.epsilonEquals(vi)) 0.0 else maxAcceleration).withSign(vi)
+            forwardMoments[i] = (vf - vi) / af
+            if (!nextMoment.constrained) nextMoment.velocity = vf
+            nextMoment.acceleration = af
         }
-        moments = listOf()
+        // Backward pass
+        val backwardMoments = Array(segmentCount - 1) { 0.0 }
+        for (i in segmentCount - 1 downTo 0) {
+            val currentMoment = timedStates[i]
+            val nextMoment = timedStates[i - 1]
+            val vi = currentMoment.velocity
+            val vf = min(sqrt(vi.pow(2) + 2 * maxAcceleration *
+                    (nextMoment.state - currentMoment.state).mag), maxVelocity).withSign(vi)
+            val af = (if (vf.epsilonEquals(vi)) 0.0 else maxAcceleration).withSign(vi)
+            backwardMoments[i] = (vf - vi) / af
+            if (!nextMoment.constrained) nextMoment.velocity = vf
+            nextMoment.acceleration = af
+        }
+        moments = forwardMoments.zip(backwardMoments, Math::max)
+                .mapIndexed { i, d -> Moment(d, timedStates[i]) }
     }
 }
