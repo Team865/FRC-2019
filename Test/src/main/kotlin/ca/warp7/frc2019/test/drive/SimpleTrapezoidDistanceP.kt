@@ -11,12 +11,9 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.lang.Math.pow
-import kotlin.math.abs
-import kotlin.math.min
-import kotlin.math.sqrt
-import kotlin.math.withSign
+import kotlin.math.*
 
-class simpleTrapezoidDistance : TimedRobot(){
+class SimpleTrapezoidDistanceP : TimedRobot(){
     private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster).apply {
         config(DriveConstants.kMasterTalonConfig)
         setNeutralMode(NeutralMode.Brake)
@@ -97,31 +94,88 @@ class simpleTrapezoidDistance : TimedRobot(){
         startTime = Timer.getFPGATimestamp()
         println("startTime")
         println(startTime)
+        position = 0.0
+        leftMaster.selectedSensorPosition = 0
+        rightMaster.selectedSensorPosition = 0
     }
 
-    override fun autonomousPeriodic() {
+    var position = 0.0
+    var lastErrorLeft = 0.0
+    var lastErrorRight = 0.0
+    var lastErrorLeftVel = 0.0
+    var lastErrorRightVel = 0.0
 
+    override fun autonomousPeriodic() {
         timeSinceStart = Timer.getFPGATimestamp() - startTime
         //println("time" + timeSinceStart)
         when {
             timeSinceStart < dtAtMaxV -> {
                 velocity = timeSinceStart * DriveConstants.kMaxAcceleration
+//                position = 0.5 * velocity * timeSinceStart
                 println("velocity up" + velocity)
             }
             timeSinceStart < dtAtMaxV + dtInCruiseV -> {
                 velocity = maxV
+//                position = dxAtMaxV + (timeSinceStart - dtAtMaxV) * maxV
                 println("velocity is" + velocity)
             }
             timeSinceStart < totalDt -> {
                 velocity =  (totalDt - timeSinceStart) * DriveConstants.kMaxAcceleration
+//                position = dxAtMaxV + dtInCruiseV * maxV +
                 println("velocity down" + velocity)
             }
-            else -> velocity = 0.0
+            else -> {
+                velocity = 0.0
+//                leftMaster.neutralOutput()
+//                rightMaster.neutralOutput()
+//                return
+            }
         }
+        position += velocity * (timeSinceStart - lastTime)
+
+        val actualLeft = (leftMaster.selectedSensorPosition / DriveConstants.kTicksPerInch) / 12
+        val actualRight = (-rightMaster.selectedSensorPosition / DriveConstants.kTicksPerInch) / 12
+
+        val errorLeft = position - actualLeft
+        val errorRight = position - actualRight
+
+        val dErrorLeft = errorLeft - lastErrorLeft
+        val dErrorRight = errorRight - lastErrorRight
+
+        lastErrorLeft = errorLeft
+        lastErrorRight = errorRight
+
+        val kP = 0.05
+        val kD = 0.2
+
+        val leftP = errorLeft * kP
+        val rightP = errorRight * kP
+
+        val leftD = dErrorLeft * kD
+        val rightD = dErrorRight * kD
+
+        val actualLeftVelocity = (leftMaster.selectedSensorVelocity / DriveConstants.kTicksPerInch * 10) / 12
+        val actualRightVelocity = (-rightMaster.selectedSensorVelocity / DriveConstants.kTicksPerInch * 10) / 12
+
+        val kD2 = 5
+
+        val errorLeftVel = velocity - actualLeftVelocity
+        val errorRightVel = velocity - actualRightVelocity
+
+        val dErrorLeftVal = errorLeftVel - lastErrorLeftVel
+        val dErrorRightVel = errorRightVel - lastErrorRightVel
+
+        lastErrorLeftVel = errorLeftVel
+        lastErrorRightVel = errorRightVel
+
+        val leftDVel = dErrorLeftVal * kD2
+        val rightDVel = dErrorRightVel * kD2
+
+        println("Position:$position\t Left:$actualLeft\t Right:$actualRight\t LeftDVel: $leftDVel\t RightDVel: $rightDVel")
 
         v.setDouble(velocity)
-        leftMaster.set(min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity))
-        rightMaster.set(-1.0 * min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity))
+        leftMaster.set(min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity) + leftP + leftD + leftDVel)
+        rightMaster.set(-1.0 *(min(abs(velocity) / DriveConstants.kMaxVelocity, 1.0).withSign(velocity)) - rightP - rightD - rightDVel)
         lastTime = timeSinceStart
     }
 }
