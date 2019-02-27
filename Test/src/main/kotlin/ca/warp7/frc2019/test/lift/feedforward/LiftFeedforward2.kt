@@ -15,7 +15,7 @@ class LiftFeedforward2 : TimedRobot() {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        setControllerMode(ControllerMode.DriverOnly)
+        RobotControl.set { mode = ControllerMode.DriverOnly }
         LiftSubsystem.set { }
         Outtake.set { }
         Conveyor.set { }
@@ -41,8 +41,8 @@ class LiftFeedforward2 : TimedRobot() {
      */
 
     override fun autonomousInit() = Unit
-    override fun teleopInit() = LiftFeedforwardLoop.start()
-    override fun testInit() = LiftFeedforwardLoop.start()
+    override fun teleopInit() = RobotControl.set(LiftFeedforwardLoop)
+    override fun testInit() = RobotControl.set(LiftFeedforwardLoop)
 
     /*
     =====================================================

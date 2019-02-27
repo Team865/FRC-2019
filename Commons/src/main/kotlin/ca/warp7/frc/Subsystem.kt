@@ -114,14 +114,14 @@ abstract class Subsystem : ActionStateMachine() {
             val row = n / 5
             val col = n % 5
             val w = tab.add(name, value).withPosition(col * 7, row * 8).withSize(7, 8)
-            when (value) {
-                is Int, is Long, is Double -> w.withWidget(BuiltInWidgets.kGraph)
-                is Float -> w.withWidget(BuiltInWidgets.kNumberSlider)
-            }
             widget?.also { w.withWidget(it) }
             extras?.also { w.withProperties(it) }
             entries[name] = w.entry
         }
+    }
+
+    fun graph(name: String, value: Any) {
+        put(name, value, BuiltInWidgets.kGraph)
     }
 
     /**

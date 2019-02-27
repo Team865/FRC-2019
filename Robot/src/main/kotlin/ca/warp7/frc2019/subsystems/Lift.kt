@@ -1,15 +1,14 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc.followedBy
 import ca.warp7.frc.lazyTalonSRX
-import ca.warp7.frc.reset
+import ca.warp7.frc.lazyVictorSPX
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 @Suppress("MemberVisibilityCanBePrivate")
 object  Lift : Subsystem() {
@@ -19,15 +18,7 @@ object  Lift : Subsystem() {
             config = LiftConstants.kMasterTalonConfig,
             voltageCompensation = true,
             currentLimit = false
-    )
-
-    init {
-        val victor = VictorSPX(LiftConstants.kFollower)
-        victor.reset()
-        victor.setNeutralMode(NeutralMode.Brake)
-        victor.inverted = true
-        victor.follow(master)
-    }
+    ).followedBy(lazyVictorSPX(LiftConstants.kFollower, inverted = true))
 
     // private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 

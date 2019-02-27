@@ -3,8 +3,9 @@ package ca.warp7.frc2019
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
-class Robot : TimedRobot() {
+class Robot : TimedRobot(0.01) {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -14,8 +15,7 @@ class Robot : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverAndOperator }
-        Drive.set { }
-        Drive.motionPlanner.set { }
+        Drive.set { motionPlanner.set { } }
         Infrastructure.set { startCompressor = true }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
@@ -43,9 +43,9 @@ class Robot : TimedRobot() {
     =====================================================
      */
 
-    override fun autonomousInit() = RobotControl.set(Sandstorm)
-    override fun teleopInit() = MainLoop.start()
-    override fun testInit() = RobotControl.set(MainLoopAction)
+    override fun autonomousInit() = RobotControl.enable(Sandstorm)
+    override fun teleopInit() = RobotControl.enable(MainLoop)
+    override fun testInit() = RobotControl.enable(MainLoop)
 
     /*
     =====================================================
@@ -67,6 +67,6 @@ class Robot : TimedRobot() {
     @Suppress("UnusedMainParameter")
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Robot() }
+        fun main(args: Array<String>) = startRobot { Robot() }
     }
 }

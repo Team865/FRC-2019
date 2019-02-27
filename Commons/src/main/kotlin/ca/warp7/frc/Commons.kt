@@ -1,6 +1,5 @@
 package ca.warp7.frc
 
-import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionStateMachine
 import ca.warp7.actionkt.runOnce
 
@@ -8,11 +7,9 @@ fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
 
 fun disableRobot() = CommonRobot.disableOutputs()
 
-fun RobotControlLoop.start() = CommonRobot.setLoop(this)
-
-fun runAutonomous(mode: () -> Action, timeout: Double = 15.0): Action = CommonRobot.runAutonomous(mode, timeout)
-
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
+
+fun Double.epsilonEquals(other: Double) = epsilonEquals(other, 1E-12)
 
 fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab
 
@@ -22,12 +19,3 @@ inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robo
 
 fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
 
-fun setControllerMode(controllerMode: ControllerMode) = CommonRobot.setControllerMode(controllerMode)
-
-object RobotControl : Subsystem() {
-    var mode: ControllerMode = ControllerMode.DriverAndOperator
-        set(value) {
-            setControllerMode(value)
-            field = value
-        }
-}
