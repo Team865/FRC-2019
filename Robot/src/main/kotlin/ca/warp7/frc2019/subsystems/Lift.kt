@@ -15,9 +15,7 @@ object  Lift : Subsystem() {
 
     private val master: TalonSRX = lazyTalonSRX(
             id = LiftConstants.kMaster,
-            config = LiftConstants.kMasterTalonConfig,
-            voltageCompensation = true,
-            currentLimit = false
+            config = LiftConstants.kMasterTalonConfig
     ).followedBy(lazyVictorSPX(LiftConstants.kFollower, inverted = true))
 
     // private val hallEffect = DigitalInput(LiftConstants.kHallEffect)

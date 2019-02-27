@@ -68,7 +68,7 @@ fun lazyTalonSRX(
         id: Int,
         config: TalonSRXConfiguration? = null,
         neutralMode: NeutralMode = NeutralMode.Brake,
-        voltageCompensation: Boolean = false,
+        voltageCompensation: Boolean = true,
         currentLimit: Boolean = false,
         inverted: Boolean = false
 ): TalonSRX = LazyTalonSRX(id).apply {

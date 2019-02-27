@@ -16,9 +16,9 @@ object DriveConstants {
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
-    const val kWheelBase = 24.75 // FIXME This is measured for traction wheels not Colsons
+    private const val kTrackWidth = 24.75 // FIXME This is measured for traction wheels not Colsons
     // The circumference the wheel base turns across in inches
-    const val kTurningCircumference = kWheelBase * Math.PI
+    const val kTurningCircumference = kTrackWidth * Math.PI
 
     /*
     ======================
@@ -38,9 +38,11 @@ object DriveConstants {
 
     const val kTicksPerInch = COTSConstants.GrayHillEncoder.kTicksPerRevolution / kWheelCircumference
 
-    const val kMaxVelocity = 12.22 // ft/s TODO Re-tune after robot is done
+    const val kMaxVelocity = 12.0 // ft/s TODO Re-tune after robot is done
     const val kMaxFreeSpeedVelocity = 14.38 // ft/s
     const val kMaxAcceleration = 8.875 //  ft/s
+
+    const val kVIntercept = 0.0 // FIXME
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 

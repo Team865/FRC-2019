@@ -16,9 +16,7 @@ object Drive : Subsystem() {
 
     private val leftMaster: TalonSRX = lazyTalonSRX(
             id = DriveConstants.kLeftMaster,
-            config = DriveConstants.kMasterTalonConfig,
-            voltageCompensation = true,
-            currentLimit = false
+            config = DriveConstants.kMasterTalonConfig
     ).followedBy(
             VictorSPX(DriveConstants.kLeftFollowerA),
             VictorSPX(DriveConstants.kLeftFollowerB)
@@ -26,9 +24,7 @@ object Drive : Subsystem() {
 
     private val rightMaster: TalonSRX = lazyTalonSRX(
             id = DriveConstants.kRightMaster,
-            config = DriveConstants.kMasterTalonConfig,
-            voltageCompensation = true,
-            currentLimit = false
+            config = DriveConstants.kMasterTalonConfig
     ).followedBy(
             VictorSPX(DriveConstants.kRightFollowerA),
             VictorSPX(DriveConstants.kRightFollowerB)
