@@ -12,7 +12,7 @@ import ca.warp7.frc.path.TimedState
 import ca.warp7.frc2019.constants.DriveConstants
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-object LineTrajectory : Action {
+class LineTrajectory : Action {
     val maxVelocity = feetToMeters(DriveConstants.kMaxVelocity) * 0.8
     val maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration)
 
@@ -31,12 +31,37 @@ object LineTrajectory : Action {
     // Generate the path
     val path: List<Translation2D> = (0..segmentCount).map { diff[it * segmentLength] }
 
+    // Generate a list of timed states
+    val timedStates: List<TimedState<Translation2D>> = path.map { TimedState(it) }
+
     // Generate moments with 0 for time, velocity and acceleration
-    val moments: List<Moment<TimedState<Translation2D>>> = path.map { Moment(Double.NaN, TimedState(it)) }
+    val moments: List<Moment<TimedState<Translation2D>>>
 
     // Create start and end velocity constraints
     val constraints: List<IsolatedConstraint> = listOf(
             IsolatedConstraint(moment = 0, velocity = 0.0),
-            IsolatedConstraint(moment = 1, velocity = 0.0)
+            IsolatedConstraint(moment = segmentCount, velocity = 0.0)
     )
+
+    init {
+        // Apply constraints to trajectory
+        constraints.forEach {
+            timedStates[it.moment].apply {
+                velocity = it.velocity
+                constrained = true
+            }
+        }
+        // Forward pass
+        var constrainedVelocity = 0.0
+        val forwardMoments = Array(segmentCount) { 0.0 }
+        for (i in 0..segmentCount - 2) {
+            val currentMoment = timedStates[i]
+            val nextMoment = timedStates[i + 1]
+            if (currentMoment.constrained) {
+                constrainedVelocity = currentMoment.velocity
+            }
+            val translation = nextMoment.state - currentMoment.state
+        }
+        moments = listOf()
+    }
 }
