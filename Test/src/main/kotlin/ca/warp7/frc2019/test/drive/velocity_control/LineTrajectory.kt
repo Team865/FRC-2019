@@ -6,6 +6,9 @@ import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.rangeTo
+import ca.warp7.frc.path.IsolatedConstraint
+import ca.warp7.frc.path.Moment
+import ca.warp7.frc.path.TimedState
 import ca.warp7.frc2019.constants.DriveConstants
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -27,4 +30,13 @@ object LineTrajectory : Action {
 
     // Generate the path
     val path: List<Translation2D> = (0..segmentCount).map { diff[it * segmentLength] }
+
+    // Generate moments with 0 for time, velocity and acceleration
+    val moments: List<Moment<TimedState<Translation2D>>> = path.map { Moment(Double.NaN, TimedState(it)) }
+
+    // Create start and end velocity constraints
+    val constraints: List<IsolatedConstraint> = listOf(
+            IsolatedConstraint(moment = 0, velocity = 0.0),
+            IsolatedConstraint(moment = 1, velocity = 0.0)
+    )
 }
