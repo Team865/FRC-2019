@@ -19,6 +19,7 @@ object VelocityControlLoop : Action {
             rightMaster.config_kF(1, 0.0)
             rightMaster.configOpenloopRamp(0.0)
         }
-        Drive.set(SimpleTrapezoid)
+        Drive.set(LinearTrajectoryFollower())
+        //Drive.set(SimpleTrapezoid)
     }
 }

@@ -15,14 +15,14 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class LineTrajectory {
+class LinearTrajectory(distanceInFeet: Double = 0.0) {
     val maxVelocity = feetToMeters(DriveConstants.kMaxVelocity)
     val maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration)
 
     val initialState: Translation2D = Translation2D.identity
 
     // Frame of reference: positive x is the front of the robot
-    val targetState: Translation2D = Translation2D(x = feetToMeters(25.0), y = 0.0)
+    val targetState: Translation2D = Translation2D(x = feetToMeters(distanceInFeet), y = 0.0)
 
     // Parameter t of each segment
     val segmentLength: Double = DriveConstants.kSegmentLength / (targetState - initialState).mag
@@ -73,7 +73,6 @@ class LineTrajectory {
             val ds = (nextMoment.state - currentMoment.state).mag
             if (ds.epsilonEquals(0.0)) continue
             val vf = min(sqrt(vi.pow(2) + 2 * maxAcceleration * ds), maxVelocity)
-            val af = if (vf.epsilonEquals(vi)) 0.0 else maxAcceleration
             val dt = ds / vf
             backwardMoments[i - 1] = dt
             if (!nextMoment.constrained) nextMoment.velocity = min(nextMoment.velocity, vf)
