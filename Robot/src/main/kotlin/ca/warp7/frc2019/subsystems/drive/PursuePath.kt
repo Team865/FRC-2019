@@ -3,6 +3,7 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.motion.Path
 import ca.warp7.frc.motion.Point2D
+import ca.warp7.frc2019.constants.DriveConstants
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan
@@ -15,7 +16,6 @@ object PursuePath : Action {
     override fun update() {
         val x = DriveMotionPlanner.motionState.x
         val y = DriveMotionPlanner.motionState.y
-        val vel = DriveMotionPlanner.motionState.vel
         val yaw = DriveMotionPlanner.motionState.yaw
         val p = Point2D(x, y)
 
@@ -32,7 +32,7 @@ object PursuePath : Action {
         val slope = tan(yaw + PI / 2)
 
         val r = Point2D(
-                ((1 - slope * slope) * t.x + 2 * (slope * t.y - slope * (p.y - slope * p.x))) / (slope * slope + 1),
+                ((1 - slope * slope) * t.x + 2 * (slope * t.y - slope * (p.y - slope * p.x))) / (slope * slope + 1), //TODO suspicious slope
                 ((slope * slope - 1) * t.y + 2 * (slope * t.x + (p.y - slope * p.x))) / (slope * slope + 1)
         )
 
@@ -46,9 +46,9 @@ object PursuePath : Action {
         )
 
         val radius = p..circumcenter
+
         val curvature = 1 / radius
-        val arcLength = 2 * radius * asin((p..t) / (2 * radius))
-
-
+        val arcLength = 2 * radius * asin((p..t) / (2 * radius))//TODO make this account for if the arc length is more than 0.5x the circumference
+        val endVel = DriveConstants.kMaxVelocity / (1 + curvature * DriveConstants.kWheelBase / 2)
     }
 }
