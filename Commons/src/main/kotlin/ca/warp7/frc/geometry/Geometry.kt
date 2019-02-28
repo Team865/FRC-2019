@@ -52,6 +52,8 @@ operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
 
 operator fun Rotation2D.unaryPlus() = copy
 
+operator fun Rotation2D.rangeTo(other: Rotation2D) = interpolator(other)
+
 /*
  * TRANSLATION FUNCTIONS
  */
@@ -96,6 +98,7 @@ operator fun Translation2D.unaryPlus() = copy
 
 operator fun Translation2D.unaryMinus() = inverse
 
+operator fun Translation2D.rangeTo(other: Translation2D) = interpolator(other)
 
 /*
  * POSE FUNCTIONS

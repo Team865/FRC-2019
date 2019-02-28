@@ -2,7 +2,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.lazySolenoid
-import ca.warp7.frc.lazyVictorSPX
+import ca.warp7.frc.victorSPX
 import ca.warp7.frc2019.constants.HatchConstants
 import ca.warp7.frc2019.constants.OuttakeConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.Solenoid
 
 object Outtake : Subsystem() {
 
-    private val left: VictorSPX = lazyVictorSPX(OuttakeConstants.kLeft)
-    private val right: VictorSPX = lazyVictorSPX(OuttakeConstants.kRight)
+    private val left: VictorSPX = victorSPX(OuttakeConstants.kLeft)
+    private val right: VictorSPX = victorSPX(OuttakeConstants.kRight)
     private val pusher: Solenoid = lazySolenoid(HatchConstants.kPusherSolenoid)
     private val grabber: Solenoid = lazySolenoid(HatchConstants.kGrabberSolenoid)
 

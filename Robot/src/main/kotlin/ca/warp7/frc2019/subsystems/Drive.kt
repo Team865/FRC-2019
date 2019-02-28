@@ -4,7 +4,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
-import ca.warp7.frc.lazyTalonSRX
+import ca.warp7.frc.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -14,25 +14,11 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Drive : Subsystem() {
 
-    private val leftMaster: TalonSRX = lazyTalonSRX(
-            id = DriveConstants.kLeftMaster,
-            config = DriveConstants.kMasterTalonConfig,
-            voltageCompensation = true,
-            currentLimit = false
-    ).followedBy(
-            VictorSPX(DriveConstants.kLeftFollowerA),
-            VictorSPX(DriveConstants.kLeftFollowerB)
-    )
+    val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA), VictorSPX(DriveConstants.kLeftFollowerB))
 
-    private val rightMaster: TalonSRX = lazyTalonSRX(
-            id = DriveConstants.kRightMaster,
-            config = DriveConstants.kMasterTalonConfig,
-            voltageCompensation = true,
-            currentLimit = false
-    ).followedBy(
-            VictorSPX(DriveConstants.kRightFollowerA),
-            VictorSPX(DriveConstants.kRightFollowerB)
-    )
+    val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
 
     val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
 
@@ -62,24 +48,28 @@ object Drive : Subsystem() {
     var leftVelocityTicks = 0
     var rightVelocityTicks = 0
 
-    private val reversedLeftDemand: Double get() = leftDemand * -1
-    private val reversedLeftFeedforward: Double get() = leftFeedforward * -1
+    private val reversedRightDemand: Double get() = rightDemand * -1
+    private val reversedRightFeedforward: Double get() = rightFeedforward * -1
 
     override fun onDisabled() {
+        leftDemand = 0.0
+        rightDemand = 0.0
+        leftFeedforward = 0.0
+        rightFeedforward = 0.0
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
     }
 
     override fun onOutput() {
-        leftMaster.set(controlMode, reversedLeftDemand, DemandType.ArbitraryFeedForward, reversedLeftFeedforward)
-        rightMaster.set(controlMode, rightDemand, DemandType.ArbitraryFeedForward, rightFeedforward)
+        leftMaster.set(controlMode, leftDemand, DemandType.ArbitraryFeedForward, leftFeedforward)
+        rightMaster.set(controlMode, reversedRightDemand, DemandType.ArbitraryFeedForward, reversedRightFeedforward)
     }
 
     override fun onMeasure(dt: Double) {
-        leftPositionTicks = -leftMaster.selectedSensorPosition * -1
-        rightPositionTicks = rightMaster.selectedSensorPosition
-        leftVelocityTicks = leftMaster.selectedSensorVelocity * -1
-        rightVelocityTicks = rightMaster.selectedSensorVelocity
+        leftPositionTicks = leftMaster.selectedSensorPosition
+        rightPositionTicks = rightMaster.selectedSensorPosition * -1
+        leftVelocityTicks = leftMaster.selectedSensorVelocity
+        rightVelocityTicks = rightMaster.selectedSensorVelocity * -1
         DriveMotionPlanner.updateMeasurements(dt)
     }
 

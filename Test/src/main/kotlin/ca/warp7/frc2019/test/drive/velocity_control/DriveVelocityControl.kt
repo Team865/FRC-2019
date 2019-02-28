@@ -1,11 +1,11 @@
-package ca.warp7.frc2019
+package ca.warp7.frc2019.test.drive.velocity_control
 
 import ca.warp7.frc.*
-import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.subsystems.Drive
 import edu.wpi.first.wpilibj.TimedRobot
-import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
-class Robot : TimedRobot(0.01) {
+@Suppress("unused")
+class DriveVelocityControl : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -14,14 +14,8 @@ class Robot : TimedRobot(0.01) {
      */
     override fun robotInit() {
         println("Hello me is robit!")
-        RobotControl.set { mode = ControllerMode.DriverAndOperator }
+        RobotControl.set { mode = ControllerMode.DriverOnly }
         Drive.set { motionPlanner.set { } }
-        Infrastructure.set { startCompressor = true }
-        Conveyor.set { speed = 0.0 }
-        Outtake.set { speed = 0.0 }
-        Intake.set { extended = false }
-        Lift.set { }
-        Superstructure.set { }
     }
 
     /**
@@ -42,9 +36,9 @@ class Robot : TimedRobot(0.01) {
     =====================================================
      */
 
-    override fun autonomousInit() = RobotControl.enable(Sandstorm)
-    override fun teleopInit() = RobotControl.enable(MainLoop)
-    override fun testInit() = RobotControl.enable(MainLoop)
+    override fun autonomousInit() = RobotControl.enable(VelocityControlLoop)
+    override fun teleopInit() = disableRobot()
+    override fun testInit() = disableRobot()
 
     /*
     =====================================================
@@ -57,15 +51,4 @@ class Robot : TimedRobot(0.01) {
     override fun autonomousPeriodic() = Unit
     override fun teleopPeriodic() = Unit
     override fun testPeriodic() = Unit
-
-    /**
-     * The main function that is executed from the `Main-Class` of the jar file.
-     * It calls on RobotBase to initialize system hardware and start the main
-     * loop that calls the other functions
-     */
-    @Suppress("UnusedMainParameter")
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) = startRobot { Robot() }
-    }
 }

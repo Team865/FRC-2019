@@ -64,11 +64,11 @@ private class LazyTalonSRX(deviceNumber: Int) : TalonSRX(deviceNumber) {
     }
 }
 
-fun lazyTalonSRX(
+fun talonSRX(
         id: Int,
         config: TalonSRXConfiguration? = null,
         neutralMode: NeutralMode = NeutralMode.Brake,
-        voltageCompensation: Boolean = false,
+        voltageCompensation: Boolean = true,
         currentLimit: Boolean = false,
         inverted: Boolean = false
 ): TalonSRX = LazyTalonSRX(id).apply {
@@ -103,7 +103,7 @@ private class LazyVictorSPX(deviceNumber: Int) : VictorSPX(deviceNumber) {
     }
 }
 
-fun lazyVictorSPX(
+fun victorSPX(
         id: Int,
         config: VictorSPXConfiguration? = null,
         neutralMode: NeutralMode = NeutralMode.Brake,
