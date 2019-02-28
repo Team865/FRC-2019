@@ -73,9 +73,7 @@ object MainLoop : Action {
                 leftBumper -> Unit // TODO Increase setpoint
                 rightBumper -> Unit // TODO Decrease setpoint
                 bButton -> Unit // TODO Go to hatch setpoint
-//                yButton -> Lift.set(LiftState.kPositionOnly) {
-//                    setpoint = FieldConstants.secondCargoBayCenterHeightInches
-//                }
+
                 xButton -> Outtake.set {
                     if (grabbing) {
                         grabbing = false
@@ -88,12 +86,8 @@ object MainLoop : Action {
                 }
                 else -> Unit
             }
-//            if (xButton == HeldDown) {
+
             Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-//                if (leftStickButton == Pressed) {
-//                    LiftMotionPlanner.zeroPosition()
-//                }
-//            }
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {

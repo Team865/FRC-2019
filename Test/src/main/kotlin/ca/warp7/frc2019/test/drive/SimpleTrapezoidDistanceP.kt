@@ -97,6 +97,7 @@ class SimpleTrapezoidDistanceP : TimedRobot(){
         position = 0.0
         leftMaster.selectedSensorPosition = 0
         rightMaster.selectedSensorPosition = 0
+        trajectoryTime = 0.0
     }
 
     var position = 0.0
@@ -104,10 +105,12 @@ class SimpleTrapezoidDistanceP : TimedRobot(){
     var lastErrorRight = 0.0
     var lastErrorLeftVel = 0.0
     var lastErrorRightVel = 0.0
-
+    var trajectoryTime = 0.0
     override fun autonomousPeriodic() {
         timeSinceStart = Timer.getFPGATimestamp() - startTime
         //println("time" + timeSinceStart)
+
+
         when {
             timeSinceStart < dtAtMaxV -> {
                 velocity = timeSinceStart * DriveConstants.kMaxAcceleration
@@ -157,7 +160,7 @@ class SimpleTrapezoidDistanceP : TimedRobot(){
         val actualLeftVelocity = (leftMaster.selectedSensorVelocity / DriveConstants.kTicksPerInch * 10) / 12
         val actualRightVelocity = (-rightMaster.selectedSensorVelocity / DriveConstants.kTicksPerInch * 10) / 12
 
-        val kD2 = 5
+        val kD2 = 0.8
 
         val errorLeftVel = velocity - actualLeftVelocity
         val errorRightVel = velocity - actualRightVelocity
