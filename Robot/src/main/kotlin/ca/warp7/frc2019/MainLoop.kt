@@ -15,8 +15,6 @@ import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
-import edu.wpi.first.networktables.NetworkTableEntry
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 
 object MainLoop : Action {
 
