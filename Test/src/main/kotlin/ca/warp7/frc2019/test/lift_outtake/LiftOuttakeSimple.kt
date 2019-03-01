@@ -23,8 +23,8 @@ class LiftOuttakeSimple : TimedRobot() {
         xboxController = XboxController(0)
         liftMaster = TalonSRX(LiftConstants.kMaster)
         VictorSPX(LiftConstants.kFollower).follow(liftMaster)
-        leftOuttake = VictorSPX(OuttakeConstants.kLeft)
-        rightOuttake = VictorSPX(OuttakeConstants.kRight)
+        leftOuttake = VictorSPX(OuttakeConstants.kLeftMaster)
+        rightOuttake = VictorSPX(OuttakeConstants.kRightMaster)
     }
 
     override fun disabledInit() {

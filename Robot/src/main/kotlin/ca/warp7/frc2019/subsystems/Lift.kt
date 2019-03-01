@@ -23,7 +23,7 @@ object Lift : Subsystem() {
     var demand = 0.0
     var feedforward = 0.0
     var positionTicks = 0
-    var velocityTicksPer100ms = 0
+    var velocityTicks = 0
     var actualPercent = 0.0
     var actualCurrent = 0.0
     var actualVoltage = 0.0
@@ -59,7 +59,7 @@ object Lift : Subsystem() {
 
     override fun onMeasure(dt: Double) {
         positionTicks = master.selectedSensorPosition
-        velocityTicksPer100ms = master.selectedSensorVelocity
+        velocityTicks = master.selectedSensorVelocity
         actualPercent = master.motorOutputPercent
         actualCurrent = master.outputCurrent
         actualVoltage = master.busVoltage * actualPercent

@@ -39,12 +39,12 @@ class Lowbot : TimedRobot() {
             VictorSPX(DriveConstants.kRightFollowerA).follow(it)
             VictorSPX(DriveConstants.kRightFollowerB).follow(it)
         }
-        leftOuttake = VictorSPX(OuttakeConstants.kLeft)
-        rightOuttake = VictorSPX(OuttakeConstants.kRight)
+        leftOuttake = VictorSPX(OuttakeConstants.kLeftMaster)
+        rightOuttake = VictorSPX(OuttakeConstants.kRightMaster)
         differentialDrive = DifferentialDrive(rightMaster, leftMaster)
-        leftConveyor = VictorSPX(ConveyorConstants.kLeft)
-        rightConveyor = VictorSPX(ConveyorConstants.kRight)
-        intake = VictorSPX(IntakeConstants.kVictor)
+        leftConveyor = VictorSPX(ConveyorConstants.kLeftMaster)
+        rightConveyor = VictorSPX(ConveyorConstants.kRightMaster)
+        intake = VictorSPX(IntakeConstants.kMaster)
         operator = XboxController(1)
         driver = XboxController(0)
     }

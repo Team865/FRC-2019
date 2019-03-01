@@ -13,7 +13,6 @@ import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
-import ca.warp7.frc2019.subsystems.superstructure.PassThrough
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 
 object MainLoop : Action {
@@ -36,7 +35,7 @@ object MainLoop : Action {
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
+                    passThroughSpeed = -1 * leftTriggerAxis
                     isOuttaking = true
                     Intake.set {
                         speed = -1 * leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
@@ -44,7 +43,7 @@ object MainLoop : Action {
                     }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
+                    passThroughSpeed = rightTriggerAxis
                     isOuttaking = rightBumper == HeldDown
                     Intake.set {
                         speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
@@ -62,11 +61,11 @@ object MainLoop : Action {
         withOperator {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = leftTriggerAxis * PassThrough.reverse
+                    passThroughSpeed = -1 * leftTriggerAxis
                     isOuttaking = true
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = rightTriggerAxis * PassThrough.forward
+                    passThroughSpeed = rightTriggerAxis
                     isOuttaking = true
                 }
             }
@@ -79,11 +78,18 @@ object MainLoop : Action {
 
                 xButton -> Outtake.set {
                     if (grabbing) {
+                        println("Not grabbing")
                         grabbing = false
+                        println("Pushing")
                         pushing = true
-                        set(runAfter(0.5) { pushing = false })
+                        set(runAfter(0.5) {
+                            println("Not pushing after 0.5s")
+                            pushing = false
+                        })
                     } else {
+                        println("Grabbing")
                         grabbing = true
+                        println("Not pushing")
                         pushing = false
                     }
                 }

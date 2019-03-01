@@ -11,18 +11,18 @@ import edu.wpi.first.wpilibj.Solenoid
 
 object Intake : Subsystem() {
 
-    private val victor: VictorSPX = victorSPX(IntakeConstants.kVictor, neutralMode = NeutralMode.Coast)
+    private val master: VictorSPX = victorSPX(IntakeConstants.kMaster, neutralMode = NeutralMode.Coast)
     private val solenoid: Solenoid = lazySolenoid(IntakeConstants.kSolenoid)
 
     var extended = false
     var speed = 0.0
 
     override fun onDisabled() {
-        victor.neutralOutput()
+        master.neutralOutput()
     }
 
     override fun onOutput() {
-        victor.set(ControlMode.PercentOutput, speed)
+        master.set(ControlMode.PercentOutput, speed)
         solenoid.set(extended)
     }
 }

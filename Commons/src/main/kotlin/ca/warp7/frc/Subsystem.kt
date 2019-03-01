@@ -50,7 +50,7 @@ abstract class Subsystem : ActionStateMachine() {
 
     private fun initialize() {
         initialized = true
-        CommonRobot.addSubsystem(this)
+        InternalControl.addSubsystem(this)
     }
 
     /**
@@ -64,6 +64,11 @@ abstract class Subsystem : ActionStateMachine() {
     override fun updateState() {
         super.updateState()
         onOutput()
+    }
+
+    override fun stopState() {
+        super.stopState()
+        onDisabled()
     }
 
     internal val tab: ShuffleboardTab by lazy { Shuffleboard.getTab(this::class.java.simpleName) }

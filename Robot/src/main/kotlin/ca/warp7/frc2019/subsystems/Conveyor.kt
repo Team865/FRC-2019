@@ -4,27 +4,22 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc.victorSPX
 import ca.warp7.frc2019.constants.ConveyorConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Conveyor : Subsystem() {
-    private val leftConveyor: VictorSPX = victorSPX(ConveyorConstants.kLeft)
-    private val rightConveyor: VictorSPX = victorSPX(ConveyorConstants.kRight)
-
-    init {
-        leftConveyor.setNeutralMode(NeutralMode.Brake)
-        rightConveyor.setNeutralMode(NeutralMode.Brake)
-    }
+    private val leftMaster: VictorSPX = victorSPX(ConveyorConstants.kLeftMaster)
+    private val rightMaster: VictorSPX = victorSPX(ConveyorConstants.kRightMaster)
 
     var speed = 0.0
 
     override fun onDisabled() {
-        leftConveyor.neutralOutput()
-        rightConveyor.neutralOutput()
+        leftMaster.neutralOutput()
+        rightMaster.neutralOutput()
     }
 
     override fun onOutput() {
-        leftConveyor.set(ControlMode.PercentOutput, speed)
-        rightConveyor.set(ControlMode.PercentOutput, speed)
+        leftMaster.set(ControlMode.PercentOutput, speed)
+        // NOTE unlike the outtake, the right master is not reversed
+        rightMaster.set(ControlMode.PercentOutput, speed)
     }
 }

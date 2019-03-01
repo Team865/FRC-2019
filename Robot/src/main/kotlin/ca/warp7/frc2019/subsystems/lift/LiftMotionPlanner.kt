@@ -14,7 +14,7 @@ object LiftMotionPlanner {
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
     val height get() = (Lift.positionTicks - nominalZero) / LiftConstants.kTicksPerInch
-    val velocity get() = Lift.velocityTicksPer100ms / LiftConstants.kTicksPerInch * measurementFrequency
+    val velocity get() = Lift.velocityTicks / LiftConstants.kTicksPerInch * measurementFrequency
     val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kTicksPerInch * squaredFrequency
 
     private var motionPlanningEnabled = false
@@ -30,20 +30,20 @@ object LiftMotionPlanner {
     private val dtBuffer = mutableListOf<Double>()
 
     fun updateMeasurements(dt: Double) {
-        if (Lift.velocityTicksPer100ms < LiftConstants.kStoppedVelocityThreshold
+        if (Lift.velocityTicks < LiftConstants.kStoppedVelocityThreshold
                 && Lift.actualCurrent.epsilonEquals(0.0, LiftConstants.kStoppedCurrentEpsilon)
                 && Lift.hallEffectTriggered) {
             //nominalZero = Lift.positionTicks
         }
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
-            dvBuffer.add(Lift.velocityTicksPer100ms - previousVelocityTicks)
+            dvBuffer.add(Lift.velocityTicks - previousVelocityTicks)
             dtBuffer.add(dt)
             if (dvBuffer.size > LiftConstants.kAccelerationMeasurementFrames) {
                 dvBuffer.removeAt(0)
                 dtBuffer.removeAt(0)
             }
             accelerationTicksPer100ms2 = dvBuffer.sum() / dtBuffer.sum()
-            previousVelocityTicks = Lift.velocityTicksPer100ms
+            previousVelocityTicks = Lift.velocityTicks
         }
     }
 
