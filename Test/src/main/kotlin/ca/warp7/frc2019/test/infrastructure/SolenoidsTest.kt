@@ -11,11 +11,11 @@ class SolenoidsTest : TimedRobot() {
     val s1 = Solenoid(1)
     val s2 = Solenoid(2)
     val s3 = Solenoid(4)
-
-    override fun teleopInit() {
+    override fun teleopPeriodic() {
         s0.set(xboxController.aButton)
         s1.set(xboxController.bButton)
         s2.set(xboxController.xButton)
         s3.set(xboxController.yButton)
+        
     }
 }
