@@ -38,7 +38,7 @@ abstract class ActionStateMachine {
     /**
      * Stop the current state
      */
-    fun stopState() {
+    open fun stopState() {
         val unlockedState = currentState
         // first set to no state
         currentState = null

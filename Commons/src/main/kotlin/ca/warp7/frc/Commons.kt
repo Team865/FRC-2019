@@ -3,9 +3,9 @@ package ca.warp7.frc
 import ca.warp7.actionkt.ActionStateMachine
 import ca.warp7.actionkt.runOnce
 
-fun runPeriodicLoop() = CommonRobot.pauseOnCrashPeriodicLoop()
+fun runPeriodicLoop() = InternalControl.haltingPeriodicLoop()
 
-fun disableRobot() = CommonRobot.disableOutputs()
+fun disableRobot() = InternalControl.disableOutputs()
 
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
