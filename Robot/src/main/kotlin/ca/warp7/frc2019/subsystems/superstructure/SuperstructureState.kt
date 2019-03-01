@@ -23,8 +23,8 @@ object SuperstructureState {
     val kIdle = runOnce {
         Outtake.set {
             speed = 0.0
-            grabbing = false
-            pushing = false
+            //FIXME grabbing = false
+            //FIXME pushing = false
         }
         Conveyor.set { speed = 0.0 }
     }

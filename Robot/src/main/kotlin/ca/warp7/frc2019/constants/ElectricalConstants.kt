@@ -34,13 +34,13 @@ internal object ElectricalConstants {
 
     /*
     ===============================================
-    Solenoid ports
+    Solenoid ports[
     ===============================================
     */
 
-    const val kIntakeSolenoidPort = 2
-    const val kPusherSolenoid = 1
-    const val kGrabberSolenoid = 0
+    const val kIntakeSolenoidPort = 6//FIXME 2
+    const val kPusherSolenoid = 5//FIXME 0
+    const val kGrabberSolenoid = 4//FIXME 1
 
 
     /*
