@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.test.pneu_test
 
-import ca.warp7.frc.ControllerState
 import ca.warp7.frc2019.constants.HatchConstants
 import ca.warp7.frc2019.constants.InfrastructureConstants
 import edu.wpi.first.wpilibj.Compressor

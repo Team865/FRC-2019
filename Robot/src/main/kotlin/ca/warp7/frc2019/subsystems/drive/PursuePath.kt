@@ -49,6 +49,6 @@ object PursuePath : Action {
 
         val curvature = 1 / radius
         val arcLength = 2 * radius * asin((p..t) / (2 * radius))//TODO make this account for if the arc length is more than 0.5x the circumference
-        val endVel = DriveConstants.kMaxVelocity / (1 + curvature * DriveConstants.kTrackWidth / 2)
+        val endVel = DriveConstants.kMaxVelocity / (1 + curvature * DriveConstants.kTurningDiameter / 2)
     }
 }

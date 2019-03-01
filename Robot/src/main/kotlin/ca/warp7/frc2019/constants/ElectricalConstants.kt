@@ -34,14 +34,14 @@ internal object ElectricalConstants {
 
     /*
     ===============================================
-    The following solenoids must have the same port
-    as the the port they are plugged in to the PCM
+    Solenoid ports[
     ===============================================
     */
 
     const val kIntakeSolenoidPort = 2
-    const val kPusherSolenoid = 1
-    const val kGrabberSolenoid = 0
+    const val kPusherSolenoid = 0
+    const val kGrabberSolenoid = 1
+
 
 
     /*

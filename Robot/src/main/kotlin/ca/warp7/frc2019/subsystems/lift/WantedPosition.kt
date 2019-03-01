@@ -4,11 +4,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-@Suppress("unused")
 class WantedPosition {
 
     private var setpointLevel = 0
-    var setpointType = LiftSetpointType.Cargo
+    var setpointType = LiftSetpointType.Hatch
 
     fun increaseLiftSetpoint() {
         setpointLevel = min(setpointLevel + 1, 3)

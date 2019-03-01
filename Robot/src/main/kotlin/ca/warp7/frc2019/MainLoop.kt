@@ -8,6 +8,7 @@ import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
@@ -69,9 +70,11 @@ object MainLoop : Action {
                 }
             }
             when (Pressed) {
-                leftBumper -> Unit // TODO Increase setpoint
-                rightBumper -> Unit // TODO Decrease setpoint
-                bButton -> Unit // TODO Go to hatch setpoint
+                leftBumper -> if (Lift.setpointLevel < 3) Lift.setpointLevel++
+                rightBumper -> if (Lift.setpointLevel > 0) Lift.setpointLevel--
+
+                aButton -> Lift.setpointType = HatchCargo.Hatch
+                bButton -> Lift.setpointType = HatchCargo.Cargo
 
                 xButton -> Outtake.set {
                     if (grabbing) {

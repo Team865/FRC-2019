@@ -4,6 +4,8 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.talonSRX
 import ca.warp7.frc.victorSPX
+import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -26,6 +28,16 @@ object Lift : Subsystem() {
     var actualCurrent = 0.0
     var actualVoltage = 0.0
     var hallEffectTriggered = true
+
+    var setpointLevel = 0
+    var setpointType = HatchCargo.Hatch
+    val coolSetpoint
+        get() = LiftConstants.kTicksPerInch *
+                (setpointLevel * FieldConstants.centerToCenterInches +
+                        when (setpointType) {
+                            HatchCargo.Hatch -> 0.0
+                            HatchCargo.Cargo -> FieldConstants.hatchToCargoHeight + 0.5
+                        })
 
     var controlMode = ControlMode.PercentOutput
         set(value) {
