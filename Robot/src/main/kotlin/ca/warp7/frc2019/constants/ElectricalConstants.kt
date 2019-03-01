@@ -34,8 +34,7 @@ internal object ElectricalConstants {
 
     /*
     ===============================================
-    The following solenoids must have the same port
-    as the the port they are plugged in to the PCM
+    Solenoid ports
     ===============================================
     */
 

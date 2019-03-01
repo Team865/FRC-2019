@@ -2,7 +2,7 @@ package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.actionkt.Action
 
-object FollowTrajectory : Action {
+object  FollowTrajectory : Action {
 
     var setpoint = 0.0
 

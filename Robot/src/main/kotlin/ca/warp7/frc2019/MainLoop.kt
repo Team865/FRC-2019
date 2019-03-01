@@ -70,8 +70,8 @@ object MainLoop : Action {
                 }
             }
             when (Pressed) {
-                leftBumper -> Unit // TODO Increase setpoint
-                rightBumper -> Unit // TODO Decrease setpoint
+                leftBumper -> if (Lift.setpointLevel<3) Lift.setpointLevel++
+                rightBumper -> if (Lift.setpointLevel>0) Lift.setpointLevel--
                 bButton -> Unit // TODO Go to hatch setpoint
 
                 xButton -> Outtake.set {

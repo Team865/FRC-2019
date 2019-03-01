@@ -11,4 +11,5 @@ object FieldConstants {
     const val secondHatchPortCenterHeightInches = firstHatchPortCenterHeightInches + centerToCenterInches
     const val thirdHatchPortCenterHeightInches = secondHatchPortCenterHeightInches + centerToCenterInches
 
+    const val hatchToCargoHeight = firstCargoBayCenterHeightInches - firstHatchPortCenterHeightInches
 }
