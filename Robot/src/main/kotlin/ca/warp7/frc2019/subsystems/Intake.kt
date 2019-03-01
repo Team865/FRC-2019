@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid
 
 object Intake : Subsystem() {
 
-    private val master: VictorSPX = victorSPX(IntakeConstants.kVictor, neutralMode = NeutralMode.Coast)
+    private val master: VictorSPX = victorSPX(IntakeConstants.kMaster, neutralMode = NeutralMode.Coast)
     private val solenoid: Solenoid = lazySolenoid(IntakeConstants.kSolenoid)
 
     var extended = false

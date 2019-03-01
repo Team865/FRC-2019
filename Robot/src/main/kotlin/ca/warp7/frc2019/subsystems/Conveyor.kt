@@ -7,8 +7,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 
 object Conveyor : Subsystem() {
-    private val leftMaster: VictorSPX = victorSPX(ConveyorConstants.kLeft)
-    private val rightMaster: VictorSPX = victorSPX(ConveyorConstants.kRight)
+    private val leftMaster: VictorSPX = victorSPX(ConveyorConstants.kLeftMaster)
+    private val rightMaster: VictorSPX = victorSPX(ConveyorConstants.kRightMaster)
 
     var speed = 0.0
 

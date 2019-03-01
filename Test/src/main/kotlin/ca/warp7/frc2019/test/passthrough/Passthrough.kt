@@ -17,9 +17,9 @@ class Passthrough : TimedRobot() {
     lateinit var intake : VictorSPX
 
     override fun robotInit() {
-        leftConveyor = VictorSPX(ConveyorConstants.kLeft)
-        rightConveyor = VictorSPX(ConveyorConstants.kRight)
-        intake = VictorSPX(IntakeConstants.kVictor)
+        leftConveyor = VictorSPX(ConveyorConstants.kLeftMaster)
+        rightConveyor = VictorSPX(ConveyorConstants.kRightMaster)
+        intake = VictorSPX(IntakeConstants.kMaster)
         controller = XboxController(0)
     }
 

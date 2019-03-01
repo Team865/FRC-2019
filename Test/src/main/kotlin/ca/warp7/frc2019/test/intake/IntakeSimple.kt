@@ -15,7 +15,7 @@ class IntakeSimple : TimedRobot() {
     lateinit var solenoid : Solenoid
 
     override fun robotInit(){
-        victor = VictorSPX(IntakeConstants.kVictor)
+        victor = VictorSPX(IntakeConstants.kMaster)
         controller = XboxController(0)
         solenoid = Solenoid(IntakeConstants.kSolenoid)
     }

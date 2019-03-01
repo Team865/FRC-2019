@@ -13,8 +13,8 @@ class ConveyorSimple : TimedRobot() {
     lateinit var leftConveyor: VictorSPX
     lateinit var rightConveyor: VictorSPX
     override fun robotInit() {
-        leftConveyor = VictorSPX(ConveyorConstants.kLeft)
-        rightConveyor = VictorSPX(ConveyorConstants.kRight)
+        leftConveyor = VictorSPX(ConveyorConstants.kLeftMaster)
+        rightConveyor = VictorSPX(ConveyorConstants.kRightMaster)
         controller = XboxController(0)
     }
 
