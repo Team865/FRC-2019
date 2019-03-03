@@ -16,6 +16,7 @@ class Robot : TimedRobot() {
         RobotControl.set { mode = ControllerMode.DriverAndOperator }
         Drive.set { motionPlanner.set { } }
         Infrastructure.set { startCompressor = true }
+        Limelight.set { isDriver = true }
         Conveyor.set { speed = 0.0 }
         Outtake.set { speed = 0.0 }
         Intake.set { extended = false }
