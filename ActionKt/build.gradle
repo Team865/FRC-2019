@@ -10,7 +10,7 @@ repositories {
 buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 dependencies {
-    compile project(":ActionAPI-Java")
+    //compile project(":ActionAPI-Java")
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     compile "org.jetbrains.kotlin:kotlin-test"
     testImplementation("junit:junit:4.12")
