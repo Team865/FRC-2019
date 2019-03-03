@@ -11,13 +11,13 @@ abstract class ActionStateMachine {
     open fun <T : Action> set(wantedState: T, block: T.() -> Unit = {}) {
         block(wantedState)
         // Check if there is a new wanted state that is not the same as the current state
-        if (wantedState != currentState) {
+        if (wantedState !== currentState) {
             // stop the current state
             stopState()
-            // Start the new state
-            wantedState.start()
             // Change to the new state
             currentState = wantedState
+            // Start the new state
+            wantedState.start()
         }
     }
 

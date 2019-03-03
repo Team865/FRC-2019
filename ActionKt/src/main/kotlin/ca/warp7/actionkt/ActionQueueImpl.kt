@@ -42,7 +42,7 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
 
     override fun printTaskGraph() {
         for ((index, task) in queue.withIndex()) {
-            print("--" + (task.name ?: task::class.java.simpleName + index))
+            println("--" + (task.name ?: task.action::class.java.simpleName + index))
         }
     }
 }

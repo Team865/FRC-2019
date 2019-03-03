@@ -21,11 +21,12 @@ object SuperstructureState {
     val kPassThrough = PassThrough
 
     val kIdle = runOnce {
-        Outtake.set {
-            speed = 0.0
-            //FIXME grabbing = false
-            //FIXME pushing = false
-        }
+//        Outtake.set {
+//            speed = 0.0
+//            //FIXME grabbing = false
+//            //FIXME pushing = false
+//        }
+        Outtake.speed  = 0.0
         Conveyor.set { speed = 0.0 }
     }
 }

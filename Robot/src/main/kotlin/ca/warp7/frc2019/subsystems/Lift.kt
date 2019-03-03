@@ -32,12 +32,13 @@ object Lift : Subsystem() {
     var setpointLevel = 0
     var setpointType = HatchCargo.Hatch
     val coolSetpoint
-        get() = LiftConstants.kTicksPerInch *
-                (setpointLevel * FieldConstants.centerToCenterInches +
+        get() = LiftConstants.kTicksPerInch * (
+                setpointLevel * FieldConstants.centerToCenterInches +
                         when (setpointType) {
                             HatchCargo.Hatch -> 0.0
                             HatchCargo.Cargo -> FieldConstants.hatchToCargoHeight + 0.5
-                        })
+                        }
+                )
 
     var controlMode = ControlMode.PercentOutput
         set(value) {
@@ -58,11 +59,11 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        positionTicks = master.selectedSensorPosition
-        velocityTicks = master.selectedSensorVelocity
-        actualPercent = master.motorOutputPercent
-        actualCurrent = master.outputCurrent
-        actualVoltage = master.busVoltage * actualPercent
+//        positionTicks = master.selectedSensorPosition
+//        velocityTicks = master.selectedSensorVelocity
+//        actualPercent = master.motorOutputPercent
+//        actualCurrent = master.outputCurrent
+//        actualVoltage = master.busVoltage * actualPercent
         hallEffectTriggered = true // hallEffect.get()
         LiftMotionPlanner.updateMeasurements(dt)
     }

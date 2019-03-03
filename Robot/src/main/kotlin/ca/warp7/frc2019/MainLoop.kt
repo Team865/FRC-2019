@@ -1,7 +1,6 @@
 package ca.warp7.frc2019
 
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.runAfter
+import ca.warp7.actionkt.*
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.set
@@ -14,6 +13,9 @@ import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.Watchdog
+import java.util.*
 
 object MainLoop : Action {
 
@@ -29,7 +31,7 @@ object MainLoop : Action {
         var isOuttaking = false
         withDriver {
             Drive.set(DriveState.kCurvature) {
-                xSpeed = leftYAxis
+                xSpeed = leftYAxis * -1
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == HeldDown
             }
@@ -69,34 +71,78 @@ object MainLoop : Action {
                     isOuttaking = true
                 }
             }
+            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             when (Pressed) {
-                leftBumper -> if (Lift.setpointLevel < 3) Lift.setpointLevel++
-                rightBumper -> if (Lift.setpointLevel > 0) Lift.setpointLevel--
+                leftBumper -> if (Lift.setpointLevel < 3) {
+                    Lift.setpointLevel++
+                    Lift.set(LiftState.kFollowTrajectory) { setpoint = Lift.coolSetpoint }
+                }
+                rightBumper -> if (Lift.setpointLevel > 0) {
+                    Lift.setpointLevel--
+                    Lift.set(LiftState.kFollowTrajectory) { setpoint = Lift.coolSetpoint }
+                }
+/*
+                aButton -> {
+                    Lift.setpointType = HatchCargo.Hatch
+                    Lift.set(LiftState.kFollowTrajectory) { setpoint = Lift.coolSetpoint }
+                }
+                bButton -> {
+                    Lift.setpointType = HatchCargo.Cargo
+                    Lift.set(LiftState.kFollowTrajectory) { setpoint = Lift.coolSetpoint }
+                }*/
 
-                aButton -> Lift.setpointType = HatchCargo.Hatch
-                bButton -> Lift.setpointType = HatchCargo.Cargo
+/*
+                xButton -> if (Outtake.grabbing) {
+                    Outtake.grabbing = false
+                    Outtake.pushing = true
+                    Outtake.set(runAfter(0.2) {
+                        Outtake.pushing = false
+                    })
+                } else {
+                    Outtake.grabbing = true
+                    Outtake.pushing = false
+                }
+                */
+//                    Outtake.set {
+//                        if (grabbing) {
+//                            grabbing = false
+//                            set(queue {
+//                                println("creating queue")
+//                                +runOnce {
+//                                    println("grabbing: false")
+//                                    grabbing = false
+//                                }
+//                                +wait(0.05)
+//                                +runOnce {
+//                                    println("pushing:true")
+//                                    pushing = true
+//                                }
+//                                +wait(0.3)
+//                                +runOnce {
+//                                    println("pushing: false")
+//                                    pushing = false
+//                                }
+//                            })
+//                        } else {
+//                            grabbing = true
+//                            pushing = false
+//                        }
 
-                xButton -> Outtake.set {
-                    if (grabbing) {
-                        println("Not grabbing")
-                        grabbing = false
-                        println("Pushing")
-                        pushing = true
-                        set(runAfter(0.5) {
-                            println("Not pushing after 0.5s")
-                            pushing = false
-                        })
-                    } else {
-                        println("Grabbing")
-                        grabbing = true
-                        println("Not pushing")
+
+                    bButton -> Outtake.set {
+                        grabbing = !grabbing
                         pushing = false
                     }
-                }
-                else -> Unit
-            }
+                    aButton -> Outtake.set {
+                        pushing = !pushing
+                        grabbing = false
+                    }
 
-            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+
+                else -> Unit
+
+
+            }
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {

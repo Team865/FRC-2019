@@ -17,7 +17,7 @@ object CurvatureDrive : Action {
     var left = 0.0
     var right = 0.0
 
-    private val differentialDrive = DifferentialDrive(speedController { right = it }, speedController { left = it })
+    private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
     init {
         differentialDrive.apply {
@@ -38,7 +38,7 @@ object CurvatureDrive : Action {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
         if (xSpeed < -ControlConstants.kControlDeadband) zRotation *= -1
-        else if (isQuickTurn) zRotation *= -DriveConstants.kQuickTurnMultiplier
+        else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
         Drive.leftDemand = left
         Drive.rightDemand = right
