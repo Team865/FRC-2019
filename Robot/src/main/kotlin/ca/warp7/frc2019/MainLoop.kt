@@ -30,10 +30,17 @@ object MainLoop : Action {
         var passThroughSpeed = 0.0
         var isOuttaking = false
         withDriver {
-            Drive.set(DriveState.kCurvature) {
-                xSpeed = leftYAxis * -1
-                zRotation = rightXAxis
-                isQuickTurn = leftBumper == HeldDown
+            if (yButton == HeldDown){
+                Drive.set(DriveState.kTurnPID)
+            } else {
+                Drive.set(DriveState.kCurvature) {
+                    xSpeed = leftYAxis * -1
+                    zRotation = rightXAxis
+                    isQuickTurn = leftBumper == HeldDown
+                }
+            }
+            if (xButton == Pressed){
+                Limelight.isDriver = !Limelight.isDriver
             }
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
