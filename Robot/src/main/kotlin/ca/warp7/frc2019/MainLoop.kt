@@ -1,21 +1,17 @@
 package ca.warp7.frc2019
 
-import ca.warp7.actionkt.*
+import ca.warp7.actionkt.Action
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
-import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.Watchdog
-import java.util.*
 
 object MainLoop : Action {
 
@@ -30,8 +26,13 @@ object MainLoop : Action {
         var passThroughSpeed = 0.0
         var isOuttaking = false
         withDriver {
-            if (yButton == HeldDown){
-                Drive.set(DriveState.kTurnPID)
+            if (yButton == HeldDown) {
+//                Drive.set(DriveState.kTurnPID)
+                Drive.set(DriveState.kCurveToTarget) {
+                    xSpeed = leftYAxis * -1
+                    zRotation = rightXAxis
+                    isQuickTurn = leftBumper == HeldDown
+                }
             } else {
                 Drive.set(DriveState.kCurvature) {
                     xSpeed = leftYAxis * -1
@@ -39,7 +40,7 @@ object MainLoop : Action {
                     isQuickTurn = leftBumper == HeldDown
                 }
             }
-            if (xButton == Pressed){
+            if (xButton == Pressed) {
                 Limelight.isDriver = !Limelight.isDriver
             }
             when {
@@ -78,7 +79,13 @@ object MainLoop : Action {
                     isOuttaking = true
                 }
             }
-            Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+            if (aButton == HeldDown) {
+                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
+            } else if (bButton == HeldDown) {
+                Lift.set(LiftState.kPositionOnly) { setpoint = 40.0 }
+            } else {
+                LiftState.kOpenLoop.speed = 0.0
+            }
             when (Pressed) {
                 leftBumper -> if (Lift.setpointLevel < 3) {
                     Lift.setpointLevel++
@@ -136,14 +143,14 @@ object MainLoop : Action {
 //                        }
 
 
-                    bButton -> Outtake.set {
-                        grabbing = !grabbing
-                        pushing = false
-                    }
-                    aButton -> Outtake.set {
-                        pushing = !pushing
-                        grabbing = false
-                    }
+                bButton -> Outtake.set {
+                    grabbing = !grabbing
+                    pushing = false
+                }
+                aButton -> Outtake.set {
+                    pushing = !pushing
+                    grabbing = false
+                }
 
 
                 else -> Unit

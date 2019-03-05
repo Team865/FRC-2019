@@ -51,5 +51,5 @@ internal object ElectricalConstants {
     ===============================================
      */
 
-    const val kLiftHallEffectSensorDIO = 0 // TODO
+    const val kLiftHallEffectSensorDIO = 9
 }

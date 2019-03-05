@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.subsystems
 
+import ca.warp7.actionkt.Action
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.talonSRX
@@ -11,14 +12,15 @@ import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
+import edu.wpi.first.wpilibj.DigitalInput
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Lift : Subsystem() {
 
-    private val master: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
+    val master: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
             .followedBy(victorSPX(LiftConstants.kFollower, inverted = true))
 
-    // private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
+    private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
     var demand = 0.0
     var feedforward = 0.0
@@ -50,6 +52,11 @@ object Lift : Subsystem() {
             field = value
         }
 
+    override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
+        println("Setting lift to $wantedState")
+        super.set(wantedState, block)
+    }
+
     override fun onDisabled() {
         master.neutralOutput()
     }
@@ -59,19 +66,20 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-//        positionTicks = master.selectedSensorPosition
-//        velocityTicks = master.selectedSensorVelocity
-//        actualPercent = master.motorOutputPercent
+        positionTicks = master.selectedSensorPosition
+        velocityTicks = master.selectedSensorVelocity
+        actualPercent = master.motorOutputPercent
 //        actualCurrent = master.outputCurrent
 //        actualVoltage = master.busVoltage * actualPercent
-        hallEffectTriggered = true // hallEffect.get()
+        hallEffectTriggered = !hallEffect.get()
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {
         put("Actual Percent", actualPercent)
-        put("Actual Current", actualCurrent)
-        put("Actual Voltage", actualVoltage)
+//        put("Actual Current", actualCurrent)
+//        put("Actual Voltage", actualVoltage)
+        put("HallEffect", hallEffectTriggered)
         put("Demand", demand)
         put("Feedforward", feedforward)
         put("Height (encoder)", positionTicks)

@@ -7,10 +7,12 @@ class PositionOnly : Action {
     var setpoint = 0.0
 
     override val shouldFinish: Boolean
-        get() = super.shouldFinish
+        get() = false
 
     override fun update() {
-        LiftMotionPlanner.setSetpoint(setpoint, isMotionPlanningEnabled = false)
+        println("update ")
+        LiftMotionPlanner.setSetpoint(-setpoint, isMotionPlanningEnabled = false)
+        println("compute ")
         LiftMotionPlanner.compute()
     }
 }
