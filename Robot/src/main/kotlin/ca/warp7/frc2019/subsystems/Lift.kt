@@ -6,8 +6,15 @@ import ca.warp7.frc.followedBy
 import ca.warp7.frc.talonSRX
 import ca.warp7.frc.victorSPX
 import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.FieldConstants.firstCargoBayCenterHeightInches
+import ca.warp7.frc2019.constants.FieldConstants.firstHatchPortCenterHeightInches
+import ca.warp7.frc2019.constants.FieldConstants.secondCargoBayCenterHeightInches
+import ca.warp7.frc2019.constants.FieldConstants.secondHatchPortCenterHeightInches
+import ca.warp7.frc2019.constants.FieldConstants.thirdCargoBayCenterHeightInches
+import ca.warp7.frc2019.constants.FieldConstants.thirdHatchPortCenterHeightInches
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.constants.LiftConstants.kHomeHeightInches
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
@@ -19,6 +26,10 @@ object Lift : Subsystem() {
 
     val master: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
             .followedBy(victorSPX(LiftConstants.kFollower, inverted = true))
+
+    init {
+        master.setSensorPhase(true)
+    }
 
     private val hallEffect = DigitalInput(LiftConstants.kHallEffect)
 
@@ -33,14 +44,30 @@ object Lift : Subsystem() {
 
     var setpointLevel = 0
     var setpointType = HatchCargo.Hatch
-    val coolSetpoint
-        get() = LiftConstants.kTicksPerInch * (
-                setpointLevel * FieldConstants.centerToCenterInches +
-                        when (setpointType) {
-                            HatchCargo.Hatch -> 0.0
-                            HatchCargo.Cargo -> FieldConstants.hatchToCargoHeight + 0.5
-                        }
-                )
+
+//    val coolSetpoint
+//        get() = LiftConstants.kHomeHeightInches + setpointLevel * FieldConstants.centerToCenterInches +
+//                        when (setpointType) {
+//                            HatchCargo.Hatch -> 0.0
+//                            HatchCargo.Cargo -> FieldConstants.hatchToCargoHeight+0.5
+//                        }
+
+    val coolSetpoint: Double
+        get() = when (setpointLevel) {
+            0 -> when (setpointType) {
+                HatchCargo.Hatch -> kHomeHeightInches
+                HatchCargo.Cargo -> firstCargoBayCenterHeightInches
+            }
+            1 -> when (setpointType) {
+                HatchCargo.Hatch -> secondHatchPortCenterHeightInches
+                HatchCargo.Cargo -> secondCargoBayCenterHeightInches
+            }
+            2 -> when (setpointType) {
+                HatchCargo.Hatch -> thirdHatchPortCenterHeightInches
+                HatchCargo.Cargo -> thirdCargoBayCenterHeightInches
+            }
+            else -> kHomeHeightInches
+        }
 
     var controlMode = ControlMode.PercentOutput
         set(value) {
@@ -62,6 +89,9 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
+        if (controlMode == ControlMode.Position && demand <= 1.0) {
+
+        }
         master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 

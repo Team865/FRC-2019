@@ -10,9 +10,7 @@ class PositionOnly : Action {
         get() = false
 
     override fun update() {
-        println("update ")
-        LiftMotionPlanner.setSetpoint(-setpoint, isMotionPlanningEnabled = false)
-        println("compute ")
+        LiftMotionPlanner.setSetpoint(setpoint, isMotionPlanningEnabled = false)
         LiftMotionPlanner.compute()
     }
 }

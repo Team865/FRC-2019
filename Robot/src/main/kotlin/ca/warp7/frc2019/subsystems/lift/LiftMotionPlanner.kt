@@ -51,7 +51,6 @@ object LiftMotionPlanner {
         motionPlanningEnabled = isMotionPlanningEnabled
         if (newSetpoint < LiftConstants.kHomeHeightInches || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
-        println(adjustedSetpoint)
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             setpointInches = adjustedSetpoint
             previousSetpoint = setpointInches
@@ -75,28 +74,21 @@ object LiftMotionPlanner {
     private val nextMotionState: LiftMotionState
         get() {
             val state = currentMotionState
-            if (state.height !in startHeight..setpointInches
-                    && !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)) generateTrajectory()
+            if (state.height !in startHeight..setpointInches &&
+                    !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)){
+                generateTrajectory()
+            }
             val nextDt = dtBuffer.average()
             val sign = dyTotal.sign
             val v1 = sqrt(abs(2 * state.height * LiftConstants.kMaxAcceleration)) * sign
             val v2 = sqrt(abs(2 * (state.height - setpointInches) * LiftConstants.kMaxAcceleration)) * sign
-            println("1 $v1")
-            println("2 $v2")
-            println("max $vMax")
-            println("dt $nextDt")
-            println("vel ${state.velocity}")
-            println("vel t ${velocity}")
-            println("vel actual ${Lift.velocityTicks / kTicksPerInch}")
             val nextVelocity = when {
                 v1 < vMax && v1 < v2 -> state.velocity + nextDt * LiftConstants.kMaxAcceleration * sign
                 v2 < vMax && v2 < v1 -> state.velocity - nextDt * LiftConstants.kMaxAcceleration * sign
                 vMax < v1 && vMax < v2 -> vMax
                 else -> 0.0
-
             }
             val nextPosition = state.height + nextDt * nextVelocity
-            println(LiftMotionState(nextPosition * kTicksPerInch, nextVelocity * kTicksPerInch))
             return LiftMotionState(nextPosition, nextVelocity)
         }
 
@@ -106,7 +98,6 @@ object LiftMotionPlanner {
     }
 
     fun compute() = Lift.apply {
-        println("motion $motionPlanningEnabled")
         if (motionPlanningEnabled) {
             nextMotionState.let {
                 controlMode = ControlMode.Velocity
@@ -116,9 +107,7 @@ object LiftMotionPlanner {
             }
         } else {
             controlMode = ControlMode.Position
-            demand = setpointInches * LiftConstants.kTicksPerInch + nominalZero
-            println("demand $setpointInches")
-            println("demand $demand")
+            demand = -(setpointInches * LiftConstants.kTicksPerInch + nominalZero)
             feedforward = LiftConstants.kPrimaryFeedforward
         }
     }

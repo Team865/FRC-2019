@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 class LiftPID : TimedRobot() {
 
     private val master = Lift.master
-    private val target = 500.0
+    private val target = -25000.0
 
     private val tab = Shuffleboard.getTab("Lift PID")
 
