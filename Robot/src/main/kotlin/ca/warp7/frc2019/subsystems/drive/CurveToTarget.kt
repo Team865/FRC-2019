@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
@@ -8,12 +9,13 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import kotlin.math.absoluteValue
+import kotlin.math.withSign
 
 object CurveToTarget : Action {
     var xSpeed = 0.0
     var zRotation = 0.0
     var isQuickTurn = false
+    var isAligning = false
 
     var left = 0.0
     var right = 0.0
@@ -41,26 +43,21 @@ object CurveToTarget : Action {
         if (xSpeed < -ControlConstants.kControlDeadband) zRotation *= -1
         else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
-        Drive.leftDemand = left
-        Drive.rightDemand = right
-        if (Limelight.hasTarget) {
-            val error = Math.toRadians(Limelight.x)  // MAX +-0.5
-            val kP = 1
-            var leftAdjustment = error * kP
-            var rightAdjustment = -error * kP
-            val speed = xSpeed.absoluteValue
-            if (speed > ControlConstants.kControlDeadband){
-                leftAdjustment /= speed
-                rightAdjustment /= speed
-            } else{
-                leftAdjustment*=2
-                rightAdjustment*=2
+        if (isAligning && Limelight.hasTarget) {
+            val error = Math.toRadians(Limelight.x)
+            if (error.epsilonEquals(0.0, 0.02)) {
+                Drive.leftDemand = left
+                Drive.rightDemand = right
+            } else {
+                val kP = 0.5
+                val kVi = 0.2
+                val frictionVoltage = kVi.withSign(error)
+                Drive.leftDemand = left + error * kP + frictionVoltage
+                Drive.rightDemand = right - error * kP - frictionVoltage
             }
-            Drive.leftFeedforward = leftAdjustment
-            Drive.rightFeedforward = rightAdjustment
         } else {
-            Drive.leftFeedforward = 0.0
-            Drive.rightFeedforward = 0.0
+            Drive.leftDemand = left
+            Drive.rightDemand = right
         }
     }
 
