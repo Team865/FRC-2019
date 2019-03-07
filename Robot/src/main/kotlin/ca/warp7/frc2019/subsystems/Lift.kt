@@ -108,7 +108,6 @@ object Lift : Subsystem() {
             nominalZero = actualPositionTicks
             println("zeroed")
         }
-        println("encoder $positionTicks")
         pHallEffectTriggered = hallEffectTriggered
 
         LiftMotionPlanner.updateMeasurements(dt)

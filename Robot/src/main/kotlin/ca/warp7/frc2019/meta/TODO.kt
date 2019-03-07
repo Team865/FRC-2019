@@ -6,11 +6,11 @@ TODO("Template)
  */
 
 /*
-TODO("due: 2019-03-07")
+TODO(due="2019-03-07")
     - Tune CurveToTarget
     - Front cargoship panel auto
     - Sandstorm camera
-    - Level 2 auto
+    - Level 2 sandstorm
     - ?(If outtake is mounted) Tune passthrough
     - ? Rocket auto
 */
