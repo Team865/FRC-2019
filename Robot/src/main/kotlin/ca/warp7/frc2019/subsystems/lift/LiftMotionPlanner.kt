@@ -15,12 +15,11 @@ object LiftMotionPlanner {
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val height get() = (Lift.positionTicks - nominalZero) / LiftConstants.kTicksPerInch
+    val height get() = (Lift.positionTicks) / LiftConstants.kTicksPerInch
     val velocity get() = Lift.velocityTicks / LiftConstants.kTicksPerInch * measurementFrequency
     val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kTicksPerInch * squaredFrequency
 
     private var motionPlanningEnabled = false
-    private var nominalZero = 0
     private var previousSetpoint = 0.0
     private var setpointInches = 0.0
     private var previousVelocityTicks = 0
@@ -32,9 +31,6 @@ object LiftMotionPlanner {
     private val dtBuffer = mutableListOf<Double>()
 
     fun updateMeasurements(dt: Double) {
-        if (Lift.hallEffectTriggered) {
-            nominalZero = Lift.positionTicks
-        }
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
             dvBuffer.add(Lift.velocityTicks - previousVelocityTicks)
             dtBuffer.add(dt)
@@ -47,9 +43,9 @@ object LiftMotionPlanner {
         }
     }
 
-    fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean = false) {
+    fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean) {
         motionPlanningEnabled = isMotionPlanningEnabled
-        if (newSetpoint < LiftConstants.kHomeHeightInches || newSetpoint > LiftConstants.kMaximumSetpoint) return
+        //if (newSetpoint < LiftConstants.kHomeHeightInches || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             setpointInches = adjustedSetpoint
@@ -92,11 +88,6 @@ object LiftMotionPlanner {
             return LiftMotionState(nextPosition, nextVelocity)
         }
 
-    @Suppress("unused")
-    fun zeroPosition() {
-        nominalZero = Lift.positionTicks
-    }
-
     fun compute() = Lift.apply {
         if (motionPlanningEnabled) {
             nextMotionState.let {
@@ -107,7 +98,7 @@ object LiftMotionPlanner {
             }
         } else {
             controlMode = ControlMode.Position
-            demand = -(setpointInches * LiftConstants.kTicksPerInch + nominalZero)
+            demand = -(setpointInches * LiftConstants.kTicksPerInch)
             feedforward = LiftConstants.kPrimaryFeedforward
         }
     }

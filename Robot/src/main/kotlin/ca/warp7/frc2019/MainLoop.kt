@@ -1,14 +1,12 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.ControllerState
+import ca.warp7.frc.*
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
-import ca.warp7.frc.set
-import ca.warp7.frc.withDriver
-import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.HatchCargo
+import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
@@ -72,35 +70,37 @@ object MainLoop : Action {
         }
         withOperator {
             when {
-                leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = -1 * leftTriggerAxis
-                    isOuttaking = true
-                }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     isOuttaking = true
                 }
+                leftTriggerAxis > ControlConstants.kControlDeadband -> {
+                    passThroughSpeed = -1 * leftTriggerAxis
+                    isOuttaking = true
+                }
             }
-            if (leftStickButton == HeldDown) {
+
+            if (!leftYAxis.epsilonEquals(0.0, 0.1)) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            } else if (leftStickButton == ControllerState.Released) {
+            } else {
                 LiftState.kOpenLoop.speed = 0.0
             }
 
             when (Pressed) {
-                leftBumper -> {
+                /*
+                rightBumper -> {
                     Lift.setpointLevel += when {
                         Lift.setpointLevel < 2 -> 1
                         else -> 0
                     }
-                    //Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
+                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
                 }
-                rightBumper -> {
+                leftBumper -> {
                     Lift.setpointLevel -= when {
                         Lift.setpointLevel > 0 -> 1
                         else -> 0
                     }
-                    //Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
+                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
 
                 }
 
@@ -114,7 +114,7 @@ object MainLoop : Action {
                     Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
                     println("Cool ${Lift.coolSetpoint}")
                 }
-
+                */
                 bButton -> Outtake.set {
                     grabbing = !grabbing
                     pushing = false
@@ -124,10 +124,7 @@ object MainLoop : Action {
                     grabbing = false
                 }
 
-
                 else -> Unit
-
-
             }
         }
         if (passThroughSpeed != 0.0) {

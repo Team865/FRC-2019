@@ -1,22 +1,17 @@
 package ca.warp7.frc2019.meta
 
-
 /*
-TODO("Template")
+TODO("Template)
     - TODO
  */
 
 /*
-TODO("TODO")
-    - Release code
-    - Superstructure states
-    - Find setpoint heights
-    - Add a state using lift motion planner
-    - Hatch outtake (panel mechanism)
-    - Implement async action
-    - Indexing cargo state tuning
-    - Add lazy actuators
-    - Add separate outtake speed for operator
-    - Implement awesome autonomous driving
+TODO("due: 2019-03-07")
+    - Tune CurveToTarget
+    - Front cargoship panel auto
+    - Sandstorm camera
+    - Level 2 auto
+    - ?(If outtake is mounted) Tune passthrough
+    - ? Rocket auto
+*/
 
- */

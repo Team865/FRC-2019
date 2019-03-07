@@ -35,12 +35,16 @@ object Lift : Subsystem() {
 
     var demand = 0.0
     var feedforward = 0.0
-    var positionTicks = 0
+    var actualPositionTicks = 0
     var velocityTicks = 0
     var actualPercent = 0.0
     var actualCurrent = 0.0
     var actualVoltage = 0.0
     var hallEffectTriggered = true
+    var pHallEffectTriggered = false
+    var nominalZero = 0
+
+    val positionTicks get() = actualPositionTicks- nominalZero
 
     var setpointLevel = 0
     var setpointType = HatchCargo.Hatch
@@ -89,19 +93,24 @@ object Lift : Subsystem() {
     }
 
     override fun onOutput() {
-        if (controlMode == ControlMode.Position && demand <= 1.0) {
-
-        }
         master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
     }
 
     override fun onMeasure(dt: Double) {
-        positionTicks = master.selectedSensorPosition
+        actualPositionTicks = master.selectedSensorPosition
         velocityTicks = master.selectedSensorVelocity
         actualPercent = master.motorOutputPercent
 //        actualCurrent = master.outputCurrent
 //        actualVoltage = master.busVoltage * actualPercent
         hallEffectTriggered = !hallEffect.get()
+
+        if (hallEffectTriggered!=pHallEffectTriggered) {
+            nominalZero = actualPositionTicks
+            println("zeroed")
+        }
+        println("encoder $positionTicks")
+        pHallEffectTriggered = hallEffectTriggered
+
         LiftMotionPlanner.updateMeasurements(dt)
     }
 
