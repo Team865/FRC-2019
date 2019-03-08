@@ -1,13 +1,10 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.actionkt.Action
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
 import ca.warp7.frc.talonSRX
 import ca.warp7.frc.victorSPX
-import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.FieldConstants.firstCargoBayCenterHeightInches
-import ca.warp7.frc2019.constants.FieldConstants.firstHatchPortCenterHeightInches
 import ca.warp7.frc2019.constants.FieldConstants.secondCargoBayCenterHeightInches
 import ca.warp7.frc2019.constants.FieldConstants.secondHatchPortCenterHeightInches
 import ca.warp7.frc2019.constants.FieldConstants.thirdCargoBayCenterHeightInches
@@ -83,11 +80,6 @@ object Lift : Subsystem() {
             field = value
         }
 
-    override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
-        println("Setting lift to $wantedState")
-        super.set(wantedState, block)
-    }
-
     override fun onDisabled() {
         master.neutralOutput()
     }
@@ -106,7 +98,6 @@ object Lift : Subsystem() {
 
         if (hallEffectTriggered!=pHallEffectTriggered) {
             nominalZero = actualPositionTicks
-            println("zeroed")
         }
         pHallEffectTriggered = hallEffectTriggered
 
