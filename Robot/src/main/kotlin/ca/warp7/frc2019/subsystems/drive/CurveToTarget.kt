@@ -52,15 +52,13 @@ object CurveToTarget : Action {
     override fun update() {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
-        if (!xSpeed.epsilonEquals(0.0, 0.2)) {
-            xSpeed = 0.5 * xSpeed.sign
-        } else {
-            xSpeed = 0.0
-        }
 
         if (xSpeed < -ControlConstants.kControlDeadband) zRotation *= -1
         else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
+
+
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
+
         if (isAligning && Limelight.hasTarget) {
             val error = Math.toRadians(Limelight.x)
             val time = Timer.getFPGATimestamp()
@@ -71,16 +69,23 @@ object CurveToTarget : Action {
             } else {
                 val dError = error - pError
 
-                val kP = p.getDouble(0.5)
-                val kD = D.getDouble(0.1)/dt
-                val kVi = 0.2
+                var kP: Double
+                var kD: Double
+                var kVi: Double
+
+                if (xSpeed.epsilonEquals(0.0, 0.1)) {
+                    kP = 0.01
+                    kD = 2.0
+                    kVi = 0.2
+                } else {
+                    kP = 0.5
+                    kD = 0.05
+                    kVi = 0.2
+                }
 
                 val frictionVoltage = kVi.withSign(error)
-                Drive.leftDemand = left + ((error * kP + dError * kD + frictionVoltage) / (Limelight.area))
-
-
-
-                Drive.rightDemand = right - ((error * kP + dError * kD + frictionVoltage) / (Limelight.area))
+                Drive.leftDemand = left*0.5 + ((error * kP + dError / dt * kD + frictionVoltage) / (Limelight.area))
+                Drive.rightDemand = right*0.5 - ((error * kP + dError / dt * kD + frictionVoltage) / (Limelight.area))
             }
             pError = error
             pTime = time
