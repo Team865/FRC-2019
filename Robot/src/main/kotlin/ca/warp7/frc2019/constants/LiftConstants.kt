@@ -20,16 +20,16 @@ object LiftConstants {
 
     const val kHomeHeightInches = 18.5
 
-    const val kMaxBaseAcceleration = 1.0 //TODO find actual max acceleration 65m/s^2 ??
+    const val kMaxBaseAcceleration = 3 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kPrimaryFeedforward = -0.1
+    const val kPrimaryFeedforward = -0.06 //FIXME -0.15
     const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO
     const val kStoppedCurrentEpsilon = 0.1 // TODO
     const val kPurePursuitPositionGain = 0.4 // TODO
-    const val kMaximumSetpoint = 80.0 // TODO
+    const val kMaximumSetpoint = 84.0 // TODO
     const val kEpsilon = 1E-9
     const val kAccelerationMeasurementFrames = 5
     const val kMaxAcceleration = kMaxBaseAcceleration
@@ -38,7 +38,7 @@ object LiftConstants {
 
         // TODO Position PID slot
         slot0.apply {
-            kP = 1 / 40.0 * kTicksPerInch
+            kP = 0.5 // 1 / 40.0 * kTicksPerInch
             kI = 0.0
             kD = 0.0
             kF = 0.0

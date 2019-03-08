@@ -22,4 +22,7 @@ object DriveState {
 
     val kFollowPath = FollowPath
 
+    val kTurnPID = TurnToTarget
+
+    val kCurveToTarget = CurveToTarget
 }
