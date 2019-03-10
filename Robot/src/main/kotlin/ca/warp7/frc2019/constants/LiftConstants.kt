@@ -24,7 +24,7 @@ object LiftConstants {
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
     const val kPrimaryFeedforward = -0.13
-    const val kManualControlScale = 0.8
+    const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO
     const val kStoppedCurrentEpsilon = 0.1 // TODO

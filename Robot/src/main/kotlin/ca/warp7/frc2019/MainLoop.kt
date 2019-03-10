@@ -27,6 +27,7 @@ object MainLoop : Action {
     override fun update() {
         var passThroughSpeed = 0.0
         var isOuttaking = false
+        var fastOuttake = false
         withDriver {
             if (xButton == Pressed) Limelight.isDriver = !Limelight.isDriver
             if (yButton == HeldDown) Limelight.isDriver = false
@@ -133,6 +134,10 @@ object MainLoop : Action {
 
                 else -> Unit
             }
+            fastOuttake = rightBumper == HeldDown
+        }
+        if (!fastOuttake) {
+            Outtake.speed = 0.0
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {
@@ -141,6 +146,10 @@ object MainLoop : Action {
             }
         } else {
             Superstructure.set(SuperstructureState.kIdle)
+        }
+        if (fastOuttake) {
+            Outtake.speed = 1.0
+            Outtake.grabbing = true
         }
     }
 }
