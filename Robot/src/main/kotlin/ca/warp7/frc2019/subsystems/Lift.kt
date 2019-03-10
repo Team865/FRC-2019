@@ -89,6 +89,7 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
+        /*
         actualPositionTicks = master.selectedSensorPosition
         velocityTicks = master.selectedSensorVelocity
         actualPercent = master.motorOutputPercent
@@ -102,6 +103,7 @@ object Lift : Subsystem() {
         pHallEffectTriggered = hallEffectTriggered
 
         LiftMotionPlanner.updateMeasurements(dt)
+        */
     }
 
     override fun onPostUpdate() {

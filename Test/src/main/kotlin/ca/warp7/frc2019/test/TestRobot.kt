@@ -9,6 +9,6 @@ import edu.wpi.first.wpilibj.TimedRobot
 object TestRobot {
     @JvmStatic
     fun main(args: Array<String>) {
-        TimedRobot.startRobot { LiftPID() }
+        TimedRobot.startRobot { object: TimedRobot(){}}
     }
 }
