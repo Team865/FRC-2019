@@ -18,7 +18,7 @@ object LiftState {
 
     val kOpenLoop = OpenLoopState {
         Lift.controlMode = ControlMode.PercentOutput
-        Lift.demand = it
+        Lift.demand = it * LiftConstants.kManualControlScale
         Lift.feedforward = LiftConstants.kPrimaryFeedforward
     }
 

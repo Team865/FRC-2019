@@ -19,6 +19,7 @@ object MainLoop : Action {
     override fun start() {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
+        Limelight.set { isDriver = true }
     }
 
     override val shouldFinish: Boolean = false
