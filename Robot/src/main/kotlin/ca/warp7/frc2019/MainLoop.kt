@@ -136,9 +136,6 @@ object MainLoop : Action {
             }
             fastOuttake = rightBumper == HeldDown
         }
-        if (!fastOuttake) {
-            Outtake.speed = 0.0
-        }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {
                 speed = passThroughSpeed
