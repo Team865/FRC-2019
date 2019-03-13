@@ -29,7 +29,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     y0 = 0.0,
                     dy0 = 0.0,
                     ddy0 = 0.0,
-                    y1 = 100.0,
+                    y1 = -60.0,
                     dy1 = 100.0,
                     ddy1 = 0.0
             ), model = DifferentialDriveModel(
@@ -39,7 +39,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
-                //curvatureConstraints.forEach { println(it) }
+                curvatureConstraints.forEach { println(it) }
             }
         }
     }
