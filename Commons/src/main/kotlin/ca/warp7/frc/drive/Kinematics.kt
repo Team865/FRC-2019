@@ -3,7 +3,6 @@
 package ca.warp7.frc.drive
 
 import ca.warp7.frc.epsilonEquals
-import kotlin.math.withSign
 
 fun DifferentialDriveModel.solve(state: WheelState) = ChassisState(
         linear = (state.left + state.right) / 2.0,
@@ -33,8 +32,8 @@ fun DifferentialDriveModel.maxAtCurvature(curvature: Double): ChassisState {
     println(curvature)
     if (curvature.epsilonEquals(0.0)) return ChassisState(maxVelocity, angular = 0.0)
     val angular = maxVelocity / (1 / curvature + wheelbaseRadius)
-    val linear = maxVelocity - angular * wheelbaseRadius.withSign(curvature)
-    return ChassisState(linear, angular)
+    val linear = (maxVelocity - (angular * wheelbaseRadius)).coerceAtLeast(0.0)
+    return ChassisState(linear, -angular)
 }
 
 fun DifferentialDriveModel.solvedMaxAtCurvature(curvature: Double) = solve(maxAtCurvature(curvature).apply { println(this) }).apply { println(this) }
