@@ -6,9 +6,9 @@ import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.rangeTo
-import ca.warp7.frc.path.IsolatedConstraint
-import ca.warp7.frc.path.Moment
-import ca.warp7.frc.path.TimedState
+import ca.warp7.frc.trajectory.IsolatedConstraint
+import ca.warp7.frc.trajectory.Moment
+import ca.warp7.frc.trajectory.TimedState
 import ca.warp7.frc2019.constants.DriveConstants
 import kotlin.math.min
 import kotlin.math.pow
