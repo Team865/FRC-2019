@@ -21,3 +21,5 @@ fun waypoint(x: Number, y: Number, angle: Number) =
         Pose2D(Translation2D(x.toDouble(), y.toDouble()), rotationInDegrees(angle.toDouble()))
 
 val Path2DState.curvature get() = (vx * ay - ax * vy) / (vx * vx + vy * vy).pow(1.5)
+
+val Path2DState.position get() = Translation2D(px, py)

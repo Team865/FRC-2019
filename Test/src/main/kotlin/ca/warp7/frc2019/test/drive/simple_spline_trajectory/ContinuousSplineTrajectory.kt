@@ -2,8 +2,13 @@ package ca.warp7.frc2019.test.drive.simple_spline_trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.solvedMaxAtCurvature
+import ca.warp7.frc.epsilonEquals
+import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.path.*
 import ca.warp7.frc2019.constants.DriveConstants
+import kotlin.math.absoluteValue
+import kotlin.math.asin
+import kotlin.math.withSign
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveModel) {
@@ -15,6 +20,29 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
     val points: List<Path2DState> = (0..segments).map { path[it * parametricDistance] }
     // Isolated constraints
     val curvatureConstraints = points.map { model.solvedMaxAtCurvature(it.curvature) }
+    // Distances
+    val leftPath: List<Double> = (0 until segments).map {
+        val p0 = points[it]
+        val pos0 = p0.position
+        val pos1 = points[it + 1].position
+        val chordLength = (pos1 - pos0).mag
+        val curvature = p0.curvature
+        if (curvature.epsilonEquals(0.0)) chordLength else {
+            val radius = 1 / curvature.absoluteValue - model.wheelbaseRadius.withSign(curvature)
+            radius * 2 * asin(chordLength / (2 * radius))
+        }
+    }
+    val rightPath: List<Double> = (0 until segments).map {
+        val p0 = points[it]
+        val pos0 = p0.position
+        val pos1 = points[it + 1].position
+        val chordLength = (pos1 - pos0).mag
+        val curvature = p0.curvature
+        if (curvature.epsilonEquals(0.0)) chordLength else {
+            val radius = 1 / curvature.absoluteValue + model.wheelbaseRadius.withSign(curvature)
+            radius * 2 * asin(chordLength / (2 * radius))
+        }
+    }
 
     companion object {
         @JvmStatic
