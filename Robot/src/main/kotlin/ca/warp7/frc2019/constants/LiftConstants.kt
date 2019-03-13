@@ -13,7 +13,7 @@ object LiftConstants {
 
     private const val kRopeDiameter = 3 / 25.4
 
-    private const val kDrumDiameter = 2.0 + kRopeDiameter // Inches
+    private const val kDrumDiameter = 2.0 // + kRopeDiameter // Inches
     private const val kDrumCircumference = kDrumDiameter * Math.PI
     const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
 
@@ -33,6 +33,8 @@ object LiftConstants {
     const val kEpsilon = 1E-9
     const val kAccelerationMeasurementFrames = 5
     const val kMaxAcceleration = kMaxBaseAcceleration
+
+    const val kMaxHeightEncoderTicks = -42268.0
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
@@ -62,8 +64,8 @@ object LiftConstants {
             closedLoopPeriod = 1
         }
 
-        openloopRamp = 0.2
-        closedloopRamp = 0.0
+        openloopRamp = 0.15
+        closedloopRamp = 0.15
 
         neutralDeadband = 0.04
 
