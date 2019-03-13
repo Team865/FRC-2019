@@ -8,12 +8,8 @@ import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
-import kotlin.math.sign
 import kotlin.math.withSign
 
 object CurveToTarget : Action {
@@ -25,12 +21,8 @@ object CurveToTarget : Action {
     var left = 0.0
     var right = 0.0
 
-    var pHasTarget = false
-    var pError = 0.0
-    var pTime = 0.0
-    private val tab = Shuffleboard.getTab("Curve To Target")
-    val p: NetworkTableEntry = tab.add("P", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
-    val D: NetworkTableEntry = tab.add("D", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
+    private var lastError = 0.0
+    private var lastTime = 0.0
 
     private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
@@ -52,28 +44,23 @@ object CurveToTarget : Action {
     override fun update() {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
-
         if (xSpeed < -ControlConstants.kControlDeadband) zRotation *= -1
         else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
-
-
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
 
         if (isAligning && Limelight.hasTarget) {
             val error = Math.toRadians(Limelight.x)
             val time = Timer.getFPGATimestamp()
-            val dt = time - pTime
+            val dt = time - lastTime
             if (error.epsilonEquals(0.0, 0.02)) {
                 Drive.leftDemand = left
                 Drive.rightDemand = right
             } else {
-                val dError = error - pError
-
-                var kP: Double
-                var kD: Double
-                var kVi: Double
-
-                if (xSpeed.epsilonEquals(0.0, 0.1)) {
+                val dError = error - lastError
+                val kP: Double
+                val kD: Double
+                val kVi: Double
+                if (!xSpeed.epsilonEquals(0.0, 0.1)) {
                     kP = 0.01
                     kD = 2.0
                     kVi = 0.2
@@ -82,18 +69,16 @@ object CurveToTarget : Action {
                     kD = 0.05
                     kVi = 0.2
                 }
-
-                val frictionVoltage = kVi.withSign(error)
-                Drive.leftDemand = left*0.5 + ((error * kP + dError / dt * kD + frictionVoltage) / (Limelight.area))
-                Drive.rightDemand = right*0.5 - ((error * kP + dError / dt * kD + frictionVoltage) / (Limelight.area))
+                val friction = kVi.withSign(error)
+                Drive.leftDemand = left * 0.5 + (error * kP + dError / dt * kD + friction) / (Limelight.area)
+                Drive.rightDemand = right * 0.5 - (error * kP + dError / dt * kD + friction) / (Limelight.area)
             }
-            pError = error
-            pTime = time
+            lastError = error
+            lastTime = time
         } else {
             Drive.leftDemand = left
             Drive.rightDemand = right
         }
-        pHasTarget = Limelight.hasTarget
     }
 
     override val shouldFinish get() = false

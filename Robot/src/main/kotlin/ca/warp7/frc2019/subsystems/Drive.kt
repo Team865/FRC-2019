@@ -67,7 +67,7 @@ object Drive : Subsystem() {
 //        rightPositionTicks = rightMaster.selectedSensorPosition * -1
 //        leftVelocityTicks = leftMaster.selectedSensorVelocity
 //        rightVelocityTicks = rightMaster.selectedSensorVelocity * -1
-        DriveMotionPlanner.updateMeasurements(dt)
+//        DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {

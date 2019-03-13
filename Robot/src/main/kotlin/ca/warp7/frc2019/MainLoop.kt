@@ -1,12 +1,13 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.*
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
+import ca.warp7.frc.epsilonEquals
+import ca.warp7.frc.set
+import ca.warp7.frc.withDriver
+import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.constants.HatchCargo
-import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
@@ -18,6 +19,7 @@ object MainLoop : Action {
     override fun start() {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
+        Limelight.set { isDriver = true }
     }
 
     override val shouldFinish: Boolean = false
@@ -25,12 +27,13 @@ object MainLoop : Action {
     override fun update() {
         var passThroughSpeed = 0.0
         var isOuttaking = false
+        var fastOuttake = false
         withDriver {
             if (xButton == Pressed) Limelight.isDriver = !Limelight.isDriver
-            if(yButton==HeldDown) Limelight.isDriver = false
+            if (yButton == HeldDown) Limelight.isDriver = false
 /*                        if (yButton == HeldDown) {
                 Drive.set(DriveState.kTurnPID)
-                Drive.set(DriveState.kCurveToTarget) {
+              ]\[  Drive.set(DriveState.kCurveToTarget) {
                     xSpeed = leftYAxis * -1
                     zRotation = rightXAxis
                     isQuickTurn = leftBumper == HeldDown
@@ -131,6 +134,7 @@ object MainLoop : Action {
 
                 else -> Unit
             }
+            fastOuttake = rightBumper == HeldDown
         }
         if (passThroughSpeed != 0.0) {
             Superstructure.set(SuperstructureState.kPassThrough) {
@@ -139,6 +143,10 @@ object MainLoop : Action {
             }
         } else {
             Superstructure.set(SuperstructureState.kIdle)
+        }
+        if (fastOuttake) {
+            Outtake.speed = 1.0
+            Outtake.grabbing = true
         }
     }
 }

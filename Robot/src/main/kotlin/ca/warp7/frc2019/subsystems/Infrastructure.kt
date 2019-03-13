@@ -33,12 +33,13 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
+        //if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
         //if (compressor.pressureSwitchValue && !compressor.enabled()) startCompressor = true
-        if (ahrsCalibrated) {
+        /*if (ahrsCalibrated) {
             yaw = Math.toRadians(ahrs.fusedHeading.toDouble())
             pitch = Math.toRadians(ahrs.pitch.toDouble())
         }
+        */
     }
 
     override fun onPostUpdate() {
