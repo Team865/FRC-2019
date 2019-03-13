@@ -16,10 +16,12 @@ object DriveConstants {
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
-    const val kTrackWidth = 24.75 // FIXME This is measured for traction wheels not Colsons
     const val kTurningDiameter = 24.75 // FIXME This is measured for traction wheels not Colsons
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
+
+    private const val kScrubFactor = 1.0
+    const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*
     ======================

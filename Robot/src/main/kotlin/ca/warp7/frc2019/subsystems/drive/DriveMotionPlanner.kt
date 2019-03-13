@@ -25,7 +25,7 @@ object DriveMotionPlanner : Subsystem() {
 
 
     val model = DifferentialDriveModel(
-            wheelbaseRadius = DriveConstants.kTurningDiameter / 2,
+            wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
             maxVelocity = DriveConstants.kMaxVelocity,
             maxAcceleration = DriveConstants.kMaxAcceleration,
             maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
