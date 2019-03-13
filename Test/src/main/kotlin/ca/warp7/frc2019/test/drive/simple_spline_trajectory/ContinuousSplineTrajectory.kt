@@ -29,8 +29,8 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     y0 = 0.0,
                     dy0 = 0.0,
                     ddy0 = 0.0,
-                    y1 = -100.0,
-                    dy1 = -100.0,
+                    y1 = 100.0,
+                    dy1 = 100.0,
                     ddy1 = 0.0
             ), model = DifferentialDriveModel(
                     wheelbaseRadius = DriveConstants.kTurningDiameter / 2,
