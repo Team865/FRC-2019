@@ -2,12 +2,12 @@
 
 package ca.warp7.frc.drive
 
-fun DifferentialModel.solve(state: WheelState) = ChassisState(
+fun DifferentialDriveModel.solve(state: WheelState) = ChassisState(
         linear = (state.left + state.right) / 2.0,
-        angular = (state.right - state.left) / (2 * wheelBaseRadius)
+        angular = (state.right - state.left) / (2 * wheelbaseRadius)
 )
 
-fun DifferentialModel.solve(state: ChassisState) = WheelState(
-        left = state.linear - state.angular * wheelBaseRadius,
-        right = state.linear + state.angular * wheelBaseRadius
+fun DifferentialDriveModel.solve(state: ChassisState) = WheelState(
+        left = state.linear - state.angular * wheelbaseRadius,
+        right = state.linear + state.angular * wheelbaseRadius
 )

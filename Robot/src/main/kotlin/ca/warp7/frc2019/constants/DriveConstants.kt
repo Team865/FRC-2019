@@ -41,12 +41,14 @@ object DriveConstants {
     const val kTicksPerInch = kTicksPerRevolution / kWheelCircumference
 
     const val kMaxVelocity = 12.0 // ft/s TODO Re-tune after robot is done
-    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
     const val kMaxAcceleration = 8.875 //  ft/s
+    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
 
     const val kSegmentLength = 0.254 // m
 
     const val kVIntercept = 0.0 // FIXME
+
+    private const val kOpenLoopRamp = 0.15
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
@@ -76,11 +78,8 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        // 0.3 too high - can't overcome direction change
-        openloopRamp = 0.15
+        openloopRamp = kOpenLoopRamp
         closedloopRamp = 0.0
-
-        neutralDeadband = 0.04
 
         voltageCompSaturation = 12.0 // Max voltage
 
