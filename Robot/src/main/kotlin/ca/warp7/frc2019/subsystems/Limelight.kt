@@ -26,11 +26,11 @@ object Limelight : Subsystem() {
     var isDriver = false
         set(value) {
             if (value) {
-                camMode.setNumber(1)
-                ledMode.setNumber(1)
+                camMode.setDouble(1.0)
+                ledMode.setDouble(1.0)
             } else {
-                camMode.setNumber(0)
-                ledMode.setNumber(0)
+                camMode.setDouble(0.0)
+                ledMode.setDouble(0.0)
             }
             field = value
         }
