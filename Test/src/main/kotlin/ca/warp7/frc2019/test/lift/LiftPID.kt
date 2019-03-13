@@ -1,37 +1,36 @@
 package ca.warp7.frc2019.test.lift
 
-import ca.warp7.frc.config
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.followedBy
-import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive.leftMaster
-import ca.warp7.frc2019.subsystems.Drive.rightMaster
 import ca.warp7.frc2019.subsystems.Lift
-import ca.warp7.frc2019.subsystems.Lift.master
 import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.can.VictorSPX
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.networktables.NetworkTableEntry
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
+import kotlin.math.absoluteValue
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class LiftPID : TimedRobot() {
 
     private val master = Lift.master
-    private val target = -25000.0
 
     private val tab = Shuffleboard.getTab("Lift PID")
 
-    val p: NetworkTableEntry = tab.add("P", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
-    val i: NetworkTableEntry = tab.add("I", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
-    val d: NetworkTableEntry = tab.add("D", 0).withWidget(BuiltInWidgets.kNumberSlider).entry
+    private val xboxController = XboxController(0)
+
+    val p: NetworkTableEntry = tab.add("P", 0).withWidget(BuiltInWidgets.kTextView).entry
+    val i: NetworkTableEntry = tab.add("I", 0).withWidget(BuiltInWidgets.kTextView).entry
+    val d: NetworkTableEntry = tab.add("D", 0).withWidget(BuiltInWidgets.kTextView).entry
+    val t: NetworkTableEntry = tab.add("Target", 0.5).withWidget(BuiltInWidgets.kTextView).entry
+    val pos: NetworkTableEntry = tab.add("pos", 0.5).withWidget(BuiltInWidgets.kGraph).entry
 
     var lastP = 0.0
     var lastI = 0.0
     var lastD = 0.0
+    var lastTime = Timer.getFPGATimestamp()
 
     override fun robotPeriodic() {
         val newP = p.getDouble(0.0)
@@ -49,15 +48,46 @@ class LiftPID : TimedRobot() {
             lastD = newD
             master.config_kD(0, newD, 0)
         }
+        val nt = Timer.getFPGATimestamp()
+        Lift.onMeasure(nt - lastTime)
+        lastTime = nt
         Lift.onPostUpdate()
     }
 
-    override fun autonomousInit() {
+    override fun teleopInit() {
         master.selectedSensorPosition = 0
     }
 
-    override fun autonomousPeriodic() {
-        master.set(ControlMode.Position, target)
+    val maxHeight = 42726.0
+    override fun teleopPeriodic() {
+        if (xboxController.getBumper(GenericHID.Hand.kLeft)) {
+            master.selectedSensorPosition = 0
+        }
+        when {
+            xboxController.xButton -> {
+                val setpoint = t.getDouble(0.0)
+                val scaledLiftLocation = Lift.actualPositionTicks.absoluteValue / maxHeight
+                if (scaledLiftLocation > 0.1) master.set(ControlMode.Position, setpoint * -maxHeight)
+                else if (!Lift.hallEffectTriggered) {
+                    if (setpoint < 0.1) {
+                        master.set(ControlMode.PercentOutput, 0.06)
+                    } else {
+                        master.set(ControlMode.Position, setpoint * -maxHeight)
+                    }
+                } else {
+                    master.set(ControlMode.Position, setpoint * -maxHeight)
+                    master.selectedSensorPosition = 0
+                }
+                pos.setDouble(scaledLiftLocation)
+            }
+            else -> {
+                val speed = xboxController.getY(GenericHID.Hand.kLeft)
+                when {
+                    speed.absoluteValue > 0.2 -> master.set(ControlMode.PercentOutput, (speed - 0.2) / 0.8)
+                    else -> master.set(ControlMode.PercentOutput, -0.12)
+                }
+            }
+        }
     }
 
     override fun disabledInit() {
