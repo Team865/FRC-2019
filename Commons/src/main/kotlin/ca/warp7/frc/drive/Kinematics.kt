@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc.path
+package ca.warp7.frc.drive
 
 fun DifferentialModel.solve(state: WheelState) = ChassisState(
         linear = (state.left + state.right) / 2.0,

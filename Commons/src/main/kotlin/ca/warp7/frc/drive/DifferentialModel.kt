@@ -1,4 +1,4 @@
-package ca.warp7.frc.path
+package ca.warp7.frc.drive
 
 @Suppress("unused")
 data class DifferentialModel(
