@@ -1,7 +1,10 @@
 package ca.warp7.frc.drive
 
-import ca.warp7.frc.geometry.Pose2D
-
-data class TankTrajectoryState(
-        val pose: Pose2D
-)
+data class TankTrajectoryState<T>(
+        val state: T
+) {
+    var leftVelocity = 0.0
+    var rightVelocity = 0.0
+    var leftAcceleration = 0.0
+    var rightAcceleration = 0.0
+}
