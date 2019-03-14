@@ -1,11 +1,13 @@
 package ca.warp7.frc2019.test.drive.simple_spline_trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.drive.TankTrajectoryState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.drive.solvedMaxAtCurvature
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.path.*
+import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
 import kotlin.math.absoluteValue
 import kotlin.math.asin
@@ -22,27 +24,35 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
     // Isolated constraints
     val curvatureConstraints: List<WheelState> = points.map { model.solvedMaxAtCurvature(it.curvature) }
     // Distances
-    val leftPath: List<Double> = (0 until segments).map {
-        val p0 = points[it]
-        val chordLength = (points[it + 1].position - p0.position).mag
-        val curvature = p0.curvature
-        if (curvature.epsilonEquals(0.0)) chordLength else {
-            // subtract the radius from the center radius
-            val radius = 1 / curvature.absoluteValue - model.wheelbaseRadius.withSign(curvature)
-            // calculate arc length
-            radius * 2 * asin(chordLength / (2 * radius))
+    val dL: List<Double>
+    val dR: List<Double>
+
+    val moments: List<Moment<TankTrajectoryState>>
+
+    init {
+        dL = (0 until segments).map {
+            val p0 = points[it]
+            val chordLength = (points[it + 1].position - p0.position).mag
+            val curvature = p0.curvature
+            if (curvature.epsilonEquals(0.0)) chordLength else {
+                // subtract the radius from the center radius
+                val radius = 1 / curvature.absoluteValue - model.wheelbaseRadius.withSign(curvature)
+                // calculate arc length
+                radius * 2 * asin(chordLength / (2 * radius))
+            }
         }
-    }
-    val rightPath: List<Double> = (0 until segments).map {
-        val p0 = points[it]
-        val chordLength = (points[it + 1].position - p0.position).mag
-        val curvature = p0.curvature
-        if (curvature.epsilonEquals(0.0)) chordLength else {
-            // add the radius to the center radius
-            val radius = 1 / curvature.absoluteValue + model.wheelbaseRadius.withSign(curvature)
-            // calculate arc length
-            radius * 2 * asin(chordLength / (2 * radius))
+        dR = (0 until segments).map {
+            val p0 = points[it]
+            val chordLength = (points[it + 1].position - p0.position).mag
+            val curvature = p0.curvature
+            if (curvature.epsilonEquals(0.0)) chordLength else {
+                // add the radius to the center radius
+                val radius = 1 / curvature.absoluteValue + model.wheelbaseRadius.withSign(curvature)
+                // calculate arc length
+                radius * 2 * asin(chordLength / (2 * radius))
+            }
         }
+        moments = emptyList()
     }
 
     companion object {
@@ -68,7 +78,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
-                curvatureConstraints.forEach { println(it) }
+                curvatureConstraints.zip(dL.zip(dR)).forEach { println(it) }
             }
         }
     }
