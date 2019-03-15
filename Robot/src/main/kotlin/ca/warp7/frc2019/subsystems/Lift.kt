@@ -38,7 +38,6 @@ object Lift : Subsystem() {
     var actualCurrent = 0.0
     var actualVoltage = 0.0
     var hallEffectTriggered = true
-    var pHallEffectTriggered = false
     var nominalZero = 0
 
     val positionTicks get() = actualPositionTicks- nominalZero
@@ -89,25 +88,21 @@ object Lift : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        /*
         actualPositionTicks = master.selectedSensorPosition
         velocityTicks = master.selectedSensorVelocity
-        actualPercent = master.motorOutputPercent
+
+//        actualPercent = master.motorOutputPercent
 //        actualCurrent = master.outputCurrent
 //        actualVoltage = master.busVoltage * actualPercent
-        hallEffectTriggered = !hallEffect.get()
 
-        if (hallEffectTriggered!=pHallEffectTriggered) {
-            nominalZero = actualPositionTicks
-        }
-        pHallEffectTriggered = hallEffectTriggered
+        hallEffectTriggered = !hallEffect.get()
+        if (hallEffectTriggered) nominalZero = actualPositionTicks
 
         LiftMotionPlanner.updateMeasurements(dt)
-        */
     }
 
     override fun onPostUpdate() {
-        put("Actual Percent", actualPercent)
+//        put("Actual Percent", actualPercent)
 //        put("Actual Current", actualCurrent)
 //        put("Actual Voltage", actualVoltage)
         put("HallEffect", hallEffectTriggered)

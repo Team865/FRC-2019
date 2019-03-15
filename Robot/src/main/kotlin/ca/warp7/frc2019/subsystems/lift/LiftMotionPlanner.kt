@@ -71,7 +71,7 @@ object LiftMotionPlanner {
         get() {
             val state = currentMotionState
             if (state.height !in startHeight..setpointInches &&
-                    !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)){
+                    !state.height.epsilonEquals(setpointInches, LiftConstants.kEpsilon)) {
                 generateTrajectory()
             }
             val nextDt = dtBuffer.average()
@@ -97,9 +97,15 @@ object LiftMotionPlanner {
                         (it.height - height) * LiftConstants.kPurePursuitPositionGain
             }
         } else {
-            controlMode = ControlMode.Position
-            demand = -(setpointInches * LiftConstants.kTicksPerInch)
-            feedforward = LiftConstants.kPrimaryFeedforward
+            if (setpointInches > 2.5 || hallEffectTriggered) {
+                controlMode = ControlMode.Position
+                demand = -(setpointInches * LiftConstants.kTicksPerInch)
+                feedforward = LiftConstants.kPrimaryFeedforward
+            } else {
+                controlMode = ControlMode.PercentOutput
+                demand = 0.06
+                feedforward = 0.0
+            }
         }
     }
 

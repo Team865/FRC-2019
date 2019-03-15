@@ -8,6 +8,7 @@ import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
@@ -95,7 +96,6 @@ object MainLoop : Action {
             }
 
             when (Pressed) {
-                /*
                 rightBumper -> {
                     Lift.setpointLevel += when {
                         Lift.setpointLevel < 2 -> 1
@@ -122,8 +122,8 @@ object MainLoop : Action {
                     Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
                     println("Cool ${Lift.coolSetpoint}")
                 }
-                */
-                bButton -> Outtake.set {
+
+                xButton -> Outtake.set {
                     grabbing = !grabbing
                     pushing = false
                 }

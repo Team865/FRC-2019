@@ -68,16 +68,11 @@ class LiftPID : TimedRobot() {
                 val setpoint = t.getDouble(0.0)
                 val scaledLiftLocation = Lift.actualPositionTicks.absoluteValue / maxHeight
                 if (scaledLiftLocation > 0.1) master.set(ControlMode.Position, setpoint * -maxHeight)
-                else if (!Lift.hallEffectTriggered) {
-                    if (setpoint < 0.1) {
-                        master.set(ControlMode.PercentOutput, 0.06)
-                    } else {
-                        master.set(ControlMode.Position, setpoint * -maxHeight)
-                    }
-                } else {
-                    master.set(ControlMode.Position, setpoint * -maxHeight)
-                    master.selectedSensorPosition = 0
+                else if (!Lift.hallEffectTriggered) when {
+                    setpoint <= 0.1 -> master.set(ControlMode.PercentOutput, 0.06)
+                    else -> master.set(ControlMode.Position, setpoint * -maxHeight)
                 }
+                else master.selectedSensorPosition = 0
                 pos.setDouble(scaledLiftLocation)
             }
             else -> {
