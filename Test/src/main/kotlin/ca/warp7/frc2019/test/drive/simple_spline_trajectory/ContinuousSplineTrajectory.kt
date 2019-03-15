@@ -7,10 +7,7 @@ import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
-import kotlin.math.absoluteValue
-import kotlin.math.asin
-import kotlin.math.sqrt
-import kotlin.math.withSign
+import kotlin.math.*
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveModel) {
@@ -56,27 +53,28 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             val now = timedStates[i]
             val next = timedStates[i + 1]
             val constraint = curvatureConstraints[i + 1]
-            var leftVel = sqrt(now.leftVelocity + 2 * model.maxAcceleration * leftDist)
-            var rightVel = sqrt(now.rightVelocity + 2 * model.maxAcceleration * rightDist)
-            if (leftVel > constraint.left) {
-                leftVel = constraint.left
-                rightVel = leftVel / constraint.left * constraint.right
+            val maxLeftVel = sqrt(now.leftVelocity.pow(2) + 2 * model.maxAcceleration * leftDist)
+            val maxRightVel = sqrt(now.rightVelocity.pow(2) + 2 * model.maxAcceleration * rightDist)
+            var leftVel = min(maxLeftVel, constraint.left)
+            var rightVel = min(maxRightVel, constraint.right)
+            println("$maxLeftVel, $maxRightVel, $constraint, maxLeft:$leftVel, maxRight:$rightVel")
+            if (leftVel > rightVel) {
+                rightVel = maxLeftVel / constraint.left * constraint.right
+                if (constraint.right > constraint.left) {
+                    leftVel = maxRightVel / constraint.right * constraint.left
+                }
+                println("maxLeft > maxRight")
+            } else if (leftVel < rightVel) {
+                leftVel = maxRightVel / constraint.right * constraint.left
+                if (constraint.left > constraint.right) {
+                    rightVel = maxLeftVel / constraint.left * constraint.right
+                }
+                println("maxRight > maxLeft")
             }
-            if (rightVel > constraint.right) {
-                rightVel = constraint.right
-                leftVel = rightVel / constraint.right * constraint.left
-            }
-            if (constraint.left > constraint.right) {
-                rightVel = leftVel / constraint.left * constraint.right
-            } else if (constraint.right > constraint.left) {
-                leftVel = rightVel / constraint.right * constraint.left
-            }
-            val leftAcc = (leftVel - now.leftVelocity) / (2 * leftDist)
-            val rightAcc = (rightVel - now.rightVelocity) / (2 * rightDist)
-            val lt = (2 * leftDist) / (leftVel + now.leftVelocity)
-            val rt = (2 * rightDist) / (rightVel + now.rightVelocity)
-
-            //println("$leftDist, $rightDist, ${constraint.left}, ${constraint.right}, $leftVel, $rightVel, $lt, $rt")
+            println("$leftVel, $rightVel")
+            println()
+            val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)) / (2 * leftDist)
+            val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)) / (2 * rightDist)
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
             next.leftAcceleration = leftAcc
