@@ -1,8 +1,7 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.ControllerState.HeldDown
-import ca.warp7.frc.ControllerState.Pressed
+import ca.warp7.frc.ControllerState.*
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
@@ -38,7 +37,8 @@ object MainLoop : Action {
                 isAligning = yButton == HeldDown
             }
             if (xButton == Pressed) Limelight.isDriver = !Limelight.isDriver
-            if (yButton == HeldDown) Limelight.isDriver = false
+            if (yButton == Pressed) Limelight.isDriver = false
+            else if (yButton == Released) Limelight.isDriver = true
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -1 * leftTriggerAxis
