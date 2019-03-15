@@ -2,13 +2,11 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.InfrastructureConstants
-import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.PowerDistributionPanel
-import edu.wpi.first.wpilibj.SPI
 
 object Infrastructure : Subsystem() {
     //private val compressor = Compressor(InfrastructureConstants.kCompressorModule)
-    private val ahrs = AHRS(SPI.Port.kMXP)
+//    private val ahrs = AHRS(SPI.Port.kMXP)
     private val pdp = PowerDistributionPanel(InfrastructureConstants.kPDPModule)
 
 
