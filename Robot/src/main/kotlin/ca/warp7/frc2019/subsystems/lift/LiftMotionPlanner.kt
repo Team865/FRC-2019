@@ -1,6 +1,8 @@
 package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.frc.epsilonEquals
+import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LiftConstants.kTicksPerInch
 import ca.warp7.frc2019.subsystems.Lift
@@ -12,10 +14,33 @@ import kotlin.math.sqrt
 
 object LiftMotionPlanner {
 
+    var setpointLevel = 0
+    var setpointType = HatchCargo.Hatch
+
+    fun getCoolSetpoint(): Double = when (setpointLevel) {
+        0 -> when (setpointType) {
+            HatchCargo.Hatch -> LiftConstants.kHomeHeightInches
+            HatchCargo.Cargo -> FieldConstants.firstCargoBayCenterHeightInches
+        }
+        1 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.secondHatchPortCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.secondCargoBayCenterHeightInches
+        }
+        2 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.thirdHatchPortCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.thirdCargoBayCenterHeightInches
+        }
+        else -> LiftConstants.kHomeHeightInches
+    }
+
+
+    var nominalZero = 0
+    val adjustedPositionTicks get() = Lift.actualPositionTicks - nominalZero
+
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val height get() = (Lift.positionTicks) / LiftConstants.kTicksPerInch
+    val height get() = (adjustedPositionTicks) / LiftConstants.kTicksPerInch
     val velocity get() = Lift.velocityTicks / LiftConstants.kTicksPerInch * measurementFrequency
     val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kTicksPerInch * squaredFrequency
 
@@ -41,6 +66,7 @@ object LiftMotionPlanner {
             accelerationTicksPer100ms2 = dvBuffer.sum() / dtBuffer.sum()
             previousVelocityTicks = Lift.velocityTicks
         }
+        if (Lift.hallEffectTriggered) nominalZero = Lift.actualPositionTicks
     }
 
     fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean) {

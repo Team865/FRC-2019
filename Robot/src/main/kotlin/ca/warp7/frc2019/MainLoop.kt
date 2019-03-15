@@ -12,6 +12,7 @@ import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
+import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 
@@ -97,30 +98,30 @@ object MainLoop : Action {
 
             when (Pressed) {
                 rightBumper -> {
-                    Lift.setpointLevel += when {
-                        Lift.setpointLevel < 2 -> 1
+                    LiftMotionPlanner.setpointLevel += when {
+                        LiftMotionPlanner.setpointLevel < 2 -> 1
                         else -> 0
                     }
-                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 leftBumper -> {
-                    Lift.setpointLevel -= when {
-                        Lift.setpointLevel > 0 -> 1
+                    LiftMotionPlanner.setpointLevel -= when {
+                        LiftMotionPlanner.setpointLevel > 0 -> 1
                         else -> 0
                     }
-                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
 
                 }
 
                 yButton -> {
-                    Lift.setpointType = HatchCargo.Hatch
-                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
-                    println("Cool ${Lift.coolSetpoint}")
+                    LiftMotionPlanner.setpointType = HatchCargo.Hatch
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                    println("Cool ${LiftMotionPlanner.getCoolSetpoint()}")
                 }
                 bButton -> {
-                    Lift.setpointType = HatchCargo.Cargo
-                    Lift.set(LiftState.kPositionOnly) { setpoint = Lift.coolSetpoint }
-                    println("Cool ${Lift.coolSetpoint}")
+                    LiftMotionPlanner.setpointType = HatchCargo.Cargo
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                    println("Cool ${LiftMotionPlanner.getCoolSetpoint()}")
                 }
 
                 xButton -> Outtake.set {
