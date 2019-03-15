@@ -55,5 +55,6 @@ object Lift : Subsystem() {
         put("Adjusted Height (in)", LiftMotionPlanner.height)
         put("Velocity (in per s)", LiftMotionPlanner.velocity)
         put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
+        put("Cool Setpoint", LiftMotionPlanner.getCoolSetpoint())
     }
 }

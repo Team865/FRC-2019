@@ -75,14 +75,12 @@ object MainLoop : Action {
                         LiftMotionPlanner.setpointLevel < 2 -> 1
                         else -> 0
                     }
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 leftBumper -> {
                     LiftMotionPlanner.setpointLevel -= when {
                         LiftMotionPlanner.setpointLevel > 0 -> 1
                         else -> 0
                     }
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch
