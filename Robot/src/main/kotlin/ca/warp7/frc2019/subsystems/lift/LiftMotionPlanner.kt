@@ -129,7 +129,7 @@ object LiftMotionPlanner {
                 feedforward = LiftConstants.kPrimaryFeedforward + positionGain
             }
         } else {
-            if (setpointInches > LiftConstants.kPIDDeadSpotHeight || hallEffectTriggered) {
+            if (height < LiftConstants.kPIDDeadSpotHeight || hallEffectTriggered) {
                 controlMode = ControlMode.Position
                 demand = -(setpointInches * LiftConstants.kTicksPerInch) + nominalZero
                 feedforward = LiftConstants.kPrimaryFeedforward

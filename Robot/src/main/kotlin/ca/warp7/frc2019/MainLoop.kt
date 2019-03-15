@@ -71,14 +71,12 @@ object MainLoop : Action {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             } else LiftState.kOpenLoop.speed = 0.0
             when (Pressed) {
-                rightBumper -> LiftMotionPlanner.increaseSetpoint()
-                leftBumper -> LiftMotionPlanner.decreaseSetpoint()
-                yButton -> {
-                    LiftMotionPlanner.setpointType = HatchCargo.Hatch
+                rightBumper -> {
+                    LiftMotionPlanner.increaseSetpoint()
                     Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
-                bButton -> {
-                    LiftMotionPlanner.setpointType = HatchCargo.Cargo
+                leftBumper -> {
+                    LiftMotionPlanner.decreaseSetpoint()
                     Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 xButton -> Outtake.set {
@@ -88,6 +86,17 @@ object MainLoop : Action {
                 aButton -> Outtake.set {
                     pushing = !pushing
                     grabbing = false
+                }
+                else -> Unit
+            }
+            when (HeldDown) {
+                yButton -> {
+                    LiftMotionPlanner.setpointType = HatchCargo.Hatch
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                }
+                bButton -> {
+                    LiftMotionPlanner.setpointType = HatchCargo.Cargo
+                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 else -> Unit
             }
