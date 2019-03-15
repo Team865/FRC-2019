@@ -27,8 +27,8 @@ object MainLoop : Action {
 
     override fun update() {
         var passThroughSpeed = 0.0
-        var isOuttaking = false
-        var fastOuttake = false
+        var isOpenOuttake = false
+        var isFastOuttake = false
         withDriver {
             Drive.set(DriveState.kAlignedCurvature) {
                 xSpeed = leftYAxis * -1
@@ -42,28 +42,29 @@ object MainLoop : Action {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -1 * leftTriggerAxis
-                    isOuttaking = true
+                    isOpenOuttake = true
                     Intake.set { speed = -1 * leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
-                    isOuttaking = rightBumper == HeldDown
+                    isOpenOuttake = rightBumper == HeldDown
                     Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                 }
                 else -> {
                     Intake.set { speed = 0.0 }
                 }
             }
+            isFastOuttake = bButton == Pressed
         }
         withOperator {
             when {
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
-                    isOuttaking = true
+                    isOpenOuttake = true
                 }
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -1 * leftTriggerAxis
-                    isOuttaking = true
+                    isOpenOuttake = true
                 }
             }
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
@@ -90,19 +91,11 @@ object MainLoop : Action {
                 }
                 else -> Unit
             }
-            fastOuttake = rightBumper == HeldDown
         }
-        if (passThroughSpeed != 0.0) {
-            Superstructure.set(SuperstructureState.kPassThrough) {
-                speed = passThroughSpeed
-                outtaking = isOuttaking
-            }
-        } else {
-            Superstructure.set(SuperstructureState.kIdle)
-        }
-        if (fastOuttake) {
-            Outtake.speed = 1.0
-            Outtake.grabbing = true
+        Superstructure.set(SuperstructureState.kPassThrough) {
+            speed = passThroughSpeed
+            openOuttake = isOpenOuttake
+            fastOuttake = isFastOuttake
         }
     }
 }
