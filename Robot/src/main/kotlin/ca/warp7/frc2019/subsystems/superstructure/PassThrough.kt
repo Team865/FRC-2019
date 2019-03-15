@@ -4,7 +4,6 @@ import ca.warp7.actionkt.Action
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.Conveyor
 import ca.warp7.frc2019.subsystems.Outtake
-import ca.warp7.frc2019.subsystems.Superstructure
 import kotlin.math.withSign
 
 object PassThrough : Action {
@@ -12,15 +11,11 @@ object PassThrough : Action {
     var speed = 0.0
     var outtaking = false
 
-    private val isLiftAtPositionForPassThrough get() = true // TODO use actual lift calculations
-
     override fun update() {
-        if (isLiftAtPositionForPassThrough) {
-            Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
-        }
-        //FIXME Outtake.grabbing = outtaking
+        Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
+        Outtake.grabbing = outtaking
         Outtake.speed = SuperstructureConstants.kOuttakeSpeed.withSign(speed)
-        //FIXME Outtake.pushing = false
+        Outtake.pushing = false
     }
 
     override val shouldFinish: Boolean
