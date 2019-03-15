@@ -66,7 +66,7 @@ class LiftPID : TimedRobot() {
         when {
             xboxController.xButton -> {
                 val setpoint = t.getDouble(0.0)
-                val scaledLiftLocation = Lift.actualPositionTicks.absoluteValue / maxHeight
+                val scaledLiftLocation = Lift.position.absoluteValue / maxHeight
                 if (scaledLiftLocation > 0.1) master.set(ControlMode.Position, setpoint * -maxHeight)
                 else if (!Lift.hallEffectTriggered) when {
                     setpoint <= 0.1 -> master.set(ControlMode.PercentOutput, 0.06)

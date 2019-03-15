@@ -14,8 +14,8 @@ object DriveDistance : Action {
 
     override fun start() {
         Drive.controlMode = ControlMode.Position
-        val leftInitialSensorTicks = Drive.leftPositionTicks
-        val rightInitialSensorTicks = Drive.rightPositionTicks
+        val leftInitialSensorTicks = Drive.leftPosition
+        val rightInitialSensorTicks = Drive.rightPosition
         initialDistance = DriveConstants.kWheelCircumference * ((leftInitialSensorTicks + rightInitialSensorTicks) / 2.0) / 1024
 
         Drive.leftDemand = 1024 * distance / DriveConstants.kWheelCircumference + leftInitialSensorTicks
@@ -23,6 +23,6 @@ object DriveDistance : Action {
     }
 
     override val shouldFinish
-        get() = abs(distance - ((Drive.leftPositionTicks + Drive.rightPositionTicks) / 2.0
+        get() = abs(distance - ((Drive.leftPosition + Drive.rightPosition) / 2.0
                 - initialDistance)) <= tolerance
 }

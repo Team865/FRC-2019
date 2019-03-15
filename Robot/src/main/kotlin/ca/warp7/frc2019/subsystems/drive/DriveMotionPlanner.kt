@@ -14,8 +14,8 @@ object DriveMotionPlanner : Subsystem() {
 
     var lastDt = 0.0
     val motionState = DriveMotionState()
-    val leftPositionInches get() = Drive.leftPositionTicks / DriveConstants.kTicksPerInch
-    val rightPositionInches get() = Drive.rightPositionTicks / DriveConstants.kTicksPerInch
+    val leftPositionInches get() = Drive.leftPosition / DriveConstants.kTicksPerInch
+    val rightPositionInches get() = Drive.rightPosition / DriveConstants.kTicksPerInch
     val leftVelocityInches get() = (leftVelocity / 2) * DriveConstants.kWheelDiameter
     val rightVelocityInches get() = (rightVelocity / 2) * DriveConstants.kWheelDiameter
 
@@ -24,8 +24,8 @@ object DriveMotionPlanner : Subsystem() {
 
     fun updateMeasurements(dt: Double) {
         lastDt = dt
-        leftVelocity = Drive.leftVelocityTicks / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
-        rightVelocity = Drive.rightVelocityTicks / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
+        leftVelocity = Drive.leftVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
+        rightVelocity = Drive.rightVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
         val measuredYaw = Infrastructure.yaw
         val measuredVelocity = (leftVelocityInches + rightVelocityInches) / 2
         motionState.apply {

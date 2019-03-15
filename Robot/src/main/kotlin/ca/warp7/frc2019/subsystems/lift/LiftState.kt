@@ -5,6 +5,8 @@ import ca.warp7.frc.OpenLoopState
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
+import kotlin.math.pow
+import kotlin.math.withSign
 
 
 @Suppress("unused")
@@ -18,7 +20,7 @@ object LiftState {
 
     val kOpenLoop = OpenLoopState {
         Lift.controlMode = ControlMode.PercentOutput
-        Lift.demand = it * LiftConstants.kManualControlScale
+        Lift.demand = it.pow(2).withSign(it) * LiftConstants.kManualControlScale
         Lift.feedforward = LiftConstants.kPrimaryFeedforward
     }
 

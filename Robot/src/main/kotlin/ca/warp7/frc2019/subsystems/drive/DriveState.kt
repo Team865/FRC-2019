@@ -24,5 +24,5 @@ object DriveState {
 
     val kTurnPID = TurnToTarget
 
-    val kCurveToTarget = CurveToTarget
+    val kAlignedCurvature = AlignedCurvature
 }

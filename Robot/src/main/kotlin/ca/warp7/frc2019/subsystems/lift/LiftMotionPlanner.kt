@@ -1,6 +1,8 @@
 package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.frc.epsilonEquals
+import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LiftConstants.kTicksPerInch
 import ca.warp7.frc2019.subsystems.Lift
@@ -12,16 +14,46 @@ import kotlin.math.sqrt
 
 object LiftMotionPlanner {
 
+    var setpointLevel = 0
+    var setpointType = HatchCargo.Hatch
+
+    fun getCoolSetpoint(): Double = when (setpointLevel) {
+        0 -> when (setpointType) {
+            HatchCargo.Hatch -> LiftConstants.kHomeHeightInches
+            HatchCargo.Cargo -> FieldConstants.firstCargoBayCenterHeightInches
+        }
+        1 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.secondHatchPortCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.secondCargoBayCenterHeightInches
+        }
+        2 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.thirdHatchPortCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.thirdCargoBayCenterHeightInches
+        }
+        else -> LiftConstants.kHomeHeightInches
+    }
+
+    fun increaseSetpoint() {
+        setpointLevel = (setpointLevel + 1).coerceAtMost(2)
+    }
+
+    fun decreaseSetpoint() {
+        setpointLevel = (setpointLevel - 1).coerceAtLeast(0)
+    }
+
+    private var nominalZero = 0
+    val adjustedPositionTicks get() = Lift.position - nominalZero
+
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
     private val squaredFrequency = measurementFrequency * measurementFrequency
 
-    val height get() = (Lift.positionTicks) / LiftConstants.kTicksPerInch
-    val velocity get() = Lift.velocityTicks / LiftConstants.kTicksPerInch * measurementFrequency
+    val height get() = (adjustedPositionTicks) / LiftConstants.kTicksPerInch
+    val velocity get() = Lift.velocity / LiftConstants.kTicksPerInch * measurementFrequency
     val acceleration get() = accelerationTicksPer100ms2 / LiftConstants.kTicksPerInch * squaredFrequency
 
     private var motionPlanningEnabled = false
     private var previousSetpoint = 0.0
-    private var setpointInches = 0.0
+    var setpointInches = 0.0
     private var previousVelocityTicks = 0
     private var accelerationTicksPer100ms2 = 0.0
     private var vMax = 0.0
@@ -32,20 +64,20 @@ object LiftMotionPlanner {
 
     fun updateMeasurements(dt: Double) {
         if (!dt.epsilonEquals(0.0, LiftConstants.kEpsilon)) {
-            dvBuffer.add(Lift.velocityTicks - previousVelocityTicks)
+            dvBuffer.add(Lift.velocity - previousVelocityTicks)
             dtBuffer.add(dt)
             if (dvBuffer.size > LiftConstants.kAccelerationMeasurementFrames) {
                 dvBuffer.removeAt(0)
                 dtBuffer.removeAt(0)
             }
             accelerationTicksPer100ms2 = dvBuffer.sum() / dtBuffer.sum()
-            previousVelocityTicks = Lift.velocityTicks
+            previousVelocityTicks = Lift.velocity
         }
+        if (Lift.hallEffectTriggered) nominalZero = Lift.position
     }
 
     fun setSetpoint(newSetpoint: Double, isMotionPlanningEnabled: Boolean) {
         motionPlanningEnabled = isMotionPlanningEnabled
-        //if (newSetpoint < LiftConstants.kHomeHeightInches || newSetpoint > LiftConstants.kMaximumSetpoint) return
         val adjustedSetpoint = newSetpoint - LiftConstants.kHomeHeightInches
         if (!adjustedSetpoint.epsilonEquals(previousSetpoint, LiftConstants.kEpsilon)) {
             setpointInches = adjustedSetpoint
@@ -93,17 +125,18 @@ object LiftMotionPlanner {
             nextMotionState.let {
                 controlMode = ControlMode.Velocity
                 demand = kTicksPerInch * it.velocity
-                feedforward = LiftConstants.kPrimaryFeedforward +
-                        (it.height - height) * LiftConstants.kPurePursuitPositionGain
+                val positionGain = (it.height - height) * LiftConstants.kPurePursuitPositionGain
+                feedforward = LiftConstants.kPrimaryFeedforward + positionGain
             }
         } else {
-            if (setpointInches > 2.5 || hallEffectTriggered) {
+            if (setpointInches > LiftConstants.kPIDDeadSpotHeight || hallEffectTriggered) {
                 controlMode = ControlMode.Position
-                demand = -(setpointInches * LiftConstants.kTicksPerInch)
+                demand = -(setpointInches * LiftConstants.kTicksPerInch) + nominalZero
                 feedforward = LiftConstants.kPrimaryFeedforward
             } else {
+                // In Dead spot, apply power to go down so that the hall effect sensor can zero the encoder
                 controlMode = ControlMode.PercentOutput
-                demand = 0.06
+                demand = LiftConstants.kMoveToBottomDemand
                 feedforward = 0.0
             }
         }
