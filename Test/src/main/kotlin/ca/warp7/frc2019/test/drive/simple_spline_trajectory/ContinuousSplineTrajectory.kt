@@ -73,8 +73,12 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             } else if (constraint.right > constraint.left) {
                 left = right / constraint.right * constraint.left
             }
+            val leftAcc = (left - now.leftVelocity) / (2 * dl)
+            val rightAcc = (right - now.rightVelocity) / (2 * dr)
             next.leftVelocity = left
             next.rightVelocity = right
+            next.leftAcceleration = leftAcc
+            next.rightAcceleration = rightAcc
         }
         moments = emptyList()
     }
@@ -102,7 +106,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
-                curvatureConstraints.zip(dL.zip(dR)).forEach { println(it) }
+                timedStates.map { it.leftVelocity }.forEach { println(it) }
             }
         }
     }
