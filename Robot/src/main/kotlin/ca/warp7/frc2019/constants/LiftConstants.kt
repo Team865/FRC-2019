@@ -43,9 +43,9 @@ object LiftConstants {
 
         // TODO Position PID slot
         slot0.apply {
-            kP = 0.5 // 1 / 40.0 * kTicksPerInch
+            kP = 0.2 // 1 / 40.0 * kTicksPerInch
             kI = 0.0
-            kD = 0.0
+            kD = 0.1
             kF = 0.0
             integralZone = 0
             allowableClosedloopError = 0

@@ -66,7 +66,7 @@ object MainLoop : Action {
                     isOuttaking = true
                 }
             }
-            if (leftYAxis.absoluteValue > ControlConstants.kControlDeadband) {
+            if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             } else LiftState.kOpenLoop.speed = 0.0
             when (Pressed) {
