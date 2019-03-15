@@ -3,7 +3,6 @@ package ca.warp7.frc2019
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.ControllerState.HeldDown
 import ca.warp7.frc.ControllerState.Pressed
-import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
@@ -15,6 +14,7 @@ import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import ca.warp7.frc2019.subsystems.lift.LiftState
 import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
+import kotlin.math.absoluteValue
 
 object MainLoop : Action {
 
@@ -31,50 +31,27 @@ object MainLoop : Action {
         var isOuttaking = false
         var fastOuttake = false
         withDriver {
-            if (xButton == Pressed) Limelight.isDriver = !Limelight.isDriver
-            if (yButton == HeldDown) Limelight.isDriver = false
-/*                        if (yButton == HeldDown) {
-                Drive.set(DriveState.kTurnPID)
-              ]\[  Drive.set(DriveState.kCurveToTarget) {
-                    xSpeed = leftYAxis * -1
-                    zRotation = rightXAxis
-                    isQuickTurn = leftBumper == HeldDown
-                }
-            } else {
-                Drive.set(DriveState.kCurvature) {
-                    xSpeed = leftYAxis * -1
-                    zRotation = rightXAxis
-                    isQuickTurn = leftBumper == HeldDown
-                }
-            }*/
-            Drive.set(DriveState.kCurveToTarget) {
+            Drive.set(DriveState.kAlignedCurvature) {
                 xSpeed = leftYAxis * -1
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == HeldDown
                 isAligning = yButton == HeldDown
             }
+            if (xButton == Pressed) Limelight.isDriver = !Limelight.isDriver
+            if (yButton == HeldDown) Limelight.isDriver = false
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -1 * leftTriggerAxis
                     isOuttaking = true
-                    Intake.set {
-                        speed = -1 * leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
-                        extended = true
-                    }
+                    Intake.set { speed = -1 * leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     isOuttaking = rightBumper == HeldDown
-                    Intake.set {
-                        speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale
-                        extended = true
-                    }
+                    Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                 }
                 else -> {
-                    Intake.set {
-                        speed = 0.0
-                        extended = false
-                    }
+                    Intake.set { speed = 0.0 }
                 }
             }
         }
@@ -89,13 +66,9 @@ object MainLoop : Action {
                     isOuttaking = true
                 }
             }
-
-            if (!leftYAxis.epsilonEquals(0.0, 0.1)) {
+            if (leftYAxis.absoluteValue > ControlConstants.kControlDeadband) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            } else {
-                LiftState.kOpenLoop.speed = 0.0
-            }
-
+            } else LiftState.kOpenLoop.speed = 0.0
             when (Pressed) {
                 rightBumper -> {
                     LiftMotionPlanner.setpointLevel += when {
@@ -110,9 +83,7 @@ object MainLoop : Action {
                         else -> 0
                     }
                     Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
-
                 }
-
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch
                     Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
@@ -123,7 +94,6 @@ object MainLoop : Action {
                     Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                     println("Cool ${LiftMotionPlanner.getCoolSetpoint()}")
                 }
-
                 xButton -> Outtake.set {
                     grabbing = !grabbing
                     pushing = false
