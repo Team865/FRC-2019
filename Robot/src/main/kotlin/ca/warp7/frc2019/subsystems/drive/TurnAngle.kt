@@ -9,7 +9,7 @@ import kotlin.math.abs
 
 object TurnAngle : Action {
     private val totalAngle
-        get() = 360 * (Drive.leftPositionTicks - Drive.rightPositionTicks) /
+        get() = 360 * (Drive.leftPosition - Drive.rightPosition) /
                 (1024 * 2 * DriveConstants.kWheelCircumference)
     var angle = 0.0 // angle in radians
     var tolerance = 1E-2 // angle

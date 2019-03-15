@@ -17,11 +17,13 @@ object Lift : Subsystem() {
     val master: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
             .followedBy(victorSPX(LiftConstants.kFollower, inverted = true))
             .apply { setSensorPhase(true) }
+
     val hallEffect = DigitalInput(LiftConstants.kHallEffect)
+
     var demand = 0.0
     var feedforward = 0.0
-    var actualPositionTicks = 0
-    var velocityTicks = 0
+    var position = 0
+    var velocity = 0
     var hallEffectTriggered = true
 
     var controlMode = ControlMode.PercentOutput
@@ -38,8 +40,8 @@ object Lift : Subsystem() {
     override fun onOutput() = master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
 
     override fun onMeasure(dt: Double) {
-        actualPositionTicks = master.selectedSensorPosition
-        velocityTicks = master.selectedSensorVelocity
+        position = master.selectedSensorPosition
+        velocity = master.selectedSensorVelocity
         hallEffectTriggered = !hallEffect.get()
         LiftMotionPlanner.updateMeasurements(dt)
     }
@@ -48,6 +50,7 @@ object Lift : Subsystem() {
         put("HallEffect", hallEffectTriggered)
         put("Demand", demand)
         put("Feedforward", feedforward)
+        put("Raw ticks", position)
         put("Adjusted Height (encoder)", LiftMotionPlanner.adjustedPositionTicks)
         put("Adjusted Height (in)", LiftMotionPlanner.height)
         put("Velocity (in per s)", LiftMotionPlanner.velocity)

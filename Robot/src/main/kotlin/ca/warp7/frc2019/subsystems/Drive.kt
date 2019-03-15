@@ -43,10 +43,10 @@ object Drive : Subsystem() {
     var leftFeedforward = 0.0
     var rightFeedforward = 0.0
 
-    var leftPositionTicks = 0
-    var rightPositionTicks = 0
-    var leftVelocityTicks = 0
-    var rightVelocityTicks = 0
+    var leftPosition = 0
+    var rightPosition = 0
+    var leftVelocity = 0
+    var rightVelocity = 0
 
     override fun onDisabled() {
         leftDemand = 0.0
@@ -63,10 +63,10 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-//        leftPositionTicks = leftMaster.selectedSensorPosition
-//        rightPositionTicks = rightMaster.selectedSensorPosition * -1
-//        leftVelocityTicks = leftMaster.selectedSensorVelocity
-//        rightVelocityTicks = rightMaster.selectedSensorVelocity * -1
+        leftPosition = leftMaster.selectedSensorPosition
+        rightPosition = rightMaster.selectedSensorPosition * -1
+        leftVelocity = leftMaster.selectedSensorVelocity
+        rightVelocity = rightMaster.selectedSensorVelocity * -1
 //        DriveMotionPlanner.updateMeasurements(dt)
     }
 
@@ -75,9 +75,9 @@ object Drive : Subsystem() {
         graph("Left Feedforward", leftFeedforward)
         graph("Right Demand", rightDemand)
         graph("Right Feedforward", rightFeedforward)
-        graph("Left Velocity", leftVelocityTicks)
-        graph("Right Velocity", rightVelocityTicks)
-        put("Left Position", leftPositionTicks)
-        put("Right Position", rightPositionTicks)
+        graph("Left Velocity", leftVelocity)
+        graph("Right Velocity", rightVelocity)
+        put("Left Position", leftPosition)
+        put("Right Position", rightPosition)
     }
 }
