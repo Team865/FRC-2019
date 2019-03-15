@@ -10,6 +10,10 @@ data class Translation2D(val x: Double, val y: Double) {
 
     val inverse: Translation2D get() = Translation2D(-x, -y)
 
+    override fun toString(): String {
+        return "Translation2D(${"%.3f".format(x)}, ${"%.3f".format(y)})"
+    }
+
     companion object {
         val identity = Translation2D(0.0, 0.0)
     }

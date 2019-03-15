@@ -52,33 +52,43 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                 radius * 2 * asin(length / (2 * radius))
             }
         }
+        val forwardMoments = Array(segments) { 0.0 }
         for (i in 0 until segments) {
-            val dl = dL[i]
-            val dr = dR[i]
+            val leftDist = dL[i]
+            val rightDist = dR[i]
             val now = timedStates[i]
             val next = timedStates[i + 1]
             val constraint = curvatureConstraints[i + 1]
-            var left = sqrt(now.leftVelocity + 2 * model.maxAcceleration * dl)
-            var right = sqrt(now.rightVelocity + 2 * model.maxAcceleration * dr)
-            if (left > constraint.left) {
-                left = constraint.left
-                right = left / constraint.left * constraint.right
+            var leftVel = sqrt(now.leftVelocity + 2 * model.maxAcceleration * leftDist)
+            var rightVel = sqrt(now.rightVelocity + 2 * model.maxAcceleration * rightDist)
+            if (leftVel > constraint.left) {
+                leftVel = constraint.left
+                rightVel = leftVel / constraint.left * constraint.right
             }
-            if (right > constraint.right) {
-                right = constraint.right
-                left = right / constraint.right * constraint.left
+            if (rightVel > constraint.right) {
+                rightVel = constraint.right
+                leftVel = rightVel / constraint.right * constraint.left
             }
             if (constraint.left > constraint.right) {
-                right = left / constraint.left * constraint.right
+                rightVel = leftVel / constraint.left * constraint.right
             } else if (constraint.right > constraint.left) {
-                left = right / constraint.right * constraint.left
+                leftVel = rightVel / constraint.right * constraint.left
             }
-            val leftAcc = (left - now.leftVelocity) / (2 * dl)
-            val rightAcc = (right - now.rightVelocity) / (2 * dr)
-            next.leftVelocity = left
-            next.rightVelocity = right
+            val leftAcc = (leftVel - now.leftVelocity) / (2 * leftDist)
+            val rightAcc = (rightVel - now.rightVelocity) / (2 * rightDist)
+            val lt = (2 * leftDist) / (leftVel + now.leftVelocity)
+            val rt = (2 * rightDist) / (rightVel + now.rightVelocity)
+
+            //println("$leftDist, $rightDist, ${constraint.left}, ${constraint.right}, $leftVel, $rightVel, $lt, $rt")
+            next.leftVelocity = leftVel
+            next.rightVelocity = rightVel
             next.leftAcceleration = leftAcc
             next.rightAcceleration = rightAcc
+        }
+        timedStates.forEach {
+            it.apply {
+                println("$leftVelocity, $rightVelocity, $state")
+            }
         }
         moments = emptyList()
     }
@@ -106,7 +116,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
-                timedStates.map { it.leftVelocity }.forEach { println(it) }
+                //timedStates.map { it.leftVelocity }.forEach { println(it) }
             }
         }
     }

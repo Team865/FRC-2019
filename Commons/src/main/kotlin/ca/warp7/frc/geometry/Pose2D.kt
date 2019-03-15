@@ -5,6 +5,10 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) {
 
     val inverse: Pose2D get() = rotation.inverse.let { Pose2D(translation.inverse.rotate(it), it) }
 
+    override fun toString(): String {
+        return "Pose2D($translation, $rotation)"
+    }
+
     companion object {
         val identity = Pose2D(Translation2D.identity, Rotation2D.identity)
     }
