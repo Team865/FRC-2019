@@ -33,8 +33,15 @@ object LiftMotionPlanner {
         else -> LiftConstants.kHomeHeightInches
     }
 
+    fun increaseSetpoint() {
+        setpointLevel = (setpointLevel + 1).coerceAtMost(2)
+    }
 
-    var nominalZero = 0
+    fun decreaseSetpoint() {
+        setpointLevel = (setpointLevel - 1).coerceAtLeast(0)
+    }
+
+    private var nominalZero = 0
     val adjustedPositionTicks get() = Lift.position - nominalZero
 
     private val measurementFrequency = 1000 / LiftConstants.kMasterTalonConfig.velocityMeasurementPeriod.value
@@ -46,7 +53,7 @@ object LiftMotionPlanner {
 
     private var motionPlanningEnabled = false
     private var previousSetpoint = 0.0
-    private var setpointInches = 0.0
+    var setpointInches = 0.0
     private var previousVelocityTicks = 0
     private var accelerationTicksPer100ms2 = 0.0
     private var vMax = 0.0
@@ -124,7 +131,7 @@ object LiftMotionPlanner {
         } else {
             if (setpointInches > LiftConstants.kPIDDeadSpotHeight || hallEffectTriggered) {
                 controlMode = ControlMode.Position
-                demand = -(setpointInches * LiftConstants.kTicksPerInch)
+                demand = -(setpointInches * LiftConstants.kTicksPerInch) + nominalZero
                 feedforward = LiftConstants.kPrimaryFeedforward
             } else {
                 // In Dead spot, apply power to go down so that the hall effect sensor can zero the encoder

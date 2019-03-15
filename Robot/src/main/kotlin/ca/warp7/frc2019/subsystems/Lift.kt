@@ -56,5 +56,6 @@ object Lift : Subsystem() {
         put("Velocity (in per s)", LiftMotionPlanner.velocity)
         put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
         put("Cool Setpoint", LiftMotionPlanner.getCoolSetpoint())
+        put("Setpoint", LiftMotionPlanner.setpointInches * LiftConstants.kTicksPerInch)
     }
 }
