@@ -1,9 +1,6 @@
 package ca.warp7.frc2019.test.drive.simple_spline_trajectory
 
-import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.TankTrajectoryState
-import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.drive.solvedMaxAtCurvature
+import ca.warp7.frc.drive.*
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.minus
@@ -85,13 +82,29 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             next.leftAcceleration = leftAcc
             next.rightAcceleration = rightAcc
         }
-        timedStates.forEach {
-            it.apply {
-                println("$leftVelocity, $rightVelocity, $state")
-            }
+        println(model)
+        println()
+        val dLx = Array(segments + 1) { 0.0 }
+        for (ll in 0 until segments) {
+            dLx[ll + 1] = dLx[ll] + dL[ll]
+        }
+        val dRx = Array(segments + 1) { 0.0 }
+        for (rr in 0 until segments) {
+            dRx[rr + 1] = dRx[rr] + dR[rr]
+        }
+        for (j in 0..segments) {
+            val p = points[j]
+            val c = curvatureConstraints[j]
+            val s = timedStates[j]
+            val l = dLx[j].s
+            val r = dRx[j].s
+            println("($l, $r), (${s.leftVelocity.s}, ${s.rightVelocity.s}), (${s.leftAcceleration.s}, ${s.rightAcceleration.s}) , $c, ${model.solve(c)}, ${s.state}, ${p.curvature.s}")
+
         }
         moments = emptyList()
     }
+
+    val Double.s get() = "%.3f".format(this)
 
     companion object {
         @JvmStatic
