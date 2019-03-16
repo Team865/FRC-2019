@@ -107,30 +107,31 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
         @JvmStatic
         fun main(args: Array<String>) {
             ContinuousSplineTrajectory(QuinticSegment2D(
-                    x0 = 0.0,
-                    y0 = 0.0,
+                    x0 = 5.5,
+                    y0 = 3.5,
 
-                    x1 = 10.0,
-                    y1 = 0.0,
+                    x1 = 18.0,
+                    y1 = 12.0,
 
-                    dx0 = 1.0,
+                    dx0 = 20.0,
                     dy0 = 0.0,
 
                     ddx0 = 0.0,
                     ddy0 = 0.0,
 
-                    dx1 = 1.0,
-                    dy1 = 0.0,
+                    dx1 = 18.0,
+                    dy1 = 15.0,
 
                     ddx1 = 0.0,
                     ddy1 = 0.0
             ), model = DifferentialDriveModel(
-                    wheelbaseRadius = DriveConstants.kTurningDiameter / 2,
+                    wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
                     maxVelocity = DriveConstants.kMaxVelocity,
                     maxAcceleration = DriveConstants.kMaxAcceleration,
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
+                //moments.forEach { println("(${it.t}, ${it.v.state.translation.x}, ${it.v.state.translation.y}),") }
                 moments.forEach { println(it) }
             }
         }

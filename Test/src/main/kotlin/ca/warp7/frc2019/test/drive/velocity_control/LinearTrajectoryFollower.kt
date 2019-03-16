@@ -18,7 +18,7 @@ class LinearTrajectoryFollower : Action {
 
     override fun update() {
         t = Timer.getFPGATimestamp()
-        while (i < moments.size - 1 && moments[i].t < t) i++
+        while (i < moments.size - 3 && moments[i].t < t) i++
         val mi = moments[i]
         val mj = moments[i + 1]
         val n = (t - mi.t) / (mj.t - mi.t)
