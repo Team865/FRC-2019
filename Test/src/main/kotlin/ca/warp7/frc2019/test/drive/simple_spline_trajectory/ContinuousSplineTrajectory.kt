@@ -57,8 +57,8 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             var rightVel = min(maxRightVel, c.right)
             if (leftVel > rightVel && c.left > c.right) rightVel = maxLeftVel / c.left * c.right
             else if (leftVel < rightVel && c.left < c.right) leftVel = maxRightVel / c.right * c.left
-            val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)) / (2 * leftDist)
-            val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)) / (2 * rightDist)
+            val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)).withSign(leftVel) / (2 * leftDist)
+            val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)).withSign(rightVel) / (2 * rightDist)
             val vi = (now.leftVelocity + now.rightVelocity) / 2
             val vf = (leftVel + rightVel) / 2
             val t = (leftDist + rightDist) / (vi + vf)
