@@ -57,15 +57,11 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             var rightVel = min(maxRight, c.right)
             if (leftVel > rightVel && c.left > c.right) rightVel = maxLeft / c.left * c.right
             else if (leftVel < rightVel && c.left < c.right) leftVel = maxRight / c.right * c.left
-            val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)).withSign(leftVel) / (2 * leftDist)
-            val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)).withSign(rightVel) / (2 * rightDist)
             val vi = (now.leftVelocity + now.rightVelocity) / 2
             val vf = (leftVel + rightVel) / 2
             val t = (leftDist + rightDist) / (vi + vf)
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
-            next.leftAcceleration = leftAcc
-            next.rightAcceleration = rightAcc
             forwardMoments[i + 1] = t
         }
         timedStates.last().apply {
@@ -87,19 +83,21 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             var rightVel = min(maxRight, forwardRightMax)
             if (leftVel > rightVel && c.left > c.right) rightVel = maxLeft / c.left * c.right
             else if (leftVel < rightVel && c.left < c.right) leftVel = maxRight / c.right * c.left
-            val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)).withSign(leftVel) / (2 * leftDist)
-            val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)).withSign(rightVel) / (2 * rightDist)
             val vi = (now.leftVelocity + now.rightVelocity) / 2
             val vf = (leftVel + rightVel) / 2
             val t = (leftDist + rightDist) / (vi + vf)
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
-            next.leftAcceleration = leftAcc
-            next.rightAcceleration = rightAcc
             backwardMoments[i - 1] = t
         }
         val totalMoments = forwardMoments.zip(backwardMoments, Math::max).toTypedArray()
-        for (i in 1 until totalMoments.size) totalMoments[i] += totalMoments[i - 1]
+        for (i in 1 until totalMoments.size) {
+            timedStates[i].leftAcceleration = (timedStates[i].leftVelocity -
+                    timedStates[i - 1].leftVelocity) / totalMoments[i]
+            timedStates[i].rightAcceleration = (timedStates[i].rightVelocity -
+                    timedStates[i - 1].rightVelocity) / totalMoments[i]
+            totalMoments[i] += totalMoments[i - 1]
+        }
         moments = totalMoments.mapIndexed { i, d -> Moment(d, timedStates[i]) }
     }
 
@@ -121,8 +119,8 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     ddx0 = 0.0,
                     ddy0 = 0.0,
 
-                    dx1 = -1.0,
-                    dy1 = 1.0,
+                    dx1 = 1.0,
+                    dy1 = 0.0,
 
                     ddx1 = 0.0,
                     ddy1 = 0.0
