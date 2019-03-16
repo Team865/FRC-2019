@@ -51,6 +51,9 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             val now = timedStates[i]
             val next = timedStates[i + 1]
             val c = curvatureConstraints[i + 1]
+            if (i == segments - 1) {
+                println("$leftDist, $rightDist, $c\n $now\n $next")
+            }
             val maxLeft = sqrt(now.leftVelocity.pow(2) + 2 * model.maxAcceleration * leftDist)
             val maxRight = sqrt(now.rightVelocity.pow(2) + 2 * model.maxAcceleration * rightDist)
             var leftVel = min(maxLeft, c.left)
@@ -63,6 +66,9 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
             forwardMoments[i + 1] = t
+            if (i == segments - 1) {
+                println("$leftDist, $rightDist, $c\n $now\n $next")
+            }
         }
         timedStates.last().apply {
             leftVelocity = 0.0
@@ -75,6 +81,9 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             val now = timedStates[i]
             val next = timedStates[i - 1]
             val c = curvatureConstraints[i - 1]
+            if (i == segments - 1) {
+                println("$leftDist, $rightDist, $c\n $now\n $next")
+            }
             val forwardLeftMax = next.leftVelocity
             val forwardRightMax = next.rightVelocity
             val maxLeft = sqrt(now.leftVelocity.pow(2) + 2 * model.maxAcceleration * leftDist)
@@ -89,8 +98,12 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
             backwardMoments[i - 1] = t
+            if (i == segments - 1) {
+                println("$leftDist, $rightDist, $c\n $now\n $next")
+            }
         }
         val totalMoments = forwardMoments.zip(backwardMoments, Math::max).toTypedArray()
+        //forwardMoments.zip(backwardMoments).zip(totalMoments).forEach { println(it) }
         for (i in 1 until totalMoments.size) {
             timedStates[i].leftAcceleration = (timedStates[i].leftVelocity -
                     timedStates[i - 1].leftVelocity) / totalMoments[i]
@@ -132,7 +145,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
                 //moments.forEach { println("(${it.t}, ${it.v.state.translation.x}, ${it.v.state.translation.y}),") }
-                moments.forEach { println(it) }
+                //moments.forEach { println(it) }
             }
         }
     }
