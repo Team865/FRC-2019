@@ -14,40 +14,35 @@ import kotlin.math.*
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
 class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveModel) {
-    // Number of segments
     val segments = 200
-    // Parameter t of each segment
     val parametricDistance: Double = 1.0 / segments
-    // Generate the path
     val points: List<Path2DState> = (0..segments).map { path[it * parametricDistance] }
-    // Isolated constraints
     val curvatureConstraints: List<WheelState> = points.map { model.solvedMaxAtCurvature(it.curvature) }
-    // timed states
     val timedStates: List<TankTrajectoryState<Pose2D>> = points.map { TankTrajectoryState(it.toPose(), it.curvature) }
-    // Distances
-    val dL: List<Double>
-    val dR: List<Double>
-    // moments
+    val dL: List<Double> = (0 until segments).map {
+        val p0 = points[it]
+        val length = (points[it + 1].position - p0.position).mag
+        val curvature = p0.curvature
+        if (curvature.epsilonEquals(0.0)) length else {
+            val radius = 1 / curvature.absoluteValue - model.wheelbaseRadius.withSign(curvature)
+            (radius * 2 * asin(length / (2 * radius)))
+        }
+    }
+    val dR: List<Double> = (0 until segments).map {
+        val p0 = points[it]
+        val length = (points[it + 1].position - p0.position).mag
+        val curvature = p0.curvature
+        if (curvature.epsilonEquals(0.0)) length else {
+            val radius = 1 / curvature.absoluteValue + model.wheelbaseRadius.withSign(curvature)
+            radius * 2 * asin(length / (2 * radius))
+        }
+    }
     val moments: List<Moment<TankTrajectoryState<Pose2D>>>
 
     init {
-        dL = (0 until segments).map {
-            val p0 = points[it]
-            val length = (points[it + 1].position - p0.position).mag
-            val curvature = p0.curvature
-            if (curvature.epsilonEquals(0.0)) length else {
-                val radius = 1 / curvature.absoluteValue - model.wheelbaseRadius.withSign(curvature)
-                (radius * 2 * asin(length / (2 * radius)))
-            }
-        }
-        dR = (0 until segments).map {
-            val p0 = points[it]
-            val length = (points[it + 1].position - p0.position).mag
-            val curvature = p0.curvature
-            if (curvature.epsilonEquals(0.0)) length else {
-                val radius = 1 / curvature.absoluteValue + model.wheelbaseRadius.withSign(curvature)
-                radius * 2 * asin(length / (2 * radius))
-            }
+        timedStates.first().apply {
+            leftVelocity = 0.0
+            rightVelocity = 0.0
         }
         val forwardMoments = Array(segments + 1) { 0.0 }
         for (i in 0 until segments) {
@@ -73,10 +68,20 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             next.rightAcceleration = rightAcc
             forwardMoments[i + 1] = t
         }
-        for (i in 1 until forwardMoments.size) {
-            forwardMoments[i] += forwardMoments[i - 1]
+        timedStates.last().apply {
+            leftVelocity = 0.0
+            rightVelocity = 0.0
         }
-        moments = forwardMoments.mapIndexed { i, d -> Moment(d, timedStates[i]) }
+        val backwardMoments = Array(segments + 1) { 0.0 }
+        for (i in segments until 1) {
+            val leftDist = dL[i - 1]
+            val rightDist = dR[i - 1]
+            val now = timedStates[i]
+            val next = timedStates[i - 1]
+        }
+        val totalMoments = forwardMoments.zip(backwardMoments, Math::max).toTypedArray()
+        for (i in 1 until totalMoments.size) totalMoments[i] += totalMoments[i - 1]
+        moments = totalMoments.mapIndexed { i, d -> Moment(d, timedStates[i]) }
     }
 
     val Double.s get() = "%.3f".format(this)
@@ -109,7 +114,6 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
                     frictionVoltage = DriveConstants.kVIntercept
             )).apply {
-                //timedStates.map { it.leftVelocity }.forEach { println(it) }
                 moments.forEach { println(it) }
             }
         }
