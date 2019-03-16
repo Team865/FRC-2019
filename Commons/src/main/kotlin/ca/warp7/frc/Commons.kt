@@ -30,3 +30,5 @@ fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
 fun feetToMeters(feet: Double) = feet * 0.3048
 
 fun interpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
+
+val Double.f get() = "%.4f".format(this)

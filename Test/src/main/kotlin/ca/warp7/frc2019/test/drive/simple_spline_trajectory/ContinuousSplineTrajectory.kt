@@ -23,7 +23,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
     // Isolated constraints
     val curvatureConstraints: List<WheelState> = points.map { model.solvedMaxAtCurvature(it.curvature) }
     // timed states
-    val timedStates: List<TankTrajectoryState<Pose2D>> = points.map { TankTrajectoryState(it.toPose()) }
+    val timedStates: List<TankTrajectoryState<Pose2D>> = points.map { TankTrajectoryState(it.toPose(), it.curvature) }
     // Distances
     val dL: List<Double>
     val dR: List<Double>
@@ -77,8 +77,6 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             next.rightAcceleration = rightAcc
             forwardMoments[i + 1] = t
         }
-        println(model)
-        println()
         val dLx = Array(segments + 1) { 0.0 }
         for (ll in 0 until segments) {
             dLx[ll + 1] = dLx[ll] + dL[ll]
@@ -119,8 +117,8 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
                     ddx0 = 0.0,
                     ddy0 = 0.0,
 
-                    dx1 = 1.0,
-                    dy1 = 0.0,
+                    dx1 = -1.0,
+                    dy1 = 1.0,
 
                     ddx1 = 0.0,
                     ddy1 = 0.0

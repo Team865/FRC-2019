@@ -1,5 +1,6 @@
 package ca.warp7.frc.geometry
 
+import ca.warp7.frc.f
 import kotlin.math.hypot
 
 data class Translation2D(val x: Double, val y: Double) {
@@ -11,7 +12,7 @@ data class Translation2D(val x: Double, val y: Double) {
     val inverse: Translation2D get() = Translation2D(-x, -y)
 
     override fun toString(): String {
-        return "Translation2D(${"%.3f".format(x)}, ${"%.3f".format(y)})"
+        return "Translation(${x.f}, ${y.f})"
     }
 
     companion object {
