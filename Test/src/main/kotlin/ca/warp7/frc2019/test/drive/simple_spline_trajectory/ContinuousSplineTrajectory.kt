@@ -55,43 +55,23 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             val rightDist = dR[i]
             val now = timedStates[i]
             val next = timedStates[i + 1]
-            val constraint = curvatureConstraints[i + 1]
+            val c = curvatureConstraints[i + 1]
             val maxLeftVel = sqrt(now.leftVelocity.pow(2) + 2 * model.maxAcceleration * leftDist)
             val maxRightVel = sqrt(now.rightVelocity.pow(2) + 2 * model.maxAcceleration * rightDist)
-            var leftVel = min(maxLeftVel, constraint.left)
-            var rightVel = min(maxRightVel, constraint.right)
-            if (leftVel > rightVel && constraint.left > constraint.right) {
-                rightVel = maxLeftVel / constraint.left * constraint.right
-            } else if (leftVel < rightVel && constraint.left < constraint.right) {
-                leftVel = maxRightVel / constraint.right * constraint.left
-            }
+            var leftVel = min(maxLeftVel, c.left)
+            var rightVel = min(maxRightVel, c.right)
+            if (leftVel > rightVel && c.left > c.right) rightVel = maxLeftVel / c.left * c.right
+            else if (leftVel < rightVel && c.left < c.right) leftVel = maxRightVel / c.right * c.left
             val leftAcc = (leftVel.pow(2) - now.leftVelocity.pow(2)) / (2 * leftDist)
             val rightAcc = (rightVel.pow(2) - now.rightVelocity.pow(2)) / (2 * rightDist)
-            val d = (leftDist + rightDist) / 2
             val vi = (now.leftVelocity + now.rightVelocity) / 2
             val vf = (leftVel + rightVel) / 2
-            val t = (2 * d) / (vi + vf)
+            val t = (leftDist + rightDist) / (vi + vf)
             next.leftVelocity = leftVel
             next.rightVelocity = rightVel
             next.leftAcceleration = leftAcc
             next.rightAcceleration = rightAcc
             forwardMoments[i + 1] = t
-        }
-        val dLx = Array(segments + 1) { 0.0 }
-        for (ll in 0 until segments) {
-            dLx[ll + 1] = dLx[ll] + dL[ll]
-        }
-        val dRx = Array(segments + 1) { 0.0 }
-        for (rr in 0 until segments) {
-            dRx[rr + 1] = dRx[rr] + dR[rr]
-        }
-        for (j in 0..segments) {
-            val p = points[j]
-            val c = curvatureConstraints[j]
-            val s = timedStates[j]
-            val l = dLx[j].s
-            val r = dRx[j].s
-            //println("($l, $r), (${s.leftVelocity.s}, ${s.rightVelocity.s}), (${s.leftAcceleration.s}, ${s.rightAcceleration.s}) , $c, ${model.solve(c)}, ${s.state}, ${p.curvature.s}")
         }
         for (i in 1 until forwardMoments.size) {
             forwardMoments[i] += forwardMoments[i - 1]
