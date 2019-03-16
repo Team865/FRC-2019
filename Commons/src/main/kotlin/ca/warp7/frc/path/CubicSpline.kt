@@ -17,5 +17,5 @@ data class CubicSpline(
     fun p(t: Double) = a * t.pow(3) + b * t.pow(2) + c * t + d
     fun v(t: Double) = 3 * a * t.pow(2) + 2 * b * t + c
     fun a(t: Double) = 6 * a * t + 2 * b
-    fun j(t: Double) = 6 * a
+    fun j() = 6 * a
 }

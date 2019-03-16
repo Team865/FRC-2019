@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.frc.Subsystem
+import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
@@ -21,6 +22,15 @@ object DriveMotionPlanner : Subsystem() {
 
     var leftVelocity = 0.0 // rad/s
     var rightVelocity = 0.0 // rad/s
+
+
+    val model = DifferentialDriveModel(
+            wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
+            maxVelocity = DriveConstants.kMaxVelocity,
+            maxAcceleration = DriveConstants.kMaxAcceleration,
+            maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
+            frictionVoltage = DriveConstants.kVIntercept
+    )
 
     fun updateMeasurements(dt: Double) {
         lastDt = dt
