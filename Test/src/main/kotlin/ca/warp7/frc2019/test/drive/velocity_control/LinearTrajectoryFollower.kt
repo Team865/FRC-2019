@@ -5,6 +5,7 @@ import ca.warp7.frc.geometry.interpolate
 import ca.warp7.frc.interpolate
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
@@ -16,10 +17,13 @@ class LinearTrajectoryFollower : Action {
     var t = 0.0
     var i = 0
     var startTime = 0.0
+    var startYaw = 0.0
     var lastTime = 0.0
+    var lastYawError = 0.0
 
     override fun start() {
         startTime = Timer.getFPGATimestamp()
+        startYaw = Infrastructure.fusedHeading
     }
 
     override fun update() {
@@ -34,6 +38,11 @@ class LinearTrajectoryFollower : Action {
         val p = mi.v.state.interpolate(mj.v.state, n).mag
         val v = interpolate(mi.v.velocity, mj.v.velocity, n)
         val a = interpolate(mi.v.acceleration, mj.v.acceleration, n)
+        val yawError = startYaw - Infrastructure.fusedHeading
+        val kD = 0
+        val dYawError = (lastYawError - yawError) * dt
+
+        lastYawError = yawError
         Drive.apply {
             controlMode = ControlMode.Velocity
             val leftPos = Drive.leftPosition / DriveConstants.kTicksPerInch * 0.0254
