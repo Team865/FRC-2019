@@ -10,7 +10,7 @@ object DriveWithCommonsLoop : Action {
 
     override fun update() {
         withDriver {
-            Drive.set(DriveState.kCurvature) {
+            Drive.set(DriveState.kAlignedCurvature) {
                 xSpeed = leftYAxis
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == ControllerState.HeldDown
