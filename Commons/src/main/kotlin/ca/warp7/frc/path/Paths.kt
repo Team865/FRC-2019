@@ -16,7 +16,7 @@ internal fun Double.checkBounds(): Double {
 }
 
 fun waypoint(x: Number, y: Number, angle: Number) =
-        Pose2D(Translation2D(x.toDouble(), y.toDouble()), rotationInDegrees(angle.toDouble()))
+        Pose2D(Translation2D(x.toDouble(), y.toDouble()), Rotation2D.fromDegrees(angle.toDouble()))
 
 val Path2DState.curvature get() = (vx * ay - ax * vy) / (vx * vx + vy * vy).pow(1.5)
 

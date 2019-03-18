@@ -36,7 +36,7 @@ object DriveMotionPlanner : Subsystem() {
         lastDt = dt
         leftVelocity = Drive.leftVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
         rightVelocity = Drive.rightVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * velocityHz
-        val measuredYaw = Infrastructure.yaw
+        val measuredYaw = Infrastructure.fusedHeading
         val measuredVelocity = (leftVelocityInches + rightVelocityInches) / 2
         motionState.apply {
             x += measuredVelocity * cos(measuredYaw) * dt

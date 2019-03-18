@@ -20,7 +20,7 @@ object DriveConstants {
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
 
-    private const val kScrubFactor = 1.0
+    private const val kScrubFactor = 1.1
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*
@@ -46,7 +46,7 @@ object DriveConstants {
     const val kMaxAcceleration = 8.875 //  ft/s
     const val kMaxFreeSpeedVelocity = 14.38 // ft/s
 
-    const val kSegmentLength = 0.254 // m
+    const val kSegmentLength = 0.0254 // m
 
     const val kVIntercept = 0.0 // FIXME
 
@@ -67,12 +67,12 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        // TODO Velocity PID slot
+        // Velocity PID slot
         slot1.apply {
-            kP = 0.0
-            kI = 0.0
-            kD = 0.0
-            kF = 0.0
+            kP = 0.2
+            kI = 0.00005
+            kD = 1.0
+            kF = 1.0
             integralZone = 0
             allowableClosedloopError = 0
             maxIntegralAccumulator = 0.0

@@ -18,7 +18,7 @@ class DriveWithCommons : TimedRobot() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverOnly }
         Drive.set(DriveState.kNeutralOutput)
-        Infrastructure.set { startCompressor = true }
+        Infrastructure.set { }
     }
 
     /**

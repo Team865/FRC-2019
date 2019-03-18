@@ -12,7 +12,7 @@ data class Rotation2D(val cos: Double, val sin: Double) {
     val normal: Rotation2D get() = Rotation2D(-sin, cos)
 
     override fun toString(): String {
-        return "Rotation(${cos.f}, ${sin.f}, ${degrees.f}°)"
+        return "Rotation(${degrees.f}°)"
     }
 
     companion object {
