@@ -6,7 +6,7 @@ import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
-object DriveDistance : Action {
+class DriveDistance : Action {
     var distance = 0.0 // distance in inches
     var tolerance = 1E-2 //distance
 

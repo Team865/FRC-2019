@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.withSign
 
 
-object TurnToTarget : Action {
+class TurnToTarget : Action {
     var error = 0.0
 
     override fun start() {
