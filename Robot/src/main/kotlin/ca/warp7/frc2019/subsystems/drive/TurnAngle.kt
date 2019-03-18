@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.PI
 import kotlin.math.abs
 
-object TurnAngle : Action {
+class TurnAngle : Action {
     private val totalAngle
         get() = 360 * (Drive.leftPosition - Drive.rightPosition) /
                 (1024 * 2 * DriveConstants.kWheelCircumference)
