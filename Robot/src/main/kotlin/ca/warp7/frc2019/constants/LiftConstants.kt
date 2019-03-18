@@ -3,10 +3,7 @@ package ca.warp7.frc2019.constants
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
-
-@Suppress("unused")
 object LiftConstants {
-
     const val kMaster = ElectricalConstants.kLiftMasterTalonId
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
@@ -17,13 +14,12 @@ object LiftConstants {
     private const val kDrumCircumference = kDrumDiameter * Math.PI
     const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
 
-
     const val kHomeHeightInches = 18.5
 
     const val kMaxBaseAcceleration = 3 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kPrimaryFeedforward = -0.13
+    const val kPrimaryFeedforward = 0.13
     const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO
@@ -34,10 +30,10 @@ object LiftConstants {
     const val kAccelerationMeasurementFrames = 5
     const val kMaxAcceleration = kMaxBaseAcceleration
 
-    const val kMaxHeightEncoderTicks = -42268.0
+    const val kMaxHeightEncoderTicks = 42268.0
 
-    const val kPIDDeadSpotHeight = -2.5
-    const val kMoveToBottomDemand = 0.06
+    const val kPIDDeadSpotHeight = 2.5
+    const val kMoveToBottomDemand = -0.06
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 

@@ -8,8 +8,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.pow
 import kotlin.math.withSign
 
-
-@Suppress("unused")
 object LiftState {
 
     val kIdle = runOnce {
@@ -23,12 +21,6 @@ object LiftState {
         Lift.demand = it.pow(2).withSign(it) * LiftConstants.kManualControlScale
         Lift.feedforward = LiftConstants.kPrimaryFeedforward
     }
-
-    val kGoToPositionPlanned = GoToPositionMotionPlanning
-
-    val kGoToPositionOptimisedNotPlanned = GoToPositionMotionPlanningSimple
-
-    val kFollowTrajectory = FollowTrajectory
 
     val kPositionOnly = PositionOnly()
 }
