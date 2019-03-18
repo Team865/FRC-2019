@@ -22,5 +22,5 @@ object LiftState {
         Lift.feedforward = LiftConstants.kPrimaryFeedforward
     }
 
-    val kPositionOnly = PositionOnly()
+    val kPositionOnly = GoToSetpoint()
 }
