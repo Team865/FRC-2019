@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer
 
 @Suppress("MemberVisibilityCanBePrivate")
 class LinearTrajectoryFollower : Action {
-    val trajectory = LinearTrajectory(12.0)
+    val trajectory = LinearTrajectory(8.0)
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0
@@ -44,8 +44,9 @@ class LinearTrajectoryFollower : Action {
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val newYaw = Infrastructure.yaw
-        val angularKp = 10.0
-        val angularGain = lastYaw.inverse.rotate(by = newYaw).inverse.radians * angularKp
+        val angularKp = 20000.0
+        val angularGain = newYaw.rotate(by = lastYaw.inverse).radians * angularKp
+        Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 
         Drive.controlMode = ControlMode.Velocity
