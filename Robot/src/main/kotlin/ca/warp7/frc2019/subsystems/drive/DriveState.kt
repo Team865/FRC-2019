@@ -14,8 +14,6 @@ object DriveState {
         rightDemand = 0.0
     }
 
-    val kCurvature = CurvatureDrive
-
     val kDriveDistance = DriveDistance
 
     val kTurnAngle = TurnAngle
