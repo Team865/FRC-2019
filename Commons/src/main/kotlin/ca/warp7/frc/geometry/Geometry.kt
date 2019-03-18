@@ -13,9 +13,9 @@ import kotlin.math.sin
  * ROTATION FUNCTIONS
  */
 
-fun rotation(radians: Double): Rotation2D = Rotation2D(cos(radians), sin(radians))
+fun Rotation2D.Companion.fromRadians(radians: Double): Rotation2D = Rotation2D(cos(radians), sin(radians))
 
-fun rotationInDegrees(degrees: Double): Rotation2D = rotation(Math.toRadians(degrees))
+fun Rotation2D.Companion.fromDegrees(degrees: Double) = fromRadians(Math.toRadians(degrees))
 
 val Rotation2D.radians: Double get() = atan2(y = sin, x = cos)
 
@@ -37,7 +37,7 @@ fun Rotation2D.distance(other: Rotation2D) = inverse.rotate(other).radians
 fun Rotation2D.interpolate(other: Rotation2D, x: Double) = when {
     x <= 0 -> copy
     x >= 1 -> other.copy
-    else -> rotate(rotation(radians = distance(other) * x))
+    else -> rotate(Rotation2D.fromRadians(radians = distance(other) * x))
 }
 
 fun Rotation2D.interpolator(other: Rotation2D) = object : Interpolator<Rotation2D> {

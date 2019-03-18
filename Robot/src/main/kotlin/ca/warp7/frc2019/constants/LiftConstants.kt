@@ -39,7 +39,7 @@ object LiftConstants {
 
         // TODO Position PID slot
         slot0.apply {
-            kP = 0.2
+            kP = 0.25
             kI = 0.0
             kD = 0.1
             kF = 0.0
@@ -64,7 +64,7 @@ object LiftConstants {
         }
 
         openloopRamp = 0.15
-        closedloopRamp = 0.15
+        closedloopRamp = 0.0
 
         neutralDeadband = 0.04
 

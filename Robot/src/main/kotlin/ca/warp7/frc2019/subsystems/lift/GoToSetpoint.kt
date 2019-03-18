@@ -2,7 +2,7 @@ package ca.warp7.frc2019.subsystems.lift
 
 import ca.warp7.actionkt.Action
 
-class PositionOnly : Action {
+class GoToSetpoint : Action {
 
     var setpoint = 0.0
 

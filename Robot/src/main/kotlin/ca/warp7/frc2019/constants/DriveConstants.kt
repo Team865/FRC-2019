@@ -16,10 +16,12 @@ object DriveConstants {
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
-    const val kTrackWidth = 24.75 // FIXME This is measured for traction wheels not Colsons
     const val kTurningDiameter = 24.75 // FIXME This is measured for traction wheels not Colsons
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
+
+    private const val kScrubFactor = 1.1
+    const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*
     ======================
@@ -41,12 +43,14 @@ object DriveConstants {
     const val kTicksPerInch = kTicksPerRevolution / kWheelCircumference
 
     const val kMaxVelocity = 12.0 // ft/s TODO Re-tune after robot is done
-    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
     const val kMaxAcceleration = 8.875 //  ft/s
+    const val kMaxFreeSpeedVelocity = 14.38 // ft/s
 
-    const val kSegmentLength = 0.254 // m
+    const val kSegmentLength = 0.0254 // m
 
     const val kVIntercept = 0.0 // FIXME
+
+    private const val kOpenLoopRamp = 0.15
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
@@ -63,12 +67,12 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        // TODO Velocity PID slot
+        // Velocity PID slot
         slot1.apply {
-            kP = 0.0
-            kI = 0.0
-            kD = 0.0
-            kF = 0.0
+            kP = 0.2
+            kI = 0.00005
+            kD = 1.0
+            kF = 1.0
             integralZone = 0
             allowableClosedloopError = 0
             maxIntegralAccumulator = 0.0
@@ -76,11 +80,8 @@ object DriveConstants {
             closedLoopPeriod = 1
         }
 
-        // 0.3 too high - can't overcome direction change
-        openloopRamp = 0.15
+        openloopRamp = kOpenLoopRamp
         closedloopRamp = 0.0
-
-        neutralDeadband = 0.04
 
         voltageCompSaturation = 12.0 // Max voltage
 

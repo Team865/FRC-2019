@@ -7,6 +7,7 @@ import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.HatchCargo
+import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.SuperstructureConstants
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
@@ -54,6 +55,17 @@ object MainLoop : Action {
                     Intake.set { speed = 0.0 }
                 }
             }
+            when (Pressed) {
+                xButton -> Outtake.set {
+                    grabbing = !grabbing
+                    pushing = false
+                }
+                aButton -> Outtake.set {
+                    pushing = !pushing
+                    grabbing = false
+                }
+                else -> Unit
+            }
             isFastOuttake = bButton == Pressed
         }
         withOperator {
@@ -69,34 +81,20 @@ object MainLoop : Action {
             }
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
-            } else LiftState.kOpenLoop.speed = 0.0
-            when (Pressed) {
-                rightBumper -> {
-                    LiftMotionPlanner.increaseSetpoint()
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
-                }
-                leftBumper -> {
-                    LiftMotionPlanner.decreaseSetpoint()
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
-                }
-                xButton -> Outtake.set {
-                    grabbing = !grabbing
-                    pushing = false
-                }
-                aButton -> Outtake.set {
-                    pushing = !pushing
-                    grabbing = false
-                }
-                else -> Unit
+            } else {
+                LiftState.kOpenLoop.speed = 0.0
             }
-            when (HeldDown) {
+            when (Pressed) {
+                rightBumper -> LiftMotionPlanner.increaseSetpoint()
+                leftBumper -> LiftMotionPlanner.decreaseSetpoint()
+                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                    Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 bButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Cargo
-                    Lift.set(LiftState.kPositionOnly) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                    Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
                 else -> Unit
             }

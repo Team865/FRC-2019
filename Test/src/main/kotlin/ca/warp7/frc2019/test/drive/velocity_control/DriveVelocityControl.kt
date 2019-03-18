@@ -2,6 +2,7 @@ package ca.warp7.frc2019.test.drive.velocity_control
 
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Infrastructure
 import edu.wpi.first.wpilibj.TimedRobot
 
 @Suppress("unused")
@@ -16,6 +17,7 @@ class DriveVelocityControl : TimedRobot() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverOnly }
         Drive.set { motionPlanner.set { } }
+        Infrastructure.set { }
     }
 
     /**
