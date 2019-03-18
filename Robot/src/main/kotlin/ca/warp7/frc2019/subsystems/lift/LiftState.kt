@@ -30,5 +30,5 @@ object LiftState {
 
     val kFollowTrajectory = FollowTrajectory
 
-    val kPositionOnly = PositionOnly()
+    val kGoToSetpoint = GoToSetpoint()
 }
