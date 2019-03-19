@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.constants
 
+import ca.warp7.frc.drive.DifferentialDriveModel
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
@@ -93,4 +94,14 @@ object DriveConstants {
         peakCurrentDuration = 1
         continuousCurrentLimit = 1
     }
+
+    /*
+     *  Drive model
+     */
+    val model = DifferentialDriveModel(
+            wheelbaseRadius = kEffectiveWheelBaseRadius,
+            maxVelocity = kMaxVelocity,
+            maxAcceleration = kMaxAcceleration,
+            maxFreeSpeedVelocity = kMaxFreeSpeedVelocity,
+            frictionVoltage = kVIntercept)
 }

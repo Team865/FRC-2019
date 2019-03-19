@@ -3,6 +3,7 @@ package ca.warp7.frc2019.test.drive.velocity_control
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
@@ -23,8 +24,8 @@ class TrajectoryFollower : Action {
                     0.0, 0.0, 0.0,
                     0.0, 0.0, 0.0,
                     0.0, 1.0, 0.0),
-            DifferentialDriveModel(DriveConstants.kEffectiveWheelBaseRadius, DriveConstants.kMaxVelocity, DriveConstants.kMaxAcceleration, DriveConstants.kMaxFreeSpeedVelocity, 0.1)
-    )
+            DriveConstants.model
+            )
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0
@@ -62,8 +63,9 @@ class TrajectoryFollower : Action {
         val rightAccelerationGain = (ar / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val expectedYaw = mi.v.state.rotation
+        val actualYaw = Infrastructure.yaw - initYaw
         val angularKp = 20000.0
-        val angularGain = angularKp * expectedYaw.rotate(by = Infrastructure.yaw.rotate(by = initYaw.inverse)).radians
+        val angularGain = angularKp * (expectedYaw - actualYaw).radians
         Drive.put("angularGain", angularGain)
 
         Drive.controlMode = ControlMode.Velocity
