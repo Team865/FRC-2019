@@ -1,6 +1,7 @@
 package ca.warp7.frc
 
 import ca.warp7.actionkt.ActionStateMachine
+import ca.warp7.actionkt.future
 import ca.warp7.actionkt.runOnce
 import edu.wpi.first.wpilibj.Timer
 
@@ -27,7 +28,11 @@ inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robo
 
 fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
 
+fun <T : ActionStateMachine> T.future(block: T.() -> Unit) = future(runOnce(block))
+
 fun feetToMeters(feet: Double) = feet * 0.3048
+
+fun inchesToMeters(inches: Double) = inches * 0.0254
 
 fun interpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
 

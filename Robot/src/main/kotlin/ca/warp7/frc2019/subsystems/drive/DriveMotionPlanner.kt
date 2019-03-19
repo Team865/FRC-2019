@@ -2,6 +2,8 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.feetToMeters
+import ca.warp7.frc.inchesToMeters
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
@@ -25,10 +27,10 @@ object DriveMotionPlanner : Subsystem() {
 
 
     val model = DifferentialDriveModel(
-            wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
-            maxVelocity = DriveConstants.kMaxVelocity,
-            maxAcceleration = DriveConstants.kMaxAcceleration,
-            maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
+            wheelbaseRadius = inchesToMeters(DriveConstants.kEffectiveWheelBaseRadius),
+            maxVelocity = feetToMeters(DriveConstants.kMaxVelocity),
+            maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration),
+            maxFreeSpeedVelocity = feetToMeters(DriveConstants.kMaxFreeSpeedVelocity),
             frictionVoltage = DriveConstants.kVIntercept
     )
 

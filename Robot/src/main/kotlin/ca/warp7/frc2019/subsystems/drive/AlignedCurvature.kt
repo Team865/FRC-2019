@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import kotlin.math.withSign
 
-object AlignedCurvature : Action {
+class AlignedCurvature : Action {
     var xSpeed = 0.0
     var zRotation = 0.0
     var isQuickTurn = false

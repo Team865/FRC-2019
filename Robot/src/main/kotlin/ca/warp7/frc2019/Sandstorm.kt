@@ -2,6 +2,9 @@ package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.Controls
+import ca.warp7.frc.RobotControl
+import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.drive.DriveState
 
 object Sandstorm : Action {
 
@@ -9,7 +12,9 @@ object Sandstorm : Action {
 
     override fun start() {
         println("Robot State: Sandstorm")
+        Drive.set(DriveState.kNeutralOutput)
         auto = Autonomous.mode()
+        auto.start()
     }
 
     override val shouldFinish: Boolean
@@ -22,6 +27,6 @@ object Sandstorm : Action {
 
     override fun stop() {
         auto.stop()
-        MainLoop.start()
+        RobotControl.set(MainLoop)
     }
 }
