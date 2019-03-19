@@ -50,6 +50,8 @@ operator fun Rotation2D.times(by: Double) = scaled(by)
 
 operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
 
+operator fun Rotation2D.minus(by: Rotation2D) = rotate(by.inverse)
+
 operator fun Rotation2D.unaryPlus() = copy
 
 operator fun Rotation2D.rangeTo(other: Rotation2D) = interpolator(other)

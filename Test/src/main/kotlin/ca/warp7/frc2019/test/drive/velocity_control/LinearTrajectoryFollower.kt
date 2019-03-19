@@ -2,6 +2,7 @@ package ca.warp7.frc2019.test.drive.velocity_control
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
@@ -31,6 +32,7 @@ class LinearTrajectoryFollower : Action {
         val nt = Timer.getFPGATimestamp()
         lastTime = nt
         t = nt - startTime
+        val dt = lastTime - t
         while (i < moments.size - 3 && moments[i].t < t) i++
         val mi = moments[i]
         val mj = moments[i + 1]
@@ -44,13 +46,13 @@ class LinearTrajectoryFollower : Action {
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val newYaw = Infrastructure.yaw
-        val angularKp = 20000.0
-        val angularGain = newYaw.rotate(by = lastYaw.inverse).radians * angularKp
+        val angularKd = 20000
+        val angularGain = angularKd * (newYaw - lastYaw).radians / dt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 
         Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = velocityGain + accelerationGain - angularGain
+        Drive.leftDemand = velocityGain + accelerationGain - angularGain + 50
         Drive.rightDemand = velocityGain + accelerationGain + angularGain
     }
 
