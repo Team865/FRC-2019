@@ -94,14 +94,4 @@ object DriveConstants {
         peakCurrentDuration = 1
         continuousCurrentLimit = 1
     }
-
-    /*
-     *  Drive model
-     */
-    val model = DifferentialDriveModel(
-            wheelbaseRadius = kEffectiveWheelBaseRadius,
-            maxVelocity = kMaxVelocity,
-            maxAcceleration = kMaxAcceleration,
-            maxFreeSpeedVelocity = kMaxFreeSpeedVelocity,
-            frictionVoltage = kVIntercept)
 }

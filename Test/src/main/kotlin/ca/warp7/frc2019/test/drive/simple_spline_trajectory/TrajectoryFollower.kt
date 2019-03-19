@@ -1,18 +1,15 @@
-package ca.warp7.frc2019.test.drive.velocity_control
+package ca.warp7.frc2019.test.drive.simple_spline_trajectory
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.QuinticSegment2D
-import ca.warp7.frc.path.QuinticSpline
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
-import ca.warp7.frc2019.test.drive.simple_spline_trajectory.ContinuousSplineTrajectory
+import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
@@ -20,11 +17,11 @@ import edu.wpi.first.wpilibj.Timer
 class TrajectoryFollower : Action {
     val trajectory = ContinuousSplineTrajectory(
             QuinticSegment2D(
+                    0.0, 0.0, 0.0,
                     0.0, 1.0, 0.0,
-                    0.0, 0.0, 0.0,
-                    0.0, 0.0, 0.0,
-                    0.0, 1.0, 0.0),
-            DriveConstants.model
+                    0.0, 1.0, 0.0,
+                    0.0, 0.0, 0.0),
+            DriveMotionPlanner.model
             )
     val moments = trajectory.moments
     val totalTime = moments.last().t
