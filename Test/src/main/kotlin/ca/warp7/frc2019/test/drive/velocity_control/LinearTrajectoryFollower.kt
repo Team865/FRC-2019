@@ -44,8 +44,8 @@ class LinearTrajectoryFollower : Action {
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val newYaw = Infrastructure.yaw
-        val angularKp = 20000.0
-        val angularGain = newYaw.rotate(by = lastYaw.inverse).radians * angularKp
+        val angularKd = 20000.0
+        val angularGain = newYaw.rotate(by = lastYaw.inverse).radians * angularKd
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 
