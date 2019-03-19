@@ -20,9 +20,9 @@ class QuickTurn(angleInDegrees: Double) : Action {
 
     override fun update() {
         val newError = targetYaw - Infrastructure.yaw.radians + startYaw
-        dError = (newError - error) / DriveMotionPlanner.lastDt
+        dError = (newError - error) * DriveMotionPlanner.lastDt
         error = newError
-        val angularKp = 1000.0
+        val angularKp = 0.05
         val angularKd = 1.0
         val angularGain = error * angularKp + dError * angularKd
         Drive.leftDemand = -angularGain
