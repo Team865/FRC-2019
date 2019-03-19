@@ -11,14 +11,14 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class LinearTrajectory(distanceInFeet: Double = 0.0, model: DifferentialDriveModel) {
+class LinearTrajectory(distance: Double = 0.0, model: DifferentialDriveModel) {
     val maxVelocity = model.maxVelocity
     val maxAcceleration = model.maxAcceleration
 
     val initialState: Translation2D = Translation2D.identity
 
     // Frame of reference: positive x is the front of the robot
-    val targetState: Translation2D = Translation2D(x = distanceInFeet, y = 0.0)
+    val targetState: Translation2D = Translation2D(x = distance, y = 0.0)
 
     // Parameter t of each segment
     val segmentLength: Double = 0.01 / (targetState - initialState).mag
