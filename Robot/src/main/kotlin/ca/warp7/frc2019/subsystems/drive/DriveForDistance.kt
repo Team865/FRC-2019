@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
 @Suppress("MemberVisibilityCanBePrivate")
-class LinearDriveTrajectory(distanceInFeet: Double) : Action {
+class DriveForDistance(distanceInFeet: Double) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
