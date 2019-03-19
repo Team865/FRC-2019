@@ -42,9 +42,9 @@ class Robot : TimedRobot() {
     =====================================================
      */
 
-    override fun autonomousInit() = RobotControl.enable(MainLoop)
-    override fun teleopInit() = RobotControl.enable(MainLoop)
-    override fun testInit() = RobotControl.enable(MainLoop)
+    override fun autonomousInit() = RobotControl.set(Sandstorm)
+    override fun teleopInit() = RobotControl.set(MainLoop)
+    override fun testInit() = RobotControl.set(MainLoop)
 
     /*
     =====================================================
