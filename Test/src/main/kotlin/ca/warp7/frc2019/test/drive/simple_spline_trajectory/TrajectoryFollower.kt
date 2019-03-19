@@ -6,6 +6,7 @@ import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.QuinticSegment2D
+import ca.warp7.frc.trajectory.ContinuousSplineTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
@@ -22,7 +23,7 @@ class TrajectoryFollower : Action {
                     0.0, 1.0, 0.0,
                     0.0, 0.0, 0.0),
             DriveMotionPlanner.model
-            )
+    )
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0

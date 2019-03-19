@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.test.drive.simple_spline_trajectory
+package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.TankTrajectoryState
@@ -8,8 +8,6 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.path.*
-import ca.warp7.frc.trajectory.Moment
-import ca.warp7.frc2019.constants.DriveConstants
 import kotlin.math.*
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
@@ -99,59 +97,5 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
             totalMoments[i] += totalMoments[i - 1]
         }
         moments = totalMoments.mapIndexed { i, d -> Moment(d, timedStates[i]) }
-    }
-
-    val Double.s get() = "%.3f".format(this)
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            ContinuousSplineTrajectory(QuinticSegment2D(
-//                    x0 = 5.5,
-//                    y0 = 3.5,
-//
-//                    x1 = 18.0,
-//                    y1 = 12.0,
-//
-//                    dx0 = 20.0,
-//                    dy0 = 0.0,
-//
-//                    ddx0 = 0.0,
-//                    ddy0 = 0.0,
-//
-//                    dx1 = 18.0,
-//                    dy1 = 15.0,
-//
-//                    ddx1 = 0.0,
-//                    ddy1 = 0.0
-
-                    x0 = 0.0,
-                    y0 = 0.0,
-
-                    x1 = 10.0,
-                    y1 = 0.0,
-
-                    dx0 = 35.0,
-                    dy0 = 20.0,
-
-                    ddx0 = 0.0,
-                    ddy0 = 0.0,
-
-                    dx1 = -32.0,
-                    dy1 = -30.0,
-
-                    ddx1 = 0.0,
-                    ddy1 = 0.0
-            ), model = DifferentialDriveModel(
-                    wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius / 12,
-                    maxVelocity = DriveConstants.kMaxVelocity,
-                    maxAcceleration = DriveConstants.kMaxAcceleration,
-                    maxFreeSpeedVelocity = DriveConstants.kMaxFreeSpeedVelocity,
-                    frictionVoltage = DriveConstants.kVIntercept
-            )).apply {
-                //moments.forEach { println("(${it.t}, ${it.v.state.translation.x}, ${it.v.state.translation.y}),") }
-                moments.forEach { println(it) }
-            }
-        }
     }
 }
