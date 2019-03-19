@@ -14,11 +14,5 @@ object DriveState {
         rightDemand = 0.0
     }
 
-    val kDriveDistance get() = DriveDistance()
-
-    val kTurnAngle get() = TurnAngle()
-
-    val kTurnPID get() = TurnToTarget()
-
-    val kAlignedCurvature = AlignedCurvature
+    val kAlignedCurvature = AlignedCurvature()
 }
