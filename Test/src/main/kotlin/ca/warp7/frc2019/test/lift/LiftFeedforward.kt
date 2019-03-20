@@ -20,6 +20,7 @@ class LiftFeedforward : TimedRobot() {
     private lateinit var xboxController: XboxController
 
     private var feedforward = 0.05
+
     private var olr = 0.5
     private var scale = 0.5
 

@@ -13,7 +13,7 @@ internal object ElectricalConstants {
      */
 
     const val kLiftMasterTalonId = 0
-    const val kLiftFollowerVictorId = 15
+    const val kLiftFollowerVictorId = 15 // 11
 
     const val kDriveLeftMasterTalonId = 1
     const val kDriveRightMasterTalonId = 14
@@ -25,7 +25,7 @@ internal object ElectricalConstants {
     const val kDriveRightFollowerBVictorId = 12
 
     const val kOuttakeLeftVictorId = 4
-    const val kOuttakeRightVictorId = 11
+    const val kOuttakeRightVictorId = 11 // 15
 
     const val kConveyorLeftVictorId = 5
     const val kConveyorRightVictorId = 10

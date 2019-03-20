@@ -23,8 +23,8 @@ object Outtake : Subsystem() {
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
-        pusher.set(false)
-        grabber.set(false)
+        pusher.set(true)
+        grabber.set(true)
     }
 
     override fun onOutput() {

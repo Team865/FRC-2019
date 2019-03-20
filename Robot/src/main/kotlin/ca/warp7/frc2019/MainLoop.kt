@@ -37,13 +37,12 @@ object MainLoop : Action {
                 isQuickTurn = leftBumper == HeldDown
                 isAligning = yButton == HeldDown
             }
-
+            if (bButton == Pressed) Limelight.isDriver = !Limelight.isDriver
             when (rightBumper) {
                 Pressed -> Limelight.isDriver = false
                 Released -> Limelight.isDriver = true
                 else -> Unit
             }
-
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -leftTriggerAxis
@@ -61,12 +60,12 @@ object MainLoop : Action {
             }
             when (Pressed) {
                 xButton -> Outtake.set {
-                    grabbing = !grabbing
-                    pushing = false
-                }
+                grabbing = !grabbing
+                pushing = true
+            }
                 aButton -> Outtake.set {
                     pushing = !pushing
-                    grabbing = false
+                    grabbing = true
                 }
                 else -> Unit
             }
@@ -74,7 +73,7 @@ object MainLoop : Action {
         }
         withOperator {
             when {
-                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
+                rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     isOpenOuttake = true
                 }
@@ -88,19 +87,19 @@ object MainLoop : Action {
             } else {
                 LiftState.kOpenLoop.speed = 0.0
             }
-
-            if (rightBumper == Pressed) LiftMotionPlanner.increaseSetpoint()
-            if (leftBumper == Pressed) LiftMotionPlanner.decreaseSetpoint()
-
-            if (xButton == Pressed) Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
-
-            if (yButton == Pressed) {
-                LiftMotionPlanner.setpointType = HatchCargo.Hatch
-                Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
-            }
-            if (bButton == Pressed) {
-                LiftMotionPlanner.setpointType = HatchCargo.Cargo
-                Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+            when (Pressed) {
+                rightBumper -> LiftMotionPlanner.increaseSetpoint()
+                leftBumper -> LiftMotionPlanner.decreaseSetpoint()
+                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
+                yButton -> {
+                    LiftMotionPlanner.setpointType = HatchCargo.Hatch
+                    Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                }
+                bButton -> {
+                    LiftMotionPlanner.setpointType = HatchCargo.Cargo
+                    Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
+                }
+                else -> Unit
             }
         }
         Superstructure.set(SuperstructureState.kPassThrough) {
