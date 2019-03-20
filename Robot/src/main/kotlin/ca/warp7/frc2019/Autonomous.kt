@@ -10,7 +10,7 @@ import ca.warp7.frc2019.subsystems.drive.QuickTurn
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = quickTurn
+    val mode get() = driveBackingStoreException
 
     private val nothingMode = { runOnce { } }
 
@@ -23,7 +23,7 @@ object Autonomous {
         get() = queue {
             +DriveForDistance(8.0)
             +QuickTurn(180.0)
-            +DriveForDistance(4.0)
+            +DriveForDistance(8.0)
             +QuickTurn(180.0)
         }
 

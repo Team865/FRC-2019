@@ -17,8 +17,7 @@ object Sandstorm : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = false//auto.shouldFinish || Controls.robotDriver.leftXAxis > 0.8
-    // || Controls.robotOperator.leftXAxis > 0.8
+        get() = auto.shouldFinish
 
     override fun update() {
         auto.update()

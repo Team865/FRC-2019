@@ -70,9 +70,9 @@ object DriveConstants {
 
         // Velocity PID slot
         slot1.apply {
-            kP = 0.2
+            kP = 0.4
             kI = 0.00005
-            kD = 1.0
+            kD = 4.0
             kF = 1.0
             integralZone = 0
             allowableClosedloopError = 0

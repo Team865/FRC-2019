@@ -20,8 +20,8 @@ class QuickTurn(angleInDegrees: Double) : Action {
     override fun start() {
         Drive.controlMode = ControlMode.PercentOutput
         startYaw = Infrastructure.yaw
+        error = targetYaw.radians
         targetYaw += startYaw
-        error = startYaw.radians
     }
 
     private val angularKp = 0.75

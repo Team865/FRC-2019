@@ -46,7 +46,7 @@ class DriveForDistance(distanceInFeet: Double, val stopVelThreshold: Double = 0.
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val newYaw = Infrastructure.yaw
-        val angularKp = 400.0
+        val angularKp = 600.0
         val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
@@ -57,8 +57,8 @@ class DriveForDistance(distanceInFeet: Double, val stopVelThreshold: Double = 0.
     }
 
     override val shouldFinish: Boolean
-        get() = (t > totalTime || i >= moments.size) &&
-                (Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
+        get() = (t > totalTime || i >= moments.size) //&&
+                //(Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
 
     override fun stop() {
         Drive.apply {

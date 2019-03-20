@@ -7,6 +7,10 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
     var currentAction: Action? = null
     var started = false
 
+    init {
+        finishWhen { queue.isEmpty() }
+    }
+
     override operator fun Action.unaryPlus() {
         if (!started) queue.add(NameableAction(this))
     }
@@ -15,9 +19,6 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
         super.start()
         started = true
     }
-
-    override val shouldFinish: Boolean
-        get() = super.shouldFinish || queue.isEmpty()
 
     override fun update() {
         super.update()
