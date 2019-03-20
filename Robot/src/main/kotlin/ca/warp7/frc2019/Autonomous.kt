@@ -10,9 +10,14 @@ import ca.warp7.frc2019.subsystems.drive.QuickTurn
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = nothingMode
+    val mode get() = quickTurn
 
     private val nothingMode = { runOnce { } }
+
+    private val quickTurn
+        get() = queue {
+            +QuickTurn(90.0)
+        }
 
     private val straightHatch
         get() = queue {

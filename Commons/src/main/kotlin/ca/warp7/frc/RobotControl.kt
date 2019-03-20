@@ -10,7 +10,11 @@ object RobotControl : Subsystem() {
         }
 
     fun enable(wantedState: Action) {
-        InternalControl.enable()
         set(wantedState)
+    }
+
+    override fun <T : Action> set(wantedState: T, block: T.() -> Unit) {
+        InternalControl.enable()
+        super.set(wantedState, block)
     }
 }
