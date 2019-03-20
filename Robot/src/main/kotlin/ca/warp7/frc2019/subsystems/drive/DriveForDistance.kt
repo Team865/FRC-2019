@@ -12,9 +12,9 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
+import kotlin.math.absoluteValue
 
-@Suppress("MemberVisibilityCanBePrivate")
-class DriveForDistance(distanceInFeet: Double) : Action {
+class DriveForDistance(distanceInFeet: Double, val stopVelThreshold: Double = 0.01) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
@@ -57,7 +57,8 @@ class DriveForDistance(distanceInFeet: Double) : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = t > totalTime || i >= moments.size
+        get() = (t > totalTime || i >= moments.size) &&
+                (Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
 
     override fun stop() {
         Drive.apply {

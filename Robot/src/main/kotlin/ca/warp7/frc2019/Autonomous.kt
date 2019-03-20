@@ -22,11 +22,8 @@ object Autonomous {
     private val driveBackingStoreException
         get() = queue {
             +DriveForDistance(8.0)
-            +wait(0.2)
             +QuickTurn(180.0)
-            +wait(0.2)
             +DriveForDistance(4.0)
-            +wait(0.2)
             +QuickTurn(180.0)
         }
 

@@ -6,7 +6,6 @@ import ca.warp7.frc.geometry.*
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
-import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlin.math.withSign
 
@@ -34,11 +33,9 @@ class QuickTurn(angleInDegrees: Double) : Action {
         val newError = (targetYaw - Infrastructure.yaw).radians
         dError = (newError - error) / DriveMotionPlanner.lastDt
 
-        when {
-            error.sign != newError.sign -> sumError = 0.0
-            error.epsilonEquals(0.0, integralZone) -> sumError += error
-            else -> sumError += integralZone.withSign(sumError)
-        }
+        if (error.sign != newError.sign) sumError = 0.0
+        else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(sumError)
+        else sumError += error
 
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
         Drive.leftDemand = angularGain
@@ -50,7 +47,7 @@ class QuickTurn(angleInDegrees: Double) : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = false//error < 0.1 && dError < 0.1
+        get() = error < 0.1 && dError < 0.1
 
     override fun stop() {
         Drive.apply {
