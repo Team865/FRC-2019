@@ -19,6 +19,17 @@ object Autonomous {
             +QuickTurn(90.0)
         }
 
+    private val driveBackingStoreException
+        get() = queue {
+            +DriveForDistance(8.0)
+            +wait(0.2)
+            +QuickTurn(180.0)
+            +wait(0.2)
+            +DriveForDistance(4.0)
+            +wait(0.2)
+            +QuickTurn(180.0)
+        }
+
     private val straightHatch
         get() = queue {
             +runOnce { Outtake.grabbing = true }

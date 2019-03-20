@@ -23,9 +23,9 @@ class QuickTurn(angleInDegrees: Double) : Action {
         error = startYaw.radians
     }
 
-    private val angularKp = 1.0
-    private val angularKd = 0.2
-    private val angularKi = 0.01
+    private val angularKp = 1.2
+    private val angularKd = 0.0//2
+    private val angularKi = 0.005
     private val integralZone = 1.0
 
     override fun update() {
@@ -39,10 +39,13 @@ class QuickTurn(angleInDegrees: Double) : Action {
         Drive.leftDemand = angularGain
         Drive.rightDemand = -angularGain
         error = newError
+        Drive.put("Qt Error", error)
+        Drive.put("Qt dError", dError)
+        Drive.put("Qt SumError", sumError)
     }
 
     override val shouldFinish: Boolean
-        get() = error < 0.1 && dError < 0.1
+        get() = false//error < 0.1 && dError < 0.1
 
     override fun stop() {
         Drive.apply {
@@ -51,6 +54,5 @@ class QuickTurn(angleInDegrees: Double) : Action {
             leftFeedforward = 0.0
             rightFeedforward = 0.0
         }
-        Drive.put("Enabled", false)
     }
 }
