@@ -36,7 +36,6 @@ fun test2(): Action {
         +waitUntil { true }
 
         +async {
-            endOnAnyFinished = true
             +runOnce {
 
             }
