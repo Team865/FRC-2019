@@ -5,6 +5,8 @@ import kotlin.math.hypot
 
 data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
+    override val state: Translation2D get() = this
+
     override fun rangeTo(state: Translation2D) = object : Interpolator<Translation2D> {
         override fun get(n: Double) = interpolate(state, n)
     }

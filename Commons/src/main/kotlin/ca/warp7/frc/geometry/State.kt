@@ -3,12 +3,7 @@ package ca.warp7.frc.geometry
 /**
  * Defines a parametric transformation state
  */
-interface State<T : State<T>> {
-
-    /**
-     * Create an interpolator for the this state and another state
-     */
-    operator fun rangeTo(state: T): Interpolator<T>
+interface State<T : State<T>> : StateView<T> {
 
     /**
      * Get the inverse transformation of this state
