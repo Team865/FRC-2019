@@ -30,9 +30,13 @@ interface State<T : State<T>> : StateView<T> {
      */
     val isIdentity: Boolean
 
-
     /**
      * Check if another state is close to the current state
      */
     fun epsilonEquals(state: T, epsilon: Double): Boolean
+
+    /**
+     * Transform this state by another state
+     */
+    fun transform(by: T): T
 }

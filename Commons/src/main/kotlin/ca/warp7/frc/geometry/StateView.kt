@@ -1,5 +1,8 @@
 package ca.warp7.frc.geometry
 
+/**
+ * Represents a way of viewing an existing state
+ */
 interface StateView<T : State<T>> {
 
     /**
