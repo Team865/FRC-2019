@@ -70,18 +70,6 @@ fun Translation2D.translate(by: Translation2D) = Translation2D(x + by.x, y + by.
 
 fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin, x * by.sin + y * by.cos)
 
-fun Translation2D.epsilonEquals(other: Translation2D, epsilon: Double) =
-        x.epsilonEquals(other.x, epsilon) && y.epsilonEquals(other.y, epsilon)
-
-fun Translation2D.extrapolate(other: Translation2D, n: Double) =
-        Translation2D(n * (other.x - x) + x, n * (other.y - y) + y)
-
-fun Translation2D.interpolate(other: Translation2D, n: Double) = when {
-    n <= 0 -> copy
-    n >= 1 -> other.copy
-    else -> extrapolate(other, n)
-}
-
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
 infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
@@ -91,10 +79,6 @@ operator fun Translation2D.times(by: Double) = scaled(by)
 operator fun Translation2D.plus(by: Translation2D) = translate(by)
 
 operator fun Translation2D.minus(by: Translation2D) = translate(by.inverse)
-
-operator fun Translation2D.unaryPlus() = copy
-
-operator fun Translation2D.unaryMinus() = inverse
 
 /*
  * POSE FUNCTIONS

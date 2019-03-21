@@ -11,4 +11,9 @@ interface StateView<T : State<T>> {
      * Create an interpolator for the this state and another state
      */
     operator fun rangeTo(state: T): Interpolator<T>
+
+    /**
+     * Interpolate between another view given a percentage
+     */
+    fun interpolate(other: T, n: Double): T
 }

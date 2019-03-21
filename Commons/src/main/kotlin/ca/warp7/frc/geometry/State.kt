@@ -29,4 +29,10 @@ interface State<T : State<T>> : StateView<T> {
      * Checks if the state is its identity
      */
     val isIdentity: Boolean
+
+
+    /**
+     * Check if another state is close to the current state
+     */
+    fun epsilonEquals(state: T, epsilon: Double): Boolean
 }
