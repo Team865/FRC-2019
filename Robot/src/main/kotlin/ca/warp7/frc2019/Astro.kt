@@ -4,7 +4,7 @@ import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.*
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Robot : TimedRobot() {
+class Astro : TimedRobot() {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -66,6 +66,6 @@ class Robot : TimedRobot() {
     @Suppress("UnusedMainParameter")
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Robot() }
+        fun main(args: Array<String>) = TimedRobot.startRobot { Astro() }
     }
 }
