@@ -9,11 +9,13 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
         override fun get(n: Double) = interpolate(state, n)
     }
 
-    override fun unaryMinus(): State<Translation2D> = inverse
-
-    override val copy: Translation2D get() = Translation2D(x, y)
+    override fun unaryMinus(): Translation2D = inverse
 
     override val inverse: Translation2D get() = Translation2D(-x, -y)
+
+    override fun unaryPlus(): Translation2D = copy
+
+    override val copy: Translation2D get() = Translation2D(x, y)
 
     override val isIdentity: Boolean get() = x == 0.0 && y == 0.0
 

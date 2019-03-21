@@ -13,12 +13,17 @@ interface State<T : State<T>> {
     /**
      * Get the inverse transformation of this state
      */
-    operator fun unaryMinus(): State<T>
+    operator fun unaryMinus(): T
 
     /**
      * Get the inverse transformation of this state
      */
     val inverse: T
+
+    /**
+     * Create a copy of this state
+     */
+    operator fun unaryPlus(): T
 
     /**
      * Create a copy of this state
