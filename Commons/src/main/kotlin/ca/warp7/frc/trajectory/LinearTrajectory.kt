@@ -6,7 +6,6 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.minus
-import ca.warp7.frc.geometry.rangeTo
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt

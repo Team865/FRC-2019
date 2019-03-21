@@ -82,10 +82,6 @@ fun Translation2D.interpolate(other: Translation2D, n: Double) = when {
     else -> extrapolate(other, n)
 }
 
-fun Translation2D.interpolator(other: Translation2D) = object : Interpolator<Translation2D> {
-    override fun get(n: Double) = interpolate(other, n)
-}
-
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
 infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
@@ -99,8 +95,6 @@ operator fun Translation2D.minus(by: Translation2D) = translate(by.inverse)
 operator fun Translation2D.unaryPlus() = copy
 
 operator fun Translation2D.unaryMinus() = inverse
-
-operator fun Translation2D.rangeTo(other: Translation2D) = interpolator(other)
 
 /*
  * POSE FUNCTIONS
