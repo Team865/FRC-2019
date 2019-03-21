@@ -35,7 +35,7 @@ object MainLoop : Action {
                 xSpeed = leftYAxis * -1
                 zRotation = rightXAxis
                 isQuickTurn = leftBumper == HeldDown
-                isAligning = yButton == HeldDown
+                isAligning = rightBumper == HeldDown
             }
             if (bButton == Pressed) Limelight.isDriver = !Limelight.isDriver
             when (rightBumper) {
@@ -61,11 +61,11 @@ object MainLoop : Action {
             when (Pressed) {
                 xButton -> Outtake.set {
                 grabbing = !grabbing
-                pushing = true
+                pushing = false
             }
                 aButton -> Outtake.set {
                     pushing = !pushing
-                    grabbing = true
+                    grabbing = false
                 }
                 else -> Unit
             }
