@@ -4,7 +4,7 @@ plugins {
     id "edu.wpi.first.GradleRIO"
 }
 
-def ROBOT_MAIN_CLASS = "ca.warp7.frc2019.Robot"
+def ROBOT_MAIN_CLASS = "ca.warp7.frc2019.Astro"
 
 deploy {
     targets {
@@ -28,9 +28,6 @@ deploy {
 
 repositories {
     mavenCentral()
-    maven {
-        url "http://dl.bintray.com/kyonifer/maven"
-    }
 }
 
 buildDir = new File(rootProject.projectDir, "build/" + project.name)
