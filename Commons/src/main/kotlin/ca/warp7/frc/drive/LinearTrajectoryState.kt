@@ -1,6 +1,6 @@
-package ca.warp7.frc.trajectory
+package ca.warp7.frc.drive
 
-data class TimedState<T>(
+data class LinearTrajectoryState<T>(
         val state: T,
         var velocity: Double = 0.0,
         var acceleration: Double = 0.0,

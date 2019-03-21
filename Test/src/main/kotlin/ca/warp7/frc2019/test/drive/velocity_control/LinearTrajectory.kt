@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.test.drive.velocity_control
 
+import ca.warp7.frc.drive.LinearTrajectoryState
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Interpolator
@@ -8,7 +9,6 @@ import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.rangeTo
 import ca.warp7.frc.trajectory.IsolatedConstraint
 import ca.warp7.frc.trajectory.Moment
-import ca.warp7.frc.trajectory.TimedState
 import ca.warp7.frc2019.constants.DriveConstants
 import kotlin.math.min
 import kotlin.math.pow
@@ -35,10 +35,10 @@ class LinearTrajectory(distanceInFeet: Double = 0.0) {
     val path: List<Translation2D> = (0 until segmentCount).map { diff[it * segmentLength] }
 
     // Generate a list of timed states
-    val timedStates: List<TimedState<Translation2D>> = path.map { TimedState(it) }
+    val timedStates: List<LinearTrajectoryState<Translation2D>> = path.map { LinearTrajectoryState(it) }
 
     // Generate moments with 0 for time, velocity and acceleration
-    val moments: List<Moment<TimedState<Translation2D>>>
+    val moments: List<Moment<LinearTrajectoryState<Translation2D>>>
 
     // Create start and end velocity constraints
     val constraints: List<IsolatedConstraint> = listOf(

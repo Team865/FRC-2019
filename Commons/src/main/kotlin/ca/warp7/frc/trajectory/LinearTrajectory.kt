@@ -1,6 +1,7 @@
 package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.drive.LinearTrajectoryState
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
@@ -31,10 +32,10 @@ class LinearTrajectory(distance: Double = 0.0, model: DifferentialDriveModel) {
     val path: List<Translation2D> = (0 until segmentCount).map { diff[it * segmentLength] }
 
     // Generate a list of timed states
-    val timedStates: List<TimedState<Translation2D>> = path.map { TimedState(it) }
+    val timedStates: List<LinearTrajectoryState<Translation2D>> = path.map { LinearTrajectoryState(it) }
 
     // Generate moments with 0 for time, velocity and acceleration
-    val moments: List<Moment<TimedState<Translation2D>>>
+    val moments: List<Moment<LinearTrajectoryState<Translation2D>>>
 
     // Create start and end velocity constraints
     val constraints: List<IsolatedConstraint> = listOf(
