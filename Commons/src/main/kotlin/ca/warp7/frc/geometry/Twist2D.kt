@@ -14,6 +14,7 @@ data class Twist2D(val dx: Double, val dy: Double, val dTheta: Double) {
     val mag get() = hypot(dx, dy)
 
     /**
+     * Convert this twist into a Pose2D transformation
      * By: Team 254
      */
     val exp: Pose2D

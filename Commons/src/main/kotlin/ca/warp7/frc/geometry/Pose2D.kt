@@ -51,6 +51,7 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
     }
 
     /**
+     * Convert this into a Twist2D transformation
      * By: Team 254
      */
     val log: Twist2D
