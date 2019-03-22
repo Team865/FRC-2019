@@ -42,20 +42,3 @@ fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
 infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
-
-/*
- * POSE FUNCTIONS
- */
-
-fun Pose2D.transform(by: Pose2D) =
-        Pose2D(translation.transform(by.translation.rotate(by.rotation)), rotation.rotate(by.rotation))
-
-fun Pose2D.transform(by: Translation2D) = transform(Pose2D(by, Rotation2D.identity))
-
-fun Pose2D.transform(by: Rotation2D) = transform(Pose2D(Translation2D.identity, by))
-
-operator fun Pose2D.plus(by: Pose2D) = transform(by)
-
-operator fun Pose2D.plus(by: Translation2D) = transform(by)
-
-operator fun Pose2D.plus(by: Rotation2D) = transform(by)
