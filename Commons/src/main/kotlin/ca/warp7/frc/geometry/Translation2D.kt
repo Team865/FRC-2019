@@ -12,10 +12,10 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
         override fun get(n: Double) = interpolate(state, n)
     }
 
-    override fun interpolate(other: Translation2D, n: Double): Translation2D = when {
-        n <= 0 -> copy
-        n >= 1 -> other.copy
-        else -> Translation2D(n * (other.x - x) + x, n * (other.y - y) + y)
+    override fun interpolate(other: Translation2D, x: Double): Translation2D = when {
+        x <= 0 -> copy
+        x >= 1 -> other.copy
+        else -> Translation2D(x * (other.x - this.x) + this.x, x * (other.y - y) + y)
     }
 
     override fun unaryMinus(): Translation2D = inverse
@@ -50,9 +50,6 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
     override fun div(by: Double): Translation2D = scaled(1.0 / by)
 
     override fun distanceTo(state: Translation2D): Double = hypot(state.x - x, state.y - y)
-
-    override val normalized: Translation2D
-        get() = scaled(1.0 / mag)
 
     val mag: Double get() = hypot(x, y)
 

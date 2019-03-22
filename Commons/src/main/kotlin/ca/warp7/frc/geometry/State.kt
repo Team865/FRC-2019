@@ -69,9 +69,4 @@ interface State<T : State<T>> : StateView<T> {
      * Get the distance to another state
      */
     fun distanceTo(state: T): Double
-
-    /**
-     * Normalized state
-     */
-    val normalized: T
 }

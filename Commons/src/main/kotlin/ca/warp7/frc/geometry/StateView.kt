@@ -18,5 +18,5 @@ interface StateView<T : State<T>> {
     /**
      * Interpolate between another view given a percentage
      */
-    fun interpolate(other: T, n: Double): T
+    fun interpolate(other: T, x: Double): T
 }
