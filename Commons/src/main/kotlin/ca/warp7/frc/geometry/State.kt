@@ -39,4 +39,15 @@ interface State<T : State<T>> : StateView<T> {
      * Transform this state by another state
      */
     fun transform(by: T): T
+
+    /**
+     * Get the result transformation of this and another state
+     */
+    operator fun plus(by: T): T
+
+    /**
+     * Get the transformation applied to another state to get this state
+     */
+    operator fun minus(by: T): T
+
 }

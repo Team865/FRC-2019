@@ -74,10 +74,6 @@ infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
 
 operator fun Translation2D.times(by: Double) = scaled(by)
 
-operator fun Translation2D.plus(by: Translation2D) = transform(by)
-
-operator fun Translation2D.minus(by: Translation2D) = transform(by.inverse)
-
 /*
  * POSE FUNCTIONS
  */

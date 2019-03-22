@@ -35,6 +35,10 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
         return Translation2D(x + by.x, y + by.y)
     }
 
+    override fun plus(by: Translation2D): Translation2D = transform(by)
+
+    override fun minus(by: Translation2D): Translation2D = transform(by.inverse)
+
     override fun toString(): String {
         return "Translation(${x.f}, ${y.f})"
     }
