@@ -33,9 +33,10 @@ data class Rotation2D(val cos: Double, val sin: Double) : State<Rotation2D> {
 
     override val state: Rotation2D get() = this
 
-    override fun rangeTo(state: Rotation2D): Interpolator<Rotation2D> = object : Interpolator<Rotation2D> {
-        override fun get(x: Double) = interpolate(state, x)
-    }
+    override fun rangeTo(state: Rotation2D): Interpolator<Rotation2D> =
+            object : Interpolator<Rotation2D> {
+                override fun get(x: Double) = interpolate(state, x)
+            }
 
     override fun interpolate(other: Rotation2D, x: Double): Rotation2D = when {
         x <= 0 -> copy

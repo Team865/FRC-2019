@@ -33,9 +33,10 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
 
     override val state: Pose2D get() = this
 
-    override fun rangeTo(state: Pose2D): Interpolator<Pose2D> = object : Interpolator<Pose2D> {
-        override fun get(x: Double): Pose2D = interpolate(state, x)
-    }
+    override fun rangeTo(state: Pose2D): Interpolator<Pose2D> =
+            object : Interpolator<Pose2D> {
+                override fun get(x: Double): Pose2D = interpolate(state, x)
+            }
 
     override fun interpolate(other: Pose2D, x: Double): Pose2D = when {
         x <= 0 -> copy

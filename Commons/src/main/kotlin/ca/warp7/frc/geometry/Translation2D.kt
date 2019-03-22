@@ -8,7 +8,8 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
     override val state: Translation2D get() = this
 
-    override fun rangeTo(state: Translation2D) = object : Interpolator<Translation2D> {
+    override fun rangeTo(state: Translation2D): Interpolator<Translation2D> =
+            object : Interpolator<Translation2D> {
         override fun get(x: Double) = interpolate(state, x)
     }
 

@@ -39,9 +39,10 @@ class Displacement1D(val x: Double) : State<Displacement1D> {
 
     override val state: Displacement1D get() = this
 
-    override fun rangeTo(state: Displacement1D): Interpolator<Displacement1D> = object : Interpolator<Displacement1D> {
-        override fun get(x: Double): Displacement1D = interpolate(state, x)
-    }
+    override fun rangeTo(state: Displacement1D): Interpolator<Displacement1D> =
+            object : Interpolator<Displacement1D> {
+                override fun get(x: Double): Displacement1D = interpolate(state, x)
+            }
 
     override fun interpolate(other: Displacement1D, x: Double): Displacement1D =
             Displacement1D(this.x + (other.x - this.x) * x)
