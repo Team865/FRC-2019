@@ -50,4 +50,28 @@ interface State<T : State<T>> : StateView<T> {
      */
     operator fun minus(by: T): T
 
+    /**
+     * Scale the transformation by a scalar value
+     */
+    fun scaled(by: Double): T
+
+    /**
+     * Scale the transformation by a scalar value
+     */
+    operator fun times(by: Double): T
+
+    /**
+     * Scale the transformation by a reciprocal scalar value
+     */
+    operator fun div(by: Double): T
+
+    /**
+     * Get the distance to another state
+     */
+    fun distanceTo(state: T): Double
+
+    /**
+     * Normalized state
+     */
+    val normalized: T
 }

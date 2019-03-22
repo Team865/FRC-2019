@@ -60,19 +60,13 @@ operator fun Rotation2D.rangeTo(other: Rotation2D) = interpolator(other)
  * TRANSLATION FUNCTIONS
  */
 
-val Translation2D.norm: Translation2D get() = scaled(by = 1 / mag)
-
 val Translation2D.direction: Rotation2D get() = Rotation2D(x, y).norm
-
-fun Translation2D.scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
 
 fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin, x * by.sin + y * by.cos)
 
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
 infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
-
-operator fun Translation2D.times(by: Double) = scaled(by)
 
 /*
  * POSE FUNCTIONS

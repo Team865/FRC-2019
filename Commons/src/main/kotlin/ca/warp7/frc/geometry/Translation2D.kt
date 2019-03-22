@@ -43,6 +43,17 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
         return "Translation(${x.f}, ${y.f})"
     }
 
+    override fun scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
+
+    override fun times(by: Double): Translation2D = scaled(by)
+
+    override fun div(by: Double): Translation2D = scaled(1.0 / by)
+
+    override fun distanceTo(state: Translation2D): Double = hypot(state.x - x, state.y - y)
+
+    override val normalized: Translation2D
+        get() = scaled(1.0 / mag)
+
     val mag: Double get() = hypot(x, y)
 
     companion object {
