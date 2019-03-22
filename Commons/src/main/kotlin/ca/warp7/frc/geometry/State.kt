@@ -36,6 +36,11 @@ interface State<T : State<T>> : StateView<T> {
     fun epsilonEquals(state: T, epsilon: Double): Boolean
 
     /**
+     * Check if another state is equal to the current state
+     */
+    fun epsilonEquals(state: T): Boolean
+
+    /**
      * Transform this state by another state
      */
     fun transform(by: T): T

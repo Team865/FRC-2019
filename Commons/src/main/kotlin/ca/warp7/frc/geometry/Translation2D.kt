@@ -26,10 +26,12 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
     override val copy: Translation2D get() = Translation2D(x, y)
 
-    override val isIdentity: Boolean get() = x == 0.0 && y == 0.0
+    override val isIdentity: Boolean get() = epsilonEquals(identity)
 
     override fun epsilonEquals(state: Translation2D, epsilon: Double) =
             x.epsilonEquals(state.x, epsilon) && y.epsilonEquals(state.y, epsilon)
+
+    override fun epsilonEquals(state: Translation2D) = epsilonEquals(state, 1E-12)
 
     override fun transform(by: Translation2D): Translation2D {
         return Translation2D(x + by.x, y + by.y)
