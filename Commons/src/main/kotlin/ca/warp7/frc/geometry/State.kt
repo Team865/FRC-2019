@@ -3,7 +3,7 @@ package ca.warp7.frc.geometry
 /**
  * Defines a parametric transformation state
  */
-interface State<T : State<T>> : StateView<T> {
+interface State<T : State<T>> : StateView<T, T> {
 
     /**
      * Get the inverse transformation of this state

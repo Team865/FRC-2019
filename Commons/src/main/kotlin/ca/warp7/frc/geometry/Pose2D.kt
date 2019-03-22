@@ -1,6 +1,5 @@
 package ca.warp7.frc.geometry
 
-@Suppress("unused", "MemberVisibilityCanBePrivate")
 data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : State<Pose2D> {
 
     override fun unaryMinus(): Pose2D = inverse
@@ -54,6 +53,7 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
      * Convert this into a Twist2D transformation
      * By: Team 254
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val log: Twist2D
         get() {
             val dTheta = rotation.radians

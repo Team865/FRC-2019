@@ -3,7 +3,7 @@ package ca.warp7.frc.geometry
 /**
  * Represents a way of viewing an existing state
  */
-interface StateView<T : State<T>> {
+interface StateView<T : State<T>, V : StateView<T, V>> {
 
     /**
      * Get the state that is being viewed
@@ -18,5 +18,5 @@ interface StateView<T : State<T>> {
     /**
      * Interpolate between another view given a percentage
      */
-    fun interpolate(other: T, x: Double): T
+    fun interpolate(other: V, x: Double): StateView<T, V>
 }
