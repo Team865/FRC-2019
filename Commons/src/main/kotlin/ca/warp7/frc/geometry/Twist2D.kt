@@ -1,6 +1,7 @@
 package ca.warp7.frc.geometry
 
 import ca.warp7.frc.f
+import kotlin.math.hypot
 
 @Suppress("unused")
 data class Twist2D(val dx: Double, val dy: Double, val dTheta: Double) {
@@ -8,6 +9,13 @@ data class Twist2D(val dx: Double, val dy: Double, val dTheta: Double) {
         return "Twist(${dx.f}, ${dy.f}, ${dTheta.f})"
     }
 
+    fun scaled(by: Double): Twist2D = Twist2D(dx * by, dy * by, dTheta * by)
+
+    val mag get() = hypot(dx, dy)
+
+    /**
+     * By: Team 254
+     */
     val exp: Pose2D
         get() {
             val sinTheta = Math.sin(dTheta)

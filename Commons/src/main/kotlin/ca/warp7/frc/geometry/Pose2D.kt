@@ -1,6 +1,6 @@
 package ca.warp7.frc.geometry
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : State<Pose2D> {
 
     override fun unaryMinus(): Pose2D = inverse
@@ -30,21 +30,21 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
 
     override fun div(by: Double): Pose2D = scaled(1.0 / by)
 
-    override fun distanceTo(state: Pose2D): Double {
-        TODO("not implemented")
-    }
+    override fun distanceTo(state: Pose2D): Double = (state - this).log.mag
 
     override val state: Pose2D get() = this
 
-    override fun rangeTo(state: Pose2D): Interpolator<Pose2D> {
-        TODO("not implemented")
+    override fun rangeTo(state: Pose2D): Interpolator<Pose2D> = object : Interpolator<Pose2D> {
+        override fun get(x: Double): Pose2D = interpolate(state, x)
     }
 
-    override fun interpolate(other: Pose2D, x: Double): Pose2D {
-        TODO("not implemented")
+    override fun interpolate(other: Pose2D, x: Double): Pose2D = when {
+        x <= 0 -> copy
+        x >= 1 -> other.copy
+        else -> transform((other - this).log.scaled(x).exp)
     }
 
-    override val inverse: Pose2D get() = rotation.inverse.let { Pose2D(translation.inverse.rotate(it), it) }
+    override val inverse: Pose2D get() = Pose2D(-translation.rotate(-rotation), -rotation)
 
     override fun toString(): String {
         return "Pose($translation, $rotation)"
