@@ -32,8 +32,8 @@ object LiftConstants {
 
     const val kMaxHeightEncoderTicks = 42268.0
 
-    const val kPIDDeadSpotHeight = 2.5
-    const val kMoveToBottomDemand = -0.06
+    const val kPIDDeadSpotHeight = -2.5
+    const val kMoveToBottomDemand = 0.06
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
