@@ -8,7 +8,6 @@ import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
-
 /*
  * ROTATION FUNCTIONS
  */
@@ -27,34 +26,10 @@ val Rotation2D.norm: Rotation2D get() = scaled(by = 1 / mag)
 
 val Rotation2D.translation: Translation2D get() = Translation2D(cos, sin)
 
-fun Rotation2D.scaled(by: Double): Rotation2D = Rotation2D(cos * by, sin * by)
-
 fun Rotation2D.rotate(by: Rotation2D): Rotation2D =
         Rotation2D(cos * by.cos - sin * by.sin, cos * by.sin + sin * by.cos).norm
 
-fun Rotation2D.distance(other: Rotation2D) = inverse.rotate(other).radians
-
-fun Rotation2D.interpolate(other: Rotation2D, x: Double) = when {
-    x <= 0 -> copy
-    x >= 1 -> other.copy
-    else -> rotate(Rotation2D.fromRadians(radians = distance(other) * x))
-}
-
-fun Rotation2D.interpolator(other: Rotation2D) = object : Interpolator<Rotation2D> {
-    override fun get(n: Double) = interpolate(other, n)
-}
-
 infix fun Rotation2D.parallelTo(other: Rotation2D) = (translation cross other.translation).epsilonEquals(0.0)
-
-operator fun Rotation2D.times(by: Double) = scaled(by)
-
-operator fun Rotation2D.plus(by: Rotation2D) = rotate(by)
-
-operator fun Rotation2D.minus(by: Rotation2D) = rotate(by.inverse)
-
-operator fun Rotation2D.unaryPlus() = copy
-
-operator fun Rotation2D.rangeTo(other: Rotation2D) = interpolator(other)
 
 /*
  * TRANSLATION FUNCTIONS

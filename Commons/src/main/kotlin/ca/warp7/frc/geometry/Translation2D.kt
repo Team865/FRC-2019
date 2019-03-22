@@ -9,7 +9,7 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
     override val state: Translation2D get() = this
 
     override fun rangeTo(state: Translation2D) = object : Interpolator<Translation2D> {
-        override fun get(n: Double) = interpolate(state, n)
+        override fun get(x: Double) = interpolate(state, x)
     }
 
     override fun interpolate(other: Translation2D, x: Double): Translation2D = when {
@@ -28,10 +28,10 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
     override val isIdentity: Boolean get() = epsilonEquals(identity)
 
-    override fun epsilonEquals(state: Translation2D, epsilon: Double) =
+    override fun epsilonEquals(state: Translation2D, epsilon: Double): Boolean =
             x.epsilonEquals(state.x, epsilon) && y.epsilonEquals(state.y, epsilon)
 
-    override fun epsilonEquals(state: Translation2D) = epsilonEquals(state, 1E-12)
+    override fun epsilonEquals(state: Translation2D): Boolean = epsilonEquals(state, 1E-12)
 
     override fun transform(by: Translation2D): Translation2D {
         return Translation2D(x + by.x, y + by.y)
