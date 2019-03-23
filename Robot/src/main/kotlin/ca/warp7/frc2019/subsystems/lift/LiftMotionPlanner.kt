@@ -129,15 +129,15 @@ object LiftMotionPlanner {
                 feedforward = LiftConstants.kPrimaryFeedforward + positionGain
             }
         } else {
-            if (setpointInches <= LiftConstants.kPIDDeadSpotHeight && height <= LiftConstants.kPIDDeadSpotHeight && !hallEffectTriggered) {
-                // In dead spot, apply power to go down so that the hall effect sensor can zero the encoder
+            if (setpointInches < LiftConstants.kPIDDeadSpotHeight || height < LiftConstants.kPIDDeadSpotHeight || hallEffectTriggered) {
+                controlMode = ControlMode.Position
+                demand = -(setpointInches * LiftConstants.kTicksPerInch) + nominalZero
+                feedforward = LiftConstants.kPrimaryFeedforward
+            } else {
+                // In Dead spot, apply power to go down so that the hall effect sensor can zero the encoder
                 controlMode = ControlMode.PercentOutput
                 demand = LiftConstants.kMoveToBottomDemand
                 feedforward = 0.0
-            } else {
-                controlMode = ControlMode.Position
-                demand = setpointInches * LiftConstants.kTicksPerInch + nominalZero
-                feedforward = LiftConstants.kPrimaryFeedforward
             }
         }
     }

@@ -37,7 +37,7 @@ object Lift : Subsystem() {
         }
 
     override fun onDisabled() = master.neutralOutput()
-    override fun onOutput() = master.set(controlMode, -demand, DemandType.ArbitraryFeedForward, -feedforward)
+    override fun onOutput() = master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
 
     override fun onMeasure(dt: Double) {
         position = master.selectedSensorPosition

@@ -83,7 +83,7 @@ object MainLoop : Action {
                 }
             }
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
-                Lift.set(LiftState.kOpenLoop) { speed = -leftYAxis }
+                Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             } else {
                 LiftState.kOpenLoop.speed = 0.0
             }
