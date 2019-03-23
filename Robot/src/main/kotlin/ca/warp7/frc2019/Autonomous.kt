@@ -32,9 +32,9 @@ object Autonomous {
             +runOnce { Outtake.grabbing = true }
             +DriveForDistance(12.0)
             +runOnce { Outtake.grabbing = false }
-            +wait(0.1)
+            +wait(0.01)
             +runOnce { Outtake.pushing = true }
-            +wait(0.3)
+            +wait(0.1)
             +runOnce { Outtake.pushing = false }
         }
 

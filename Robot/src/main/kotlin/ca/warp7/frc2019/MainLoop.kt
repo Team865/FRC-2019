@@ -40,7 +40,7 @@ object MainLoop : Action {
             if (bButton == Pressed) Limelight.isDriver = !Limelight.isDriver
             when (rightBumper) {
                 Pressed -> Limelight.isDriver = false
-                Released -> Limelight.isDriver = true
+                Released -> Limelight.isDriver = false
                 else -> Unit
             }
             when {

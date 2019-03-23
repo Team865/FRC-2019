@@ -60,18 +60,21 @@ class AlignedCurvature : Action {
                 val kP: Double
                 val kD: Double
                 val kVi: Double
-                if (!xSpeed.epsilonEquals(0.0, 0.1)) {
-                    kP = 0.3
-                    kD = 2.0
-                    kVi = 0.25
+                if (!xSpeed.epsilonEquals(0.0, 0.2)) {
+                    left=0.4
+                    right=0.4
+                    kP = 0.01
+                    kD = 2.0 / (Limelight.area)
+                    kVi = 0.2
                 } else {
-                    kP = 0.5
+                    kP = 0.6
                     kD = 0.05
-                    kVi = 0.35
+                    kVi = 0.2
                 }
                 val friction = kVi.withSign(error)
-                Drive.leftDemand = left * 0.5 + (error * kP + dError / dt * kD + friction) / (Limelight.area * 2)
-                Drive.rightDemand = right * 0.5 - (error * kP + dError / dt * kD + friction) / (Limelight.area * 2)
+                Drive.leftDemand = left + (error * kP + dError / dt * kD + friction)
+                Drive.rightDemand = right  - (error * kP + dError / dt * kD + friction)
+                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
             }
             lastError = error
             lastTime = time
