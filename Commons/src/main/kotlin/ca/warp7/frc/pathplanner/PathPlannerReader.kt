@@ -1,5 +1,11 @@
 package ca.warp7.frc.pathplanner
 
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.Translation2D
+import ca.warp7.frc.geometry.fromDegrees
+import ca.warp7.frc.trajectory.DifferentialTimedState
+import ca.warp7.frc.trajectory.Trajectory
 import java.io.File
 
 fun loadTrajectory(name: String): Any {
@@ -16,6 +22,19 @@ fun loadTrajectory(name: String): Any {
     }
 }
 
-fun loadTrajectory(leftRight: List<Pair<DoubleArray, DoubleArray>>): Any {
-    TODO()
+fun loadTrajectory(leftRight: List<Pair<DoubleArray, DoubleArray>>): Trajectory<Pose2D, DifferentialTimedState<Pose2D>> {
+    return Trajectory(leftRight.map {
+        val t = it.first[0]
+        val x = (it.first[1] + it.second[1]) / 2
+        val y = (it.first[2] + it.second[2]) / 2
+        val h = it.first[3]
+        val lp = it.first[4]
+        val lv = it.first[5]
+        val la = it.first[6]
+        val rp = it.second[4]
+        val rv = it.second[5]
+        val ra = it.second[6]
+        return@map DifferentialTimedState(Pose2D(Translation2D(x, y), Rotation2D.fromDegrees(h)),
+                t, lp, lv, la, rp, rv, ra)
+    })
 }
