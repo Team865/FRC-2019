@@ -5,6 +5,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
+import ca.warp7.frc2019.subsystems.Outtake
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
@@ -24,10 +25,10 @@ class QuickTurn(angleInDegrees: Double) : Action {
         targetYaw += startYaw
     }
 
-    private val angularKp = 0.75
-    private val angularKd = 0.15
-    private val angularKi = 0.001
-    private val integralZone = 0.75
+    private val angularKp = 0.5
+    private val angularKd = 0.11
+    private val angularKi = 0.0015
+    private val integralZone = 0.3
 
     override fun update() {
         val newError = (targetYaw - Infrastructure.yaw).radians
@@ -44,10 +45,13 @@ class QuickTurn(angleInDegrees: Double) : Action {
         Drive.put("Qt Error", error)
         Drive.put("Qt dError", dError)
         Drive.put("Qt SumError", sumError)
+        println("ERROR $error")
     }
 
-    override val shouldFinish: Boolean
-        get() = error < 0.1 && dError < 0.1
+    override val shouldFinish
+        get() = error.epsilonEquals(0.0, 0.07) &&
+                dError.epsilonEquals(0.0, 0.01)
+
 
     override fun stop() {
         Drive.apply {
@@ -56,5 +60,7 @@ class QuickTurn(angleInDegrees: Double) : Action {
             leftFeedforward = 0.0
             rightFeedforward = 0.0
         }
+        Outtake.pushing=true
+        Outtake.grabbing=false
     }
 }

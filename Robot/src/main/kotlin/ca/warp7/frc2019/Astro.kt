@@ -18,7 +18,11 @@ class Astro : TimedRobot() {
         Infrastructure.set { }
         Limelight.set { isDriver = false }
         Conveyor.set { speed = 0.0 }
-        Outtake.set { speed = 0.0 }
+        Outtake.set {
+            speed = 0.0
+            grabbing = true
+            pushing = false
+        }
         Intake.set { extended = false }
         Lift.set { }
         Superstructure.set { }

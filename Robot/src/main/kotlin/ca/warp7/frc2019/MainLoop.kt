@@ -22,6 +22,10 @@ object MainLoop : Action {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
         Limelight.set { isDriver = true }
+        Outtake.set {
+            grabbing = true
+            pushing = false
+        }
     }
 
     override val shouldFinish: Boolean = false

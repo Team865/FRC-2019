@@ -2,7 +2,9 @@ package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.RobotControl
+import ca.warp7.frc.set
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveState
 
 object Sandstorm : Action {
@@ -12,6 +14,10 @@ object Sandstorm : Action {
     override fun start() {
         println("Robot State: Sandstorm")
         Drive.set(DriveState.kNeutralOutput)
+        Outtake.set {
+            grabbing = true
+            pushing = false
+        }
         auto = Autonomous.mode
         auto.start()
     }
