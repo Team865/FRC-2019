@@ -2,19 +2,18 @@ package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.State
-import ca.warp7.frc.geometry.StateView
 import ca.warp7.frc.interpolate
 
 data class DifferentialTimedState<T : State<T>>(
         override val state: T,
-        val t: Double,
+        override val t: Double,
         val lp: Double,
         val lv: Double,
         val la: Double,
         val rp: Double,
         val rv: Double,
         val ra: Double
-) : StateView<T, DifferentialTimedState<T>> {
+) : TimedState<T, DifferentialTimedState<T>> {
 
     override fun rangeTo(state: DifferentialTimedState<T>): Interpolator<DifferentialTimedState<T>> =
             object : Interpolator<DifferentialTimedState<T>> {
