@@ -19,4 +19,8 @@ data class Trajectory<T : State<T>, V : StateView<T, V>>(
 
     override val start: Double = 0.0
     override val end: Double = points.size.toDouble()
+
+    override fun toString(): String {
+        return "Trajectory size: ${points.size}\n" + points.joinToString("\n")
+    }
 }

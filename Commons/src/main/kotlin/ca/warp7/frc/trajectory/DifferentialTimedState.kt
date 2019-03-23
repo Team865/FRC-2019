@@ -1,5 +1,6 @@
 package ca.warp7.frc.trajectory
 
+import ca.warp7.frc.f
 import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.State
 import ca.warp7.frc.interpolate
@@ -33,4 +34,8 @@ data class DifferentialTimedState<T : State<T>>(
                     interpolate(rv, other.rv, x),
                     interpolate(ra, other.ra, x)
             )
+
+    override fun toString(): String {
+        return "State($state, t=${t.f}, p=(${lp.f}, ${rp.f}), v=(${lv.f}, ${rv.f}), a=(${la.f}, ${ra.f})"
+    }
 }
