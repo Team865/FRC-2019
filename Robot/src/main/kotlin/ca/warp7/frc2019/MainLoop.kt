@@ -30,7 +30,7 @@ object MainLoop : Action {
 
     override val shouldFinish: Boolean = false
 
-    var isStopOverrideOuttake = false
+    var isStopOverrideOuttake = true
 
     override fun update() {
         var passThroughSpeed = 0.0
@@ -43,10 +43,9 @@ object MainLoop : Action {
                 isQuickTurn = leftBumper == HeldDown
                 isAligning = rightBumper == HeldDown
             }
-            if (bButton == Pressed) Limelight.isDriver = !Limelight.isDriver
             when (rightBumper) {
                 Pressed -> Limelight.isDriver = false
-                Released -> Limelight.isDriver = false
+                Released -> Limelight.isDriver = true
                 else -> Unit
             }
             when {
@@ -62,9 +61,7 @@ object MainLoop : Action {
                     Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                     isStopOverrideOuttake = false
                 }
-                else -> {
-                    Intake.set { speed = 0.0 }
-                }
+                else -> Intake.set { speed = 0.0 }
             }
             when (Pressed) {
                 xButton -> Outtake.set {

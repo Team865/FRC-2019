@@ -41,11 +41,11 @@ class DriveForDistance(distanceInFeet: Double) : Action {
         val velocityGain = (v / 0.0254 * DriveConstants.kTicksPerInch) / 10
 
         val a = interpolate(mi.v.acceleration, mj.v.acceleration, n)
-        val kA = 1.0 / 23
+        val kA = 1.0 / 30 // 1.0 / 23
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val newYaw = Infrastructure.yaw
-        val angularKp = 400.0
+        val angularKp = 500.0
         val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw

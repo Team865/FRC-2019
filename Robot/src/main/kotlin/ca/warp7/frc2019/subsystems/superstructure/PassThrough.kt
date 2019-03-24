@@ -20,11 +20,10 @@ object PassThrough : Action {
             Outtake.grabbing = openOuttake
         }
         Outtake.speed = when {
-            speed.epsilonEquals(0.0) -> 0.0
+            speed.epsilonEquals(0.0, 0.1) -> 0.0
             fastOuttake -> SuperstructureConstants.kFastOuttakeSpeed
             else -> SuperstructureConstants.kNormalOuttakeSpeed.withSign(speed)
         }
-        //Outtake.pushing = false
     }
 
     override val shouldFinish: Boolean
@@ -32,8 +31,6 @@ object PassThrough : Action {
 
     override fun stop() {
         Conveyor.speed = 0.0
-        //Outtake.pushing = false
         Outtake.speed = 0.0
-        //Outtake.grabbing = false
     }
 }

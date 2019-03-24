@@ -16,7 +16,7 @@ object Autonomous {
 
     private val quickTurn
         get() = queue {
-            +QuickTurn(180.0)
+            +QuickTurn(1.0)
             +QuickTurn(-180.0)
         }
 
