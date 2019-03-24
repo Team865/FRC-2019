@@ -51,7 +51,7 @@ object DriveMotionPlanner : Subsystem() {
     override fun onPostUpdate() {
         put("State.X", motionState.x)
         put("State.Y", motionState.y)
-        put("State.Yaw", motionState.yaw)
+        put("State.Yaw", Math.toDegrees(motionState.yaw))
         put("State.Vel", motionState.vel)
     }
 }

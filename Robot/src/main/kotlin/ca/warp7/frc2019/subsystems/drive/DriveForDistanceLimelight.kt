@@ -3,16 +3,18 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
+import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
-class DriveForDistance(distanceInFeet: Double) : Action {
+class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
@@ -44,7 +46,7 @@ class DriveForDistance(distanceInFeet: Double) : Action {
         val kA = 1.0 / 23
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
-        val newYaw = Infrastructure.yaw
+        val newYaw = Rotation2D.fromDegrees(Limelight.x)
         val angularKp = 400.0
         val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
         Drive.put("angularGain", angularGain)
@@ -57,7 +59,7 @@ class DriveForDistance(distanceInFeet: Double) : Action {
 
     override val shouldFinish: Boolean
         get() = (t > totalTime || i >= moments.size) //&&
-                //(Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
+    //(Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
 
     override fun stop() {
         Drive.apply {

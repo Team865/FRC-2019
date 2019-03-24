@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.constants
 
-import ca.warp7.frc.drive.DifferentialDriveModel
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
@@ -57,9 +56,9 @@ object DriveConstants {
 
         // TODO Position PID slot
         slot0.apply {
-            kP = 0.0
-            kI = 0.0
-            kD = 0.0
+            kP = 1.0
+            kI = 0.01
+            kD = 0.6
             kF = 0.0
             integralZone = 0
             allowableClosedloopError = 0
