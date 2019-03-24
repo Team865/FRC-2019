@@ -6,7 +6,6 @@ import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.drive.solvedMaxAtCurvature
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.path.*
 import kotlin.math.*
 

@@ -3,7 +3,6 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.trajectory.LinearTrajectory
@@ -12,7 +11,6 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
-import kotlin.math.absoluteValue
 
 class DriveForDistance(distanceInFeet: Double, val stopVelThreshold: Double = 0.01) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
