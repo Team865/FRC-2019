@@ -30,6 +30,8 @@ object MainLoop : Action {
 
     override val shouldFinish: Boolean = false
 
+    var isStopOverrideOuttake = false
+
     override fun update() {
         var passThroughSpeed = 0.0
         var isOpenOuttake = false
@@ -52,11 +54,13 @@ object MainLoop : Action {
                     passThroughSpeed = -leftTriggerAxis
                     isOpenOuttake = true
                     Intake.set { speed = -leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
+                    isStopOverrideOuttake = false
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     isOpenOuttake = rightBumper == HeldDown
                     Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
+                    isStopOverrideOuttake = false
                 }
                 else -> {
                     Intake.set { speed = 0.0 }
@@ -64,12 +68,14 @@ object MainLoop : Action {
             }
             when (Pressed) {
                 xButton -> Outtake.set {
-                grabbing = !grabbing
-                pushing = false
-            }
+                    grabbing = !grabbing
+                    pushing = false
+                    isStopOverrideOuttake = true
+                }
                 aButton -> Outtake.set {
                     pushing = !pushing
                     grabbing = false
+                    isStopOverrideOuttake = true
                 }
                 else -> Unit
             }
@@ -80,10 +86,12 @@ object MainLoop : Action {
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     isOpenOuttake = true
+                    isStopOverrideOuttake = false
                 }
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -leftTriggerAxis
                     isOpenOuttake = true
+                    isStopOverrideOuttake = false
                 }
             }
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
@@ -110,6 +118,7 @@ object MainLoop : Action {
             speed = passThroughSpeed
             openOuttake = isOpenOuttake
             fastOuttake = isFastOuttake
+            stopOverrideOuttake = isStopOverrideOuttake
         }
     }
 }

@@ -1,7 +1,5 @@
 package ca.warp7.frc.pathplanner
 
-import ca.warp7.frc.Data
-import ca.warp7.frc.DataKt
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.Translation2D
@@ -40,8 +38,8 @@ fun loadTrajectory(leftRight: List<Pair<DoubleArray, DoubleArray>>) =
             return@map DifferentialTimedState(Pose2D(Translation2D(x, y), Rotation2D.fromDegrees(h)),
                     t, lp, lv, la, rp, rv, ra)
         }).points)
-
+/*
 fun main() {
     val a = loadTrajectory(DataKt.pathLeft.zip(Data.pathRight))
     println(a)
-}
+}*/

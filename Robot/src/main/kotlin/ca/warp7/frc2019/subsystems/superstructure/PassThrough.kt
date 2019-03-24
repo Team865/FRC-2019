@@ -12,10 +12,13 @@ object PassThrough : Action {
     var speed = 0.0
     var openOuttake = false
     var fastOuttake = true
+    var stopOverrideOuttake = false
 
     override fun update() {
         Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
-        //Outtake.grabbing = openOuttake
+        if(!stopOverrideOuttake){
+            Outtake.grabbing = openOuttake
+        }
         Outtake.speed = when {
             speed.epsilonEquals(0.0) -> 0.0
             fastOuttake -> SuperstructureConstants.kFastOuttakeSpeed
