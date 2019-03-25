@@ -1,42 +1,40 @@
-package ca.warp7.frc2019.test.drive.velocity_control
+package ca.warp7.frc.trajectory
 
+import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.LinearTrajectoryState
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Interpolator
-import ca.warp7.frc.geometry.Translation2D
-import ca.warp7.frc.trajectory.IsolatedConstraint
-import ca.warp7.frc.trajectory.Moment
-import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.radians
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 @Suppress("MemberVisibilityCanBePrivate", "unused")
-class LinearTrajectory(distanceInFeet: Double = 0.0) {
-    val maxVelocity = feetToMeters(DriveConstants.kMaxVelocity)
-    val maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration)
+class TurnTrajectory(angle: Double = 0.0, model: DifferentialDriveModel) {
+    val maxVelocity = model.maxVelocity / model.wheelbaseRadius
+    val maxAcceleration = model.maxAcceleration / model.wheelbaseRadius
 
-    val initialState: Translation2D = Translation2D.identity
+    val initialState: Rotation2D = Rotation2D.identity
 
     // Frame of reference: positive x is the front of the robot
-    val targetState: Translation2D = Translation2D(x = feetToMeters(distanceInFeet), y = 0.0)
+    val targetState: Rotation2D = Rotation2D(Math.cos(angle), Math.sin(angle))
 
     // Parameter t of each segment
-    val segmentLength: Double = DriveConstants.kSegmentLength / (targetState - initialState).mag
+    val segmentLength: Double = 0.01 / (targetState - initialState).radians
     val segmentCount: Int = (1 / segmentLength).toInt() + 1
 
     // Interpolator between current state and target state
-    val diff: Interpolator<Translation2D> = initialState..targetState
+    val diff: Interpolator<Rotation2D> = initialState..targetState
 
     // Generate the path
-    val path: List<Translation2D> = (0 until segmentCount).map { diff[it * segmentLength] }
+    val path: List<Rotation2D> = (0 until segmentCount).map { diff[it * segmentLength] }
 
     // Generate a list of timed states
-    val timedStates: List<LinearTrajectoryState<Translation2D>> = path.map { LinearTrajectoryState(it) }
+    val timedStates: List<LinearTrajectoryState<Rotation2D>> = path.map { LinearTrajectoryState(it) }
 
     // Generate moments with 0 for time, velocity and acceleration
-    val moments: List<Moment<LinearTrajectoryState<Translation2D>>>
+    val moments: List<Moment<LinearTrajectoryState<Rotation2D>>>
 
     // Create start and end velocity constraints
     val constraints: List<IsolatedConstraint> = listOf(
@@ -56,7 +54,7 @@ class LinearTrajectory(distanceInFeet: Double = 0.0) {
             val currentMoment = timedStates[i]
             val nextMoment = timedStates[i + 1]
             val vi = currentMoment.velocity
-            val ds = (nextMoment.state - currentMoment.state).mag
+            val ds = (nextMoment.state - currentMoment.state).radians
             if (ds.epsilonEquals(0.0)) continue
             val vf = min(sqrt(vi.pow(2) + 2 * maxAcceleration * ds), maxVelocity)
             val dt = ds / vf
@@ -68,7 +66,7 @@ class LinearTrajectory(distanceInFeet: Double = 0.0) {
             val currentMoment = timedStates[i]
             val nextMoment = timedStates[i - 1]
             val vi = currentMoment.velocity
-            val ds = (nextMoment.state - currentMoment.state).mag
+            val ds = (nextMoment.state - currentMoment.state).radians
             if (ds.epsilonEquals(0.0)) continue
             val vf = min(sqrt(vi.pow(2) + 2 * maxAcceleration * ds), maxVelocity)
             val dt = ds / vf
