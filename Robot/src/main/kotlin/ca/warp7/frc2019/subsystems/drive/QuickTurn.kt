@@ -48,18 +48,16 @@ class QuickTurn(angleInDegrees: Double) : Action {
         else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(newError)
         else sumError += newError
 
-        val feed: Double
-        if (t < feedTime) feed = feedForwards.withSign(newError) / t
-        else feed = 0.0
+        val feed = if (t < feedTime) feedForwards.withSign(newError) / t else 0.0
 
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
 
-        val demand = angularGain + feed
+        var demand = angularGain + feed
         val kA = 0.0
-        val accGain = (demand - pDemand) * kA
+        demand += (demand - pDemand) * kA
 
-        Drive.leftDemand = demand + accGain
-        Drive.rightDemand = -(demand + accGain)
+        Drive.leftDemand = demand
+        Drive.rightDemand = -demand
 
         pDemand = demand
         error = newError
