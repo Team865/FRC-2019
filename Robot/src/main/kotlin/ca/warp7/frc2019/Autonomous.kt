@@ -6,11 +6,12 @@ import ca.warp7.actionkt.wait
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
+import ca.warp7.frc2019.subsystems.drive.TurnForAngle
 
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = quickTurn
+    val mode get() = runOnce{TurnForAngle(90.0)}
 
     private val nothingMode = { runOnce { } }
 

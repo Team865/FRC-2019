@@ -21,6 +21,7 @@ class QuickTurn(angleInDegrees: Double) : Action {
     private var dError = 0.0
     private var sumError = 0.0
     private var t = 0.0
+    private var pDemand = 0.0
 
     override fun start() {
         Drive.controlMode = ControlMode.PercentOutput
@@ -52,8 +53,15 @@ class QuickTurn(angleInDegrees: Double) : Action {
         else feed = 0.0
 
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
-        Drive.leftDemand = angularGain + feed
-        Drive.rightDemand = -angularGain - feed
+
+        val demand = angularGain + feed
+        val kA = 0.0
+        val accGain = (demand - pDemand) * kA
+
+        Drive.leftDemand = demand + accGain
+        Drive.rightDemand = -(demand + accGain)
+
+        pDemand = demand
         error = newError
 //        Drive.put("Qt Error", error)
 //        Drive.put("Qt dError", dError)
@@ -73,7 +81,7 @@ class QuickTurn(angleInDegrees: Double) : Action {
             leftFeedforward = 0.0
             rightFeedforward = 0.0
         }
-        Outtake.pushing=true
-        Outtake.grabbing=false
+        Outtake.pushing = true
+        Outtake.grabbing = false
     }
 }

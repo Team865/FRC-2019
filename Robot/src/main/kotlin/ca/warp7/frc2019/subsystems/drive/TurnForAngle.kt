@@ -12,8 +12,8 @@ import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
-class TurnForAngle(distanceInFeet: Double, val stopVelThreshold: Double = 0.01) : Action {
-    val trajectory = TurnTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
+class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) : Action {
+    val trajectory = TurnTrajectory(Math.toRadians(angleInDegrees), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0
@@ -49,7 +49,7 @@ class TurnForAngle(distanceInFeet: Double, val stopVelThreshold: Double = 0.01) 
         Drive.put("angularGain", angularGain)
 
         Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = velocityGain + accelerationGain - angularGain
+        Drive.leftDemand = -(velocityGain + accelerationGain + angularGain)
         Drive.rightDemand = velocityGain + accelerationGain + angularGain
     }
 
