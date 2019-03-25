@@ -2,17 +2,16 @@ package ca.warp7.actionkt
 
 class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
 
-    private val queue: MutableList<NameableAction> = mutableListOf()
-    var currentName: String? = null
+    private val queue: MutableList<Action> = mutableListOf()
     var currentAction: Action? = null
     var started = false
 
     init {
-        finishWhen { queue.isEmpty() }
+        finishWhen { queue.isEmpty() && currentAction == null }
     }
 
     override operator fun Action.unaryPlus() {
-        if (!started) queue.add(NameableAction(this))
+        if (!started) queue.add(this)
     }
 
     override fun start() {
@@ -24,10 +23,9 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
         super.update()
         if (currentAction == null) {
             if (queue.isEmpty()) return
-            val (action, name) = queue.removeAt(0)
+            val action = queue.removeAt(0)
             action.start()
             currentAction = action
-            currentName = name
         }
         currentAction?.update()
         if (currentAction?.shouldFinish != false) {
@@ -42,8 +40,5 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
     }
 
     override fun printTaskGraph() {
-        for ((index, task) in queue.withIndex()) {
-            println("--" + (task.name ?: task.action::class.java.simpleName + index))
-        }
     }
 }

@@ -80,7 +80,7 @@ class AlignedCurvature : Action {
             lastTime = time
         } else {
             Drive.leftDemand = left
-            Drive.rightDemand = right
+            Drive.rightDemand = right * 0.95
         }
     }
 

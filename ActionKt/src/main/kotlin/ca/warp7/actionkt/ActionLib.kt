@@ -30,7 +30,7 @@ fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = ASMPeriodic(this,
 
 fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action {
     onStart(block)
-    finishWhen { false }
+    finishWhen { true }
 }
 
 fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
