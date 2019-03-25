@@ -3,8 +3,11 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.direction
+import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
+import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc.trajectory.TurnTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
@@ -13,7 +16,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
 class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) : Action {
-    val trajectory = TurnTrajectory(Math.toRadians(angleInDegrees), DriveMotionPlanner.model)
+    val trajectory = LinearTrajectory(Math.toRadians(angleInDegrees) * DriveMotionPlanner.model.wheelbaseRadius, DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0
@@ -40,16 +43,16 @@ class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) 
         val velocityGain = (v / 0.0254 * DriveConstants.kTicksPerInch) / 10
 
         val a = interpolate(mi.v.acceleration, mj.v.acceleration, n)
-        val kA = 1.0 / 23
+        val kA = 0.0//1.0 / 23
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         val yaw = Infrastructure.yaw
-        val angularKp = 600.0
-        val angularGain = angularKp * (yaw - initYaw - mi.v.state).radians
+        val angularKp = 0.0
+        val angularGain = angularKp * (yaw - initYaw - Rotation2D.fromRadians( mi.v.state.mag/DriveMotionPlanner.model.wheelbaseRadius)).radians
         Drive.put("angularGain", angularGain)
 
         Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = -(velocityGain + accelerationGain + angularGain)
+        Drive.leftDemand = (velocityGain + accelerationGain + angularGain)
         Drive.rightDemand = velocityGain + accelerationGain + angularGain
     }
 

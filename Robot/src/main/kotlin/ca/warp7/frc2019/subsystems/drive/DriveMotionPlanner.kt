@@ -4,6 +4,7 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.inchesToMeters
+import ca.warp7.frc.trajectory.TurnTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure

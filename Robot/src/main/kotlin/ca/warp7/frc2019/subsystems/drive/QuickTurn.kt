@@ -6,6 +6,7 @@ import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
+import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.Outtake
@@ -20,8 +21,6 @@ class QuickTurn(angleInDegrees: Double) : Action {
     private var error = 0.0
     private var dError = 0.0
     private var sumError = 0.0
-    private var t = 0.0
-    private var pDemand = 0.0
 
     override fun start() {
         Drive.controlMode = ControlMode.PercentOutput
@@ -30,17 +29,13 @@ class QuickTurn(angleInDegrees: Double) : Action {
         targetYaw += startYaw
     }
 
-    private val angularKp = 0.03
-    private val angularKd = 0.0075
-    private val angularKi = 0.00001//2
+    private val angularKp = 0.029
+    private val angularKd = 0.0077
+    private val angularKi = 0.0001
+    private val kA = 0.0007
     private val integralZone = 10.0
 
-    private val feedForwards = 0.0//3
-    private val feedTime = 0.0//3
-
     override fun update() {
-        t += DriveMotionPlanner.lastDt
-
         val newError = (targetYaw - Infrastructure.yaw).degrees
         dError = (newError - error) / DriveMotionPlanner.lastDt
 
@@ -48,18 +43,15 @@ class QuickTurn(angleInDegrees: Double) : Action {
         else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(newError)
         else sumError += newError
 
-        val feed = if (t < feedTime) feedForwards.withSign(newError) / t else 0.0
-
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
 
-        var demand = angularGain + feed
-        val kA = 0.0
-        demand += (demand - pDemand) * kA
+        var demand = angularGain
+        val apparantPercent= (Drive.leftVelocity+Drive.rightVelocity)/2.0 /(DriveConstants.kMaxVelocity)
+        demand += (demand - apparantPercent) * kA / DriveMotionPlanner.lastDt
 
         Drive.leftDemand = demand
         Drive.rightDemand = -demand
 
-        pDemand = demand
         error = newError
 //        Drive.put("Qt Error", error)
 //        Drive.put("Qt dError", dError)
