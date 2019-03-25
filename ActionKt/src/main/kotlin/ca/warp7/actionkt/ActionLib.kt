@@ -38,6 +38,16 @@ fun ActionDSL.periodic(block: ActionState.() -> Unit) = action {
     finishWhen { false }
 }
 
+fun Action.withTimeout(seconds: Double): Action {
+    val action = this
+    return action {
+        onStart { action.start() }
+        onUpdate { action.update() }
+        finishWhen { elapsed > seconds || action.shouldFinish }
+        onStop { action.stop() }
+    }
+}
+
 inline fun runOnce(crossinline block: () -> Unit) = object : Action {
     override fun start() = block()
     override val shouldFinish: Boolean get() = false
