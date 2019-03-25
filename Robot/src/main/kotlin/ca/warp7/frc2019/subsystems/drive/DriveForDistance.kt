@@ -12,7 +12,7 @@ import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
-class DriveForDistance(distanceInFeet: Double) : Action {
+class DriveForDistance(distanceInFeet: Double, val isBackwards: Boolean = false) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
@@ -51,8 +51,13 @@ class DriveForDistance(distanceInFeet: Double) : Action {
         lastYaw = newYaw
 
         Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = velocityGain + accelerationGain - angularGain
-        Drive.rightDemand = velocityGain + accelerationGain + angularGain
+        if (isBackwards) {
+            Drive.leftDemand = -velocityGain - accelerationGain - angularGain
+            Drive.rightDemand = -velocityGain - accelerationGain + angularGain
+        } else {
+            Drive.leftDemand = velocityGain + accelerationGain - angularGain
+            Drive.rightDemand = velocityGain + accelerationGain + angularGain
+        }
     }
 
     override val shouldFinish: Boolean

@@ -68,8 +68,8 @@ class QuickTurn(angleInDegrees: Double) : Action {
     }
 
     override val shouldFinish
-        get() = error.epsilonEquals(0.0, 4.0)
-                && dError.epsilonEquals(0.0, 0.1)
+        get() = error.epsilonEquals(0.0, 6.0)
+                && dError.epsilonEquals(0.0, 1.0)
 
 
     override fun stop() {

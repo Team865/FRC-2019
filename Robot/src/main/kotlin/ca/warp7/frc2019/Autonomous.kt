@@ -6,12 +6,11 @@ import ca.warp7.actionkt.wait
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
-import ca.warp7.frc2019.subsystems.drive.TurnForAngle
 
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = runOnce{TurnForAngle(90.0)}
+    val mode get() = leftSideCargoShipHatch
 
     private val nothingMode = { runOnce { } }
 
@@ -54,14 +53,23 @@ object Autonomous {
     private val leftSideCargoShipHatch
         get() = queue {
             +runOnce { Outtake.grabbing = true }
-            +DriveForDistance(12.0)
+            +DriveForDistance(218.0 / 12)
             +QuickTurn(90.0)
-            +DriveForDistance(2.0)
+            +DriveForDistance(24.0 / 12)
             +runOnce { Outtake.grabbing = false }
             +wait(0.1)
             +runOnce { Outtake.pushing = true }
             +wait(0.3)
             +runOnce { Outtake.pushing = false }
+            +DriveForDistance(45.0 / 12, isBackwards = true)
+            +QuickTurn(100.0)
+            +DriveForDistance(240.0 / 12)
+            +wait(2)
+            +DriveForDistance(10.0 / 12, isBackwards = true)
+            +wait(0.5)
+            +DriveForDistance(200.0 / 12, isBackwards = true)
+            +QuickTurn(-100.0)
+            +DriveForDistance(40.0 / 12)
         }
 
     private val leftRocketHatch
