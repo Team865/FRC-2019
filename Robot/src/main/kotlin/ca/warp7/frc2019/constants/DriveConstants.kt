@@ -42,8 +42,8 @@ object DriveConstants {
     const val kTicksPerRevolution = COTSConstants.GrayHillEncoder.kTicksPerRevolution
     const val kTicksPerInch = kTicksPerRevolution / kWheelCircumference
 
-    const val kMaxVelocity = 12.0 // ft/s TODO Re-tune after robot is done
-    const val kMaxAcceleration = 8.875 //  ft/s
+    const val kMaxVelocity = 12.0 // ft/s
+    const val kMaxAcceleration = 9.0 //  ft/s^2
     const val kMaxFreeSpeedVelocity = 14.38 // ft/s
 
     const val kSegmentLength = 0.0254 // m
@@ -69,9 +69,9 @@ object DriveConstants {
 
         // Velocity PID slot
         slot1.apply {
-            kP = 0.4
-            kI = 0.00005
-            kD = 4.0
+            kP = 0.5
+            kI = 0.0
+            kD = 5.0
             kF = 1.0
             integralZone = 0
             allowableClosedloopError = 0

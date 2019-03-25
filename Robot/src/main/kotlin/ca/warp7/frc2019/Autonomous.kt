@@ -3,6 +3,7 @@ package ca.warp7.frc2019
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.runOnce
 import ca.warp7.actionkt.wait
+import ca.warp7.actionkt.withTimeout
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
@@ -52,23 +53,35 @@ object Autonomous {
 
     private val leftSideCargoShipHatch
         get() = queue {
+
+            // grab hatch
             +runOnce { Outtake.grabbing = true }
-            +DriveForDistance(218.0 / 12)
-            +QuickTurn(90.0)
+
+            // drive to second cargo bay
+            +DriveForDistance(197.0 / 12 + 1.0)
+            +QuickTurn(90.0).withTimeout(5.0)
             +DriveForDistance(24.0 / 12)
+
+            // outtake hatch
             +runOnce { Outtake.grabbing = false }
             +wait(0.1)
             +runOnce { Outtake.pushing = true }
             +wait(0.3)
             +runOnce { Outtake.pushing = false }
+
+            // drive to loading station
             +DriveForDistance(45.0 / 12, isBackwards = true)
-            +QuickTurn(100.0)
-            +DriveForDistance(240.0 / 12)
-            +wait(2)
+            +QuickTurn(100.0).withTimeout(5.0)
+            +DriveForDistance(230.0 / 12)
+
+            // intake hatch
+            +wait(1.5)
+
+            // more driving to places
             +DriveForDistance(10.0 / 12, isBackwards = true)
             +wait(0.5)
-            +DriveForDistance(200.0 / 12, isBackwards = true)
-            +QuickTurn(-100.0)
+            +DriveForDistance(190.0 / 12, isBackwards = true)
+            +QuickTurn(-100.0).withTimeout(5.0)
             +DriveForDistance(40.0 / 12)
         }
 
