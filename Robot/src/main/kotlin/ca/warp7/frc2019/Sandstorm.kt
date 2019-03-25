@@ -1,6 +1,8 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc.ControllerState
+import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
 import ca.warp7.frc2019.subsystems.Drive
@@ -23,7 +25,7 @@ object Sandstorm : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = auto.shouldFinish
+        get() = auto.shouldFinish || Controls.robotDriver.yButton == ControllerState.Pressed // switch to teleop
 
     override fun update() {
         auto.update()

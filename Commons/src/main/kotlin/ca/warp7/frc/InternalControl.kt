@@ -33,8 +33,8 @@ internal object InternalControl {
 
     fun disableOutputs() {
         LiveWindow.disableAllTelemetry()
-        robotEnabled = false
         subsystems.forEach { it.stopState() }
+        robotEnabled = false
     }
 
     fun enable() {
