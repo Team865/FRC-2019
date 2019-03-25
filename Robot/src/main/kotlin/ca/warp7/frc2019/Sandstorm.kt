@@ -6,8 +6,10 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
 import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveState
+import ca.warp7.frc2019.subsystems.lift.LiftState
 
 object Sandstorm : Action {
 
@@ -16,6 +18,7 @@ object Sandstorm : Action {
     override fun start() {
         println("Robot State: Sandstorm")
         Drive.set(DriveState.kNeutralOutput)
+        Lift.set(LiftState.kIdle)
         Outtake.set {
             grabbing = true
             pushing = false

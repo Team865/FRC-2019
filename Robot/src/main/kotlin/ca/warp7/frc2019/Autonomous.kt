@@ -1,12 +1,11 @@
 package ca.warp7.frc2019
 
-import ca.warp7.actionkt.queue
-import ca.warp7.actionkt.runOnce
-import ca.warp7.actionkt.wait
-import ca.warp7.actionkt.withTimeout
+import ca.warp7.actionkt.*
+import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
+import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
 @Suppress("unused")
 object Autonomous {
@@ -63,11 +62,7 @@ object Autonomous {
             +DriveForDistance(24.0 / 12)
 
             // outtake hatch
-            +runOnce { Outtake.grabbing = false }
-            +wait(0.1)
-            +runOnce { Outtake.pushing = true }
-            +wait(0.3)
-            +runOnce { Outtake.pushing = false }
+            +outtakeHatch
 
             // drive to loading station
             +DriveForDistance(45.0 / 12, isBackwards = true)
@@ -85,12 +80,26 @@ object Autonomous {
             +DriveForDistance(40.0 / 12)
         }
 
-    private val leftRocketHatch
+    private val leftRocketFarHatch
         get() = queue {
-            //+DriveForDistance(4.0)
-            //+wait(0.5)
+            +DriveForDistance(200.0 / 12 + 1.0)
             +QuickTurn(-90.0)
-            //+wait(0.5)
-            //+DriveForDistance(10.0)
+            +async {
+                +queue {
+                    +DriveForDistance(7.0)
+                    +QuickTurn(-45.0)
+                }
+                +GoToSetpoint().apply { setpoint = FieldConstants.secondHatchPortCenterHeightInches }
+            }
+            +outtakeHatch
+        }
+
+    private val outtakeHatch
+        get() = queue {
+            +runOnce { Outtake.grabbing = false }
+            +wait(0.1)
+            +runOnce { Outtake.pushing = true }
+            +wait(0.3)
+            +runOnce { Outtake.pushing = false }
         }
 }
