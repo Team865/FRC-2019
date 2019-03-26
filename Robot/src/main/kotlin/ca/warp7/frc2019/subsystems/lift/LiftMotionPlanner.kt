@@ -23,11 +23,11 @@ object LiftMotionPlanner {
             HatchCargo.Cargo -> FieldConstants.kCargo1Height
         }
         1 -> when (setpointType) {
-            HatchCargo.Hatch -> FieldConstants.secondHatchPortCenterHeightInches
+            HatchCargo.Hatch -> FieldConstants.kHatch2Height
             HatchCargo.Cargo -> FieldConstants.kCargo2Height
         }
         2 -> when (setpointType) {
-            HatchCargo.Hatch -> FieldConstants.thirdHatchPortCenterHeightInches
+            HatchCargo.Hatch -> FieldConstants.kHatch3Height
             HatchCargo.Cargo -> FieldConstants.kCargo3Height
         }
         else -> LiftConstants.kHomeHeightInches

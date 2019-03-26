@@ -81,7 +81,7 @@ object Autonomous {
             +DriveForDistance(40.0 / 12)
         }
 
-    private val leftRocketFarHatch
+    private val leftRocketFarHatchLevel2
         get() = queue {
             +DriveForDistance(200.0 / 12 + 1.0)
             +QuickTurn(-90.0)
@@ -93,15 +93,58 @@ object Autonomous {
                     +outtakeHatch
                     +stopSignal
                 }
-                +GoToSetpoint().apply { setpoint = FieldConstants.secondHatchPortCenterHeightInches }
+                +GoToSetpoint(FieldConstants.kHatch2Height)
             }
             +async {
                 +DriveForDistance(2.0, isBackwards = true)
                 +queue {
                     wait(0.5)
-                    +GoToSetpoint().apply { setpoint = LiftConstants.kHomeHeightInches }
+                    +GoToSetpoint(LiftConstants.kHomeHeightInches)
                 }
             }
+        }
+
+    private val leftRocketLevel2Hatch
+        get() = queue {
+            // off platform and turn
+            +DriveForDistance(88.0 / 12 + 1.0)
+            +QuickTurn(-90.0)
+            +DriveForDistance(65.0 / 12)
+
+            // turn to rocket and raise lift
+            +QuickTurn(70.0)
+            +async {
+                val stopSignal = stopSignal
+                +queue {
+                    +DriveForDistance(50.0 / 12)
+                    +outtakeHatch
+                    +stopSignal
+                }
+                +GoToSetpoint(FieldConstants.kHatch2Height)
+            }
+
+            // back off and lower lift
+            +async {
+                +queue {
+                    +DriveForDistance(3.0, isBackwards = true)
+                    +QuickTurn(-160.0)
+                    +DriveForDistance(160.0 / 12)
+                }
+                +queue {
+                    wait(0.5)
+                    +GoToSetpoint(LiftConstants.kHomeHeightInches)
+                }
+            }
+
+            +intakeHatch
+        }
+
+    private val intakeHatch
+        get() = queue {
+            +wait(0.5)
+            +runOnce { Outtake.grabbing = true }
+            +wait(0.5)
+            +DriveForDistance(3.0, isBackwards = true)
         }
 
     private val outtakeHatch
