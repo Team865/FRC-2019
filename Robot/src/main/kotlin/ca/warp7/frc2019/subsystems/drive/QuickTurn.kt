@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
 
-class QuickTurn(angleInDegrees: Double) : Action {
+class QuickTurn(angleInDegrees: Double, val stopAngleThreshold:Double = 5.0) : Action {
 
     private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
     private var startYaw = Rotation2D.identity
@@ -60,7 +60,7 @@ class QuickTurn(angleInDegrees: Double) : Action {
     }
 
     override val shouldFinish
-        get() = error.epsilonEquals(0.0, 6.0)
+        get() = error.epsilonEquals(0.0, stopAngleThreshold)
                 && dError.epsilonEquals(0.0, 1.0)
 
 
