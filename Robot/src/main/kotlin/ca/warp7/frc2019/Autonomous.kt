@@ -14,31 +14,7 @@ object Autonomous {
 
     val mode get() = leftSideCargoShipHatch
 
-    private val nothingMode = { runOnce { } }
-
-    private val quickTurn
-        get() = queue {
-            +QuickTurn(1.0)
-            +QuickTurn(-180.0)
-        }
-
-    private val driveBackgroundSubtractor
-        get() = queue {
-            +QuickTurn(180.0)
-            +wait(0.5)
-            +DriveForDistance(8.0)
-        }
-
-    private val driveBackingStoreException
-        get() = queue {
-            +DriveForDistance(8.0)
-            +wait(0.5)
-            +QuickTurn(180.0)
-            +wait(0.5)
-            +DriveForDistance(8.0)
-            +wait(0.5)
-            +QuickTurn(180.0)
-        }
+    private val nothingMode get() = runOnce { }
 
     private val straightHatch
         get() = queue {
@@ -57,6 +33,7 @@ object Autonomous {
 
             // grab hatch
             +runOnce { Outtake.grabbing = true }
+            +wait(1.0)
 
             // drive to second cargo bay
             +DriveForDistance(197.0 / 12 + 1.0)
@@ -87,6 +64,7 @@ object Autonomous {
 
             // grab hatch
             +runOnce { Outtake.grabbing = true }
+            +wait(1.0)
 
             // drive to second cargo bay
             +DriveForDistance(197.0 / 12 + 1.0)
@@ -188,5 +166,22 @@ object Autonomous {
             +runOnce { Outtake.pushing = true }
             +wait(0.3)
             +runOnce { Outtake.pushing = false }
+        }
+
+    private val quickTurn
+        get() = queue {
+            +QuickTurn(1.0)
+            +QuickTurn(-180.0)
+        }
+
+    private val driveBackingStoreException
+        get() = queue {
+            +DriveForDistance(8.0)
+            +wait(0.5)
+            +QuickTurn(180.0)
+            +wait(0.5)
+            +DriveForDistance(8.0)
+            +wait(0.5)
+            +QuickTurn(180.0)
         }
 }
