@@ -12,7 +12,7 @@ import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
-class DriveForDistance(distanceInFeet: Double, val isBackwards: Boolean = false) : Action {
+class DriveForDistance(distanceInFeet: Double, val isBackwards: Boolean = distanceInFeet < 0) : Action {
     val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t

@@ -20,15 +20,15 @@ object LiftMotionPlanner {
     fun getCoolSetpoint(): Double = when (setpointLevel) {
         0 -> when (setpointType) {
             HatchCargo.Hatch -> LiftConstants.kHomeHeightInches
-            HatchCargo.Cargo -> FieldConstants.firstCargoBayCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.kCargo1Height
         }
         1 -> when (setpointType) {
             HatchCargo.Hatch -> FieldConstants.secondHatchPortCenterHeightInches
-            HatchCargo.Cargo -> FieldConstants.secondCargoBayCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.kCargo2Height
         }
         2 -> when (setpointType) {
             HatchCargo.Hatch -> FieldConstants.thirdHatchPortCenterHeightInches
-            HatchCargo.Cargo -> FieldConstants.thirdCargoBayCenterHeightInches
+            HatchCargo.Cargo -> FieldConstants.kCargo3Height
         }
         else -> LiftConstants.kHomeHeightInches
     }

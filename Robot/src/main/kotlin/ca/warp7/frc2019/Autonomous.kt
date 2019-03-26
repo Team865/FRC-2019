@@ -2,6 +2,7 @@ package ca.warp7.frc2019
 
 import ca.warp7.actionkt.*
 import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
@@ -85,13 +86,22 @@ object Autonomous {
             +DriveForDistance(200.0 / 12 + 1.0)
             +QuickTurn(-90.0)
             +async {
+                val stopSignal = stopSignal
                 +queue {
                     +DriveForDistance(7.0)
                     +QuickTurn(-45.0)
+                    +outtakeHatch
+                    +stopSignal
                 }
                 +GoToSetpoint().apply { setpoint = FieldConstants.secondHatchPortCenterHeightInches }
             }
-            +outtakeHatch
+            +async {
+                +DriveForDistance(2.0, isBackwards = true)
+                +queue {
+                    wait(0.5)
+                    +GoToSetpoint().apply { setpoint = LiftConstants.kHomeHeightInches }
+                }
+            }
         }
 
     private val outtakeHatch
