@@ -28,7 +28,7 @@ class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
             currentAction = action
         }
         currentAction?.update()
-        if (currentAction?.shouldFinish != false) {
+        if (currentAction?.shouldFinish == true) {
             currentAction?.stop()
             currentAction = null
         }

@@ -1,13 +1,10 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.speedController
-import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import kotlin.math.withSign
 
 class AlignWithLimelight : Action {
@@ -16,16 +13,6 @@ class AlignWithLimelight : Action {
 
     private var lastError = 0.0
     private var lastTime = 0.0
-
-    private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
-
-    init {
-        differentialDrive.apply {
-            setDeadband(DriveConstants.kDifferentialDeadband)
-            isSafetyEnabled = false
-            isRightSideInverted = false
-        }
-    }
 
     override fun start() {
         Drive.controlMode = ControlMode.PercentOutput

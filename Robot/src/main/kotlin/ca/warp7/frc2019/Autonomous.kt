@@ -162,7 +162,7 @@ object Autonomous {
     private val outtakeHatch
         get() = queue {
             +runOnce { Outtake.grabbing = false }
-            +wait(0.1)
+            +wait(0.3)
             +runOnce { Outtake.pushing = true }
             +wait(0.5)
             +runOnce { Outtake.pushing = false }

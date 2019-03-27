@@ -9,12 +9,11 @@ import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
-import ca.warp7.frc2019.subsystems.Outtake
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
 
-class QuickTurn(angleInDegrees: Double, val stopAngleThreshold:Double = 5.0) : Action {
+class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
 
     private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
     private var startYaw = Rotation2D.identity
@@ -46,7 +45,7 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold:Double = 5.0) : A
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
 
         var demand = angularGain
-        val apparantPercent= (Drive.leftVelocity+Drive.rightVelocity)/2.0 /(DriveConstants.kMaxVelocity)
+        val apparantPercent = (Drive.leftVelocity + Drive.rightVelocity) / 2.0 / (DriveConstants.kMaxVelocity)
         demand += (demand - apparantPercent) * kA / DriveMotionPlanner.lastDt
 
         Drive.leftDemand = demand
@@ -71,7 +70,5 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold:Double = 5.0) : A
             leftFeedforward = 0.0
             rightFeedforward = 0.0
         }
-        Outtake.pushing = true
-        Outtake.grabbing = false
     }
 }
