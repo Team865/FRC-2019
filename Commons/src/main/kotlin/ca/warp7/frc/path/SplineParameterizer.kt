@@ -8,7 +8,7 @@ import ca.warp7.frc.geometry.rotate
 fun List<QuinticSegment2D>.parameterized() = map { it.parameterized() }.flatten()
 
 fun QuinticSegment2D.parameterized(): List<CurvatureState<Pose2D>> =
-        parameterized(threshold = Twist2D(0.0254, 0.0254, 0.1))
+        parameterized(threshold = Twist2D(0.0254 * 2, 0.0254 * 0.05, 0.1))
 
 fun QuinticSegment2D.parameterized(threshold: Twist2D): List<CurvatureState<Pose2D>> {
     val points = mutableListOf<CurvatureState<Pose2D>>()
