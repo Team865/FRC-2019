@@ -1,28 +1,13 @@
 package ca.warp7.frc.path
 
 import ca.warp7.frc.geometry.*
-import kotlin.math.pow
 
 /**
  * @author Team 254
  */
 
-fun QuinticSegment2D.dCurvature2(t: Double): Double {
-    val vx = vx(t)
-    val vy = vy(t)
-    val ax = ax(t)
-    val ay = ay(t)
-    val jx = jx(t)
-    val jy = jy(t)
-    val dx2dy2 = vx.pow(2) + vy.pow(2)
-    val num = (vx * jy - jx * vy) * dx2dy2 - 3.0 * (vx * ay - ax * vy) * (vx * ax + vy * ay)
-    return num.pow(2) / dx2dy2.pow(5)
-}
-
-fun QuinticSegment2D.sumDCurvature2(): Double {
-    val dt = 1.0 / 100
-    return (0 until 100).sumByDouble { dt * dCurvature2(dt * it) }
-}
+fun QuinticSegment2D.sumDCurvature2(): Double =
+        (0 until 100).sumByDouble { 0.01 * get(0.01 * it).dCurvature2 }
 
 fun List<QuinticSegment2D>.sumDCurvature2(): Double = this.sumByDouble { it.sumDCurvature2() }
 
@@ -153,10 +138,11 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
 }
 
 fun main() {
-    val splines = parameterizedPathOf(
+    val splines = parameterizedSplinesOf(
             waypoint(0, 0, 0),
-            waypoint(6, -3, -45),
-            waypoint(4.0, -1.0, -45)
+            waypoint(8, 0, 0),
+            waypoint(16, -6, -60),
+            waypoint(18, -8, -45)
     )
     splines.forEach { println(it) }
 }

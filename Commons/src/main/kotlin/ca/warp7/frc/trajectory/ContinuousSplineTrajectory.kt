@@ -18,7 +18,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
     val timedStates: List<TankTrajectoryState<Pose2D>> = points.map { TankTrajectoryState(it.toPose(), it.curvature) }
     val dL: List<Double> = (0 until segments).map {
         val p0 = points[it]
-        val length = (points[it + 1].position - p0.position).mag
+        val length = (points[it + 1].point - p0.point).mag
         val curvature = p0.curvature
         if (curvature.epsilonEquals(0.0)) length else {
             val radius = 1 / curvature.absoluteValue
@@ -27,7 +27,7 @@ class ContinuousSplineTrajectory(val path: Path2D, val model: DifferentialDriveM
     }
     val dR: List<Double> = (0 until segments).map {
         val p0 = points[it]
-        val length = (points[it + 1].position - p0.position).mag
+        val length = (points[it + 1].point - p0.point).mag
         val curvature = p0.curvature
         if (curvature.epsilonEquals(0.0)) length else {
             val radius = 1 / curvature.absoluteValue
