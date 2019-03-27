@@ -23,3 +23,24 @@ val Path2DState.curvature get() = (vx * ay - ax * vy) / (vx * vx + vy * vy).pow(
 val Path2DState.position get() = Translation2D(px, py)
 
 fun Path2DState.toPose() = Pose2D(position, Rotation2D(vx, vy).norm)
+
+fun splineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
+    val scale = p0.translation.distanceTo(p1.translation)
+    return QuinticSegment2D(
+            x0 = p0.translation.x,
+            x1 = p1.translation.x,
+            dx0 = p0.rotation.cos * scale,
+            dx1 = p1.rotation.cos * scale,
+            ddx0 = 0.0,
+            ddx1 = 0.0,
+            y0 = p0.translation.y,
+            y1 = p1.translation.y,
+            dy0 = p0.rotation.sin * scale,
+            dy1 = p1.rotation.sin * scale,
+            ddy0 = 0.0,
+            ddy1 = 0.0
+    )
+}
+
+fun splinePathOf(vararg waypoints: Pose2D): List<QuinticSegment2D> =
+        waypoints.asIterable().zipWithNext { p0: Pose2D, p1: Pose2D -> splineFromPose(p0, p1) }.optimized()
