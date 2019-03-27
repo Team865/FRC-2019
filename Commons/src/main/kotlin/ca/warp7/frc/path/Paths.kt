@@ -24,7 +24,7 @@ val Path2DState.position get() = Translation2D(px, py)
 
 fun Path2DState.toPose() = Pose2D(position, Rotation2D(vx, vy).norm)
 
-fun splineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
+fun quinticSplineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
     val scale = p0.translation.distanceTo(p1.translation)
     return QuinticSegment2D(
             x0 = p0.translation.x,
@@ -42,5 +42,7 @@ fun splineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
     )
 }
 
-fun splinePathOf(vararg waypoints: Pose2D): List<QuinticSegment2D> =
-        waypoints.asIterable().zipWithNext { p0: Pose2D, p1: Pose2D -> splineFromPose(p0, p1) }.optimized()
+fun quinticSplinePathOf(vararg waypoints: Pose2D): List<QuinticSegment2D> =
+        waypoints.asIterable().zipWithNext { p0: Pose2D, p1: Pose2D -> quinticSplineFromPose(p0, p1) }.optimized()
+
+fun parameterizedPathOf(vararg waypoints: Pose2D) = quinticSplinePathOf(*waypoints).parameterizedWithArcLength()

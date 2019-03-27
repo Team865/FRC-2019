@@ -153,10 +153,10 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
 }
 
 fun main() {
-    val splines = splinePathOf(
-            Pose2D.identity,
-            Pose2D(Translation2D(6.0, -3.0), Rotation2D.fromDegrees(-45.0)),
-            Pose2D(Translation2D(4.0, -1.0), Rotation2D.fromDegrees(-45.0))
+    val splines = parameterizedPathOf(
+            waypoint(0, 0, 0),
+            waypoint(6, -3, -45),
+            waypoint(4.0, -1.0, -45)
     )
     splines.forEach { println(it) }
 }
