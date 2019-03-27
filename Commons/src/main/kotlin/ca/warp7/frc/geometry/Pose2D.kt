@@ -67,6 +67,9 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
             return Twist2D(translation.x, translation.y, dTheta)
         }
 
+    val mirrored: Pose2D
+        get() = Pose2D(Translation2D(translation.x, -translation.y), rotation.inverse)
+
     companion object {
         val identity = Pose2D(Translation2D.identity, Rotation2D.identity)
     }
