@@ -38,24 +38,24 @@ object Autonomous {
                 Limelight.isDriver = false
                 Limelight.isDriver = false
             }
-            +wait(1.0)
+            +wait(0.5)
 
             // drive to second cargo bay
-            +DriveForDistance(207.0 / 12 + 1.0)
+            +DriveForDistance(184.0 / 12 + 1.0)
             +QuickTurn(90.0).withTimeout(2.0)
             +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(22.0 / 12)
+            +DriveForDistance(16.0 / 12)
 
             // outtake hatch
             +outtakeHatch
 
             // drive to loading station
-            +DriveForDistance(45.0 / 12, isBackwards = true)
-            +QuickTurn(93.0).withTimeout(2.0)
+            +DriveForDistance(55.0 / 12, isBackwards = true)
+            +QuickTurn(93.0).withTimeout(1.0)
             +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(224.0 / 12)
+            +DriveForDistance(215.0 / 12)
             +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(6.0 / 12)
+            +DriveForDistance(10.0 / 12)
 
             // intake hatch
             +intakeHatch

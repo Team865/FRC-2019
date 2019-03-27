@@ -5,10 +5,7 @@ import ca.warp7.frc.ControllerState.*
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
 import ca.warp7.frc.withOperator
-import ca.warp7.frc2019.constants.ControlConstants
-import ca.warp7.frc2019.constants.HatchCargo
-import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.constants.SuperstructureConstants
+import ca.warp7.frc2019.constants.*
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
@@ -108,6 +105,11 @@ object MainLoop : Action {
                     LiftMotionPlanner.setpointType = HatchCargo.Cargo
                     Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
+                else -> Unit
+            }
+            when (aButton){
+                Pressed -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kCargo1Height }
+                Released -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
                 else -> Unit
             }
         }

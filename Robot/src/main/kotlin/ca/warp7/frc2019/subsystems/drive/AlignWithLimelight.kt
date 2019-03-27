@@ -28,7 +28,7 @@ class AlignWithLimelight : Action {
             val dError = error - lastError
 
             val kP = 0.9
-            val kD = 0.15
+            val kD = 0.4
             val kVi = 0.2
 
             val friction = kVi.withSign(error)
@@ -42,8 +42,8 @@ class AlignWithLimelight : Action {
     }
 
     override val shouldFinish
-        get() = Limelight.x.epsilonEquals(0.0, 1.0)
-                && Infrastructure.yawRate.epsilonEquals(0.0, 0.05)
+        get() = Limelight.x.epsilonEquals(0.0, 1.5)
+                && Infrastructure.yawRate.epsilonEquals(0.0, 0.07)
                 && Limelight.hasTarget
 
     override fun stop() {
