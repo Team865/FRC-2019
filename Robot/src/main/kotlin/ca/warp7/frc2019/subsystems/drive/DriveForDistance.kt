@@ -37,6 +37,11 @@ class DriveForDistance(distanceInFeet: Double, val isBackwards: Boolean = distan
         val mj = moments[i + 1]
         val n = (t - mi.t) / (mj.t - mi.t)
 
+        val p = mi.v.state.interpolate(mj.v.state, n).x
+        val avg = (Drive.leftPosition + Drive.rightPosition) / 2
+        val error = p - avg / DriveConstants.kTicksPerInch * 0.0254
+        println("ERROR $p, $error")
+
         val v = interpolate(mi.v.velocity, mj.v.velocity, n)
         val velocityGain = (v / 0.0254 * DriveConstants.kTicksPerInch) / 10
 

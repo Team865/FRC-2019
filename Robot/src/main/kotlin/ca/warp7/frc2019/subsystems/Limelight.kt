@@ -25,7 +25,7 @@ object Limelight : Subsystem() {
 
     var isDriver = false
         set(value) {
-            if (field != value) {
+            //if (field != value) {
                 if (value) {
                     camMode.setDouble(1.0)
                     ledMode.setDouble(1.0)
@@ -33,7 +33,7 @@ object Limelight : Subsystem() {
                     camMode.setDouble(0.0)
                     ledMode.setDouble(0.0)
                 }
-            }
+            //}
             field = value
         }
 
