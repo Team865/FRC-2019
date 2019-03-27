@@ -155,7 +155,7 @@ object Autonomous {
         get() = queue {
             +wait(0.5)
             +runOnce { Outtake.grabbing = true }
-            +wait(0.5)
+            +wait(1.0)
             +DriveForDistance(3.0, isBackwards = true)
         }
 
@@ -164,7 +164,7 @@ object Autonomous {
             +runOnce { Outtake.grabbing = false }
             +wait(0.1)
             +runOnce { Outtake.pushing = true }
-            +wait(0.3)
+            +wait(0.5)
             +runOnce { Outtake.pushing = false }
         }
 

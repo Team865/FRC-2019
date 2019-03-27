@@ -2,7 +2,6 @@ package ca.warp7.frc2019.test.drive.simple_spline_trajectory
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.minus
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.QuinticSegment2D

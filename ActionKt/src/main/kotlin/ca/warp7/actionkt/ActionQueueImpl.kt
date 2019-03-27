@@ -3,8 +3,8 @@ package ca.warp7.actionkt
 class ActionQueueImpl : ActionDSLImpl(), ActionQueue {
 
     private val queue: MutableList<Action> = mutableListOf()
-    var currentAction: Action? = null
-    var started = false
+    private var currentAction: Action? = null
+    private var started = false
 
     init {
         finishWhen { queue.isEmpty() && currentAction == null }

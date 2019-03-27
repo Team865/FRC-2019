@@ -1,19 +1,19 @@
 package ca.warp7.frc.path
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate", "CanBeParameter")
 class QuinticSegment2D(
-        x0: Double,
-        dx0: Double,
-        ddx0: Double,
-        x1: Double,
-        dx1: Double,
-        ddx1: Double,
-        y0: Double,
-        dy0: Double,
-        ddy0: Double,
-        y1: Double,
-        dy1: Double,
-        ddy1: Double
+        val x0: Double,
+        val x1: Double,
+        val dx0: Double,
+        val dx1: Double,
+        val ddx0: Double,
+        val ddx1: Double,
+        val y0: Double,
+        val y1: Double,
+        val dy0: Double,
+        val dy1: Double,
+        val ddy0: Double,
+        val ddy1: Double
 ) : Path2D {
 
     val x = QuinticSpline(x0, dx0, ddx0, x1, dx1, ddx1)

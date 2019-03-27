@@ -42,3 +42,19 @@ fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y
 
 infix fun Translation2D.cross(other: Translation2D) = x * other.y - y * other.x
+
+fun fitParabola(p1: Translation2D, p2: Translation2D, p3: Translation2D): Double {
+    val a = p3.x * (p2.y - p1.y) + p2.x * (p1.y - p3.y) + p1.x * (p3.y - p2.y)
+    val b = p3.x * p3.x * (p1.y - p2.y) + p2.x * p2.x * (p3.y - p1.y) + p1.x * p1.x * (p2.y - p3.y)
+    return -b / (2 * a)
+}
+
+/*
+ * POSE FUNCTIONS
+ */
+
+fun Pose2D.isColinear(other: Pose2D): Boolean {
+    if (!rotation.parallelTo(other.rotation)) return false
+    val twist = (other - this).log
+    return twist.dy.epsilonEquals(0.0) && twist.dTheta.epsilonEquals(0.0)
+}
