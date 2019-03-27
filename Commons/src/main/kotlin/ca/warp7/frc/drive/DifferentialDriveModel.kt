@@ -6,5 +6,9 @@ data class DifferentialDriveModel(
         val maxVelocity: Double,
         val maxAcceleration: Double,
         val maxFreeSpeedVelocity: Double,
-        val frictionVoltage: Double
+        val speedPerVolt: Double,
+        val torquePerVolt: Double,
+        val frictionVoltage: Double,
+        val linearInertia: Double,
+        val angularInertia: Double
 )

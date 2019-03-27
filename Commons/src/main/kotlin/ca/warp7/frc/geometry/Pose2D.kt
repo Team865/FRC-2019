@@ -54,7 +54,6 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
      * Convert this into a Twist2D transformation
      * By: Team 254
      */
-    @Suppress("MemberVisibilityCanBePrivate")
     val log: Twist2D
         get() {
             val dTheta = rotation.radians
@@ -67,6 +66,7 @@ data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : St
             return Twist2D(translation.x, translation.y, dTheta)
         }
 
+    @Suppress("unused")
     val mirrored: Pose2D
         get() = Pose2D(Translation2D(translation.x, -translation.y), rotation.inverse)
 
