@@ -27,7 +27,7 @@ object MainLoop : Action {
 
     override val shouldFinish: Boolean = false
 
-    var isStopOverrideOuttake = true
+    private var isStopOverrideOuttake = true
 
     override fun update() {
         var passThroughSpeed = 0.0
@@ -88,15 +88,23 @@ object MainLoop : Action {
                     isStopOverrideOuttake = false
                 }
             }
+
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
             } else {
                 LiftState.kOpenLoop.speed = 0.0
             }
+
             when (Pressed) {
                 rightBumper -> LiftMotionPlanner.increaseSetpoint()
                 leftBumper -> LiftMotionPlanner.decreaseSetpoint()
-                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
+                else -> Unit
+            }
+
+            when (Pressed) {
+                xButton -> Lift.set(LiftState.kGoToSetpoint) {
+                    setpoint = FieldConstants.kHatch2Height - 5.0
+                }
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch
                     Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
@@ -107,7 +115,8 @@ object MainLoop : Action {
                 }
                 else -> Unit
             }
-            when (aButton){
+
+            when (aButton) {
                 Pressed -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kCargo1Height }
                 Released -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
                 else -> Unit
