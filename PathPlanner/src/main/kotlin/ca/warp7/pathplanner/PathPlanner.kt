@@ -35,7 +35,10 @@ class PathPlanner : PApplet() {
     val kPixelsPerMeter = 494 / 8.2296
     val Double.my2x: Double get() = (17.0 + (512.0 - 17.0) / 2 + kPixelsPerMeter * this)
     val Double.mx2y: Double get() = (493.0 - kPixelsPerMeter * this)
+    val Double.px2y: Double get() = (this - 17.0 - (512.0 - 17.0) / 2) / kPixelsPerMeter
+    val Double.py2x: Double get() = (493.0 - this) / kPixelsPerMeter
     val Translation2D.newXY get() = Translation2D(y.my2x, x.mx2y)
+    val Translation2D.oldXY get() = Translation2D(y.py2x, x.px2y)
     val Translation2D.newXYNoOffset get() = Translation2D(kPixelsPerMeter * y, -kPixelsPerMeter * x)
 
     var waypoints: Array<Pose2D> = emptyArray()
@@ -187,7 +190,30 @@ class PathPlanner : PApplet() {
         }
     }
 
-    override fun mouseClicked() {
+    var dragging = false
+    var draggedControlPoint: ControlPoint? = null
+
+    override fun mouseDragged() {
+        if (selectedIndex == -1) {
+            mouseClicked()
+            if (!selectionChanged) return
+        }
+        val mouse = Translation2D(mouseX.toDouble(), mouseY.toDouble())
+        val controlPoint = controlPoints[selectedIndex]
+        val waypoint = waypoints[selectedIndex]
+        val pc = controlPoint.pos - mouse
+        if (pc.mag < 16 || dragging) {
+            dragging = true
+            redrawScreen()
+            val heading = (mouse.oldXY + waypoint.rotation.translation.scaled(0.5)).newXY
+            val dir = waypoint.rotation.norm.translation
+            stroke(255f, 128f, 255f)
+            strokeWeight(2f)
+            draggedControlPoint = ControlPoint(mouse, heading, dir).apply { drawArrow() }
+        }
+    }
+
+    override fun mousePressed() {
         var found = false
         controlPoints.forEachIndexed { index, controlPoint ->
             val mouse = Translation2D(mouseX.toDouble(), mouseY.toDouble())
@@ -196,7 +222,7 @@ class PathPlanner : PApplet() {
             if (pc < 12 || hc < 12) {
                 selectionChanged = true
                 found = true
-                selectedIndex = (if (selectedIndex != index) index else -1)
+                selectedIndex = index
             }
         }
         if (!found && selectedIndex != -1) {
@@ -205,25 +231,15 @@ class PathPlanner : PApplet() {
         }
     }
 
-    var dragging = false
-
-    override fun mouseDragged() {
-        if (selectedIndex == -1) return
-        val mouse = Translation2D(mouseX.toDouble(), mouseY.toDouble())
-        val controlPoint = controlPoints[selectedIndex]
-        val waypoint = waypoints[selectedIndex]
-        val pc = controlPoint.pos - mouse
-        if (pc.mag < 16 || dragging) {
-            dragging = true
-            redrawScreen()
-            val heading = (mouse + waypoint.rotation.translation.scaled(0.5)).newXY
-            val dir = waypoint.rotation.norm.translation
-            ControlPoint(mouse, heading, dir).drawArrow()
-        }
-    }
-
     override fun mouseReleased() {
-        dragging = false
+        if (dragging && selectedIndex != -1) {
+            dragging = false
+            draggedControlPoint?.also {
+                controlPoints[selectedIndex] = it
+                waypoints[selectedIndex] = Pose2D(it.pos.oldXY, it.dir.direction)
+                regenerateSplines()
+            }
+        }
     }
 
     override fun keyPressed() {
