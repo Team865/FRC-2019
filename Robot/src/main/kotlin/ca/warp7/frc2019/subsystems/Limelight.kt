@@ -51,8 +51,10 @@ object Limelight : Subsystem() {
     }
 
     override fun onPostUpdate() {
+        /*
         graph("x", x)
         graph("y", y)
         graph("area", area)
+        */
     }
 }

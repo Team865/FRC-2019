@@ -33,9 +33,11 @@ object Infrastructure : Subsystem() {
     }
 
     override fun onPostUpdate() {
+        /*
         put("ahrsCalibrated", ahrsCalibrated)
         put("Yaw", fusedHeading)
         put("Pitch", pitch)
         put(pdp)
+        */
     }
 }
