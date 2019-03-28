@@ -1,0 +1,25 @@
+
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "edu.wpi.first.GradleRIO"
+    id "application"
+}
+
+repositories {
+    mavenCentral()
+}
+
+buildDir = new File(rootProject.projectDir, "build/" + project.name)
+
+dependencies {
+    compile project(":Robot-Commons")
+    compile wpi.deps.wpilib()
+    compile wpi.deps.vendor.java()
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.jetbrains.kotlin:kotlin-test"
+    compile "org.processing:core:3.3.7"
+}
+
+mainClassName = "ca.warp7.pathplanner.MainKt"

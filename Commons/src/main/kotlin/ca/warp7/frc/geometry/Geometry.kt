@@ -26,6 +26,8 @@ val Rotation2D.norm: Rotation2D get() = scaled(by = 1 / mag)
 
 val Rotation2D.translation: Translation2D get() = Translation2D(cos, sin)
 
+val Rotation2D.normal: Rotation2D get() = Rotation2D(-sin, cos)
+
 fun Rotation2D.rotate(by: Rotation2D): Rotation2D = transform(by)
 
 infix fun Rotation2D.parallelTo(other: Rotation2D) = (translation cross other.translation).epsilonEquals(0.0)
@@ -35,6 +37,8 @@ infix fun Rotation2D.parallelTo(other: Rotation2D) = (translation cross other.tr
  */
 
 val Translation2D.direction: Rotation2D get() = Rotation2D(x, y).norm
+
+val Translation2D.transposed: Translation2D get() = Translation2D(y, x)
 
 fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin, x * by.sin + y * by.cos)
 
