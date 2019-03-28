@@ -24,19 +24,25 @@ object Limelight : Subsystem() {
     var connected = false
 
     var isDriver = false
-        set(value) {
-            //if (field != value) {
-                if (value) {
-                    camMode.setDouble(1.0)
-                    ledMode.setDouble(1.0)
-                } else {
-                    camMode.setDouble(0.0)
-                    ledMode.setDouble(0.0)
-                }
-            //}
-            field = value
-        }
+//        set(value) {
+//            //if (field != value) {
+//                if (value) {
+//                    camMode.setDouble(1.0)
+//                    ledMode.setDouble(1.0)
+//                } else {
+//                    camMode.setDouble(0.0)
+//                    ledMode.setDouble(0.0)
+//                }
+//            //}
+//            field = value
+//        }
 
+    override fun onOutput() {
+        (if (isDriver) 1.0 else 0.0).also{
+            camMode.setDouble(it)
+            ledMode.setDouble(it)
+        }
+    }
     override fun onMeasure(dt: Double) {
         if (!connected && tv.exists()) connected = true
         if (connected && !isDriver) {

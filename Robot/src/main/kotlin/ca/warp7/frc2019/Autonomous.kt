@@ -13,7 +13,7 @@ import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = leftSideCargoShipHatch
+    val mode get() = leftSideCargoShipHatch()
 
     private val nothingMode get() = runOnce { }
 
@@ -29,13 +29,12 @@ object Autonomous {
             +runOnce { Outtake.pushing = false }
         }
 
-    private val leftSideCargoShipHatch
-        get() = queue {
+    private fun leftSideCargoShipHatch(isLimelight: Boolean=true): Action{
+        return queue {
             // grab hatch
             +runOnce {
                 Outtake.grabbing = true
                 Outtake.pushing = false
-                Limelight.isDriver = false
                 Limelight.isDriver = false
             }
             +wait(0.5)
@@ -43,7 +42,7 @@ object Autonomous {
             // drive to second cargo bay
             +DriveForDistance(184.0 / 12 + 1.0)
             +QuickTurn(90.0).withTimeout(2.0)
-            +AlignWithLimelight().withTimeout(2.0)
+            if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
             +DriveForDistance(16.0 / 12)
 
             // outtake hatch
@@ -52,21 +51,15 @@ object Autonomous {
             // drive to loading station
             +DriveForDistance(55.0 / 12, isBackwards = true)
             +QuickTurn(93.0).withTimeout(1.0)
-            +AlignWithLimelight().withTimeout(2.0)
+            if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
             +DriveForDistance(215.0 / 12)
-            +AlignWithLimelight().withTimeout(2.0)
+            if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
             +DriveForDistance(10.0 / 12)
 
             // intake hatch
             +intakeHatch
-
-            // more driving to places
-            +DriveForDistance(10.0 / 12, isBackwards = true)
-//            +wait(0.5)
-//            +DriveForDistance(190.0 / 12, isBackwards = true)
-//            +QuickTurn(-100.0).withTimeout(5.0)
-//            +DriveForDistance(40.0 / 12)
         }
+    }
 
     private val leftSideCargoShipHatchLimelight
         get() = queue {
@@ -164,7 +157,11 @@ object Autonomous {
     private val intakeHatch
         get() = queue {
             +runOnce { Outtake.grabbing = true }
-            +wait(1.0)
+            +wait(0.3)
+            +GoToSetpoint(FieldConstants.kCargo1Height).withTimeout(0.4)
+            +wait(0.1)
+            +DriveForDistance(10.0 / 12, isBackwards = true)
+            +GoToSetpoint(LiftConstants.kHomeHeightInches).withTimeout(0.4)
         }
 
     private val outtakeHatch
