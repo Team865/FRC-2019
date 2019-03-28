@@ -15,7 +15,7 @@ class GoToSetpoint(var setpoint: Double = 0.0) : Action {
     }
 
     override fun stop() {
-        Lift.demand = LiftMotionPlanner.setpointInches*LiftConstants.kTicksPerInch
+        Lift.demand = 0.0
         Lift.feedforward=LiftConstants.kPrimaryFeedforward
     }
 }
