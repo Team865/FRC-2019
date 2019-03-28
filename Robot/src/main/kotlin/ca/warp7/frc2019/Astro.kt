@@ -2,6 +2,7 @@ package ca.warp7.frc2019
 
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.*
+import ca.warp7.frc2019.subsystems.lift.MainDisplay
 import edu.wpi.first.wpilibj.TimedRobot
 
 class Astro : TimedRobot() {
@@ -26,6 +27,7 @@ class Astro : TimedRobot() {
         Intake.set { extended = false }
         Lift.set { }
         Superstructure.set { }
+        MainDisplay.set{ }
     }
 
     /**
