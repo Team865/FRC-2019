@@ -43,7 +43,7 @@ class DriveForDistance(
 
     private val kLinearKp = 0.0
     private val kAngularKp = 500.0
-    private val kA: Double = 1.0 / 30
+    private val kA: Double = 1.0 / 23
 
     override fun update() {
         // lookup position based on time

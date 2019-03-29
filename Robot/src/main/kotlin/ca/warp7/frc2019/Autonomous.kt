@@ -7,26 +7,23 @@ import ca.warp7.frc2019.subsystems.Limelight
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.AlignWithLimelight
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
+import ca.warp7.frc2019.subsystems.drive.DriveForDistanceOld
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
 import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
 @Suppress("unused")
 object Autonomous {
 
-    val mode get() = leftSideCargoShipHatch()
+    val mode get() = leftSideCargoShipHatch(isLimelight = false)
 
     private val nothingMode get() = runOnce { }
 
     private val straightHatch
         get() = queue {
             +runOnce { Outtake.grabbing = true }
-            +DriveForDistance(138.0 / 12)
             +wait(0.5)
-            +runOnce { Outtake.grabbing = false }
-            +wait(0.2)
-            +runOnce { Outtake.pushing = true }
-            +wait(0.5)
-            +runOnce { Outtake.pushing = false }
+            +DriveForDistanceOld(139.5 / 12 + 1.0 + 1.0)
+            +outtakeHatch
         }
 
     private fun leftSideCargoShipHatch(isLimelight: Boolean=true): Action{

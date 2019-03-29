@@ -15,6 +15,7 @@ class Astro : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverAndOperator }
+        MainDisplay.set { }
         Drive.set { motionPlanner.set { } }
         Infrastructure.set { }
         Limelight.set { isDriver = false }
@@ -27,7 +28,6 @@ class Astro : TimedRobot() {
         Intake.set { extended = false }
         Lift.set { }
         Superstructure.set { }
-        MainDisplay.set{ }
     }
 
     /**
