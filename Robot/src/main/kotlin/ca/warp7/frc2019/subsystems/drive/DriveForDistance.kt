@@ -1,73 +1,92 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc.drive.LinearTrajectoryState
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.trajectory.LinearTrajectory
+import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
-class DriveForDistance(distanceInFeet: Double, val isBackwards: Boolean = distanceInFeet < 0) : Action {
-    val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
-    val moments = trajectory.moments
-    val totalTime = moments.last().t
-    var t = 0.0
+class DriveForDistance(
+        distanceInFeet: Double,
+        val isBackwards: Boolean = distanceInFeet < 0,
+        private val velocityScale: Double = 1.0
+) : Action {
+
+    private val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
+
+    private val moments: List<Moment<LinearTrajectoryState<Translation2D>>> =
+            if (velocityScale == 1.0) trajectory.moments
+            else trajectory.moments.map { Moment(it.t / velocityScale, it.v) }
+
+    private val totalTime = moments.last().t
+    private var t = 0.0
     var i = 0
     var startTime = 0.0
     var lastTime = 0.0
     var lastYaw: Rotation2D = Rotation2D.identity
 
+    private val trajectorySign = if (isBackwards) -1.0 else 1.0
+
     override fun start() {
         startTime = Timer.getFPGATimestamp()
         lastYaw = Infrastructure.yaw
-
     }
 
+    private val kLinearKp = 0.0
+    private val kAngularKp = 500.0
+    private val kA: Double = 1.0 / 30
+
     override fun update() {
+        // lookup position based on time
         val nt = Timer.getFPGATimestamp()
         lastTime = nt
         t = nt - startTime
         while (i < moments.size - 3 && moments[i].t < t) i++
-        val mi = moments[i]
-        val mj = moments[i + 1]
-        val n = (t - mi.t) / (mj.t - mi.t)
+        val thisMoment = moments[i]
+        val nextMoment = moments[i + 1]
 
-        val p = mi.v.state.interpolate(mj.v.state, n).x
+        // interpolating value between [0, 1]
+        val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
+
+        // calculate velocity feedforward gain
+        val expectedVelocity = interpolate(thisMoment.v.velocity, nextMoment.v.velocity, tx)
+        val velocityGain = (expectedVelocity / 0.0254 * DriveConstants.kTicksPerInch) / 10
+
+        // calculate acceleration feedforward gain
+        val expectedAcceleration = interpolate(thisMoment.v.acceleration, nextMoment.v.acceleration, tx)
+        val accelerationGain = (expectedAcceleration / 0.0254 * DriveConstants.kTicksPerInch) * kA
+
+        // calculate linear feedback gain
+        val expectedPosition = thisMoment.v.state.interpolate(nextMoment.v.state, tx).x
         val avg = (Drive.leftPosition + Drive.rightPosition) / 2
-        val error = p - avg / DriveConstants.kTicksPerInch * 0.0254
-        println("ERROR $p, $error")
+        val error = expectedPosition - avg / DriveConstants.kTicksPerInch * 0.0254
+        val positionGain = kLinearKp * error
 
-        val v = interpolate(mi.v.velocity, mj.v.velocity, n)
-        val velocityGain = (v / 0.0254 * DriveConstants.kTicksPerInch) / 10
-
-        val a = interpolate(mi.v.acceleration, mj.v.acceleration, n)
-        val kA = 1.0 / 30
-        val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
-
+        // calculate angular feedback gain
         val newYaw = Infrastructure.yaw
-        val angularKp = 500.0
-        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
+        val angularGain = kAngularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 
+        // add up gains
+        val pvaOutput = (velocityGain + accelerationGain + positionGain) * trajectorySign
+
+        // apply max power constraints and set demand
         Drive.controlMode = ControlMode.Velocity
-        if (isBackwards) {
-            Drive.leftDemand = -velocityGain - accelerationGain - angularGain
-            Drive.rightDemand = -velocityGain - accelerationGain + angularGain
-        } else {
-            Drive.leftDemand = velocityGain + accelerationGain - angularGain
-            Drive.rightDemand = velocityGain + accelerationGain + angularGain
-        }
+        Drive.leftDemand = pvaOutput * velocityScale - angularGain
+        Drive.rightDemand = pvaOutput * velocityScale + angularGain
     }
 
-    override val shouldFinish: Boolean
-        get() = (t > totalTime || i >= moments.size) //&&
-                //(Drive.leftVelocity.absoluteValue + Drive.rightVelocity.absoluteValue) / 2 <= stopVelThreshold
+    override val shouldFinish: Boolean get() = (t > totalTime || i >= moments.size)
 
     override fun stop() {
         Drive.apply {
