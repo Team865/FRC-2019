@@ -71,7 +71,6 @@ object Drive : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        /*
         graph("Left Demand", leftDemand)
         graph("Left Feedforward", leftFeedforward)
         graph("Right Demand", rightDemand)
@@ -80,6 +79,5 @@ object Drive : Subsystem() {
         graph("Right Velocity", rightVelocity)
         put("Left Position", leftPosition)
         put("Right Position", rightPosition)
-        */
     }
 }

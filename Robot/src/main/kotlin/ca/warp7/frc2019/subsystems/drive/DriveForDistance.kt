@@ -18,7 +18,10 @@ import edu.wpi.first.wpilibj.Timer
 class DriveForDistance(
         distanceInFeet: Double,
         val isBackwards: Boolean = distanceInFeet < 0,
-        private val velocityScale: Double = 1.0
+        private val velocityScale: Double = 1.0,
+        private val linearKp: Double = 0.0,
+        private val angularKp: Double = 500.0,
+        private val kA: Double = 1.0 / 30
 ) : Action {
 
     private val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
@@ -32,7 +35,7 @@ class DriveForDistance(
     var i = 0
     var startTime = 0.0
     var lastTime = 0.0
-    var lastYaw: Rotation2D = Rotation2D.identity
+    private var lastYaw: Rotation2D = Rotation2D.identity
 
     private val trajectorySign = if (isBackwards) -1.0 else 1.0
 
@@ -40,10 +43,6 @@ class DriveForDistance(
         startTime = Timer.getFPGATimestamp()
         lastYaw = Infrastructure.yaw
     }
-
-    private val kLinearKp = 0.0
-    private val kAngularKp = 500.0
-    private val kA: Double = 1.0 / 23
 
     override fun update() {
         // lookup position based on time
@@ -69,11 +68,11 @@ class DriveForDistance(
         val expectedPosition = thisMoment.v.state.interpolate(nextMoment.v.state, tx).x
         val avg = (Drive.leftPosition + Drive.rightPosition) / 2
         val error = expectedPosition - avg / DriveConstants.kTicksPerInch * 0.0254
-        val positionGain = kLinearKp * error
+        val positionGain = linearKp * error
 
         // calculate angular feedback gain
         val newYaw = Infrastructure.yaw
-        val angularGain = kAngularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
+        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 

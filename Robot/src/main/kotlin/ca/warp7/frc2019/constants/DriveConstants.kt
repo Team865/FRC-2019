@@ -69,7 +69,7 @@ object DriveConstants {
 
         // Velocity PID slot
         slot1.apply {
-            kP = 0.5
+            kP = 0.8
             kI = 0.0
             kD = 5.0
             kF = 1.0
