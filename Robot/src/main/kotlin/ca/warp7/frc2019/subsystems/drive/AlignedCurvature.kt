@@ -74,7 +74,7 @@ class AlignedCurvature : Action {
                 val friction = kVi.withSign(error)
                 Drive.leftDemand = left + (error * kP + dError / dt * kD + friction)
                 Drive.rightDemand = right  - (error * kP + dError / dt * kD + friction)
-                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
+//                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
             }
             lastError = error
             lastTime = time
