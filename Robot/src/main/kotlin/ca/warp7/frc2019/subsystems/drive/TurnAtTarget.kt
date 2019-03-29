@@ -9,11 +9,13 @@ import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
+import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.wpilibj.Timer
 import kotlin.math.sign
 import kotlin.math.withSign
 
-class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
+class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0, val limeThreshold: Double = 10.0) : Action {
     private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
     private var startYaw = Rotation2D.identity
     private var error = 0.0
@@ -60,6 +62,10 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : 
     override val shouldFinish
         get() = error.epsilonEquals(0.0, stopAngleThreshold)
                 && dError.epsilonEquals(0.0, 1.0)
+                ||
+                Limelight.hasTarget
+                && error.epsilonEquals(0.0, limeThreshold)
+                && Limelight.x.epsilonEquals(0.0, limeThreshold)
 
 
     override fun stop() {
