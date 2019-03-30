@@ -22,9 +22,9 @@ object Autonomous {
             +runOnce { Outtake.grabbing = true }
             +wait(0.5)
             +DriveForDistance((139.5 + 4) / 12 + 1.0)
-            +AlignWithLimelight()
-            +outtakeHatch
-            +DriveForDistance(4.0, isBackwards = true)
+            //+AlignWithLimelight()
+            //+outtakeHatch
+            //+DriveForDistance(4.0, isBackwards = true)
         }
 
     private fun leftSideCargoShipHatch(isLimelight: Boolean=true): Action{

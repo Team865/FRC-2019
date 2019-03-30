@@ -103,7 +103,7 @@ object MainLoop : Action {
 
             when (Pressed) {
                 xButton -> Lift.set(LiftState.kGoToSetpoint) {
-                    setpoint = FieldConstants.kHatch2Height - 5.0
+                    setpoint = FieldConstants.kHatch2Height - 9.0
                 }
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch

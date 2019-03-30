@@ -61,8 +61,8 @@ class AlignedCurvature : Action {
                 val kD: Double
                 val kVi: Double
                 if (!xSpeed.epsilonEquals(0.0, 0.2)) {
-                    left=0.4
-                    right=0.4
+                    left = 0.4
+                    right = 0.4
                     kP = 0.01
                     kD = 2.0 / (Limelight.area)
                     kVi = 0.2
@@ -72,15 +72,24 @@ class AlignedCurvature : Action {
                     kVi = 0.2
                 }
                 val friction = kVi.withSign(error)
-                Drive.leftDemand = left + (error * kP + dError / dt * kD + friction)
-                Drive.rightDemand = right  - (error * kP + dError / dt * kD + friction)
-//                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
+                val angularGain = error * kP + dError / dt * kD + friction
+                if (angularGain > 0) {
+                    Drive.leftDemand = left + angularGain
+                    Drive.rightDemand = right
+                } else {
+                    Drive.leftDemand = left
+                    Drive.rightDemand = right - angularGain
+                }
+//
+//                Drive.leftDemand = left + (error * kP + dError / dt * kD + friction)
+//                Drive.rightDemand = right - (error * kP + dError / dt * kD + friction)
+////                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
             }
             lastError = error
             lastTime = time
         } else {
             Drive.leftDemand = left
-            Drive.rightDemand = right * 0.95
+            Drive.rightDemand = right
         }
     }
 
