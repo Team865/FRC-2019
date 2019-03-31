@@ -72,7 +72,7 @@ class DriveForDistance(
 
         // calculate angular feedback gain
         val newYaw = Infrastructure.yaw
-        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
+        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.dt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 

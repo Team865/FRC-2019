@@ -12,7 +12,8 @@ object DriveConstants {
     ==================
     */
 
-    const val kWheelDiameter = 5.9//FIXME // Inches
+    private const val kWheelDiameter = 5.9//FIXME // Inches
+    const val kWheelRadius = kWheelDiameter / 2.0
     const val kWheelCircumference = kWheelDiameter * Math.PI // Inches
 
     // Distance between left and right wheels in inches
@@ -52,6 +53,12 @@ object DriveConstants {
 
     private const val kOpenLoopRamp = 0.15
 
+    const val kMaxVolts = 12.0
+    const val kSpeedPerVolt = kMaxFreeSpeedVelocity / kMaxVolts
+    const val kTorquePerVolt = 0.0
+    const val kLinearInertia = 60.0
+    const val kAngularInertia = 10.0
+
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot
@@ -83,7 +90,7 @@ object DriveConstants {
         openloopRamp = kOpenLoopRamp
         closedloopRamp = 0.0
 
-        voltageCompSaturation = 12.0 // Max voltage
+        voltageCompSaturation = kMaxVolts // Max voltage
 
         // TalonSRXConfiguration
 

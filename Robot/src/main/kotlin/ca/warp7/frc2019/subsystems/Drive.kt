@@ -20,8 +20,6 @@ object Drive : Subsystem() {
     val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
 
-    val motionPlanner: DriveMotionPlanner = DriveMotionPlanner
-
     var controlMode = ControlMode.PercentOutput
         set(value) {
             if (field != value) when (value) {

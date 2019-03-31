@@ -48,7 +48,7 @@ class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
 
         val newYaw = Rotation2D.fromDegrees(Limelight.x)
         val angularKp = 400.0
-        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.lastDt
+        val angularGain = angularKp * (newYaw - lastYaw).radians / DriveMotionPlanner.dt
         Drive.put("angularGain", angularGain)
         lastYaw = newYaw
 
