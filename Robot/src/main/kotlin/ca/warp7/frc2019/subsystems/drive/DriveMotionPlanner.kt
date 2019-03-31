@@ -31,7 +31,11 @@ object DriveMotionPlanner : Subsystem() {
             maxVelocity = feetToMeters(DriveConstants.kMaxVelocity),
             maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration),
             maxFreeSpeedVelocity = feetToMeters(DriveConstants.kMaxFreeSpeedVelocity),
-            frictionVoltage = DriveConstants.kVIntercept
+            speedPerVolt = 0.0,
+            torquePerVolt = 0.0,
+            frictionVoltage = DriveConstants.kVIntercept,
+            linearInertia = 0.0,
+            angularInertia = 0.0
     )
 
     fun updateMeasurements(dt: Double) {
