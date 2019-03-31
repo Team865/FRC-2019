@@ -7,7 +7,6 @@ import ca.warp7.frc2019.subsystems.Limelight
 import ca.warp7.frc2019.subsystems.Outtake
 import ca.warp7.frc2019.subsystems.drive.AlignWithLimelight
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
-import ca.warp7.frc2019.subsystems.drive.DriveForDistanceOld
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
 import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
@@ -22,7 +21,7 @@ object Autonomous {
         get() = queue {
             +runOnce { Outtake.grabbing = true }
             +wait(0.5)
-            +DriveForDistanceOld(139.5 / 12 + 1.0 + 1.0)
+            +DriveForDistance(139.5 / 12 + 1.0 + 1.0)
             +outtakeHatch
         }
 
