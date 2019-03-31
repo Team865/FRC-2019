@@ -121,6 +121,7 @@ class PathPlanner : PApplet() {
         strokeWeight(2f)
 
         val maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
+        val maxDkDs = splines.maxBy { it.dk_ds.absoluteValue }?.dk_ds?.absoluteValue ?: 0.0
         // draw the curve
         for (i in 1 until splines.size) {
             t = splines[i].state.translation
@@ -142,8 +143,9 @@ class PathPlanner : PApplet() {
         noFill()
         val angular = maxVel / (1 / maxK + wheelBaseRadius)
         val linear = maxVel - (angular * wheelBaseRadius)
-        val msg = "Σdk: ${curvatureSum.f}\n" +
+        val msg = "Σdk^2: ${curvatureSum.f}\n" +
                 "maxK: ${maxK.f}\n" +
+                "max_dk: ${maxDkDs.f}\n" +
                 "minRadius: ${metersToFeet(1 / maxK).f}ft\n" +
                 "vel@min ${metersToFeet(linear).f}ft/s\n" +
                 "arcLength: ${metersToFeet(arcLength).f}ft\n"
@@ -203,7 +205,7 @@ class PathPlanner : PApplet() {
         val mouse = Translation2D(mouseX.toDouble(), mouseY.toDouble())
         val controlPoint = controlPoints[selectedIndex]
         val waypoint = waypoints[selectedIndex]
-        if ((controlPoint.pos - mouse).mag < 10) draggingPoint = true
+        if ((controlPoint.pos - mouse).mag < 10 && !draggingAngle) draggingPoint = true
         if (draggingPoint) {
             redrawScreen()
             val heading = (mouse.oldXY + waypoint.rotation.translation.scaled(0.5)).newXY
@@ -212,7 +214,7 @@ class PathPlanner : PApplet() {
             strokeWeight(2f)
             draggedControlPoint = ControlPoint(mouse, heading, dir).apply { drawArrow() }
         }
-        if ((controlPoint.heading - mouse).mag < 10) draggingAngle = true
+        if ((controlPoint.heading - mouse).mag < 10 && !draggingPoint) draggingAngle = true
         if (draggingAngle) {
             redrawScreen()
             val dir = -(mouse - controlPoint.pos).oldXYNoOffset.norm
@@ -249,7 +251,7 @@ class PathPlanner : PApplet() {
                 regenerateSplines()
             }
         }
-        if (draggingAngle) {
+        if (draggingAngle && selectedIndex != -1) {
             draggingAngle = false
             redrawScreen()
             draggedControlPoint?.also {
