@@ -4,7 +4,7 @@ import ca.warp7.frc.Subsystem
 import ca.warp7.frc2019.constants.HatchCargo
 
 object MainDisplay : Subsystem (){
-    override fun onPostUpdate() {
+    override fun onOutput() {
         put("is bottom hatch", LiftMotionPlanner.setpointLevel == 0 && LiftMotionPlanner.setpointType == HatchCargo.Hatch)
         put("is bottom cargo", LiftMotionPlanner.setpointLevel == 0 && LiftMotionPlanner.setpointType == HatchCargo.Cargo)
         put("is middle hatch", LiftMotionPlanner.setpointLevel == 1 && LiftMotionPlanner.setpointType == HatchCargo.Hatch)

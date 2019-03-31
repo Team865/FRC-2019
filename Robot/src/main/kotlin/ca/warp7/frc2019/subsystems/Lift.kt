@@ -47,6 +47,7 @@ object Lift : Subsystem() {
     }
 
     override fun onPostUpdate() {
+        /*
         put("HallEffect", hallEffectTriggered)
         put("Demand", demand)
         put("Feedforward", feedforward)
@@ -57,5 +58,6 @@ object Lift : Subsystem() {
         put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
         put("Cool Setpoint", LiftMotionPlanner.getCoolSetpoint())
         put("Setpoint", LiftMotionPlanner.setpointInches * LiftConstants.kTicksPerInch)
+        */
     }
 }
