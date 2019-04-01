@@ -16,7 +16,7 @@ class Astro : TimedRobot() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverAndOperator }
         MainDisplay.set { }
-        Drive.set { motionPlanner.set { } }
+        Drive.set { }
         Infrastructure.set { }
         Limelight.set { isDriver = false }
         Conveyor.set { speed = 0.0 }

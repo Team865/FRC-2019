@@ -35,7 +35,7 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : 
 
     override fun update() {
         val newError = (targetYaw - Infrastructure.yaw).degrees
-        dError = (newError - error) / DriveMotionPlanner.lastDt
+        dError = (newError - error) / DriveMotionPlanner.dt
 
         if (error.sign != newError.sign) sumError = 0.0
         else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(newError)
@@ -45,7 +45,7 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : 
 
         var demand = angularGain
         val apparantPercent = (Drive.leftVelocity + Drive.rightVelocity) / 2.0 / (DriveConstants.kMaxVelocity)
-        demand += (demand - apparantPercent) * kA / DriveMotionPlanner.lastDt
+        demand += (demand - apparantPercent) * kA / DriveMotionPlanner.dt
 
         Drive.leftDemand = demand
         Drive.rightDemand = -demand

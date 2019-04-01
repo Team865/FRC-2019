@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems.drive.unused
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.motion.Path
 import ca.warp7.frc.motion.Point2D
 import ca.warp7.frc2019.constants.DriveConstants
@@ -15,9 +16,9 @@ object PursuePath : Action {
     var lookaheadGain = 0.05
 
     override fun update() {
-        val x = DriveMotionPlanner.motionState.x
-        val y = DriveMotionPlanner.motionState.y
-        val yaw = DriveMotionPlanner.motionState.yaw
+        val x = DriveMotionPlanner.robotState.translation.x
+        val y = DriveMotionPlanner.robotState.translation.y
+        val yaw = DriveMotionPlanner.robotState.rotation.radians
         val p = Point2D(x, y)
 
         var i = path.closestPoint(p)
@@ -51,5 +52,7 @@ object PursuePath : Action {
         val curvature = 1 / radius
         val arcLength = 2 * radius * asin((p..t) / (2 * radius))//TODO make this account for if the arc length is more than 0.5x the circumference
         val endVel = DriveConstants.kMaxVelocity / (1 + curvature * DriveConstants.kTurningDiameter / 2)
+
+        println("$arcLength, $endVel")
     }
 }

@@ -16,7 +16,7 @@ class DriveVelocityControl : TimedRobot() {
     override fun robotInit() {
         println("Hello me is robit!")
         RobotControl.set { mode = ControllerMode.DriverOnly }
-        Drive.set { motionPlanner.set { } }
+        Drive.set { }
         Infrastructure.set { }
     }
 
