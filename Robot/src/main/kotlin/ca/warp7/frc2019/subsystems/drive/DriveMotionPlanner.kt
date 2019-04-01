@@ -64,7 +64,7 @@ object DriveMotionPlanner {
         // otherwise add the calculated angular velocity to current yaw
         val newAngle =
                 if (Infrastructure.ahrsCalibrated) Infrastructure.yaw
-                else robotState.rotation + Rotation2D.fromRadians(chassisVelocity.angular) * dt
+                else robotState.rotation + Rotation2D.fromRadians(chassisVelocity.angular * dt)
 
         // add displacement into current position
         val newPosition = robotState.translation + newAngle.translation * (chassisVelocity.linear * dt)
