@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.subsystems.lift.DEPRECATED
+package ca.warp7.frc2019.subsystems.lift.deprecated
 
 import kotlin.math.max
 import kotlin.math.min
