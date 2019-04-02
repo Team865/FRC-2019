@@ -55,7 +55,7 @@ class PathPlanner : PApplet() {
     var arcLength = 0.0
     var trajectoryTime = 0.0
     var maxK = 0.0
-    var maxDkDs = 0.0
+    var maxAngular = 0.0
 
     var selectedIndex = -1
     var selectionChanged = false
@@ -66,9 +66,9 @@ class PathPlanner : PApplet() {
 
     val model = DifferentialDriveModel(
             wheelRadius = 0.0,
-            wheelbaseRadius = wheelBaseRadius,
+            wheelbaseRadius = wheelBaseRadius * 2.0,
             maxVelocity = maxVel,
-            maxAcceleration = feetToMeters(10.0),
+            maxAcceleration = feetToMeters(9.0),
             maxFreeSpeed = 0.0,
             speedPerVolt = 0.0,
             torquePerVolt = 0.0,
@@ -110,7 +110,7 @@ class PathPlanner : PApplet() {
         fill(255f, 255f, 255f)
         noStroke()
         textSize(15f)
-        text(t, 529f, 34f)
+        text(t, 529f, 15f)
     }
 
     override fun setup() {
@@ -140,7 +140,7 @@ class PathPlanner : PApplet() {
         trajectory = splines.timedTrajectory(model, 0.0, 0.0)
         trajectoryTime = trajectory.last().t
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
-        maxDkDs = splines.maxBy { it.dk_ds.absoluteValue }?.dk_ds?.absoluteValue ?: 0.0
+        maxAngular = trajectory.map { it.velocity * it.state.curvature.absoluteValue }.max() ?: 1.0
         redrawScreen()
     }
 
@@ -159,13 +159,8 @@ class PathPlanner : PApplet() {
     fun redrawInfoNoSim() {
         stroke(255f, 255f, 0f)
         noFill()
-        val angular = maxVel / (1 / maxK + wheelBaseRadius)
-        val linear = maxVel - (angular * wheelBaseRadius)
         val msg = "Σdk^2: ${curvatureSum.f}\n" +
                 "maxK: ${maxK.f}\n" +
-                "max_dk: ${maxDkDs.f}\n" +
-                "minRadius: ${metersToFeet(1 / maxK).f}ft\n" +
-                "vel@min ${metersToFeet(linear).f}ft/s\n" +
                 "arcLength: ${metersToFeet(arcLength).f}ft\n" +
                 "totalTime: ${trajectory.last().t.f}s"
         // draw control points
@@ -177,13 +172,13 @@ class PathPlanner : PApplet() {
                 val angle = waypoints[index].rotation.degrees
                 textSize(15f)
                 var controlPointMsg = "index: $index\n" +
-                        "pos: (${metersToFeet(translation.x).f}ft, ${metersToFeet(translation.y).f}ft)\n"
+                        "pos: (${metersToFeet(translation.x).f}ft, ${metersToFeet(translation.y).f}ft)\n" +
                 "θ: ${angle.f}°\n"
                 if (index != controlPoints.size - 1) {
                     controlPointMsg += "dd0: (${intermediate[index].ddx0.f}, ${intermediate[index].ddy0.f})\n" +
                             "dd1: (${intermediate[index].ddx1.f}, ${intermediate[index].ddy1.f})\n"
                 }
-                text(controlPointMsg + msg, 529f, 34f)
+                drawText(controlPointMsg + msg)
                 stroke(90f, 138f, 222f)
                 strokeWeight(2f)
                 noFill()
@@ -197,35 +192,26 @@ class PathPlanner : PApplet() {
         if (selectedIndex == -1) drawText(msg)
     }
 
-    fun v2T(v: Double, t: Double) = Translation2D(
-            529 + (t / trajectoryTime) * 350,
-            400 - (v / maxVel) * 100
-    )
+    fun v2T(v: Double, t: Double, max: Double) =
+            Translation2D(529 + (t / trajectoryTime) * 350, 400 - (v / max) * 100)
 
-    fun a2T(a: Double, t: Double) = Translation2D(
-            529 + (t / trajectoryTime) * 350,
-            400 - (a / model.maxAcceleration) * 100
-    )
-
-    fun c2T(c: Double, t: Double) = Translation2D(
-            529 + (t / trajectoryTime) * 350,
-            400 - (c / maxK) * 100
-    )
-
+    fun List<Translation2D>.connect() = zipWithNext { a, b -> lineTo(a, b) }
 
     fun drawGraph(i: Int) {
         if (i == 0) return
         strokeWeight(2f)
         trajectory.subList(0, i + 1).apply {
+            stroke(64f, 64f, 64f)
+            map { v2T(it.acceleration, it.t, model.maxAcceleration) }.connect()
+//            val states = map { it.t to model.solve(ChassisState(it.velocity, it.state.curvature * it.velocity)) }
+//            stroke(128f, 0f, 128f)
+//            states.map { v2T(it.second.left, it.first, maxVel) }.connect()
+//            stroke(0f, 128f, 128f)
+//            states.map { v2T(it.second.right, it.first, maxVel) }.connect()
+            stroke(255f, 255f, 128f)
+            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t) }
-                    .zipWithNext { a, b -> lineTo(a, b) }
-            stroke(255f, 128f, 128f)
-            map { a2T(it.acceleration, it.t) }
-                    .zipWithNext { a, b -> lineTo(a, b) }
-            stroke(192f, 192f, 128f)
-            map { c2T(it.state.curvature, it.t) }
-                    .zipWithNext { a, b -> lineTo(a, b) }
+            map { v2T(it.velocity, it.t, maxVel) }.connect()
         }
     }
 
@@ -412,6 +398,12 @@ class PathPlanner : PApplet() {
                 simFrames = 0
             }
             redrawScreen()
+        } else if (key == 's') {
+            showForCopy(waypoints.joinToString(",\n") {
+                "waypoint(${metersToFeet(it.translation.x).f}, " +
+                        "${metersToFeet(it.translation.y).f}, " +
+                        "${it.rotation.degrees.f})"
+            })
         }
         if (!simulating) {
             if (selectedIndex == -1) processDeselected()

@@ -25,7 +25,8 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val now = timedStates[i]
         val next = timedStates[i + 1]
         val c = curvatureConstraints[i + 1]
-        val maxLinear = sqrt(now.velocity.pow(2) + 2 * model.maxAcceleration * dist)
+        val maxAcceleration = model.maxAcceleration
+        val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
         next.velocity = minOf(next.velocity, c.linear, maxLinear)
         val t = (2 * dist) / (now.velocity + next.velocity)
         forwardMoments[i + 1] = t
@@ -37,7 +38,8 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val now = timedStates[i]
         val next = timedStates[i - 1]
         val c = curvatureConstraints[i - 1]
-        val maxLinear = sqrt(now.velocity.pow(2) - 2 * -model.maxAcceleration * dist)
+        val maxAcceleration = model.maxAcceleration
+        val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
         next.velocity = minOf(next.velocity, c.linear, maxLinear)
         val t = (2 * dist) / (now.velocity + next.velocity)
         reverseMoments[i - 1] = t
