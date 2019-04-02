@@ -1,7 +1,9 @@
 package ca.warp7.pathplanner
 
 import ca.warp7.frc.*
+import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.drive.solve
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.TimedConstraints
@@ -22,7 +24,7 @@ class PathPlanner : PApplet() {
             var dir: Translation2D
     )
 
-    override fun settings() = size(768, 512)
+    override fun settings() = size(910, 512)
 
     val kTriangleRatio = 1 / sqrt(3.0)
     val step = 0.0254 * 12 / 10
@@ -51,6 +53,9 @@ class PathPlanner : PApplet() {
 
     var curvatureSum = 0.0
     var arcLength = 0.0
+    var trajectoryTime = 0.0
+    var maxK = 0.0
+    var maxDkDs = 0.0
 
     var selectedIndex = -1
     var selectionChanged = false
@@ -62,8 +67,8 @@ class PathPlanner : PApplet() {
     val model = DifferentialDriveModel(
             wheelRadius = 0.0,
             wheelbaseRadius = wheelBaseRadius,
-            maxVelocity = feetToMeters(12.0),
-            maxAcceleration = feetToMeters(9.0),
+            maxVelocity = maxVel,
+            maxAcceleration = feetToMeters(10.0),
             maxFreeSpeed = 0.0,
             speedPerVolt = 0.0,
             torquePerVolt = 0.0,
@@ -133,6 +138,9 @@ class PathPlanner : PApplet() {
             (b.state.translation - a.state.translation).mag
         }.sum()
         trajectory = splines.timedTrajectory(model, 0.0, 0.0)
+        trajectoryTime = trajectory.last().t
+        maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
+        maxDkDs = splines.maxBy { it.dk_ds.absoluteValue }?.dk_ds?.absoluteValue ?: 0.0
         redrawScreen()
     }
 
@@ -148,7 +156,7 @@ class PathPlanner : PApplet() {
         line(17f, 492f, 512f, 492f)
     }
 
-    fun redrawInfoNoSim(maxK: Double, maxDkDs: Double) {
+    fun redrawInfoNoSim() {
         stroke(255f, 255f, 0f)
         noFill()
         val angular = maxVel / (1 / maxK + wheelBaseRadius)
@@ -172,8 +180,8 @@ class PathPlanner : PApplet() {
                         "pos: (${metersToFeet(translation.x).f}ft, ${metersToFeet(translation.y).f}ft)\n"
                 "θ: ${angle.f}°\n"
                 if (index != controlPoints.size - 1) {
-                    controlPointMsg += "dd_xy0: (${intermediate[index].ddx0.f}, ${intermediate[index].ddy0.f})\n" +
-                            "dd_xy1: (${intermediate[index].ddx1.f}\n, ${intermediate[index].ddy1.f})\n"
+                    controlPointMsg += "dd0: (${intermediate[index].ddx0.f}, ${intermediate[index].ddy0.f})\n" +
+                            "dd1: (${intermediate[index].ddx1.f}, ${intermediate[index].ddy1.f})\n"
                 }
                 text(controlPointMsg + msg, 529f, 34f)
                 stroke(90f, 138f, 222f)
@@ -189,6 +197,38 @@ class PathPlanner : PApplet() {
         if (selectedIndex == -1) drawText(msg)
     }
 
+    fun v2T(v: Double, t: Double) = Translation2D(
+            529 + (t / trajectoryTime) * 350,
+            400 - (v / maxVel) * 100
+    )
+
+    fun a2T(a: Double, t: Double) = Translation2D(
+            529 + (t / trajectoryTime) * 350,
+            400 - (a / model.maxAcceleration) * 100
+    )
+
+    fun c2T(c: Double, t: Double) = Translation2D(
+            529 + (t / trajectoryTime) * 350,
+            400 - (c / maxK) * 100
+    )
+
+
+    fun drawGraph(i: Int) {
+        if (i == 0) return
+        strokeWeight(2f)
+        trajectory.subList(0, i + 1).apply {
+            stroke(128f, 128f, 255f)
+            map { v2T(it.velocity, it.t) }
+                    .zipWithNext { a, b -> lineTo(a, b) }
+            stroke(255f, 128f, 128f)
+            map { a2T(it.acceleration, it.t) }
+                    .zipWithNext { a, b -> lineTo(a, b) }
+            stroke(192f, 192f, 128f)
+            map { c2T(it.state.curvature, it.t) }
+                    .zipWithNext { a, b -> lineTo(a, b) }
+        }
+    }
+
     fun redrawScreen() {
         redrawBackground()
         var t = splines[0].state.translation
@@ -198,8 +238,6 @@ class PathPlanner : PApplet() {
 
         strokeWeight(2f)
 
-        val maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
-        val maxDkDs = splines.maxBy { it.dk_ds.absoluteValue }?.dk_ds?.absoluteValue ?: 0.0
         // draw the curve
         for (i in 1 until splines.size) {
             t = splines[i].state.translation
@@ -215,7 +253,10 @@ class PathPlanner : PApplet() {
             left = newLeft
             right = newRight
         }
-        if (!simulating) redrawInfoNoSim(maxK, maxDkDs)
+        if (!simulating) {
+            redrawInfoNoSim()
+            drawGraph(trajectory.size - 1)
+        }
     }
 
     fun processDeselected() {
@@ -383,26 +424,32 @@ class PathPlanner : PApplet() {
             val nt = System.currentTimeMillis() / 1000.0
             val t = nt - simTime
             while (simIndex < trajectory.size - 2 && trajectory[simIndex].t < t) simIndex++
-            if (t > trajectory.last().t || simIndex >= trajectory.size) {
+            if (t > trajectoryTime || simIndex >= trajectory.size) {
                 simulating = false
                 redrawScreen()
                 return
             }
             val thisMoment = trajectory[simIndex]
             val nextMoment = trajectory[simIndex + 1]
-
-            // interpolating value between [0, 1]
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
-
             val pos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx).newXY
             redrawScreen()
             fill(255f, 128f, 0f)
             noStroke()
             ellipse(pos.x.toFloat(), pos.y.toFloat(), 12f, 12f)
-            if (simFrames % 10 == 0) simMsg = "velocity: ${metersToFeet(nextMoment.velocity).f}ft/s\n" +
-                    "percent: ${(nextMoment.velocity / model.maxVelocity * 100).f} %\n" +
+            val linear = nextMoment.velocity
+            val angular = linear * nextMoment.state.curvature
+            val wheels = model.solve(ChassisState(linear, angular))
+            if (simFrames % 10 == 0) simMsg = "velocity: ${metersToFeet(linear).f}ft/s\n" +
+                    "percent: ${(linear / model.maxVelocity * 100).f} %\n" +
+                    "angular: ${Math.toDegrees(angular).f}deg/s\n" +
+                    "wheelLeft: ${metersToFeet(wheels.left).f}ft/s\n" +
+                    "wheelRight: ${metersToFeet(wheels.right).f}ft/s\n" +
                     "acceleration: ${metersToFeet(nextMoment.acceleration).f}ft/s^2\n" +
+                    "curvature: ${nextMoment.state.curvature.f} \n" +
+                    "dk_ds: ${nextMoment.state.dk_ds.f} \n" +
                     "elapsed: ${t.f}s\n"
+            drawGraph(simIndex)
             drawText(simMsg)
             simFrames++
 
