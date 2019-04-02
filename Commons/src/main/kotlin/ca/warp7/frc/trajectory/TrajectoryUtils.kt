@@ -12,7 +12,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         model: DifferentialDriveModel,
         startVelocity: Double = 0.0,
         endVelocity: Double = 0.0
-): IndexedTrajectory<Pose2D, DifferentialTimedState<Pose2D>> {
+): List<TimedConstraints> {
     val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature) }
     val distances = zipWithNext { a, b ->
         (a.state.translation - b.state.translation).mag
@@ -50,11 +50,10 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         totalMoments[i] += totalMoments[i - 1]
         timedStates[i].t = totalMoments[i]
     }
-    println(timedStates.joinToString("\n"))
-    return IndexedTrajectory(listOf())
+    return timedStates
 }
 
-private data class TimedConstraints(
+data class TimedConstraints(
         var state: CurvatureState<Pose2D>,
         var velocity: Double = 0.0,
         var acceleration: Double = 0.0,
