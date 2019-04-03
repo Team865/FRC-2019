@@ -48,10 +48,7 @@ object DriveMotionPlanner {
         rightVelocity = Drive.rightVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
 
         // convert rad/s into m/s
-        wheelVelocity = WheelState(
-                left = leftVelocity / 2 * model.wheelRadius,
-                right = rightVelocity / 2 * model.wheelRadius
-        )
+        wheelVelocity = WheelState(left = leftVelocity * model.wheelRadius, right = rightVelocity * model.wheelRadius)
 
         // solve into chassis velocity
         chassisVelocity = model.solve(wheelVelocity)

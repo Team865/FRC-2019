@@ -42,6 +42,10 @@ val Translation2D.transposed: Translation2D get() = Translation2D(y, x)
 
 val Translation2D.norm: Translation2D get() = scaled(by = 1 / mag)
 
+val Translation2D.flipX: Translation2D get() = Translation2D(-x, y)
+
+val Translation2D.flipY: Translation2D get() = Translation2D(x, -y)
+
 fun Translation2D.rotate(by: Rotation2D) = Translation2D(x * by.cos - y * by.sin, x * by.sin + y * by.cos)
 
 infix fun Translation2D.dot(other: Translation2D) = x * other.x + y * other.y

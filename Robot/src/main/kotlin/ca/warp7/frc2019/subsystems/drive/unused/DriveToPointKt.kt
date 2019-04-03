@@ -86,8 +86,8 @@ class DriveToPointKt(
             xOutput *= 0.85
         }
 
-        val leftOut = xOutput - yOutput
-        val rightOut = xOutput + yOutput
+        val leftOut = yOutput + xOutput
+        val rightOut = yOutput - xOutput
 
         Drive.controlMode = ControlMode.Velocity
         Drive.leftDemand = leftOut
