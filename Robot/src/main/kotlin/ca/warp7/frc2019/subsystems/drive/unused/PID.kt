@@ -9,9 +9,9 @@ data class PID(
         val kF: Double = 0.0,
         val errorEpsilon: Double = 0.1,
         val dErrorEpsilon: Double = 0.1,
+        val minTimeInEpsilon: Double = 0.1,
         val dtNormalizer: Double = 50.0,
-        val maxOutput: Double = 1.0,
-        val minTimeInEpsilon: Double = 0.1
+        val maxOutput: Double = 1.0
 ) {
 
     var lastError = 0.0

@@ -16,20 +16,12 @@ class PIDToPoint(
         val lateralKp: Double = 1.0,
         val turningOutputKp: Double = 0.8,
         val straightPID: PID = PID(
-                kP = 0.15,
-                kI = 0.0015,
-                kD = 0.3,
-                errorEpsilon = 0.25,
-                dErrorEpsilon = 0.2,
-                minTimeInEpsilon = 0.3
+                kP = 0.15, kI = 0.0015, kD = 0.3, kF = 0.0,
+                errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3
         ),
         val turnPID: PID = PID(
-                kP = 3.5,
-                kI = 0.08,
-                kD = 5.0,
-                errorEpsilon = 2.0,
-                dErrorEpsilon = 1.0,
-                minTimeInEpsilon = 0.3
+                kP = 3.5, kI = 0.08, kD = 5.0, kF = 0.0,
+                errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
         )
 ) : Action {
 
@@ -84,8 +76,8 @@ class PIDToPoint(
         }
 
         // convert to ticks/100ms and set the motor velocities
-        Drive.leftDemand = (forwardOutput - turningOutput) * 12 * DriveConstants.kTicksPerInch * 0.1
-        Drive.rightDemand = (forwardOutput + turningOutput) * 12 * DriveConstants.kTicksPerInch * 0.1
+        Drive.leftDemand = (forwardOutput - turningOutput) * DriveConstants.kTicksPerFootPer100ms
+        Drive.rightDemand = (forwardOutput + turningOutput) * DriveConstants.kTicksPerFootPer100ms
     }
 
     override fun stop() {
