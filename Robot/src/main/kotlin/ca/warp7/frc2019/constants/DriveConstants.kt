@@ -21,7 +21,7 @@ object DriveConstants {
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
 
-    private const val kScrubFactor = 1.1
+    private const val kScrubFactor = 1.4
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*

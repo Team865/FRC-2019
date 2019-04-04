@@ -106,7 +106,7 @@ class PIDTrajectory(
             }
         }
 
-        if (enableFeedback) {
+        if (true) {
 
             val currentPos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx)
             var trackingDist = (nextMoment.state.state.translation - currentPos).mag
@@ -127,18 +127,28 @@ class PIDTrajectory(
             val error = Pose2D((target.translation - robotState.translation).rotate(robotState.rotation),
                     (target.rotation - robotState.rotation))
 
-            val forwardFeedback = straightPID.updateByError(error.translation.x)
+//            println("Target: $target")
+//            println("RobotState: $robotState")
+//            println("Error: $error")
+//            println()
 
-            val lateralError = error.translation.y * error.translation.x.sign
+            if (enableFeedback) {
 
-            val lateralOffset = (lateralError * lateralKp).coerceIn(-maxFeedbackTurn, maxFeedbackTurn)
+                val forwardFeedback = straightPID.updateByError(error.translation.x)
 
-            val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees
+                val lateralError = error.translation.y * error.translation.x.sign
 
-            val turningFeedback = turnPID.updateByError(turningError)
+                val lateralOffset = (lateralError * lateralKp).coerceIn(-maxFeedbackTurn, maxFeedbackTurn)
 
-            leftVel += forwardFeedback - turningFeedback
-            rightVel += forwardFeedback + turningFeedback
+                val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees
+
+                val turningFeedback = turnPID.updateByError(turningError)
+
+                // println("$forwardFeedback, $turningFeedback")
+
+                leftVel += forwardFeedback - turningFeedback
+                rightVel += forwardFeedback + turningFeedback
+            }
         }
 
         DriveMotionPlanner.setVelocity(leftVel, rightVel, leftAcc, rightAcc)

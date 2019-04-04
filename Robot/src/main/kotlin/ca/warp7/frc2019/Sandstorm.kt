@@ -5,7 +5,7 @@ import ca.warp7.frc.ControllerState
 import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
-import ca.warp7.frc2019.auton.StraightHatch
+import ca.warp7.frc2019.auton.DriveOnly
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Outtake
@@ -15,7 +15,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 object Sandstorm : Action {
 
     fun getAutoMode(): Action {
-        return StraightHatch.straightHatch
+        return DriveOnly.leftCloseRocket
     }
 
     private lateinit var autoAction: Action
