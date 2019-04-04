@@ -5,6 +5,7 @@ import ca.warp7.actionkt.wait
 import ca.warp7.frc.path.waypoint
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
+import ca.warp7.frc2019.subsystems.drive.SetRobotState
 import ca.warp7.frc2019.subsystems.drive.unused.PIDTrajectory
 
 object DriveOnly {
@@ -27,6 +28,7 @@ object DriveOnly {
 
     val leftCloseRocket
         get() = queue {
+            +SetRobotState(6.0000, -4.0000, 0.0000)
             +PIDTrajectory(
                     arrayOf(
                             waypoint(6.0000, -4.0000, 0.0000),
