@@ -13,6 +13,7 @@ import ca.warp7.frc.inchesToMeters
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
+import com.ctre.phoenix.motorcontrol.ControlMode
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 object DriveMotionPlanner {
@@ -44,14 +45,11 @@ object DriveMotionPlanner {
         dt = newDt
 
         // convert ticks/100ms into rad/s
-        leftVelocity = Drive.leftVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
-        rightVelocity = Drive.rightVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
+        leftVelocity = Drive.leftVelocity.toDouble() / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
+        rightVelocity = Drive.rightVelocity.toDouble() / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
 
         // convert rad/s into m/s
-        wheelVelocity = WheelState(
-                left = leftVelocity / 2 * model.wheelRadius,
-                right = rightVelocity / 2 * model.wheelRadius
-        )
+        wheelVelocity = WheelState(left = leftVelocity * model.wheelRadius, right = rightVelocity * model.wheelRadius)
 
         // solve into chassis velocity
         chassisVelocity = model.solve(wheelVelocity)
@@ -62,14 +60,29 @@ object DriveMotionPlanner {
     fun updateLocalization() {
         // If gyro connected, use the yaw value from the gyro as the new angle
         // otherwise add the calculated angular velocity to current yaw
-        val newAngle =
-                if (Infrastructure.ahrsCalibrated) Infrastructure.yaw
-                else robotState.rotation + Rotation2D.fromRadians(chassisVelocity.angular * dt)
+        val newAngle = robotState.rotation + Rotation2D.fromRadians(dt *
+                if (Infrastructure.ahrsCalibrated) {
+                    Infrastructure.yawRate
+                } else {
+                    chassisVelocity.angular
+                }
+        )
 
         // add displacement into current position
         val newPosition = robotState.translation + newAngle.translation * (chassisVelocity.linear * dt)
 
         // update the robot state
         robotState = Pose2D(newPosition, newAngle)
+    }
+
+    fun setVelocity(
+            leftVel: Double, rightVel: Double, // m/s
+            leftAcc: Double = 0.0, rightAcc: Double = 0.0 // m/s^2 * kA
+    ) {
+        Drive.controlMode = ControlMode.Velocity
+        Drive.leftDemand = leftVel * DriveConstants.kTicksPerMeterPer100ms
+        Drive.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
+        Drive.leftFeedforward = leftAcc / 1023
+        Drive.rightFeedforward = rightAcc / 1023
     }
 }

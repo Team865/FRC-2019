@@ -12,7 +12,8 @@ object LiftConstants {
 
     private const val kDrumDiameter = 2.0 // + kRopeDiameter // Inches
     private const val kDrumCircumference = kDrumDiameter * Math.PI
-    const val kTicksPerInch = COTSConstants.MagEncoder.kTicksPerRevolution / kDrumCircumference
+    const val kTicksPerRevolution = 4096
+    const val kTicksPerInch = kTicksPerRevolution / kDrumCircumference
 
     const val kHomeHeightInches = 18.5
 

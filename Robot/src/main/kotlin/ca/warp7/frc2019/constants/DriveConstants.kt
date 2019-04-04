@@ -21,7 +21,7 @@ object DriveConstants {
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
 
-    private const val kScrubFactor = 1.1
+    private const val kScrubFactor = 1.4
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*
@@ -40,8 +40,10 @@ object DriveConstants {
     const val kDifferentialDeadband = 0.2
     const val kQuickTurnMultiplier = 0.7
 
-    const val kTicksPerRevolution = COTSConstants.GrayHillEncoder.kTicksPerRevolution
+    const val kTicksPerRevolution = 1024
     const val kTicksPerInch = kTicksPerRevolution / kWheelCircumference
+    const val kTicksPerFootPer100ms = 12 * kTicksPerInch * 0.1
+    const val kTicksPerMeterPer100ms = kTicksPerInch / 0.0254 * 0.1
 
     const val kMaxVelocity = 12.0 // ft/s
     const val kMaxAcceleration = 9.0 //  ft/s^2

@@ -18,7 +18,7 @@ object Infrastructure : Subsystem() {
     var pitch = 0.0
 
     var yaw: Rotation2D = Rotation2D.identity
-    private var pYaw = Rotation2D.identity
+    private var previousYaw = Rotation2D.identity
     var yawRate = 0.0
 
     override fun onMeasure(dt: Double) {
@@ -26,9 +26,9 @@ object Infrastructure : Subsystem() {
         if (ahrsCalibrated) {
             pitch = Math.toRadians(ahrs.pitch.toDouble())
             fusedHeading = Math.toRadians(ahrs.fusedHeading.toDouble())
-            pYaw = yaw
+            previousYaw = yaw
             yaw = Rotation2D.fromRadians(fusedHeading)
-            yawRate = (pYaw - yaw).radians / dt
+            yawRate = (previousYaw - yaw).radians / dt
         }
     }
 

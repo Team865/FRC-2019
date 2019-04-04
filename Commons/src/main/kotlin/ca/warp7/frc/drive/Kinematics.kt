@@ -30,11 +30,20 @@ fun DifferentialDriveModel.solve(state: ChassisState) = WheelState(
  *
  * If curvature is 0, we just return a ChassisState with no angular velocity
  */
-fun DifferentialDriveModel.signedMaxAtCurvature(curvature: Double): ChassisState {
+
+fun DifferentialDriveModel.signedMaxAtCurvature(
+        curvature: Double,
+        maxVelocity: Double,
+        angularDrag: Double
+): ChassisState {
     if (curvature.epsilonEquals(0.0, 1E-9)) return ChassisState(maxVelocity, angular = 0.0)
-    val angular = maxVelocity / (1 / abs(curvature) + wheelbaseRadius)
+    val angular = maxVelocity / (1 / abs(curvature) + wheelbaseRadius) * angularDrag
     val linear = maxVelocity - (angular * wheelbaseRadius)
     return ChassisState(linear, angular.withSign(curvature))
+}
+
+fun DifferentialDriveModel.signedMaxAtCurvature(curvature: Double): ChassisState {
+    return signedMaxAtCurvature(curvature, maxVelocity, 1.0)
 }
 
 fun DifferentialDriveModel.solvedMaxAtCurvature(curvature: Double) = solve(signedMaxAtCurvature(curvature))
