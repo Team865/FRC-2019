@@ -2,7 +2,6 @@ package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.signedMaxAtCurvature
-import ca.warp7.frc.f
 import ca.warp7.frc.geometry.CurvatureState
 import ca.warp7.frc.geometry.Pose2D
 import kotlin.math.pow
@@ -11,13 +10,15 @@ import kotlin.math.sqrt
 fun List<CurvatureState<Pose2D>>.timedTrajectory(
         model: DifferentialDriveModel,
         startVelocity: Double = 0.0,
-        endVelocity: Double = 0.0
-): List<TimedConstraints> {
-    val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature) }
+        endVelocity: Double = 0.0,
+        maxVelocity: Double = model.maxVelocity,
+        maxAcceleration: Double = model.maxAcceleration
+): List<TrajectoryPoint> {
+    val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature, maxVelocity) }
     val distances = zipWithNext { a, b ->
         (a.state.translation - b.state.translation).mag
     }
-    val timedStates = map { TimedConstraints(it, model.maxVelocity, model.maxAcceleration) }
+    val timedStates = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }
     timedStates.first().velocity = startVelocity
     val forwardMoments = Array(size) { 0.0 }
     for (i in 0 until size - 1) {
@@ -25,7 +26,6 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val now = timedStates[i]
         val next = timedStates[i + 1]
         val c = curvatureConstraints[i + 1]
-        val maxAcceleration = model.maxAcceleration
         val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
         next.velocity = minOf(next.velocity, c.linear, maxLinear)
         val t = (2 * dist) / (now.velocity + next.velocity)
@@ -38,7 +38,6 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val now = timedStates[i]
         val next = timedStates[i - 1]
         val c = curvatureConstraints[i - 1]
-        val maxAcceleration = model.maxAcceleration
         val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
         next.velocity = minOf(next.velocity, c.linear, maxLinear)
         val t = (2 * dist) / (now.velocity + next.velocity)
@@ -53,15 +52,4 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         timedStates[i].t = totalMoments[i]
     }
     return timedStates
-}
-
-data class TimedConstraints(
-        var state: CurvatureState<Pose2D>,
-        var velocity: Double = 0.0,
-        var acceleration: Double = 0.0,
-        var t: Double = 0.0
-) {
-    override fun toString(): String {
-        return "Timed(t=${t.f}, $state, v=${velocity.f}, a=${acceleration.f})"
-    }
 }

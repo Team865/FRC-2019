@@ -6,7 +6,7 @@ import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.solve
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.path.*
-import ca.warp7.frc.trajectory.TimedConstraints
+import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.timedTrajectory
 import processing.core.PApplet
 import processing.core.PConstants
@@ -48,7 +48,7 @@ class PathPlanner : PApplet() {
     var waypoints: Array<Pose2D> = emptyArray()
     var intermediate: List<QuinticSegment2D> = emptyList()
     var splines: List<CurvatureState<Pose2D>> = emptyList()
-    var trajectory: List<TimedConstraints> = emptyList()
+    var trajectory: List<TrajectoryPoint> = emptyList()
     var controlPoints = mutableListOf<ControlPoint>()
 
     var curvatureSum = 0.0

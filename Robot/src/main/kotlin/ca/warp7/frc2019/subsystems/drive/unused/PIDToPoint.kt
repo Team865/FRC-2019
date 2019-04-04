@@ -57,8 +57,8 @@ class PIDToPoint(
         // then limiting it based on a maximum lateral turning angle. The result is in degrees
         val lateralOffset = (error.translation.y * lateralKp).coerceIn(-maxTurn, maxTurn)
 
-        // calculate the total turning error taking in account of the lateral offset accounts for
-        // rotation over a full circle by converting to a Rotation2D and back to degrees
+        // calculate the total turning error accounting for the lateral offset and rotations
+        // over a full circle by converting to a Rotation2D and back to degrees
         val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees
 
         // calculate the turning PID output with the total turning error
