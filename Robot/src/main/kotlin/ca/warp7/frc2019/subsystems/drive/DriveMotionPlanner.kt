@@ -45,8 +45,8 @@ object DriveMotionPlanner {
         dt = newDt
 
         // convert ticks/100ms into rad/s
-        leftVelocity = Drive.leftVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
-        rightVelocity = Drive.rightVelocity / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
+        leftVelocity = Drive.leftVelocity.toDouble() / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
+        rightVelocity = Drive.rightVelocity.toDouble() / DriveConstants.kTicksPerRevolution * 2 * Math.PI * 10
 
         // convert rad/s into m/s
         wheelVelocity = WheelState(left = leftVelocity * model.wheelRadius, right = rightVelocity * model.wheelRadius)
@@ -60,9 +60,13 @@ object DriveMotionPlanner {
     fun updateLocalization() {
         // If gyro connected, use the yaw value from the gyro as the new angle
         // otherwise add the calculated angular velocity to current yaw
-        val newAngle =
-                if (Infrastructure.ahrsCalibrated) Infrastructure.yaw
-                else robotState.rotation + Rotation2D.fromRadians(chassisVelocity.angular * dt)
+        val newAngle = robotState.rotation + Rotation2D.fromRadians(dt *
+                if (Infrastructure.ahrsCalibrated) {
+                    Infrastructure.yawRate
+                } else {
+                    chassisVelocity.angular
+                }
+        )
 
         // add displacement into current position
         val newPosition = robotState.translation + newAngle.translation * (chassisVelocity.linear * dt)

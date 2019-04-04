@@ -4,6 +4,7 @@ package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.Subsystem
 import ca.warp7.frc.followedBy
+import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
@@ -69,12 +70,15 @@ object Drive : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        graph("Left Demand", leftDemand)
-        graph("Left Feedforward", leftFeedforward)
-        graph("Right Demand", rightDemand)
-        graph("Right Feedforward", rightFeedforward)
-        graph("Left Velocity", leftVelocity)
-        graph("Right Velocity", rightVelocity)
+        put("x", DriveMotionPlanner.robotState.translation.x)
+        put("y", DriveMotionPlanner.robotState.translation.y)
+        put("yaw", DriveMotionPlanner.robotState.rotation.degrees)
+//        graph("Left Demand", leftDemand)
+//        graph("Left Feedforward", leftFeedforward)
+//        graph("Right Demand", rightDemand)
+//        graph("Right Feedforward", rightFeedforward)
+        put("Left Velocity", leftVelocity)
+        put("Right Velocity", rightVelocity)
         put("Left Position", leftPosition)
         put("Right Position", rightPosition)
     }
