@@ -43,6 +43,7 @@ object DriveConstants {
     const val kTicksPerRevolution = 1024
     const val kTicksPerInch = kTicksPerRevolution / kWheelCircumference
     const val kTicksPerFootPer100ms = 12 * kTicksPerInch * 0.1
+    const val kTicksPerMeterPer100ms = kTicksPerInch / 0.0254 * 0.1
 
     const val kMaxVelocity = 12.0 // ft/s
     const val kMaxAcceleration = 9.0 //  ft/s^2
