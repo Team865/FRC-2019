@@ -63,12 +63,12 @@ object MainLoop : Action {
             when (Pressed) {
                 xButton -> Outtake.set {
                     grabbing = !grabbing
-                    pushing = false
+                    pushing=true
                     isStopOverrideOuttake = true
                 }
                 aButton -> Outtake.set {
                     pushing = !pushing
-                    grabbing = false
+                    grabbing=false
                     isStopOverrideOuttake = true
                 }
                 else -> Unit

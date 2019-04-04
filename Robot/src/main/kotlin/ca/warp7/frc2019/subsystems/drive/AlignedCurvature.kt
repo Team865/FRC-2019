@@ -1,6 +1,8 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc.PID
+import ca.warp7.frc.PIDValues
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
@@ -21,8 +23,7 @@ class AlignedCurvature : Action {
     var left = 0.0
     var right = 0.0
 
-    private var lastError = 0.0
-    private var lastTime = 0.0
+    val anglePID = PID(PIDValues(0.6, 0.05))
 
     private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
@@ -49,44 +50,29 @@ class AlignedCurvature : Action {
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
 
         if (isAligning && Limelight.hasTarget) {
-            val error = Math.toRadians(Limelight.x)
-            val time = Timer.getFPGATimestamp()
-            val dt = time - lastTime
-            if (error.epsilonEquals(0.0, 0.02)) {
-                Drive.leftDemand = left
+            val kVi: Double
+            if (xSpeed.epsilonEquals(0.0, 0.2)) {
+                anglePID.pidValues = PIDValues(0.6, 0.05)
+                kVi = 0.2
+            } else {
+                left = 0.4
+                right = 0.4
+                anglePID.pidValues = PIDValues(0.01, 2.0 / (Limelight.area))
+                kVi = 0.05
+            }
+
+            val angleAdjustment = anglePID.calc(
+                    dt = DriveMotionPlanner.lastDt, curState = Math.toRadians(Limelight.x)
+            )
+            val friction = kVi.withSign(angleAdjustment)
+
+            if (angleAdjustment >= 0) {
+                Drive.leftDemand = left - (angleAdjustment + friction)
                 Drive.rightDemand = right
             } else {
-                val dError = error - lastError
-                val kP: Double
-                val kD: Double
-                val kVi: Double
-                if (!xSpeed.epsilonEquals(0.0, 0.2)) {
-                    left = 0.4
-                    right = 0.4
-                    kP = 0.01
-                    kD = 2.0 / (Limelight.area)
-                    kVi = 0.2
-                } else {
-                    kP = 0.6
-                    kD = 0.05
-                    kVi = 0.2
-                }
-                val friction = kVi.withSign(error)
-                val angularGain = error * kP + dError / dt * kD + friction
-                if (angularGain > 0) {
-                    Drive.leftDemand = left + angularGain
-                    Drive.rightDemand = right
-                } else {
-                    Drive.leftDemand = left
-                    Drive.rightDemand = right - angularGain
-                }
-//
-//                Drive.leftDemand = left + (error * kP + dError / dt * kD + friction)
-//                Drive.rightDemand = right - (error * kP + dError / dt * kD + friction)
-////                println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
+                Drive.leftDemand = left
+                Drive.rightDemand = right + (angleAdjustment + friction)
             }
-            lastError = error
-            lastTime = time
         } else {
             Drive.leftDemand = left
             Drive.rightDemand = right
