@@ -11,7 +11,7 @@ import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
 object LeftRocketCloseHatch {
 
-    val leftRocketCloseHatchLevel2
+    val level2
         get() = queue {
             // off platform and turn
             +DriveForDistance(88.0 / 12 + 1.0)

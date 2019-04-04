@@ -8,7 +8,7 @@ import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
 
 object LeftCargoShipHatch {
-    fun leftSideCargoShipHatch(isLimelight: Boolean = true): Action {
+    fun get(isLimelight: Boolean = true): Action {
         return queue {
             // grab hatch
             +runOnce {

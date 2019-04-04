@@ -10,7 +10,7 @@ import ca.warp7.frc2019.subsystems.drive.QuickTurn
 import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
 object LeftRocketFarHatch {
-    val leftRocketFarHatchLevel2
+    val level2
         get() = queue {
             +DriveForDistance(200.0 / 12 + 1.0)
             +QuickTurn(-90.0)
