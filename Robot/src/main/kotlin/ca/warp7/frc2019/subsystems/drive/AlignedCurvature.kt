@@ -49,29 +49,29 @@ class AlignedCurvature : Action {
         else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
 
-        if (isAligning && Limelight.hasTarget) {
+        if (isAligning && Limelight.hasTarget && !Limelight.x.epsilonEquals(0.0,0.2)) {
             val kVi: Double
             if (xSpeed.epsilonEquals(0.0, 0.2)) {
                 anglePID.pidValues = PIDValues(0.6, 0.05)
                 kVi = 0.2
             } else {
-                left = 0.4
-                right = 0.4
+                left = 0.4.withSign(xSpeed)
+                right = 0.4.withSign(xSpeed)
                 anglePID.pidValues = PIDValues(0.01, 2.0 / (Limelight.area))
                 kVi = 0.05
             }
 
             val angleAdjustment = anglePID.calc(
-                    dt = DriveMotionPlanner.lastDt, curState = Math.toRadians(Limelight.x)
+                    dt = DriveMotionPlanner.dt, curState = Math.toRadians(Limelight.x)
             )
             val friction = kVi.withSign(angleAdjustment)
 
             if (angleAdjustment >= 0) {
-                Drive.leftDemand = left - (angleAdjustment + friction)
-                Drive.rightDemand = right
-            } else {
                 Drive.leftDemand = left
                 Drive.rightDemand = right + (angleAdjustment + friction)
+            } else {
+                Drive.leftDemand = left- (angleAdjustment + friction)
+                Drive.rightDemand = right
             }
         } else {
             Drive.leftDemand = left

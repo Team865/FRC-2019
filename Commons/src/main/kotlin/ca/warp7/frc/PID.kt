@@ -1,13 +1,23 @@
 package ca.warp7.frc
 
-class PID(var pidValues: PIDValues) {
-    var zeroOffset: Double = 0.0
+class PID {
+    var pidValues: PIDValues
+
+    var zeroOffset = 0.0
     private var relTarget = 0.0
-    private var prevError: Double = 0.0
+    private var prevError = 0.0
 
     var sumError: Double = 0.0
     var error: Double = 0.0
     var dError: Double = 0.0
+
+    constructor(pid: PIDValues) {
+        pidValues = pid
+    }
+
+    constructor(p: Double, d: Double, i: Double) {
+        pidValues = PIDValues(p, d, i)
+    }
 
     fun setTarget(target: Double) {
         relTarget = target - zeroOffset
