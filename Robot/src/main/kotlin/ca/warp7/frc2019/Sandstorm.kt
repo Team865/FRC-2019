@@ -5,6 +5,7 @@ import ca.warp7.frc.ControllerState
 import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
+import ca.warp7.frc2019.auton.StraightHatch
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Outtake
@@ -13,7 +14,11 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 
 object Sandstorm : Action {
 
-    private lateinit var auto: Action
+    fun getAutoMode(): Action {
+        return StraightHatch.straightHatch
+    }
+
+    private lateinit var autoAction: Action
 
     override fun start() {
         println("Robot State: Sandstorm")
@@ -23,19 +28,19 @@ object Sandstorm : Action {
             grabbing = true
             pushing = false
         }
-        auto = Autonomous.mode
-        auto.start()
+        autoAction = getAutoMode()
+        autoAction.start()
     }
 
     override val shouldFinish: Boolean
-        get() = auto.shouldFinish || Controls.robotDriver.yButton == ControllerState.Pressed // switch to teleop
+        get() = autoAction.shouldFinish || Controls.robotDriver.yButton == ControllerState.Pressed // switch to teleop
 
     override fun update() {
-        auto.update()
+        autoAction.update()
     }
 
     override fun stop() {
-        auto.stop()
+        autoAction.stop()
         RobotControl.set(MainLoop)
     }
 }

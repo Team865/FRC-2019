@@ -16,6 +16,7 @@ class PIDTrajectory(
         waypoints: Array<Pose2D>,
         maxVelocityRatio: Double = 0.75,
         maxAccelerationRatio: Double = 0.85,
+        angularDrag: Double = 0.8,
         val backwards: Boolean = false,
         val lookaheadDist: Double = 0.2, // m
         val kA: Double = 0.2, // unit: maxAcceleration(m/s) / 1023
@@ -42,7 +43,8 @@ class PIDTrajectory(
             startVelocity = feetToMeters(startVelocity),
             endVelocity = feetToMeters(endVelocity),
             maxVelocity = model.maxVelocity * maxVelocityRatio,
-            maxAcceleration = model.maxAcceleration * maxAccelerationRatio
+            maxAcceleration = model.maxAcceleration * maxAccelerationRatio,
+            angularDrag = angularDrag
     )
 
     val trajectoryTime = trajectory.last().t
