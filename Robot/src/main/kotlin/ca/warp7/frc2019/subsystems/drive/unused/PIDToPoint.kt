@@ -7,6 +7,7 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 class PIDToPoint(
         val target: Pose2D,
@@ -44,18 +45,18 @@ class PIDToPoint(
         turnPID.dt = DriveMotionPlanner.dt
 
         // calculate the error from the robot to the target (in the perspective of the robot)
-        var error = Pose2D((absoluteTarget.translation - robotState.translation).rotate(robotState.rotation),
+        val error = Pose2D((absoluteTarget.translation - robotState.translation).rotate(robotState.rotation),
                 (absoluteTarget.rotation - robotState.rotation))
 
         // calculate the forward PID output with the x (forward) direction error
         var forwardOutput = straightPID.updateByError(error.translation.x)
 
         // reverse the lateral direction if the setpoint is behind the robot
-        if (error.translation.x < 0) error = Pose2D(error.translation.flipY, error.rotation)
+        val lateralError = error.translation.y * error.translation.x.sign
 
         // calculate an offset to the angular setpoint based on the y (lateral) direction error,
         // then limiting it based on a maximum lateral turning angle. The result is in degrees
-        val lateralOffset = (error.translation.y * lateralKp).coerceIn(-maxTurn, maxTurn)
+        val lateralOffset = (lateralError * lateralKp).coerceIn(-maxTurn, maxTurn)
 
         // calculate the total turning error accounting for the lateral offset and rotations
         // over a full circle by converting to a Rotation2D and back to degrees
