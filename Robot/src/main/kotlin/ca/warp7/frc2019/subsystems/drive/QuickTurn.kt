@@ -1,21 +1,15 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc.geometry.fromDegrees
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
-import ca.warp7.frc2019.subsystems.drive.unused.PID
+import ca.warp7.frc.PID
 import com.ctre.phoenix.motorcontrol.ControlMode
-import kotlin.math.sign
-import kotlin.math.withSign
 
-class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
+class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
     val turnPID = PID(
             kP = 2.0, kI = 0.08, kD = 5.0, kF = 0.0,
             errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
@@ -34,17 +28,19 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : 
     private val integralZone = 10.0
 
     override fun update() {
-        val error = robotState.rotation.degrees - initYaw
+        val error = robotState.rotation.degrees - initYaw - angleInDegrees
+
+        turnPID.dt=DriveMotionPlanner.dt
         val angularGain = turnPID.updateByError(error)
 
-        var demand = angularGain
+        val demand = angularGain * DriveConstants.kTicksPerFootPer100ms
 
         Drive.leftDemand = demand
         Drive.rightDemand = -demand
     }
 
     override val shouldFinish
-        get() =turnPID.isDone()
+        get() = turnPID.isDone()
 
 
     override fun stop() {

@@ -2,7 +2,6 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
-import ca.warp7.frc.PIDValues
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
@@ -10,7 +9,6 @@ import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Limelight
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import kotlin.math.withSign
 
@@ -23,7 +21,7 @@ class AlignedCurvature : Action {
     var left = 0.0
     var right = 0.0
 
-    val anglePID = PID(PIDValues(0.6, 0.05))
+    val anglePID = PID(kP = 0.6, kD = 0.05)
 
     private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
@@ -52,18 +50,19 @@ class AlignedCurvature : Action {
         if (isAligning && Limelight.hasTarget) {
             val kVi: Double
             if (xSpeed.epsilonEquals(0.0, 0.2)) {
-                anglePID.pidValues = PIDValues(0.6, 0.05)
+                anglePID.kP = 0.6
+                anglePID.kD = 0.05
                 kVi = 0.2
             } else {
                 left = 0.4
                 right = 0.4
-                anglePID.pidValues = PIDValues(0.01, 2.0 / (Limelight.area))
+                anglePID.kP = 0.01
+                anglePID.kD = 2.0 / (Limelight.area)
                 kVi = 0.05
             }
 
-            val angleAdjustment = anglePID.calc(
-                    dt = DriveMotionPlanner.dt, curState = Math.toRadians(Limelight.x)
-            )
+            anglePID.dt = DriveMotionPlanner.dt
+            val angleAdjustment = anglePID.updateByError(Math.toRadians(Limelight.x))
             val friction = kVi.withSign(angleAdjustment)
 
             if (angleAdjustment >= 0) {

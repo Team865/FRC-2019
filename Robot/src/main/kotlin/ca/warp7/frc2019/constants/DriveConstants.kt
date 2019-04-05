@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.constants
 
-import ca.warp7.frc2019.subsystems.drive.unused.PID
+import ca.warp7.frc.PID
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
