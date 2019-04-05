@@ -62,7 +62,7 @@ class AlignedCurvature : Action {
             }
 
             val angleAdjustment = anglePID.calc(
-                    dt = DriveMotionPlanner.lastDt, curState = Math.toRadians(Limelight.x)
+                    dt = DriveMotionPlanner.dt, curState = Math.toRadians(Limelight.x)
             )
             val friction = kVi.withSign(angleAdjustment)
 

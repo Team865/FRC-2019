@@ -17,12 +17,14 @@ class PIDToPoint(
         val lateralKp: Double = 1.0,
         val turningOutputKp: Double = 0.8,
         val straightPID: PID = PID(
-                kP = 0.15, kI = 0.0015, kD = 0.3, kF = 0.0,
-                errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3
+                kP = 0.15, kI = 0.0015, kD = 0.3, kF = 0.1,
+                errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3,
+                maxOutput = DriveConstants.kMaxVelocity
         ),
         val turnPID: PID = PID(
-                kP = 3.5, kI = 0.08, kD = 5.0, kF = 0.0,
-                errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
+                kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0,
+                errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3,
+                maxOutput =  DriveConstants.kMaxVelocity
         )
 ) : Action {
 
@@ -36,7 +38,7 @@ class PIDToPoint(
     }
 
     override val shouldFinish: Boolean
-        get() = straightPID.isDone() && turnPID.isDone()
+        get() = false//straightPID.isDone() && turnPID.isDone()
 
     override fun update() {
 
@@ -75,6 +77,10 @@ class PIDToPoint(
             // slow down the turning output to go straight more
             turningOutput *= turningOutputKp
         }
+        println("Error $error")
+        println("turn $turningError")
+        println("late $lateralError")
+        println("lato $lateralOffset")
 
         // convert to ticks/100ms and set the motor velocities
         Drive.leftDemand = (forwardOutput - turningOutput) * DriveConstants.kTicksPerFootPer100ms

@@ -15,7 +15,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 object Sandstorm : Action {
 
     fun getAutoMode(): Action {
-        return DriveOnly.leftCloseRocket
+        return DriveOnly.driveForDistance
     }
 
     private lateinit var autoAction: Action

@@ -1,5 +1,6 @@
 package ca.warp7.frc2019.constants
 
+import ca.warp7.frc2019.subsystems.drive.unused.PID
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
@@ -60,6 +61,12 @@ object DriveConstants {
     const val kTorquePerVolt = 0.0
     const val kLinearInertia = 60.0
     const val kAngularInertia = 10.0
+
+    val straightPID: PID = PID(
+            kP = 6.0, kI = 0.0015, kD = 1.0, kF = 0.0,
+            errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3,
+            maxOutput = kMaxVelocity
+    )//meters
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 

@@ -9,22 +9,22 @@ import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
+import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
+import ca.warp7.frc2019.subsystems.drive.unused.PID
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
 
 class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
-    private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
-    private var startYaw = Rotation2D.identity
-    private var error = 0.0
-    private var dError = 0.0
-    private var sumError = 0.0
+    val turnPID = PID(
+            kP = 2.0, kI = 0.08, kD = 5.0, kF = 0.0,
+            errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
+    )
+    var initYaw: Double = 0.0
 
     override fun start() {
-        Drive.controlMode = ControlMode.PercentOutput
-        startYaw = Infrastructure.yaw
-        error = targetYaw.radians
-        targetYaw += startYaw
+        Drive.controlMode = ControlMode.Velocity
+        initYaw = Infrastructure.yaw.degrees
     }
 
     private val angularKp = 0.029
@@ -34,32 +34,17 @@ class QuickTurn(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : 
     private val integralZone = 10.0
 
     override fun update() {
-        val newError = (targetYaw - Infrastructure.yaw).degrees
-        dError = (newError - error) / DriveMotionPlanner.dt
-
-        if (error.sign != newError.sign) sumError = 0.0
-        else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(newError)
-        else sumError += newError
-
-        val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
+        val error = robotState.rotation.degrees - initYaw
+        val angularGain = turnPID.updateByError(error)
 
         var demand = angularGain
-        val apparantPercent = (Drive.leftVelocity + Drive.rightVelocity) / 2.0 / (DriveConstants.kMaxVelocity)
-        demand += (demand - apparantPercent) * kA / DriveMotionPlanner.dt
 
         Drive.leftDemand = demand
         Drive.rightDemand = -demand
-
-        error = newError
-//        Drive.put("Qt Error", error)
-//        Drive.put("Qt dError", dError)
-//        Drive.put("Qt SumError", sumError)
-//        println("ERROR $error")
     }
 
     override val shouldFinish
-        get() = error.epsilonEquals(0.0, stopAngleThreshold)
-                && dError.epsilonEquals(0.0, 1.0)
+        get() =turnPID.isDone()
 
 
     override fun stop() {
