@@ -22,7 +22,7 @@ object DriveConstants {
     // The circumference the wheel base turns across in inches
     const val kTurningCircumference = kTurningDiameter * Math.PI
 
-    private const val kScrubFactor = 1.4
+    private const val kScrubFactor = 1.45
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor
 
     /*
@@ -63,11 +63,15 @@ object DriveConstants {
     const val kAngularInertia = 10.0
 
     val straightPID: PID = PID(
-            kP = 6.0, kI = 0.0015, kD = 1.0, kF = 0.0,
-            errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3,
-            maxOutput = kMaxVelocity
+            kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0,
+            errorEpsilon = 0.07, dErrorEpsilon = 0.04, minTimeInEpsilon = 0.3,
+            maxOutput = DriveConstants.kMaxVelocity*2
     )//meters
-
+    val turnPID = PID(
+            kP = 0.5, kI = 0.0001, kD = 1.5, kF = 0.0,
+            errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.5,
+            maxOutput = DriveConstants.kMaxVelocity*2
+    )//degrees
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
         // TODO Position PID slot

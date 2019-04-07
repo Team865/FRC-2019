@@ -62,15 +62,15 @@ class AlignedCurvature : Action {
             }
 
             anglePID.dt = DriveMotionPlanner.dt
-            val angleAdjustment = anglePID.updateByError(Math.toRadians(Limelight.x))
+            val angleAdjustment = anglePID.updateByError(-Math.toRadians(Limelight.x))
             val friction = kVi.withSign(angleAdjustment)
 
             if (angleAdjustment >= 0) {
-                Drive.leftDemand = left - (angleAdjustment + friction)
-                Drive.rightDemand = right
-            } else {
                 Drive.leftDemand = left
                 Drive.rightDemand = right + (angleAdjustment + friction)
+            } else {
+                Drive.leftDemand = left - (angleAdjustment + friction)
+                Drive.rightDemand = right
             }
         } else {
             Drive.leftDemand = left

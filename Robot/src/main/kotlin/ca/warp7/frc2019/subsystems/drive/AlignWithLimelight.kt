@@ -42,7 +42,7 @@ class AlignWithLimelight : Action {
     }
 
     override val shouldFinish
-        get() = Limelight.x.epsilonEquals(0.0, 1.5)
+        get() = Limelight.x.epsilonEquals(0.0, 0.5)
                 && Infrastructure.yawRate.epsilonEquals(0.0, 0.07)
                 && Limelight.hasTarget
 

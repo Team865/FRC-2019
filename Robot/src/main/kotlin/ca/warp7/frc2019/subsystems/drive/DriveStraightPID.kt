@@ -11,8 +11,8 @@ import ca.warp7.frc.PID
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class DriveStraightPID(val distance: Double, val straightPID: PID = PID(
-        kP = 6.0, kI = 0.0015, kD = 1.0, kF = 0.0,
-        errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3,
+        kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0,
+        errorEpsilon = 0.07, dErrorEpsilon = 0.04, minTimeInEpsilon = 0.3,
         maxOutput = DriveConstants.kMaxVelocity
 )) : Action {
 
@@ -22,14 +22,14 @@ class DriveStraightPID(val distance: Double, val straightPID: PID = PID(
     }
 
     override val shouldFinish: Boolean
-        get() = false//straightPID.isDone()
+        get() = straightPID.isDone()
 
     override fun update() {
         straightPID.dt = DriveMotionPlanner.dt
         val error = distance-robotState.translation.x
-        println(robotState)
+        println(error)
 
-        Drive.leftDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerFootPer100ms
-        Drive.rightDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerFootPer100ms
+        Drive.leftDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerMeterPer100ms
+        Drive.rightDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerMeterPer100ms
     }
 }

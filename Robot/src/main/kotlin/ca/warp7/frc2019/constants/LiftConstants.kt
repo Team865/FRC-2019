@@ -20,7 +20,7 @@ object LiftConstants {
     const val kMaxBaseAcceleration = 3 //TODO find actual max acceleration 65m/s^2 ??
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kPrimaryFeedforward = -0.08
+    const val kPrimaryFeedforward = -0.12
     const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO

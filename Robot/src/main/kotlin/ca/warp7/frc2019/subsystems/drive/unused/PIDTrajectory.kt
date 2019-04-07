@@ -61,7 +61,7 @@ class PIDTrajectory(
     }
 
     override val shouldFinish: Boolean
-        get() = false//t > trajectoryTime || i >= trajectory.size
+        get() = t > trajectoryTime || i >= trajectory.size
 
     override fun stop() {
         DriveMotionPlanner.setVelocity(endVelocity, endVelocity)
@@ -134,19 +134,19 @@ class PIDTrajectory(
             println()
 
             if (enableFeedback) {
+//
+//                val forwardFeedback = straightPID.updateByError(error.translation.x)
+//
+//                val lateralError = error.translation.y * error.translation.x.sign
+//                val lateralOffset = (lateralError * lateralKp).coerceIn(-maxFeedbackTurn, maxFeedbackTurn)
 
-                val forwardFeedback = straightPID.updateByError(error.translation.x)
-
-                val lateralError = error.translation.y * error.translation.x.sign
-                val lateralOffset = (lateralError * lateralKp).coerceIn(-maxFeedbackTurn, maxFeedbackTurn)
-
-                val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees
+                val turningError = (error.rotation/* - Rotation2D.fromDegrees(lateralOffset)*/).degrees
                 val turningFeedback = turnPID.updateByError(turningError)
 
                 // println("$forwardFeedback, $turningFeedback")
 
-                leftVel += forwardFeedback - turningFeedback
-                rightVel += forwardFeedback + turningFeedback
+                leftVel +=/* forwardFeedback -*/ turningFeedback
+                rightVel += /*forwardFeedback +*/ turningFeedback
             }
         }
 

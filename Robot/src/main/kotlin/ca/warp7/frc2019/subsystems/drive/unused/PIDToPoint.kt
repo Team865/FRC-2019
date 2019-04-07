@@ -13,20 +13,12 @@ import kotlin.math.sign
 class PIDToPoint(
         val target: Pose2D,
         val absolute: Boolean = true,
-        val fastTurn: Boolean = true,
+        val fastTurn: Boolean = false,
         val maxTurn: Double = 90.0,
-        val lateralKp: Double = 1.0,
-        val turningOutputKp: Double = 0.8,
-        val straightPID: PID = PID(
-                kP = 0.15, kI = 0.0015, kD = 0.3, kF = 0.1,
-                errorEpsilon = 0.25, dErrorEpsilon = 0.2, minTimeInEpsilon = 0.3,
-                maxOutput = DriveConstants.kMaxVelocity
-        ),
-        val turnPID: PID = PID(
-                kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0,
-                errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3,
-                maxOutput = DriveConstants.kMaxVelocity
-        )
+        val lateralKp: Double = 25.0,
+        val turningOutputKp: Double = 0.1,
+        val straightPID: PID = DriveConstants.straightPID,
+        val turnPID: PID = DriveConstants.turnPID
 ) : Action {
 
     private val robotState get() = DriveMotionPlanner.robotState
