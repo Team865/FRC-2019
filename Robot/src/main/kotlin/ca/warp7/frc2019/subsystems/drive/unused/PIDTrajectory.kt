@@ -11,6 +11,8 @@ import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
+import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import edu.wpi.first.wpilibj.Timer
 
@@ -56,6 +58,7 @@ class PIDTrajectory(
     override fun start() {
         i = 0
         startTime = Timer.getFPGATimestamp()
+        Drive.setPID(DriveConstants.kVelocityFeedforwardPID)
         DriveMotionPlanner.setVelocity(startVelocity, startVelocity)
     }
 

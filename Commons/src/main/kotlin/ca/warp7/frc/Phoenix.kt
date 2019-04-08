@@ -19,6 +19,14 @@ fun <T : BaseMotorController> T.reset() = apply {
     setNeutralMode(NeutralMode.Brake)
 }
 
+fun <T : BaseMotorController> T.setPID(pid: PID) = apply {
+    selectProfileSlot(0, 0)
+    config_kP(0, pid.kP, 0)
+    config_kI(0, pid.kI, 0)
+    config_kD(0, pid.kD, 0)
+    config_kF(0, pid.kF, 0)
+}
+
 private class UnsafeSpeedController(val base: BaseMotorController) : SpeedController {
 
     var lastSpeed = 0.0

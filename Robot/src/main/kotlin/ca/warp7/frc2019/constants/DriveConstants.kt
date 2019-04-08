@@ -50,54 +50,37 @@ object DriveConstants {
     const val kMaxAcceleration = 9.0 //  ft/s^2
     const val kMaxFreeSpeedVelocity = 14.38 // ft/s
 
-    const val kSegmentLength = 0.0254 // m
-
-    const val kVIntercept = 0.0 // FIXME
-
-    private const val kOpenLoopRamp = 0.15
+    const val kMaxDx = 0.0254 // m
+    const val kOpenLoopRamp = 0.15
 
     const val kMaxVolts = 12.0
     const val kSpeedPerVolt = kMaxFreeSpeedVelocity / kMaxVolts
     const val kTorquePerVolt = 0.0
+    const val kFrictionVoltage = 0.0
     const val kLinearInertia = 60.0
     const val kAngularInertia = 10.0
 
-    val straightPID: PID = PID(
+    val kStraightPID: PID = PID(
             kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0,
             errorEpsilon = 0.07, dErrorEpsilon = 0.04, minTimeInEpsilon = 0.3,
-            maxOutput = DriveConstants.kMaxVelocity*2
+            maxOutput = DriveConstants.kMaxVelocity * 2
     )//meters
-    val turnPID = PID(
+
+    val kTurnPID = PID(
             kP = 0.5, kI = 0.0001, kD = 1.5, kF = 0.0,
             errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.5,
-            maxOutput = DriveConstants.kMaxVelocity*2
+            maxOutput = DriveConstants.kMaxVelocity * 2
     )//degrees
+
+    val kVelocityFeedforwardPID = PID(kP = 0.8, kI = 0.0, kD = 5.0, kF = 1.0)
+
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
 
-        // TODO Position PID slot
         slot0.apply {
-            kP = 1.0
-            kI = 0.01
-            kD = 0.6
-            kF = 0.0
-            integralZone = 0
-            allowableClosedloopError = 0
-            maxIntegralAccumulator = 0.0
-            closedLoopPeakOutput = 1.0
-            closedLoopPeriod = 1
-        }
-
-        // Velocity PID slot
-        slot1.apply {
-            kP = 0.8
-            kI = 0.0
-            kD = 5.0
-            kF = 1.0
-            integralZone = 0
-            allowableClosedloopError = 0
-            maxIntegralAccumulator = 0.0
-            closedLoopPeakOutput = 1.0
-            closedLoopPeriod = 1
+            kP = kVelocityFeedforwardPID.kP
+            kI = kVelocityFeedforwardPID.kI
+            kD = kVelocityFeedforwardPID.kD
+            kF = kVelocityFeedforwardPID.kF
         }
 
         openloopRamp = kOpenLoopRamp
@@ -108,9 +91,5 @@ object DriveConstants {
         // TalonSRXConfiguration
 
         primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-
-        peakCurrentLimit = 1
-        peakCurrentDuration = 1
-        continuousCurrentLimit = 1
     }
 }

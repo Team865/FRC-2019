@@ -23,7 +23,7 @@ class LinearTrajectory(distanceInFeet: Double = 0.0) {
     val targetState: Translation2D = Translation2D(x = feetToMeters(distanceInFeet), y = 0.0)
 
     // Parameter t of each segment
-    val segmentLength: Double = DriveConstants.kSegmentLength / (targetState - initialState).mag
+    val segmentLength: Double = DriveConstants.kMaxDx / (targetState - initialState).mag
     val segmentCount: Int = (1 / segmentLength).toInt() + 1
 
     // Interpolator between current state and target state

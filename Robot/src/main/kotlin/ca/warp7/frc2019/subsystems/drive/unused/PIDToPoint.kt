@@ -17,8 +17,8 @@ class PIDToPoint(
         val maxTurn: Double = 90.0,
         val lateralKp: Double = 25.0,
         val turningOutputKp: Double = 0.1,
-        val straightPID: PID = DriveConstants.straightPID,
-        val turnPID: PID = DriveConstants.turnPID
+        val straightPID: PID = DriveConstants.kStraightPID,
+        val turnPID: PID = DriveConstants.kTurnPID
 ) : Action {
 
     private val robotState get() = DriveMotionPlanner.robotState

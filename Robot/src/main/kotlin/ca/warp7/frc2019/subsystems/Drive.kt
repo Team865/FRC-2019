@@ -2,10 +2,8 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
-import ca.warp7.frc.followedBy
+import ca.warp7.frc.*
 import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -22,20 +20,6 @@ object Drive : Subsystem() {
             .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
 
     var controlMode = ControlMode.PercentOutput
-        set(value) {
-            if (field != value) when (value) {
-                ControlMode.Position -> {
-                    leftMaster.selectProfileSlot(0, 0)
-                    rightMaster.selectProfileSlot(0, 0)
-                }
-                ControlMode.Velocity -> {
-                    leftMaster.selectProfileSlot(1, 0)
-                    rightMaster.selectProfileSlot(1, 0)
-                }
-                else -> Unit
-            }
-            field = value
-        }
 
     var leftDemand = 0.0
     var rightDemand = 0.0
@@ -46,6 +30,11 @@ object Drive : Subsystem() {
     var rightPosition = 0
     var leftVelocity = 0
     var rightVelocity = 0
+
+    fun setPID(pid: PID) {
+        leftMaster.setPID(pid)
+        rightMaster.setPID(pid)
+    }
 
     override fun onDisabled() {
         leftDemand = 0.0
@@ -73,10 +62,8 @@ object Drive : Subsystem() {
         put("x", DriveMotionPlanner.robotState.translation.x)
         put("y", DriveMotionPlanner.robotState.translation.y)
         put("yaw", DriveMotionPlanner.robotState.rotation.degrees)
-//        graph("Left Demand", leftDemand)
-//        graph("Left Feedforward", leftFeedforward)
-//        graph("Right Demand", rightDemand)
-//        graph("Right Feedforward", rightFeedforward)
+        put("Left Demand", leftDemand)
+        put("Right Demand", rightDemand)
         put("Left Velocity", leftVelocity)
         put("Right Velocity", rightVelocity)
         put("Left Position", leftPosition)
