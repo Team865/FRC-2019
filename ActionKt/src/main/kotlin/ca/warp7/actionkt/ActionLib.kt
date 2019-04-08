@@ -24,9 +24,9 @@ fun wait(seconds: Double) = waitUntil { elapsed > seconds }
 
 fun cleanup(block: ActionState.() -> Unit) = action { onStop(block) }
 
-fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = ASMRunOnce(this, block)
+fun <T : ActionStateMachine> T.runOnce(block: T.() -> Unit) = RunOnce(this, block)
 
-fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = ASMPeriodic(this, block)
+fun <T : ActionStateMachine> T.periodic(block: T.() -> Unit) = Periodic(this, block)
 
 fun ActionDSL.runOnce(block: ActionState.() -> Unit) = action {
     onStart(block)
