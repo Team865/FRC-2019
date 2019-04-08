@@ -5,19 +5,19 @@ import ca.warp7.frc.PID
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.solve
 import ca.warp7.frc.feetToMeters
-import ca.warp7.frc.geometry.*
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.degrees
+import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import edu.wpi.first.wpilibj.Timer
-import kotlin.math.sign
 
 class PIDTrajectory(
         waypoints: Array<Pose2D>,
         maxVelocityRatio: Double = 0.75,
         maxAccelerationRatio: Double = 0.85,
-        angularDrag: Double = 0.8,
         val backwards: Boolean = false,
         val lookaheadDist: Double = 0.2, // m
         val kA: Double = 0.2, // unit: maxAcceleration(m/s) / 1023
@@ -44,8 +44,7 @@ class PIDTrajectory(
             startVelocity = feetToMeters(startVelocity),
             endVelocity = feetToMeters(endVelocity),
             maxVelocity = model.maxVelocity * maxVelocityRatio,
-            maxAcceleration = model.maxAcceleration * maxAccelerationRatio,
-            angularDrag = angularDrag
+            maxAcceleration = model.maxAcceleration * maxAccelerationRatio
     )
 
     val trajectoryTime = trajectory.last().t

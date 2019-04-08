@@ -12,10 +12,9 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         startVelocity: Double = 0.0,
         endVelocity: Double = 0.0,
         maxVelocity: Double = model.maxVelocity,
-        maxAcceleration: Double = model.maxAcceleration,
-        angularDrag: Double = 1.0
+        maxAcceleration: Double = model.maxAcceleration
 ): List<TrajectoryPoint> {
-    val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature, maxVelocity, angularDrag) }
+    val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature, maxVelocity) }
     val distances = zipWithNext { a, b ->
         (a.state.translation - b.state.translation).mag
     }

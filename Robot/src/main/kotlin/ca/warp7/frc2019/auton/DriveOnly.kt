@@ -11,7 +11,6 @@ import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
 import ca.warp7.frc2019.subsystems.drive.DriveStraightPID
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
-import ca.warp7.frc2019.subsystems.drive.unused.PIDToPoint
 import ca.warp7.frc2019.subsystems.drive.unused.PIDTrajectory
 
 object DriveOnly {
@@ -47,7 +46,6 @@ object DriveOnly {
                     ),
                     maxAccelerationRatio = 1.0,
                     maxVelocityRatio = 1.0,
-                    angularDrag = 1.0,
                     enableFeedback = false,
                     enableFeedforward = true,
                     kA = 6.0,
@@ -78,7 +76,6 @@ object DriveOnly {
                     ),
                     maxAccelerationRatio = 1.0,
                     maxVelocityRatio = 1.0,
-                    angularDrag = 1.0,
                     enableFeedback = false,
                     enableFeedforward = true,
                     kA = 6.0,
