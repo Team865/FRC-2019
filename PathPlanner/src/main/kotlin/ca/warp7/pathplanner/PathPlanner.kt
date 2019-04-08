@@ -3,7 +3,6 @@ package ca.warp7.pathplanner
 import ca.warp7.frc.*
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.solve
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.TrajectoryPoint
