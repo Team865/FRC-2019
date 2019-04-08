@@ -71,7 +71,7 @@ class PathPlanner : PApplet() {
             maxFreeSpeed = 0.0,
             speedPerVolt = 0.0,
             torquePerVolt = 0.0,
-            frictionVolts = 0.0,
+            frictionVoltage = 0.0,
             linearInertia = 0.0,
             angularInertia = 0.0,
             maxVolts = 0.0

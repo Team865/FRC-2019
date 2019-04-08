@@ -34,7 +34,7 @@ object DriveMotionPlanner {
             maxFreeSpeed = feetToMeters(DriveConstants.kMaxFreeSpeedVelocity),
             speedPerVolt = feetToMeters(DriveConstants.kSpeedPerVolt),
             torquePerVolt = DriveConstants.kTorquePerVolt,
-            frictionVolts = DriveConstants.kFrictionVoltage,
+            frictionVoltage = DriveConstants.kFrictionVoltage,
             linearInertia = DriveConstants.kLinearInertia,
             angularInertia = DriveConstants.kAngularInertia,
             maxVolts = DriveConstants.kMaxVolts
