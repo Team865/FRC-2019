@@ -6,15 +6,6 @@ import ca.warp7.frc.epsilonEquals
 import kotlin.math.abs
 import kotlin.math.withSign
 
-fun DifferentialDriveModel.solve(state: WheelState) = ChassisState(
-        linear = (state.left + state.right) / 2.0,
-        angular = (state.right - state.left) / (2 * wheelbaseRadius)
-)
-
-fun DifferentialDriveModel.solve(state: ChassisState) = WheelState(
-        left = state.linear - state.angular * wheelbaseRadius,
-        right = state.linear + state.angular * wheelbaseRadius
-)
 
 /**
  * Calculates the maximum reachable linear and angular velocity based on the curvature.
@@ -31,18 +22,9 @@ fun DifferentialDriveModel.solve(state: ChassisState) = WheelState(
  * If curvature is 0, we just return a ChassisState with no angular velocity
  */
 
-fun DifferentialDriveModel.signedMaxAtCurvature(
-        curvature: Double,
-        maxVelocity: Double
-): ChassisState {
+fun signedMaxAtCurvature(curvature: Double, maxVelocity: Double, wheelbaseRadius: Double): ChassisState {
     if (curvature.epsilonEquals(0.0, 1E-9)) return ChassisState(maxVelocity, angular = 0.0)
     val angular = maxVelocity / (1 / abs(curvature) + wheelbaseRadius)
     val linear = maxVelocity - (angular * wheelbaseRadius)
     return ChassisState(linear, angular.withSign(curvature))
 }
-
-fun DifferentialDriveModel.signedMaxAtCurvature(curvature: Double): ChassisState {
-    return signedMaxAtCurvature(curvature, maxVelocity)
-}
-
-fun DifferentialDriveModel.solvedMaxAtCurvature(curvature: Double) = solve(signedMaxAtCurvature(curvature))

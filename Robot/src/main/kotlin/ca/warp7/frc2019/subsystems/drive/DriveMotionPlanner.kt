@@ -3,7 +3,6 @@ package ca.warp7.frc2019.subsystems.drive
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.drive.solve
 import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D

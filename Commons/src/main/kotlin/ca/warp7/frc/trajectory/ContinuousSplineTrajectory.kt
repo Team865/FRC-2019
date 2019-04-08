@@ -3,7 +3,6 @@ package ca.warp7.frc.trajectory
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.TankTrajectoryState
 import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.drive.solvedMaxAtCurvature
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.path.*
