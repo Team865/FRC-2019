@@ -74,7 +74,7 @@ class PathPlanner : PApplet() {
             frictionVoltage = 0.0,
             linearInertia = 0.0,
             angularInertia = 0.0,
-            maxVolts = 0.0
+            maxVoltage = 0.0
     )
 
     var draggingPoint = false

@@ -21,7 +21,7 @@ data class DifferentialDriveModel(
         val frictionVoltage: Double, // V (voltage that breaks static friction)
         val linearInertia: Double, // kg (equivalent mass)
         val angularInertia: Double, // kg*m^2 (equivalent moment of inertia)
-        val maxVolts: Double, // V (maximum voltage of transmission)
+        val maxVoltage: Double, // V (maximum voltage of transmission)
         val angularDrag: Double = 1.0 // (N*m)/(m/s)
 ) {
 
@@ -144,7 +144,10 @@ data class DifferentialDriveModel(
         val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque)
         val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque)
 
-        return DynamicState(WheelState(leftVoltage, rightVoltage), WheelState(leftTorque, rightTorque))
+        return DynamicState(
+                voltage = WheelState(left = leftVoltage, right = rightVoltage),
+                torque = WheelState(left = leftTorque, right = rightTorque)
+        )
     }
 
     companion object {
