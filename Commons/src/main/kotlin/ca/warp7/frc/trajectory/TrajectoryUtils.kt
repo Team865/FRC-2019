@@ -1,7 +1,6 @@
 package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.signedMaxAtCurvature
 import ca.warp7.frc.geometry.CurvatureState
 import ca.warp7.frc.geometry.Pose2D
 import kotlin.math.pow
