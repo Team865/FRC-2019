@@ -1,6 +1,9 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
+import ca.warp7.actionkt.action
+import ca.warp7.actionkt.queue
+import ca.warp7.actionkt.runOnce
 import ca.warp7.frc.ControllerState.*
 import ca.warp7.frc.set
 import ca.warp7.frc.withDriver
@@ -61,14 +64,19 @@ object MainLoop : Action {
                 else -> Intake.set { speed = 0.0 }
             }
             when (Pressed) {
+                aButton -> Outtake.set(queue {
+                    +runOnce {
+                        Outtake.grabbing = false
+                    }
+                    +action {
+                        onUpdate { isStopOverrideOuttake = true }
+                        finishWhen { elapsed > 0.3 }
+                    }
+                    +runOnce { Outtake.pushing = !Outtake.pushing }
+                })
                 xButton -> Outtake.set {
                     grabbing = !grabbing
-                    pushing=true
-                    isStopOverrideOuttake = true
-                }
-                aButton -> Outtake.set {
-                    pushing = !pushing
-                    grabbing=false
+                    pushing = false
                     isStopOverrideOuttake = true
                 }
                 else -> Unit

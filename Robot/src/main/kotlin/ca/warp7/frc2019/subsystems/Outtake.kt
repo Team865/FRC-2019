@@ -31,7 +31,7 @@ object Outtake : Subsystem() {
         leftMaster.set(ControlMode.PercentOutput, speed)
         // Note unlike the conveyor, the right master is reversed
         rightMaster.set(ControlMode.PercentOutput, -speed)
-        pusher.set(!pushing)
-        grabber.set(grabbing)
+        pusher.set(pushing)
+        grabber.set(!grabbing)
     }
 }
