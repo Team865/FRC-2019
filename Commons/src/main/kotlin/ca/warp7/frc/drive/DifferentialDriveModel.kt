@@ -51,7 +51,7 @@ data class DifferentialDriveModel(
         val angularInertia: Double, // kg * m^2
 
         val maxVoltage: Double, // V
-        val angularDrag: Double = 0.0 // (N * m) / (rad/s)
+        val angularDrag: Double // (N * m) / (rad/s)
 ) {
 
     companion object {

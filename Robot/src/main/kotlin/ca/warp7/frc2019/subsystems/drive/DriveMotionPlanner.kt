@@ -38,7 +38,8 @@ object DriveMotionPlanner {
             frictionVoltage = DriveConstants.kFrictionVoltage,
             linearInertia = DriveConstants.kLinearInertia,
             angularInertia = DriveConstants.kAngularInertia,
-            maxVoltage = DriveConstants.kMaxVolts
+            maxVoltage = DriveConstants.kMaxVolts,
+            angularDrag = DriveConstants.kAngularDrag
     )
 
     fun updateMeasurements(newDt: Double) {

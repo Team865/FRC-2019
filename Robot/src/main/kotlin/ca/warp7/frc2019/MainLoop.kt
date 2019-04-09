@@ -51,29 +51,33 @@ object MainLoop : Action {
             when {
                 leftTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = -leftTriggerAxis
-                    isOpenOuttake = true
                     Intake.set { speed = -leftTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                     isStopOverrideOuttake = false
                 }
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
-                    isOpenOuttake = rightBumper == HeldDown
                     Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
                     isStopOverrideOuttake = false
                 }
                 else -> Intake.set { speed = 0.0 }
             }
+            if (aButton == Pressed) {
+                if (!Outtake.pushing) {
+                    Outtake.set(queue {
+                        +runOnce {
+                            Outtake.grabbing = false
+                        }
+                        +action {
+                            onUpdate { isStopOverrideOuttake = true }
+                            finishWhen { elapsed > 0.1 }
+                        }
+                        +runOnce { Outtake.pushing = !Outtake.pushing }
+                    })
+                } else {
+                    Outtake.pushing = !Outtake.pushing
+                }
+            }
             when (Pressed) {
-                aButton -> Outtake.set(queue {
-                    +runOnce {
-                        Outtake.grabbing = false
-                    }
-                    +action {
-                        onUpdate { isStopOverrideOuttake = true }
-                        finishWhen { elapsed > 0.3 }
-                    }
-                    +runOnce { Outtake.pushing = !Outtake.pushing }
-                })
                 xButton -> Outtake.set {
                     grabbing = !grabbing
                     pushing = false

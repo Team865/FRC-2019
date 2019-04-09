@@ -59,6 +59,7 @@ object DriveConstants {
     const val kFrictionVoltage = 0.0
     const val kLinearInertia = 60.0
     const val kAngularInertia = 10.0
+    const val kAngularDrag = 0.0
 
     val kStraightPID: PID = PID(
             kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0,
