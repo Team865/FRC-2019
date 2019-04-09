@@ -50,7 +50,6 @@ object DriveOnly {
                     ),
                     maxAccelerationRatio = 1.0,
                     maxVelocityRatio = 1.0,
-                    angularDrag = 1.0,
                     enableFeedback = false,
                     enableFeedforward = true,
                     kA = 6.0,
