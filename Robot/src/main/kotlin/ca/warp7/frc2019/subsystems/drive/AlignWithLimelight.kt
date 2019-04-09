@@ -24,16 +24,20 @@ class AlignWithLimelight : Action {
         if (Limelight.hasTarget) {
             val error = Math.toRadians(Limelight.x)
             val time = Timer.getFPGATimestamp()
-            val dt = time - lastTime
+            val dt = DriveMotionPlanner.dt
             val dError = error - lastError
 
-            val kP = 0.9
-            val kD = 0.4
+            val kP = 1.9
+            val kD = 0.95
             val kVi = 0.2
+
 
             val friction = kVi.withSign(error)
             Drive.leftDemand = error * kP + dError / dt * kD + friction
             Drive.rightDemand = right - (error * kP + dError / dt * kD + friction)
+
+            println("error $error")
+            println("demand ${error * kP + dError / dt * kD + friction}")
             //println((Drive.leftVelocity + Drive.rightVelocity) / 2.0)
 
             lastError = error

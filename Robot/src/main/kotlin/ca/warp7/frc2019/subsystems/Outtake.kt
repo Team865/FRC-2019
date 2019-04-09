@@ -23,15 +23,15 @@ object Outtake : Subsystem() {
     override fun onDisabled() {
         leftMaster.neutralOutput()
         rightMaster.neutralOutput()
-        pusher.set(false)
-        grabber.set(true)
+        pusher.set(true)
+        grabber.set(false)
     }
 
     override fun onOutput() {
         leftMaster.set(ControlMode.PercentOutput, speed)
         // Note unlike the conveyor, the right master is reversed
         rightMaster.set(ControlMode.PercentOutput, -speed)
-        pusher.set(pushing)
+        pusher.set(!pushing)
         grabber.set(grabbing)
     }
 }

@@ -21,7 +21,7 @@ object MainLoop : Action {
         Limelight.set { isDriver = true }
         Outtake.set {
             grabbing = true
-            pushing = false
+            pushing = true
         }
     }
 

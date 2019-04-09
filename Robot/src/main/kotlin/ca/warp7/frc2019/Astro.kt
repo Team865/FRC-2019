@@ -22,7 +22,7 @@ class Astro : TimedRobot() {
         Conveyor.set { speed = 0.0 }
         Outtake.set {
             speed = 0.0
-            grabbing = true
+            grabbing = false
             pushing = false
         }
         Intake.set { extended = false }

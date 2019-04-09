@@ -7,18 +7,22 @@ import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
 import ca.warp7.frc.PID
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.fromDegrees
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
     val turnPID = PID(
-            kP = 2.0, kI = 0.08, kD = 5.0, kF = 0.0,
-            errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
+            kP = 1.5, kI = 0.004, kD = 5.0, kF = 0.0,
+            errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3,
+            maxOutput=DriveConstants.kMaxVelocity
     )
-    var initYaw: Double = 0.0
+    var initYaw: Rotation2D = Rotation2D.identity
 
     override fun start() {
         Drive.controlMode = ControlMode.Velocity
-        initYaw = Infrastructure.yaw.degrees
+        initYaw = robotState.rotation
+        println("ERROR start ${robotState}")
     }
 
     private val angularKp = 0.029
@@ -28,19 +32,19 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
     private val integralZone = 10.0
 
     override fun update() {
-        val error = robotState.rotation.degrees - initYaw - angleInDegrees
+        val error = robotState.rotation - initYaw - Rotation2D.fromDegrees(angleInDegrees)
 
         turnPID.dt=DriveMotionPlanner.dt
-        val angularGain = turnPID.updateByError(error)
+        val angularGain = turnPID.updateByError(error.degrees)
 
         val demand = angularGain * DriveConstants.kTicksPerFootPer100ms
-
+        println("ERROR ${robotState}")
         Drive.leftDemand = demand
         Drive.rightDemand = -demand
     }
 
     override val shouldFinish
-        get() = turnPID.isDone()
+        get() = false//turnPID.isDone()
 
 
     override fun stop() {
