@@ -34,7 +34,7 @@ import kotlin.math.withSign
  *  @param angularDrag drag torque per speed in (N * m) / (rad/s)
  */
 @Suppress("unused")
-data class DifferentialDriveModel(
+class DifferentialDriveModel(
 
         val wheelRadius: Double, // m
         val wheelbaseRadius: Double, // m
@@ -236,7 +236,7 @@ data class DifferentialDriveModel(
                 acceleration.angular * angularInertia / wheelbaseRadius +
                 velocity.angular * angularDrag / wheelbaseRadius) // N * m
 
-        val wheelVelocity = solve(velocity) // (m/s, m/s)
+        val wheelVelocity = solve(velocity) * (1 / wheelRadius) // (rad/s, rad/s)
 
         val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque) // V
         val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque) // V
