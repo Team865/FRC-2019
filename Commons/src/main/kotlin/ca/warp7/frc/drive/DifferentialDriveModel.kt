@@ -51,14 +51,22 @@ data class DifferentialDriveModel(
         val angularInertia: Double, // kg * m^2
 
         val maxVoltage: Double, // V
-        val angularDrag: Double = 0.0 // (N * m) / (m/s)
+        val angularDrag: Double = 0.0 // (N * m) / (rad/s)
 ) {
+
+    companion object {
+        const val kEpsilon = 1E-9
+    }
 
 
     /**
      * Solves the forward kinematics of the drive train by converting the
      * speeds/accelerations of wheels on each side into linear and angular
      * speed/acceleration
+     *
+     * Equations:
+     * v = (left + right) / 2
+     * w = (right - left) / L
      *
      * for velocity, solves (m/s, m/s) into (m/s, rad/s)
      * for acceleration, solves (m/s^2, m/s^2) into (m/s^2, rad/s^2)
@@ -88,10 +96,26 @@ data class DifferentialDriveModel(
             right = chassis.linear + chassis.angular * wheelbaseRadius
     )
 
+    /**
+     * Solves for the effective wheelbase radius given wheel velocity measured
+     * by encoders and angular velocity measured by a gyro
+     *
+     * This is given by rearranging the above function
+     * w = (right - left) / L
+     * wL = right - left
+     * L = (right - left) / w
+     * L/2 = (right - left) / 2w
+     *
+     * @param wheels the velocity of each wheel in (m/s, m/s)
+     * @param angular the angular velocity of the robot in rad/s
+     * @return the effective wheelbase radius
+     */
+    fun solveWheelbase(wheels: WheelState, angular: Double) =
+            (wheels.right - wheels.left) / (2 * angular)
+
 
     /**
-     * Calculates the maximum reachable linear and angular velocity based on the curvature.
-     * The result is unsigned.
+     * Solves the maximum reachable linear and angular velocity based on the curvature.
      *
      * The equations are derived from `w(r + L / 2) = far side velocity`. Assume far side goes 100%,
      * we replace it with max velocity and isolate for angular velocity.
@@ -116,34 +140,30 @@ data class DifferentialDriveModel(
 
 
     /**
-     * Solves the results from above into wheel velocities
-     */
-    fun solvedMaxAtCurvature(curvature: Double) = solve(signedMaxAtCurvature(curvature))
-
-
-    /**
      * Get the free speed obtained at a specified voltage
      *
      * @param voltage desired voltage in V
      */
-    fun freeSpeedAtVoltage(voltage: Double): Double {
-        return when {
-            voltage > kEpsilon -> max(0.0, voltage - frictionVoltage) * speedPerVolt
-            voltage < kEpsilon -> min(0.0, voltage + frictionVoltage) * speedPerVolt
-            else -> 0.0
-        }
+    fun freeSpeedAtVoltage(voltage: Double) = when {
+        voltage > kEpsilon -> max(0.0, voltage - frictionVoltage) * speedPerVolt
+        voltage < kEpsilon -> min(0.0, voltage + frictionVoltage) * speedPerVolt
+        else -> 0.0
     }
 
 
     /**
      * Get the motor torque for a specified speed and voltage
      *
+     * calculate the effective voltage (taking away the friction voltage),
+     * then calculate torque based on the voltage left
+     * Units: ((N * m) / V) * (V - (rad/s) / ((rad/s) / V) = N * m
+     *
      * @param speed speed in rad/s
      * @param voltage voltage in V
      * @return torque in N * m
      */
     fun torqueForVoltage(speed: Double, voltage: Double): Double {
-        // calculate the effective voltage (taking away the friction voltage)
+
         var effectiveVoltage = voltage
         when {
             speed > kEpsilon -> effectiveVoltage -= frictionVoltage
@@ -152,20 +172,23 @@ data class DifferentialDriveModel(
             voltage < -kEpsilon -> effectiveVoltage = min(0.0, voltage + frictionVoltage)
             else -> return 0.0
         }
-        // calculate torque based on the voltage left
-        // Units: ((N * m) / V) * (V - (rad/s) / ((rad/s) / V) = N * m
+
         return torquePerVolt * (effectiveVoltage - speed / speedPerVolt)
     }
 
+
     /**
      * Get the motor voltage for a specified speed and torque
+     *
+     * find out the sign of the friction voltage that needs to be applied,
+     * then convert to volts and add the signed friction voltage
+     * Units: (N * m) / ((N * m) / V) + (rad/s) / ((rad/s) / V) + V = V
      *
      * @param speed the desired speed in rad/s
      * @param torque the desired torque in N * m
      * @return voltage in V
      */
     fun voltageForTorque(speed: Double, torque: Double): Double {
-        // find out the sign of the friction voltage that needs to be applied
         val frictionVoltage = when {
             speed > kEpsilon -> this.frictionVoltage
             speed < -kEpsilon -> -this.frictionVoltage
@@ -173,10 +196,9 @@ data class DifferentialDriveModel(
             torque < -kEpsilon -> -this.frictionVoltage
             else -> return 0.0
         }
-        // convert to volts and add the signed friction voltage
-        // Units: (N * m) / ((N * m) / V) + (rad/s) / ((rad/s) / V) + V = V
         return torque / torquePerVolt + speed / speedPerVolt + frictionVoltage
     }
+
 
     /**
      * Solves the kinematic state of the robot into the dynamic state
@@ -189,6 +211,8 @@ data class DifferentialDriveModel(
      *
      * The result is multiplied by 0.5 because the forces needed by the
      * entire robot are distributed between the two wheels
+     *
+     * Then solve for input voltages based on velocity and torque
      *
      * Units for torque calculation:
      * m * (m/s^2 * kg - rad/s^2 * kg * m^2 / m - rad/s * ((N * m) / (rad/s)) / m)
@@ -212,8 +236,8 @@ data class DifferentialDriveModel(
                 acceleration.angular * angularInertia / wheelbaseRadius +
                 velocity.angular * angularDrag / wheelbaseRadius) // N * m
 
-        // Solve for input voltages based on velocity and torque
         val wheelVelocity = solve(velocity) // (m/s, m/s)
+
         val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque) // V
         val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque) // V
 
@@ -221,9 +245,5 @@ data class DifferentialDriveModel(
                 voltage = WheelState(left = leftVoltage, right = rightVoltage),
                 torque = WheelState(left = leftTorque, right = rightTorque)
         )
-    }
-
-    companion object {
-        const val kEpsilon = 1E-9
     }
 }
