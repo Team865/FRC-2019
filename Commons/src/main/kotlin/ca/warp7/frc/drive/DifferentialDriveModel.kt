@@ -7,22 +7,51 @@ import kotlin.math.min
 import kotlin.math.withSign
 
 /**
- * Model of the kinematics and dynamics of a differential drive
+ * Model of the kinematics, dynamics, and transmission of a differential drive robot
+ *
+ *  @param wheelRadius measured radius of wheels in m
+ *
+ *  @param wheelbaseRadius effective wheelbase radius in m
+ *
+ *  @param maxVelocity maximum loaded velocity in m/s
+ *
+ *  @param maxAcceleration maximum acceleration in m/s^2
+ *
+ *  @param maxFreeSpeed maximum free speed in m/s
+ *
+ *  @param speedPerVolt free speed of transmission per volt in (rad/s) / V
+ *
+ *  @param torquePerVolt stall torque of transmission per volt in (N * m) / V
+ *
+ *  @param frictionVoltage voltage that breaks static friction in V
+ *
+ *  @param linearInertia equivalent mass in kg
+ *
+ *  @param angularInertia equivalent moment of inertia kg * m^2
+ *
+ *  @param maxVoltage maximum voltage of transmission in V
+ *
+ *  @param angularDrag drag torque per speed in (N * m) / (rad/s)
  */
 @Suppress("unused")
 data class DifferentialDriveModel(
+
         val wheelRadius: Double, // m
-        val wheelbaseRadius: Double, // m (effective wheelbase)
+        val wheelbaseRadius: Double, // m
+
         val maxVelocity: Double, // m/s
         val maxAcceleration: Double, // m/s^2
         val maxFreeSpeed: Double, // m/s
-        val speedPerVolt: Double, // m/s per V (free speed of transmission per volt)
-        val torquePerVolt: Double, // N m per V (stall torque of transmission per volt)
-        val frictionVoltage: Double, // V (voltage that breaks static friction)
-        val linearInertia: Double, // kg (equivalent mass)
-        val angularInertia: Double, // kg*m^2 (equivalent moment of inertia)
-        val maxVoltage: Double, // V (maximum voltage of transmission)
-        val angularDrag: Double = 1.0 // (N*m)/(m/s)
+
+        val speedPerVolt: Double, // (rad/s) / V
+        val torquePerVolt: Double, // (N * m) / V
+        val frictionVoltage: Double, // V
+
+        val linearInertia: Double, // kg
+        val angularInertia: Double, // kg * m^2
+
+        val maxVoltage: Double, // V
+        val angularDrag: Double = 0.0 // (N * m) / (m/s)
 ) {
 
 
@@ -30,6 +59,12 @@ data class DifferentialDriveModel(
      * Solves the forward kinematics of the drive train by converting the
      * speeds/accelerations of wheels on each side into linear and angular
      * speed/acceleration
+     *
+     * for velocity, solves (m/s, m/s) into (m/s, rad/s)
+     * for acceleration, solves (m/s^2, m/s^2) into (m/s^2, rad/s^2)
+     *
+     * @param wheels the wheel state
+     * @return the chassis state
      */
     fun solve(wheels: WheelState) = ChassisState(
             linear = (wheels.left + wheels.right) / 2.0,
@@ -41,6 +76,12 @@ data class DifferentialDriveModel(
      * Solves the inverse kinematics of the drive train by converting linear
      * and angular speed/acceleration into the speeds/accelerations of wheels
      * on each side
+     *
+     * for velocity, solves (m/s, rad/s) into (m/s, m/s)
+     * for acceleration, solves (m/s^2, rad/s^2) into (m/s^2, m/s^2)
+     *
+     * @param chassis the chassis state
+     * @return the wheel state
      */
     fun solve(chassis: ChassisState) = WheelState(
             left = chassis.linear - chassis.angular * wheelbaseRadius,
@@ -73,13 +114,17 @@ data class DifferentialDriveModel(
         return ChassisState(linear, angular.withSign(curvature))
     }
 
+
     /**
      * Solves the results from above into wheel velocities
      */
     fun solvedMaxAtCurvature(curvature: Double) = solve(signedMaxAtCurvature(curvature))
 
+
     /**
      * Get the free speed obtained at a specified voltage
+     *
+     * @param voltage desired voltage in V
      */
     fun freeSpeedAtVoltage(voltage: Double): Double {
         return when {
@@ -89,8 +134,13 @@ data class DifferentialDriveModel(
         }
     }
 
+
     /**
      * Get the motor torque for a specified speed and voltage
+     *
+     * @param speed speed in rad/s
+     * @param voltage voltage in V
+     * @return torque in N * m
      */
     fun torqueForVoltage(speed: Double, voltage: Double): Double {
         // calculate the effective voltage (taking away the friction voltage)
@@ -103,11 +153,16 @@ data class DifferentialDriveModel(
             else -> return 0.0
         }
         // calculate torque based on the voltage left
+        // Units: ((N * m) / V) * (V - (rad/s) / ((rad/s) / V) = N * m
         return torquePerVolt * (effectiveVoltage - speed / speedPerVolt)
     }
 
     /**
      * Get the motor voltage for a specified speed and torque
+     *
+     * @param speed the desired speed in rad/s
+     * @param torque the desired torque in N * m
+     * @return voltage in V
      */
     fun voltageForTorque(speed: Double, torque: Double): Double {
         // find out the sign of the friction voltage that needs to be applied
@@ -119,30 +174,48 @@ data class DifferentialDriveModel(
             else -> return 0.0
         }
         // convert to volts and add the signed friction voltage
+        // Units: (N * m) / ((N * m) / V) + (rad/s) / ((rad/s) / V) + V = V
         return torque / torquePerVolt + speed / speedPerVolt + frictionVoltage
     }
 
     /**
      * Solves the kinematic state of the robot into the dynamic state
+     * by calculating torque and then voltage
+     *
+     * Determines the necessary torques on the left and right wheels
+     * to produce the desired wheel accelerations, which is a sum of
+     * linear and angular acceleration forces, plus an angular drag
+     * proportional to velocity.
+     *
+     * The result is multiplied by 0.5 because the forces needed by the
+     * entire robot are distributed between the two wheels
+     *
+     * Units for torque calculation:
+     * m * (m/s^2 * kg - rad/s^2 * kg * m^2 / m - rad/s * ((N * m) / (rad/s)) / m)
+     * = m * (m/s^2 * kg - 1/s^2 * kg * m^2 / m - 1/s * ((N * m) / (1/s)) / m)
+     * = m * (N - N - N)
+     * = N * m
+     *
+     * @param kinematicState kinematic state in [(m/s, rad/s), (m/s^2, rad/s^2)]
+     * @return dynamic state in [(V, V), (N * m, N * m)]
      */
     fun solve(kinematicState: KinematicState): DynamicState {
 
-        val velocity = kinematicState.velocity
-        val acceleration = kinematicState.acceleration
+        val velocity = kinematicState.velocity // (m/s, rad/s)
+        val acceleration = kinematicState.acceleration // (m/s, rad/s)
 
-        // Determine the necessary torques on the left and right wheels to produce the desired wheel accelerations.
-        val leftTorque = wheelRadius / 2.0 * (acceleration.linear * linearInertia -
+        val leftTorque = 0.5 * wheelRadius * (acceleration.linear * linearInertia -
                 acceleration.angular * angularInertia / wheelbaseRadius -
-                velocity.angular * angularDrag / wheelbaseRadius)
+                velocity.angular * angularDrag / wheelbaseRadius) // N * m
 
-        val rightTorque = wheelRadius / 2.0 * (acceleration.linear * linearInertia +
+        val rightTorque = 0.5 * wheelRadius * (acceleration.linear * linearInertia +
                 acceleration.angular * angularInertia / wheelbaseRadius +
-                velocity.angular * angularDrag / wheelbaseRadius)
+                velocity.angular * angularDrag / wheelbaseRadius) // N * m
 
-        // Solve for input voltages.
-        val wheelVelocity = solve(velocity)
-        val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque)
-        val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque)
+        // Solve for input voltages based on velocity and torque
+        val wheelVelocity = solve(velocity) // (m/s, m/s)
+        val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque) // V
+        val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque) // V
 
         return DynamicState(
                 voltage = WheelState(left = leftVoltage, right = rightVoltage),

@@ -2,8 +2,8 @@
 
 package ca.warp7.frc.path
 
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.*
+import ca.warp7.frc.kFeetToMeters
 import kotlin.math.hypot
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -20,7 +20,7 @@ internal fun Double.checkBounds(): Double {
 
 fun waypoint(xInFeet: Number, yInFeet: Number, angleInDegrees: Number) =
         Pose2D(
-                Translation2D(feetToMeters(xInFeet.toDouble()), feetToMeters(yInFeet.toDouble())),
+                Translation2D(kFeetToMeters * xInFeet.toDouble(), kFeetToMeters * yInFeet.toDouble()),
                 Rotation2D.fromDegrees(angleInDegrees.toDouble())
         )
 
