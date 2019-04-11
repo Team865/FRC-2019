@@ -35,7 +35,7 @@ class WheelbaseTest : TimedRobot() {
 
     override fun autonomousInit() = RobotControl.set(periodic {
         Drive.leftDemand = 0.8
-        Drive.rightDemand = 0.8
+        Drive.rightDemand = -0.8
         val wheelbase = DriveMotionPlanner.model
                 .solveWheelbase(DriveMotionPlanner.wheelVelocity, Infrastructure.yawRate)
         RobotControl.put("wheelbase", wheelbase)

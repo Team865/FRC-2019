@@ -26,7 +26,7 @@ class Astro : TimedRobot() {
             pushing = false
         }
         Intake.set { extended = false }
-        Lift.set { }
+        Lift.set {}
         Superstructure.set { }
     }
 

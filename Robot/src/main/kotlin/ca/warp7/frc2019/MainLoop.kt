@@ -114,9 +114,6 @@ object MainLoop : Action {
             }
 
             when (Pressed) {
-                xButton -> Lift.set(LiftState.kGoToSetpoint) {
-                    setpoint = FieldConstants.kHatch2Height - 9.0
-                }
                 yButton -> {
                     LiftMotionPlanner.setpointType = HatchCargo.Hatch
                     Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
@@ -125,14 +122,12 @@ object MainLoop : Action {
                     LiftMotionPlanner.setpointType = HatchCargo.Cargo
                     Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
+                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kHatch1Height                                                                       - LiftConstants.kHatchIntakeHeight }
+                aButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
                 else -> Unit
             }
 
-            when (aButton) {
-                Pressed -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kCargo1Height }
-                Released -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
-                else -> Unit
-            }
+//            when (rightTriggerAxis)
         }
         Superstructure.set(SuperstructureState.kPassThrough) {
             speed = passThroughSpeed

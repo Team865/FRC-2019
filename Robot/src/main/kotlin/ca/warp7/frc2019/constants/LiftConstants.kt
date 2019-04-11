@@ -8,6 +8,8 @@ object LiftConstants {
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
+    const val kHatchStartHeightInches = 0
+
     private const val kRopeDiameter = 3 / 25.4
 
     private const val kDrumDiameter = 2.0 // + kRopeDiameter // Inches
@@ -16,8 +18,10 @@ object LiftConstants {
     const val kTicksPerInch = kTicksPerRevolution / kDrumCircumference
 
     const val kHomeHeightInches = 18.5
+    const val kHatchIntakeHeight = -9.0
 
-    const val kMaxBaseAcceleration = 3 //TODO find actual max acceleration 65m/s^2 ??
+    const val kMaxBaseAcceleration = 3
+
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
     const val kPrimaryFeedforward = -0.2

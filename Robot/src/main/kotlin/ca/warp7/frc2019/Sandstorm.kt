@@ -6,6 +6,7 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
 import ca.warp7.frc2019.auton.DriveOnly
+import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Outtake
@@ -23,7 +24,11 @@ object Sandstorm : Action {
     override fun start() {
         println("Robot State: Sandstorm")
         Drive.set(DriveState.kNeutralOutput)
-        Lift.set(LiftState.kIdle)
+
+        val initPos = LiftConstants.kHatchStartHeightInches
+        Lift.master.setSelectedSensorPosition((initPos*LiftConstants.kTicksPerInch).toInt())
+        Lift.set(LiftState.kGoToSetpoint) { setpoint = initPos+LiftConstants.kHomeHeightInches }
+
         Outtake.set {
             grabbing = true
             pushing = false
