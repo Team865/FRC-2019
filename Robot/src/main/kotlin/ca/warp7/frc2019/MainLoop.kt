@@ -17,22 +17,24 @@ import ca.warp7.frc2019.subsystems.superstructure.SuperstructureState
 import kotlin.math.absoluteValue
 
 object MainLoop : Action {
-
+    var pTrigger = false
     override fun start() {
         println("Robot State: Teleop")
         Drive.set(DriveState.kNeutralOutput)
         Limelight.set { isDriver = true }
         Outtake.set {
+            speed = 0.0
             grabbing = true
-            pushing = true
+            pushing = false
         }
     }
 
     override val shouldFinish: Boolean = false
 
-    private var isStopOverrideOuttake = true
+    private var isStopOverrideOuttake = false
 
     override fun update() {
+        isStopOverrideOuttake = false
         var passThroughSpeed = 0.0
         var isOpenOuttake = false
         var isFastOuttake = false
@@ -57,49 +59,34 @@ object MainLoop : Action {
                 rightTriggerAxis > ControlConstants.kControlDeadband -> {
                     passThroughSpeed = rightTriggerAxis
                     Intake.set { speed = rightTriggerAxis * SuperstructureConstants.kIntakeSpeedScale }
-                    isStopOverrideOuttake = false
+                    isStopOverrideOuttake = true
                 }
                 else -> Intake.set { speed = 0.0 }
             }
             if (aButton == Pressed) {
-                if (!Outtake.pushing) {
-                    Outtake.set(queue {
-                        +runOnce {
-                            Outtake.grabbing = false
-                        }
-                        +action {
-                            onUpdate { isStopOverrideOuttake = true }
-                            finishWhen { elapsed > 0.1 }
-                        }
-                        +runOnce { Outtake.pushing = !Outtake.pushing }
-                    })
-                } else {
-                    Outtake.pushing = !Outtake.pushing
+                Outtake.apply {
+                    grabbing = false
+                    if (pushing) {
+                        pushing = true
+                    } else {
+                        set(queue {
+                            +action { finishWhen { elapsed > 0.2 } }
+                            +runOnce { pushing = true }
+                        })
+                    }
                 }
             }
             when (Pressed) {
                 xButton -> Outtake.set {
                     grabbing = !grabbing
                     pushing = false
-                    isStopOverrideOuttake = true
                 }
                 else -> Unit
             }
             isFastOuttake = bButton == Pressed
         }
         withOperator {
-            when {
-                rightTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = rightTriggerAxis
-                    isOpenOuttake = true
-                    isStopOverrideOuttake = false
-                }
-                leftTriggerAxis > ControlConstants.kControlDeadband -> {
-                    passThroughSpeed = -leftTriggerAxis
-                    isOpenOuttake = true
-                    isStopOverrideOuttake = false
-                }
-            }
+            val trigger = leftTriggerAxis > ControlConstants.kControlDeadband
 
             if (leftYAxis.absoluteValue > ControlConstants.kLiftControlDeadband) {
                 Lift.set(LiftState.kOpenLoop) { speed = leftYAxis }
@@ -122,12 +109,15 @@ object MainLoop : Action {
                     LiftMotionPlanner.setpointType = HatchCargo.Cargo
                     Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftMotionPlanner.getCoolSetpoint() }
                 }
-                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kHatch1Height                                                                       - LiftConstants.kHatchIntakeHeight }
+                xButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kHatch1Height - LiftConstants.kHatchIntakeHeight }
                 aButton -> Lift.set(LiftState.kGoToSetpoint) { setpoint = LiftConstants.kHomeHeightInches }
                 else -> Unit
             }
 
-//            when (rightTriggerAxis)
+            if (pTrigger != trigger) {
+                Lift.set(LiftState.kGoToSetpoint) { setpoint = FieldConstants.kCargo2Height - 12.0 }
+            }
+            pTrigger = trigger
         }
         Superstructure.set(SuperstructureState.kPassThrough) {
             speed = passThroughSpeed

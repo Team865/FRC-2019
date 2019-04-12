@@ -5,7 +5,7 @@ import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.lift.MainDisplay
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Astro : TimedRobot() {
+class Astro : TimedRobot(0.02) {
 
     /**
      * Initializes the robot by setting the state of subsystems
@@ -22,8 +22,8 @@ class Astro : TimedRobot() {
         Conveyor.set { speed = 0.0 }
         Outtake.set {
             speed = 0.0
-            grabbing = false
-            pushing = false
+            grabbing = true
+            pushing = true
         }
         Intake.set { extended = false }
         Lift.set {}

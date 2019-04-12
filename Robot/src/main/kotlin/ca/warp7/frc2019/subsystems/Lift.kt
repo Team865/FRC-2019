@@ -47,10 +47,10 @@ object Lift : Subsystem() {
     }
 
     override fun onPostUpdate() {
-        put("HallEffect", hallEffectTriggered)
-        put("Demand", demand)
-        put("Feedforward", feedforward)
-        put("Raw ticks", position)
+//        put("HallEffect", hallEffectTriggered)
+//        put("Demand", demand)
+//        put("Feedforward", feedforward)
+//        put("Raw ticks", position)
 //        put("Adjusted Height (encoder)", LiftMotionPlanner.adjustedPositionTicks)
 //        put("Adjusted Height (in)", LiftMotionPlanner.height)
 //        put("Velocity (in per s)", LiftMotionPlanner.velocity)

@@ -13,10 +13,7 @@ import ca.warp7.frc2019.subsystems.drive.unused.PIDToPoint
 import ca.warp7.frc2019.subsystems.drive.unused.PIDTrajectory
 
 object DriveOnly {
-    val driveForDistance = queue{
-        +runOnce{Limelight.isDriver=false}
-        +wait(1000.0)
-    }
+    val driveForDistance = queue{}
 
     val quickTurn
         get() = queue {

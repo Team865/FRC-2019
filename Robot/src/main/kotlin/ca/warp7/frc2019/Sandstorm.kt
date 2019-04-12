@@ -16,7 +16,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 object Sandstorm : Action {
 
     fun getAutoMode(): Action {
-        return DriveOnly.leftCloseRocket
+        return DriveOnly.driveForDistance
     }
 
     private lateinit var autoAction: Action
@@ -26,10 +26,11 @@ object Sandstorm : Action {
         Drive.set(DriveState.kNeutralOutput)
 
         val initPos = LiftConstants.kHatchStartHeightInches
-        Lift.master.setSelectedSensorPosition((initPos*LiftConstants.kTicksPerInch).toInt())
-        Lift.set(LiftState.kGoToSetpoint) { setpoint = initPos+LiftConstants.kHomeHeightInches }
+        Lift.master.selectedSensorPosition = -(initPos * LiftConstants.kTicksPerInch).toInt()
+        Lift.set(LiftState.kGoToSetpoint) { setpoint = (initPos + LiftConstants.kHomeHeightInches)+9.0 }
 
         Outtake.set {
+            speed = 0.0
             grabbing = true
             pushing = false
         }

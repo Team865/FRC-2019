@@ -69,7 +69,7 @@ internal object InternalControl {
                 previousTime = time
                 subsystems.forEach { it.onMeasure(dt) }
                 if (robotEnabled) subsystems.forEach { it.updateState() }
-                subsystems.forEach { it.onPostUpdate() }
+                //subsystems.forEach { it.onPostUpdate() }
             } catch (e: Throwable) {
                 crashed = true
                 print("ERROR LOOP ENDED")

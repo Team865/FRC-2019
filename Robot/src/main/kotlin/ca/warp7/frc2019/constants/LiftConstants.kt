@@ -8,7 +8,7 @@ object LiftConstants {
     const val kFollower = ElectricalConstants.kLiftFollowerVictorId
     const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
 
-    const val kHatchStartHeightInches = 0
+    const val kHatchStartHeightInches = 5.0
 
     private const val kRopeDiameter = 3 / 25.4
 
@@ -24,7 +24,7 @@ object LiftConstants {
 
     const val kMaxVelocityInchesPerSecond = 74.0 //TODO find out if this is true
 
-    const val kPrimaryFeedforward = -0.2
+    const val kPrimaryFeedforward = -0.12
     const val kManualControlScale = 0.6
 
     const val kStoppedVelocityThreshold = 64 // TODO

@@ -22,14 +22,14 @@ object Infrastructure : Subsystem() {
     var yawRate = 0.0
 
     override fun onMeasure(dt: Double) {
-        if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
-        if (ahrsCalibrated) {
-            pitch = Math.toRadians(ahrs.pitch.toDouble())
-            fusedHeading = Math.toRadians(ahrs.fusedHeading.toDouble())
-            previousYaw = yaw
-            yaw = Rotation2D.fromRadians(fusedHeading)
-            yawRate = (previousYaw - yaw).radians / dt
-        }
+//        if (!ahrsCalibrated && !ahrs.isCalibrating) ahrsCalibrated = true
+//        if (ahrsCalibrated) {
+//            pitch = Math.toRadians(ahrs.pitch.toDouble())
+//            fusedHeading = Math.toRadians(ahrs.fusedHeading.toDouble())
+//            previousYaw = yaw
+//            yaw = Rotation2D.fromRadians(fusedHeading)
+//            yawRate = (previousYaw - yaw).radians / dt
+//        }
     }
 
     override fun onPostUpdate() {
