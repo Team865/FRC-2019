@@ -12,8 +12,8 @@ internal object InternalControl {
     internal val robotDriver = RobotControllerImpl()
     internal val robotOperator = RobotControllerImpl()
 
-    private val xboxDriver = XboxController(0)
-    private val xboxOperator = XboxController(1)
+    val xboxDriver = XboxController(0)
+    val xboxOperator = XboxController(1)
 
     private var controllerMode = 0
     private val driverStation: DriverStation = DriverStation.getInstance()
