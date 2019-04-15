@@ -25,6 +25,6 @@ data class CurvatureState<T : State<T>>(
     }
 
     override fun toString(): String {
-        return "Curvature($state, k=${curvature.f}, dk_ds=${dk_ds.f})"
+        return "K($state, k=${curvature.f}, dk_ds=${dk_ds.f})"
     }
 }

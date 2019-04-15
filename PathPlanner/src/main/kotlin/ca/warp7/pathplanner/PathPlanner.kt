@@ -23,7 +23,10 @@ class PathPlanner : PApplet() {
             var dir: Translation2D
     )
 
-    override fun settings() = size(910, 512)
+    override fun settings() {
+        size(910, 512)
+        noSmooth()
+    }
 
     val kTriangleRatio = 1 / sqrt(3.0)
     val step = 0.0254 * 12 / 10
@@ -74,7 +77,8 @@ class PathPlanner : PApplet() {
             frictionVoltage = 0.0,
             linearInertia = 0.0,
             angularInertia = 0.0,
-            maxVoltage = 0.0
+            maxVoltage = 0.0,
+            angularDrag = 0.0
     )
 
     var draggingPoint = false
@@ -109,7 +113,7 @@ class PathPlanner : PApplet() {
         fill(255f, 255f, 255f)
         noStroke()
         textSize(15f)
-        text(t, 529f, 15f)
+        text(t, 529f, 30f)
     }
 
     override fun setup() {

@@ -33,7 +33,7 @@ object DriveMotionPlanner {
             maxVelocity = feetToMeters(DriveConstants.kMaxVelocity),
             maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration),
             maxFreeSpeed = feetToMeters(DriveConstants.kMaxFreeSpeedVelocity),
-            speedPerVolt = feetToMeters(DriveConstants.kSpeedPerVolt),
+            speedPerVolt = DriveConstants.kSpeedPerVolt,
             torquePerVolt = DriveConstants.kTorquePerVolt,
             frictionVoltage = DriveConstants.kFrictionVoltage,
             linearInertia = DriveConstants.kLinearInertia,
@@ -100,5 +100,18 @@ object DriveMotionPlanner {
         Drive.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
         Drive.leftFeedforward = dynamicState.voltage.left / 12
         Drive.rightFeedforward = dynamicState.voltage.right / 12
+    }
+
+    fun setDynamicFeedforward(
+            leftVel: Double, rightVel: Double, // m/s
+            leftAcc: Double = 0.0, rightAcc: Double = 0.0 // m/s^2
+    ) {
+        val dynamicState = model.solve(KinematicState(
+                velocity = model.solve(wheels = WheelState(left = leftVel, right = rightVel)),
+                acceleration = model.solve(wheels = WheelState(left = leftAcc, right = rightAcc))
+        ))
+        Drive.controlMode = ControlMode.PercentOutput
+        Drive.leftDemand = dynamicState.voltage.left / 12
+        Drive.rightDemand = dynamicState.voltage.right / 12
     }
 }

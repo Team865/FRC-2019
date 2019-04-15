@@ -11,6 +11,6 @@ data class TrajectoryPoint(
         var t: Double = 0.0
 ) {
     override fun toString(): String {
-        return "Timed(t=${t.f}, $state, v=${velocity.f}, a=${acceleration.f})"
+        return "T(t=${t.f}, $state, v=${velocity.f}, a=${acceleration.f})"
     }
 }

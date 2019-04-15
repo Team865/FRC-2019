@@ -50,5 +50,6 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         totalMoments[i] += totalMoments[i - 1]
         timedStates[i].t = totalMoments[i]
     }
+    timedStates.last().acceleration = 0.0
     return timedStates
 }

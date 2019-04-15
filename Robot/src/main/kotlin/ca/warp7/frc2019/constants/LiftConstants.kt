@@ -13,6 +13,7 @@ object LiftConstants {
     private const val kDrumDiameter = 2.0 // + kRopeDiameter // Inches
     private const val kDrumCircumference = kDrumDiameter * Math.PI
     const val kTicksPerRevolution = 4096
+    const val kTicksPerRadian = kTicksPerRevolution / (2 * Math.PI)
     const val kTicksPerInch = kTicksPerRevolution / kDrumCircumference
 
     const val kHomeHeightInches = 18.5

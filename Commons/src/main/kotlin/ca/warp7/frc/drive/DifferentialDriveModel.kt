@@ -236,14 +236,15 @@ class DifferentialDriveModel(
                 acceleration.angular * angularInertia / wheelbaseRadius +
                 velocity.angular * angularDrag / wheelbaseRadius) // N * m
 
-        val wheelVelocity = solve(velocity) * (1 / wheelRadius) // (rad/s, rad/s)
+        val wheelVelocity = solve(velocity) // (m/s, m/s)
+        val wheelVelocityRadians = wheelVelocity / wheelRadius // (rad/s, rad/s)
 
-        val leftVoltage = voltageForTorque(wheelVelocity.left, leftTorque) // V
-        val rightVoltage = voltageForTorque(wheelVelocity.right, rightTorque) // V
+        val leftVoltage = voltageForTorque(wheelVelocityRadians.left, leftTorque) // V
+        val rightVoltage = voltageForTorque(wheelVelocityRadians.right, rightTorque) // V
 
         return DynamicState(
                 voltage = WheelState(left = leftVoltage, right = rightVoltage),
-                torque = WheelState(left = leftTorque, right = rightTorque)
+                velocity = wheelVelocity
         )
     }
 }
