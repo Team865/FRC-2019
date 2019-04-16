@@ -4,6 +4,7 @@ import ca.warp7.actionkt.ActionStateMachine
 import ca.warp7.actionkt.future
 import ca.warp7.actionkt.runOnce
 import edu.wpi.first.wpilibj.Timer
+import kotlin.math.abs
 
 fun runPeriodicLoop() {
     val time = Timer.getFPGATimestamp()
@@ -39,3 +40,8 @@ fun metersToFeet(meters: Double) = meters / 0.3048
 fun interpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
 
 val Double.f get() = "%.4f".format(this)
+
+fun applyDeadband(value: Double, max: Double, deadband: Double) = when {
+    abs(value) > deadband -> (abs(value) - deadband) / (max - deadband)
+    else -> 0.0
+}

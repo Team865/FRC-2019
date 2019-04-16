@@ -27,6 +27,11 @@ data class PID(
     var setpoint = 0.0
     var dt = 0.0
 
+    fun updateByError(error: Double, dt: Double): Double {
+        this.dt = dt
+        return updateByError(error)
+    }
+
     fun updateByError(error: Double): Double {
         // normalize the change in time so kD doesn't need to be too high and kI doesn't need to be too low
         val dt = dt * dtNormalizer

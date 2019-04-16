@@ -4,12 +4,10 @@ import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.KinematicState
 import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.translation
-import ca.warp7.frc.inchesToMeters
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Infrastructure
@@ -28,11 +26,11 @@ object DriveMotionPlanner {
     var chassisVelocity = ChassisState(0.0, 0.0) // m/s and rad/s
 
     val model = DifferentialDriveModel(
-            wheelRadius = inchesToMeters(DriveConstants.kWheelRadius),
-            wheelbaseRadius = inchesToMeters(DriveConstants.kEffectiveWheelBaseRadius),
-            maxVelocity = feetToMeters(DriveConstants.kMaxVelocity),
-            maxAcceleration = feetToMeters(DriveConstants.kMaxAcceleration),
-            maxFreeSpeed = feetToMeters(DriveConstants.kMaxFreeSpeedVelocity),
+            wheelRadius = DriveConstants.kWheelRadius,
+            wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
+            maxVelocity = DriveConstants.kMaxVelocity,
+            maxAcceleration = DriveConstants.kMaxAcceleration,
+            maxFreeSpeed = DriveConstants.kMaxFreeSpeed,
             speedPerVolt = DriveConstants.kSpeedPerVolt,
             torquePerVolt = DriveConstants.kTorquePerVolt,
             frictionVoltage = DriveConstants.kFrictionVoltage,

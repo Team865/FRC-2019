@@ -247,4 +247,8 @@ class DifferentialDriveModel(
                 velocity = wheelVelocity
         )
     }
+
+    fun solve(velocity: ChassisState, acceleration: ChassisState): DynamicState {
+        return solve(KinematicState(velocity, acceleration))
+    }
 }
