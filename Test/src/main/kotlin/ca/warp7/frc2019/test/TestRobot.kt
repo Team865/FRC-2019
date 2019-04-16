@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.test
 
-import ca.warp7.frc2019.test.drive.velocity_control.DriveVelocityControl
 import ca.warp7.frc2019.test.pneu_test.PneumaticsTest
 import edu.wpi.first.wpilibj.TimedRobot
 

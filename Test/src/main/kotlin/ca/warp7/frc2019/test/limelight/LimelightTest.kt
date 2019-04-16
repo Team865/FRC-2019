@@ -1,12 +1,10 @@
-package ca.warp7.frc2019.test.commons
+package ca.warp7.frc2019.test.limelight
 
 import ca.warp7.actionkt.action
 import ca.warp7.actionkt.periodic
 import ca.warp7.frc.*
 import ca.warp7.frc2019.subsystems.Limelight
 import edu.wpi.first.wpilibj.TimedRobot
-import java.awt.SystemColor.control
-import javax.swing.DefaultButtonModel.PRESSED
 
 @Suppress("unused")
 class LimelightTest : TimedRobot() {
