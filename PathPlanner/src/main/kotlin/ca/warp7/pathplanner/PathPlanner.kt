@@ -425,7 +425,7 @@ class PathPlanner : PApplet() {
         if (simulating) {
             val nt = System.currentTimeMillis() / 1000.0
             val t = nt - simTime
-            while (simIndex < trajectory.size - 2 && trajectory[simIndex].t < t) simIndex++
+            while (simIndex < trajectory.size - 2 && trajectory[simIndex + 1].t < t) simIndex++
             if (t > trajectoryTime || simIndex >= trajectory.size) {
                 simulating = false
                 redrawScreen()
@@ -436,9 +436,12 @@ class PathPlanner : PApplet() {
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
             val pos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx).newXY
             redrawScreen()
-            fill(255f, 128f, 0f)
-            noStroke()
-            ellipse(pos.x.toFloat(), pos.y.toFloat(), 12f, 12f)
+            stroke(255f, 128f, 0f)
+            noFill()
+            val heading = thisMoment.state.state.rotation.interpolate(nextMoment.state.state.rotation, tx)
+            val headingXY = pos + heading.translation.scaled(0.5).newXYNoOffset
+            val dir = heading.norm.translation
+            ControlPoint(pos, headingXY, dir).drawArrow()
             drawGraph(simIndex)
         } else if (selectionChanged) {
             redrawScreen()

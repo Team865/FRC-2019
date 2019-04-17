@@ -72,7 +72,7 @@ class PIDTrajectory(
         val nt = Timer.getFPGATimestamp()
         t = nt - startTime
 
-        while (i < trajectory.size - 2 && trajectory[i].t < t) i++
+        while (i < trajectory.size - 2 && trajectory[i + 1].t < t) i++
 
         val thisMoment = trajectory[i]
         val nextMoment = trajectory[i + 1]

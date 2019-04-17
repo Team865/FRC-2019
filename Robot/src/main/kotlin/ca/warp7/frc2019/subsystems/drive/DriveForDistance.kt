@@ -49,7 +49,7 @@ class DriveForDistance(
         val nt = Timer.getFPGATimestamp()
         lastTime = nt
         t = nt - startTime
-        while (i < moments.size - 3 && moments[i].t < t) i++
+        while (i < moments.size - 3 && moments[i + 1].t < t) i++
         val thisMoment = moments[i]
         val nextMoment = moments[i + 1]
 
