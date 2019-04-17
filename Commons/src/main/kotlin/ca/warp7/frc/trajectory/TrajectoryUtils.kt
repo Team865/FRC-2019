@@ -40,16 +40,16 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
         next.velocity = minOf(next.velocity, c.linear, maxLinear)
         val t = (2 * dist) / (now.velocity + next.velocity)
-        reverseMoments[i - 1] = t
+        reverseMoments[i] = t
     }
-    val totalMoments = forwardMoments.zip(reverseMoments, Math::max).toTypedArray()
-    for (i in 0 until totalMoments.size - 1) {
-        timedStates[i + 1].acceleration = (timedStates[i + 1].velocity - timedStates[i].velocity) / totalMoments[i]
-    }
-    for (i in 1 until totalMoments.size) {
-        totalMoments[i] += totalMoments[i - 1]
-        timedStates[i].t = totalMoments[i]
+    val moments = forwardMoments.zip(reverseMoments, Math::max).toTypedArray()
+    for (i in 0 until size - 2) {
+        timedStates[i + 1].acceleration = (timedStates[i + 1].velocity - timedStates[i].velocity) / moments[i + 1]
     }
     timedStates.last().acceleration = 0.0
+    for (i in 1 until moments.size) {
+        moments[i] += moments[i - 1]
+        timedStates[i].t = moments[i]
+    }
     return timedStates
 }

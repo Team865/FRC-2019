@@ -118,8 +118,6 @@ class PathPlanner : PApplet() {
         surface.setIcon(PImage(ImageIO.read(this::class.java.getResource("/icon.png"))))
         waypoints = arrayOf(
                 waypoint(6, -4, 0),
-                waypoint(10, -4, 0),
-                waypoint(14, -8, -75),
                 waypoint(17.5, -11.5, -30)
         )
         regenerate()
@@ -436,7 +434,7 @@ class PathPlanner : PApplet() {
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
             val pos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx).newXY
             redrawScreen()
-            stroke(255f, 128f, 0f)
+            stroke(255f, 255f, 255f)
             noFill()
             val heading = thisMoment.state.state.rotation.interpolate(nextMoment.state.state.rotation, tx)
             val headingXY = pos + heading.translation.scaled(0.5).newXYNoOffset
