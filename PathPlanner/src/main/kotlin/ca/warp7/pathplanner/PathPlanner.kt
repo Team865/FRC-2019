@@ -23,7 +23,7 @@ class PathPlanner : PApplet() {
     )
 
     override fun settings() {
-        size(910, 512)
+        size(1024, 512)
         noSmooth()
     }
 
@@ -33,7 +33,9 @@ class PathPlanner : PApplet() {
     val nAng = Rotation2D.fromDegrees(-1.0)
     val reversedRotation = Rotation2D(-1.0, 0.0)
 
-    val wheelBaseRadius = inchesToMeters(12.4)
+    val wheelBaseRadius = kInchesToMeters * 12.4
+    val robotLength = wheelBaseRadius * 1.3
+    val robotDrawCenter = Translation2D(768.0, 100.0)
     val maxVel = feetToMeters(12.0)
 
     val kPixelsPerMeter = 494 / 8.2296
@@ -114,6 +116,20 @@ class PathPlanner : PApplet() {
         text(t, 529f, 30f)
     }
 
+    fun drawRobot(pos: Translation2D, heading: Rotation2D) {
+        val a = Translation2D(robotLength, wheelBaseRadius).rotate(heading).newXYNoOffset
+        val b = Translation2D(robotLength, -wheelBaseRadius).rotate(heading).newXYNoOffset
+        val p1 = pos + a
+        val p2 = pos + b
+        val p3 = pos - a
+        val p4 = pos - b
+        stroke(192f, 192f, 192f)
+        lineTo(p1, p2)
+        lineTo(p2, p3)
+        lineTo(p3, p4)
+        lineTo(p4, p1)
+    }
+
     override fun setup() {
         surface.setIcon(PImage(ImageIO.read(this::class.java.getResource("/icon.png"))))
         waypoints = arrayOf(
@@ -164,22 +180,10 @@ class PathPlanner : PApplet() {
                 "maxK: ${maxK.f}\n" +
                 "arcLength: ${metersToFeet(arcLength).f}ft\n" +
                 "totalTime: ${trajectory.last().t.f}s"
+        drawText(msg)
         // draw control points
         controlPoints.forEachIndexed { index, controlPoint ->
             if (selectedIndex == index) {
-                fill(255f, 255f, 255f)
-                noStroke()
-                val translation = waypoints[index].translation
-                val angle = waypoints[index].rotation.degrees
-                textSize(15f)
-                var controlPointMsg = "index: $index\n" +
-                        "pos: (${metersToFeet(translation.x).f}ft, ${metersToFeet(translation.y).f}ft)\n" +
-                        "θ: ${angle.f}°\n"
-                if (index != controlPoints.size - 1) {
-                    controlPointMsg += "dd0: (${intermediate[index].ddx0.f}, ${intermediate[index].ddy0.f})\n" +
-                            "dd1: (${intermediate[index].ddx1.f}, ${intermediate[index].ddy1.f})\n"
-                }
-                drawText(controlPointMsg + msg)
                 stroke(90f, 138f, 222f)
                 strokeWeight(2f)
                 noFill()
@@ -190,14 +194,13 @@ class PathPlanner : PApplet() {
             }
             controlPoint.drawArrow()
         }
-        if (selectedIndex == -1) drawText(msg)
     }
 
     fun v2T(v: Double, t: Double, max: Double) =
-            Translation2D(529 + (t / trajectoryTime) * 350, 450 - (v / max) * 50)
+            Translation2D(529 + (t / trajectoryTime) * 478, 450 - (v / max) * 50)
 
     fun a2T(v: Double, t: Double, max: Double) =
-            Translation2D(529 + (t / trajectoryTime) * 350, 300 - (v / max) * 50)
+            Translation2D(529 + (t / trajectoryTime) * 478, 300 - (v / max) * 50)
 
     fun List<Translation2D>.connect() = zipWithNext { a, b -> lineTo(a, b) }
 
@@ -206,17 +209,16 @@ class PathPlanner : PApplet() {
         trajectory.subList(0, i + 1).apply {
             strokeWeight(1f)
             stroke(255f, 128f, 0f)
-            forEach {
-                val x = (529 + (it.t / trajectoryTime) * 350).toFloat()
-                line(x, 370f, x, 380f)
+            forEachIndexed { index, point ->
+                val x = (529 + (point.t / trajectoryTime) * 478).toFloat()
+                if (index % 2 == 0) line(x, 365f, x, 380f)
+                else line(x, 370f, x, 385f)
             }
             strokeWeight(1.5f)
             stroke(0f, 128f, 192f)
             map { a2T(it.acceleration, it.t, model.maxAcceleration) }.connect()
             stroke(0f, 192f, 128f)
             map { a2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc) }.connect()
-
-
             stroke(255f, 255f, 128f)
             map { v2T(it.state.curvature * it.velocity, it.t, maxAngular) }.connect()
             stroke(128f, 128f, 255f)
@@ -226,20 +228,30 @@ class PathPlanner : PApplet() {
 
     fun redrawScreen() {
         redrawBackground()
-        var t = splines[0].state.translation
-        var normal = (splines[0].state.rotation.normal * wheelBaseRadius).translation
-        var left = (t - normal).newXY
-        var right = (t + normal).newXY
+
+        // draw the start of the curve
+        val s0 = splines.first()
+        val t0 = s0.state.translation
+        var normal = (s0.state.rotation.normal * wheelBaseRadius).translation
+        var left = (t0 - normal).newXY
+        var right = (t0 + normal).newXY
 
         strokeWeight(2f)
+        stroke(0f, 255f, 0f)
+        val a0 = t0.newXY - Translation2D(robotLength, wheelBaseRadius).rotate(s0.state.rotation).newXYNoOffset
+        val b0 = t0.newXY + Translation2D(-robotLength, wheelBaseRadius).rotate(s0.state.rotation).newXYNoOffset
+        lineTo(a0, b0)
+        lineTo(left, a0)
+        lineTo(right, b0)
 
         // draw the curve
         for (i in 1 until splines.size) {
-            t = splines[i].state.translation
-            normal = (splines[i].state.rotation.normal * wheelBaseRadius).translation
+            val s = splines[i]
+            val t = s.state.translation
+            normal = (s.state.rotation.normal * wheelBaseRadius).translation
             val newLeft = (t - normal).newXY
             val newRight = (t + normal).newXY
-            val kx = splines[i].curvature.absoluteValue / maxK
+            val kx = s.curvature.absoluteValue / maxK
             val r = interpolate(0.0, 192.0, kx).toFloat() + 64
             val g = 255 - interpolate(0.0, 192.0, kx).toFloat()
             stroke(r, g, 0f)
@@ -248,6 +260,18 @@ class PathPlanner : PApplet() {
             left = newLeft
             right = newRight
         }
+
+        // draw the end of the curve
+
+        val sf = splines.last()
+        stroke(0f, 255f, 0f)
+        val tf = sf.state.translation.newXY
+        val af = tf - Translation2D(-robotLength, wheelBaseRadius).rotate(sf.state.rotation).newXYNoOffset
+        val bf = tf + Translation2D(robotLength, wheelBaseRadius).rotate(sf.state.rotation).newXYNoOffset
+        lineTo(af, bf)
+        lineTo(left, af)
+        lineTo(right, bf)
+
         if (!simulating) {
             redrawInfoNoSim()
             drawGraph(trajectory.size - 1)
@@ -434,9 +458,10 @@ class PathPlanner : PApplet() {
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
             val pos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx).newXY
             redrawScreen()
-            stroke(255f, 255f, 255f)
-            noFill()
             val heading = thisMoment.state.state.rotation.interpolate(nextMoment.state.state.rotation, tx)
+            drawRobot(pos, heading)
+            stroke(255f, 128f, 0f)
+            noFill()
             val headingXY = pos + heading.translation.scaled(0.5).newXYNoOffset
             val dir = heading.norm.translation
             ControlPoint(pos, headingXY, dir).drawArrow()
