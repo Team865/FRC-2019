@@ -129,18 +129,22 @@ class PathPlanner : PApplet() {
         val p2 = pos + b
         val p3 = pos - a
         val p4 = pos - b
-        stroke(192f, 192f, 192f)
-        lineTo(p1, p2)
-        lineTo(p2, p3)
-        lineTo(p3, p4)
-        lineTo(p4, p1)
+        stroke(60f, 92f, 148f)
+        fill(90f, 138f, 222f)
+        beginShape()
+        vertex(p1)
+        vertex(p2)
+        vertex(p3)
+        vertex(p4)
+        vertex(p1)
+        endShape()
     }
 
     override fun setup() {
         surface.setIcon(PImage(ImageIO.read(this::class.java.getResource("/icon.png"))))
         waypoints = arrayOf(
                 waypoint(6, -4, 0),
-                waypoint(17.5, -11.5, -30)
+                waypoint(16.8, -11.2, -32)
         )
         regenerate()
     }
@@ -173,11 +177,16 @@ class PathPlanner : PApplet() {
         image(bg, 17f, 0f)
         noFill()
         strokeWeight(1f)
-        stroke(90f, 138f, 222f)
+        stroke(192f, 192f, 192f)
         line(17f, 0f, 17f, 492f)
         strokeWeight(2f)
         line(512f, 0f, 512f, 492f)
         line(17f, 492f, 512f, 492f)
+        strokeWeight(1f)
+        stroke(192f, 192f, 192f)
+        rect(529f, 17f, 478f, 100f)
+        rect(529f, 125f, 478f, 100f)
+        rect(529f, 233f, 478f, 259f)
     }
 
     fun redrawControlPoints() {
@@ -197,42 +206,44 @@ class PathPlanner : PApplet() {
     }
 
     fun v2T(v: Double, t: Double, max: Double, y: Int) =
-            Translation2D(529 + (t / trajectoryTime) * 478, y - (v / max) * 50)
+            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 50)
 
-    fun List<Translation2D>.connect() = zipWithNext { a, b -> lineTo(a, b) }
+    fun List<Translation2D>.connect() {
+        beginShape()
+        forEach { vertex(it) }
+        endShape()
+    }
 
     fun drawGraph(i: Int) {
         if (i == 0) return
         trajectory.subList(0, i + 1).apply {
             strokeWeight(1f)
             stroke(255f, 128f, 0f)
+            // todo 233 259 362.5
             forEachIndexed { index, point ->
-                val x = (529 + (point.t / trajectoryTime) * 478).toFloat()
-                if (index % 2 == 0) line(x, 365f, x, 380f)
-                else line(x, 370f, x, 385f)
+                val x = (531 + (point.t / trajectoryTime) * 474).toFloat()
+                if (index % 2 == 0) line(x, 352.5f, x, 367.5f)
+                else line(x, 357.5f, x, 372.5f)
             }
             strokeWeight(2f)
             stroke(0f, 128f, 192f)
-            map { v2T(it.acceleration, it.t, model.maxAcceleration, 300) }.connect()
+            map { v2T(it.acceleration, it.t, model.maxAcceleration, 290) }.connect()
             stroke(0f, 192f, 128f)
-            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 300) }.connect()
+            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 290) }.connect()
             stroke(255f, 255f, 128f)
-            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 450) }.connect()
+            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 434) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t, maxVel, 450) }.connect()
+            map { v2T(it.velocity, it.t, maxVel, 434) }.connect()
             val dynamics = map {
                 val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
                 val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
                 val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
-                val wa = model.solve(acceleration) * (7.0 / 1023 * 12)
+                val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
                 Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
                         model.solve(KinematicState(velocity, acceleration)).voltage, it.t)
             }
-            strokeWeight(1f)
-            stroke(192f, 192f, 192f)
-            rect(529f, 17f, 478f, 100f)
-            rect(529f, 125f, 478f, 100f)
             stroke(255f, 255f, 128f)
+            strokeWeight(1f)
             dynamics.map { v2T(it.first.left - 6, it.third, 6.0, 175) }.connect()
             dynamics.map { v2T(it.first.right - 6, it.third, 6.0, 67) }.connect()
             stroke(128f, 255f, 255f)
@@ -502,7 +513,7 @@ class PathPlanner : PApplet() {
             redrawScreen()
             val heading = thisMoment.state.state.rotation.interpolate(nextMoment.state.state.rotation, tx)
             drawRobot(pos, heading)
-            stroke(255f, 128f, 0f)
+            stroke(255f, 255f, 255f)
             noFill()
             val headingXY = pos + heading.translation.scaled(0.5).newXYNoOffset
             val dir = heading.norm.translation
