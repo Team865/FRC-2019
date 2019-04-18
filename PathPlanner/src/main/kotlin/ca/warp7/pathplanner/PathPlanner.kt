@@ -23,7 +23,7 @@ class PathPlanner : PApplet() {
     )
 
     override fun settings() {
-        size(1024, 512)
+        size(1024, 540)
         noSmooth()
     }
 
@@ -36,7 +36,7 @@ class PathPlanner : PApplet() {
     val wheelBaseRadius = kInchesToMeters * 12.4
     val robotLength = wheelBaseRadius * 1.3
     val robotDrawCenter = Translation2D(768.0, 100.0)
-    val maxVel = feetToMeters(12.0)
+    val maxVel = kFeetToMeters * 12.0
 
     val kPixelsPerMeter = 494 / 8.2296
     val Double.my2x: Double get() = (17.0 + (512.0 - 17.0) / 2 + kPixelsPerMeter * this)
@@ -54,6 +54,9 @@ class PathPlanner : PApplet() {
     var trajectory: List<TrajectoryPoint> = emptyList()
     var controlPoints = mutableListOf<ControlPoint>()
 
+    var maxVRatio = 1.0
+    var maxARatio = 1.0
+
     var curvatureSum = 0.0
     var arcLength = 0.0
     var trajectoryTime = 0.0
@@ -70,7 +73,7 @@ class PathPlanner : PApplet() {
 
     val model = DifferentialDriveModel(
             wheelRadius = 0.0,
-            wheelbaseRadius = wheelBaseRadius * 1.4,
+            wheelbaseRadius = wheelBaseRadius * 1.35,
             maxVelocity = maxVel,
             maxAcceleration = feetToMeters(9.0),
             maxFreeSpeed = 0.0,
@@ -113,7 +116,7 @@ class PathPlanner : PApplet() {
         fill(255f, 255f, 255f)
         noStroke()
         textSize(15f)
-        text(t, 529f, 30f)
+        text(t, 17f, 525f)
     }
 
     fun drawRobot(pos: Translation2D, heading: Rotation2D) {
@@ -153,7 +156,8 @@ class PathPlanner : PApplet() {
         arcLength = splines.zipWithNext { a: CurvatureState<Pose2D>, b: CurvatureState<Pose2D> ->
             (b.state.translation - a.state.translation).mag
         }.sum()
-        trajectory = splines.timedTrajectory(model, 0.0, 0.0)
+        trajectory = splines.timedTrajectory(model, 0.0, 0.0,
+                model.maxVelocity * maxVRatio, model.maxAcceleration * maxARatio)
         trajectoryTime = trajectory.last().t
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
         maxAngular = trajectory.map { Math.abs(it.velocity * it.state.curvature) }.max() ?: 1.0
@@ -165,22 +169,15 @@ class PathPlanner : PApplet() {
         background(0f, 0f, 0f)
         image(bg, 17f, 0f)
         noFill()
-        stroke(90f, 138f, 222f)
         strokeWeight(1f)
-        line(17f, 0f, 17f, 493f)
-        line(512f, 0f, 512f, 493f)
+        stroke(90f, 138f, 222f)
+        line(17f, 0f, 17f, 492f)
         strokeWeight(2f)
+        line(512f, 0f, 512f, 492f)
         line(17f, 492f, 512f, 492f)
     }
 
-    fun redrawInfoNoSim() {
-        stroke(255f, 255f, 0f)
-        noFill()
-        val msg = "Σdk^2: ${curvatureSum.f}\n" +
-                "maxK: ${maxK.f}\n" +
-                "arcLength: ${metersToFeet(arcLength).f}ft\n" +
-                "totalTime: ${trajectory.last().t.f}s"
-        drawText(msg)
+    fun redrawControlPoints() {
         // draw control points
         controlPoints.forEachIndexed { index, controlPoint ->
             if (selectedIndex == index) {
@@ -271,39 +268,26 @@ class PathPlanner : PApplet() {
         lineTo(af, bf)
         lineTo(left, af)
         lineTo(right, bf)
+        val msg = "max(k): ${maxK.f}   " +
+                "Σ(Δk)^2: ${curvatureSum.f}   " +
+                "Σ(Δd): ${(kMetersToFeet * arcLength).f}ft   " +
+                "Σ(Δt): ${trajectory.last().t.f}s   " +
+                "maxV: ${(maxVRatio * 100).toInt()}%   " +
+                "maxA: ${(maxARatio * 100).toInt()}%   "
+        drawText(msg)
 
         if (!simulating) {
-            redrawInfoNoSim()
+            redrawControlPoints()
             drawGraph(trajectory.size - 1)
         }
     }
 
     fun processDeselected() {
-        when {
-            key.toInt() == CODED -> when (keyCode) {
-                PConstants.UP -> translateAll(Translation2D(step, 0.0))
-                PConstants.DOWN -> translateAll(Translation2D(-step, 0.0))
-                PConstants.LEFT -> translateAll(Translation2D(0.0, -step))
-                PConstants.RIGHT -> translateAll(Translation2D(0.0, step))
-            }
-            key == 'r' -> {
-                val newWaypoints = waypoints.reversedArray()
-                for (i in 0 until newWaypoints.size) {
-                    newWaypoints[i] = newWaypoints[i].run {
-                        Pose2D(translation, rotation.rotate(reversedRotation))
-                    }
-                }
-                waypoints = newWaypoints
-                regenerate()
-            }
-            key == 'f' -> {
-                for (i in 0 until waypoints.size) {
-                    waypoints[i] = waypoints[i].run {
-                        Pose2D(Translation2D(translation.x, -translation.y), Rotation2D(rotation.cos, -rotation.sin))
-                    }
-                }
-                regenerate()
-            }
+        if (key.toInt() == CODED) when (keyCode) {
+            PConstants.UP -> translateAll(Translation2D(step, 0.0))
+            PConstants.DOWN -> translateAll(Translation2D(-step, 0.0))
+            PConstants.LEFT -> translateAll(Translation2D(0.0, -step))
+            PConstants.RIGHT -> translateAll(Translation2D(0.0, step))
         }
     }
 
@@ -438,6 +422,45 @@ class PathPlanner : PApplet() {
             })
         }
         if (!simulating) {
+            when (key) {
+                '-' -> {
+                    maxVRatio = (maxVRatio - 0.1).coerceIn(0.3, 1.0)
+                    regenerate()
+                }
+                '=' -> {
+                    maxVRatio = (maxVRatio + 0.1).coerceIn(0.3, 1.0)
+                    regenerate()
+                }
+                '[' -> {
+                    maxARatio = (maxARatio - 0.1).coerceIn(0.3, 1.0)
+                    regenerate()
+                }
+                ']' -> {
+                    maxARatio = (maxARatio + 0.1).coerceIn(0.3, 1.0)
+                    regenerate()
+                }
+                'r' -> {
+                    val newWaypoints = waypoints.reversedArray()
+                    for (i in 0 until newWaypoints.size) {
+                        newWaypoints[i] = newWaypoints[i].run {
+                            Pose2D(translation, rotation.rotate(reversedRotation))
+                        }
+                    }
+                    waypoints = newWaypoints
+                    if (selectedIndex != -1) {
+                        selectedIndex = waypoints.size - 1 - selectedIndex
+                    }
+                    regenerate()
+                }
+                'f' -> {
+                    for (i in 0 until waypoints.size) {
+                        waypoints[i] = waypoints[i].run {
+                            Pose2D(Translation2D(translation.x, -translation.y), Rotation2D(rotation.cos, -rotation.sin))
+                        }
+                    }
+                    regenerate()
+                }
+            }
             if (selectedIndex == -1) processDeselected()
             else processSelected()
         }
