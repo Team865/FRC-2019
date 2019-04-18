@@ -7,6 +7,7 @@ object FieldConstants {
     const val kCargo2Height = 53.5 // kCargo1Height + centerToCenterInches
     const val kCargo3Height = 81.5 // kCargo2Height + centerToCenterInches
 
+    const val kHatch1Height = 19.0 // firstHatchPortCenterHeightInches + centerToCenterInches
     const val kHatch2Height = 47.0 // firstHatchPortCenterHeightInches + centerToCenterInches
     const val kHatch3Height = 75.0 //kHatch2Height + centerToCenterInches
 }

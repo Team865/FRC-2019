@@ -16,14 +16,13 @@ object PassThrough : Action {
 
     override fun update() {
         Conveyor.speed = -speed * SuperstructureConstants.kConveyorSpeedScale
-        if(!stopOverrideOuttake){
-            Outtake.grabbing = openOuttake
-        }
         Outtake.speed = when {
             speed.epsilonEquals(0.0, 0.1) -> 0.0
             fastOuttake -> SuperstructureConstants.kFastOuttakeSpeed
             else -> SuperstructureConstants.kNormalOuttakeSpeed.withSign(speed)
         }
+        if(stopOverrideOuttake){Outtake.grabbing=true
+        Outtake.pushing=false}
     }
 
     override val shouldFinish: Boolean

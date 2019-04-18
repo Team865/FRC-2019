@@ -51,22 +51,22 @@ object Drive : Subsystem() {
     }
 
     override fun onMeasure(dt: Double) {
-        leftPosition = leftMaster.selectedSensorPosition
-        rightPosition = rightMaster.selectedSensorPosition * -1
-        leftVelocity = leftMaster.selectedSensorVelocity
-        rightVelocity = rightMaster.selectedSensorVelocity * -1
+//        leftPosition = leftMaster.selectedSensorPosition
+//        rightPosition = rightMaster.selectedSensorPosition * -1
+//        leftVelocity = leftMaster.selectedSensorVelocity
+//        rightVelocity = rightMaster.selectedSensorVelocity * -1
         DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {
-        put("x", DriveMotionPlanner.robotState.translation.x)
-        put("y", DriveMotionPlanner.robotState.translation.y)
-        put("yaw", DriveMotionPlanner.robotState.rotation.degrees)
-        put("Left Demand", leftDemand)
-        put("Right Demand", rightDemand)
-        put("Left Velocity", leftVelocity)
-        put("Right Velocity", rightVelocity)
-        put("Left Position", leftPosition)
-        put("Right Position", rightPosition)
+//        put("x", DriveMotionPlanner.robotState.translation.x)
+//        put("y", DriveMotionPlanner.robotState.translation.y)
+//        put("yaw", DriveMotionPlanner.robotState.rotation.degrees)
+//        put("Left Demand", leftDemand)
+//        put("Right Demand", rightDemand)
+//        put("Left Velocity", leftVelocity)
+//        put("Right Velocity", rightVelocity)
+//        put("Left Position", leftPosition)
+//        put("Right Position", rightPosition)
     }
 }

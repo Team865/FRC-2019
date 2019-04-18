@@ -6,6 +6,7 @@ import ca.warp7.frc.Controls
 import ca.warp7.frc.RobotControl
 import ca.warp7.frc.set
 import ca.warp7.frc2019.auton.DriveOnly
+import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Outtake
@@ -15,7 +16,7 @@ import ca.warp7.frc2019.subsystems.lift.LiftState
 object Sandstorm : Action {
 
     fun getAutoMode(): Action {
-        return DriveOnly.leftCloseRocket
+        return DriveOnly.driveForDistance
     }
 
     private lateinit var autoAction: Action
@@ -23,8 +24,13 @@ object Sandstorm : Action {
     override fun start() {
         println("Robot State: Sandstorm")
         Drive.set(DriveState.kNeutralOutput)
-        Lift.set(LiftState.kIdle)
+
+        val initPos = LiftConstants.kHatchStartHeightInches
+        Lift.master.selectedSensorPosition = -(initPos * LiftConstants.kTicksPerInch).toInt()
+        Lift.set(LiftState.kGoToSetpoint) { setpoint = (initPos + LiftConstants.kHomeHeightInches)+9.0 }
+
         Outtake.set {
+            speed = 0.0
             grabbing = true
             pushing = false
         }
