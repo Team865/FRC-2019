@@ -59,6 +59,7 @@ class PathPlanner : PApplet() {
 
     var maxVRatio = 1.0
     var maxARatio = 1.0
+    var optimizing = true
 
     var curvatureSum = 0.0
     var arcLength = 0.0
@@ -97,22 +98,23 @@ class PathPlanner : PApplet() {
     var simTime = 0.0
     var simIndex = 0
 
-    fun ControlPoint.drawArrow() {
-        val r1 = dir.scaled(0.1524 * kTriangleRatio * 2)
+    fun drawArrow(point: ControlPoint): ControlPoint {
+        val r1 = point.dir.scaled(0.1524 * kTriangleRatio * 2)
         val r2 = r1.rotate(Rotation2D(0.0, 1.0)).scaled(kTriangleRatio)
         val r3 = r1.rotate(Rotation2D(0.0, -1.0)).scaled(kTriangleRatio)
-        ellipse(pos.x.toFloat(), pos.y.toFloat(), 12f, 12f)
-        val start = pos + dir.scaled(6.0).run { Translation2D(y, -x) }
-        lineTo(start, heading)
-        val a1 = heading + r1.newXYNoOffset
-        val a2 = heading + r2.newXYNoOffset
-        val a3 = heading + r3.newXYNoOffset
+        ellipse(point.pos.x.toFloat(), point.pos.y.toFloat(), 12f, 12f)
+        val start = point.pos + point.dir.scaled(6.0).run { Translation2D(y, -x) }
+        lineTo(start, point.heading)
+        val a1 = point.heading + r1.newXYNoOffset
+        val a2 = point.heading + r2.newXYNoOffset
+        val a3 = point.heading + r3.newXYNoOffset
         beginShape()
         vertex(a1)
         vertex(a2)
         vertex(a3)
         vertex(a1)
         endShape()
+        return point
     }
 
     fun drawText(t: String) {
@@ -157,7 +159,7 @@ class PathPlanner : PApplet() {
             val dir = it.rotation.norm.translation
             controlPoints.add(ControlPoint(pos, heading, dir))
         }
-        intermediate = quinticSplinesOf(*waypoints)
+        intermediate = quinticSplinesOf(*waypoints, optimizing = optimizing)
         curvatureSum = intermediate.sumDCurvature2()
         splines = intermediate.parameterized()
         arcLength = splines.zipWithNext { a: CurvatureState<Pose2D>, b: CurvatureState<Pose2D> ->
@@ -201,7 +203,7 @@ class PathPlanner : PApplet() {
                 strokeWeight(2f)
                 noFill()
             }
-            controlPoint.drawArrow()
+            drawArrow(controlPoint)
         }
     }
 
@@ -219,7 +221,6 @@ class PathPlanner : PApplet() {
         trajectory.subList(0, i + 1).apply {
             strokeWeight(1f)
             stroke(255f, 128f, 0f)
-            // todo 233 259 362.5
             forEachIndexed { index, point ->
                 val x = (531 + (point.t / trajectoryTime) * 474).toFloat()
                 if (index % 2 == 0) line(x, 352.5f, x, 367.5f)
@@ -227,13 +228,13 @@ class PathPlanner : PApplet() {
             }
             strokeWeight(2f)
             stroke(0f, 128f, 192f)
-            map { v2T(it.acceleration, it.t, model.maxAcceleration, 290) }.connect()
+            map { v2T(it.acceleration, it.t, model.maxAcceleration, 434) }.connect()
             stroke(0f, 192f, 128f)
-            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 290) }.connect()
+            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
             stroke(255f, 255f, 128f)
-            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 434) }.connect()
+            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t, maxVel, 434) }.connect()
+            map { v2T(it.velocity, it.t, maxVel, 290) }.connect()
             val dynamics = map {
                 val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
                 val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
@@ -244,11 +245,11 @@ class PathPlanner : PApplet() {
             }
             stroke(255f, 255f, 128f)
             strokeWeight(1f)
-            dynamics.map { v2T(it.first.left - 6, it.third, 6.0, 175) }.connect()
-            dynamics.map { v2T(it.first.right - 6, it.third, 6.0, 67) }.connect()
+            dynamics.map { v2T(it.first.left, it.third, 12.0, 175) }.connect()
+            dynamics.map { v2T(it.first.right, it.third, 12.0, 67) }.connect()
             stroke(128f, 255f, 255f)
-            dynamics.map { v2T(it.second.left - 6, it.third, 6.0, 175) }.connect()
-            dynamics.map { v2T(it.second.right - 6, it.third, 6.0, 67) }.connect()
+            dynamics.map { v2T(it.second.left, it.third, 12.0, 175) }.connect()
+            dynamics.map { v2T(it.second.right, it.third, 12.0, 67) }.connect()
         }
     }
 
@@ -297,12 +298,13 @@ class PathPlanner : PApplet() {
         lineTo(af, bf)
         lineTo(left, af)
         lineTo(right, bf)
-        val msg = "max(k): ${maxK.f}   " +
-                "Σ(Δk)^2: ${curvatureSum.f}   " +
-                "Σ(Δd): ${(kMetersToFeet * arcLength).f}ft   " +
-                "Σ(Δt): ${trajectory.last().t.f}s   " +
-                "maxV: ${(maxVRatio * 100).toInt()}%   " +
-                "maxA: ${(maxARatio * 100).toInt()}%   "
+        val msg = "K=${maxK.f}  " +
+                "ΣΔk2=${curvatureSum.f}  " +
+                "ΣΔd=${(kMetersToFeet * arcLength).f}ft  " +
+                "ΣΔt=${trajectory.last().t.f}s  " +
+                "V=${(maxVRatio * 100).toInt()}%  " +
+                "A=${(maxARatio * 100).toInt()}%  " +
+                "O=$optimizing  "
         drawText(msg)
 
         if (!simulating) {
@@ -385,7 +387,7 @@ class PathPlanner : PApplet() {
             val dir = waypoint.rotation.norm.translation
             stroke(255f, 128f, 255f)
             strokeWeight(2f)
-            draggedControlPoint = ControlPoint(mouse, heading, dir).apply { drawArrow() }
+            draggedControlPoint = drawArrow(ControlPoint(mouse, heading, dir))
         }
         if ((controlPoint.heading - mouse).mag < 10 && !draggingPoint) draggingAngle = true
         if (draggingAngle) {
@@ -394,7 +396,7 @@ class PathPlanner : PApplet() {
             val heading = controlPoint.pos + (mouse - controlPoint.pos).norm.scaled(0.5 * kPixelsPerMeter)
             stroke(255f, 128f, 255f)
             strokeWeight(2f)
-            draggedControlPoint = ControlPoint(controlPoint.pos, heading, dir).apply { drawArrow() }
+            draggedControlPoint = drawArrow(ControlPoint(controlPoint.pos, heading, dir))
         }
     }
 
@@ -490,6 +492,10 @@ class PathPlanner : PApplet() {
                     }
                     regenerate()
                 }
+                'o' -> {
+                    optimizing = !optimizing
+                    regenerate()
+                }
             }
             if (selectedIndex == -1) processDeselected()
             else processSelected()
@@ -517,7 +523,7 @@ class PathPlanner : PApplet() {
             noFill()
             val headingXY = pos + heading.translation.scaled(0.5).newXYNoOffset
             val dir = heading.norm.translation
-            ControlPoint(pos, headingXY, dir).drawArrow()
+            drawArrow(ControlPoint(pos, headingXY, dir))
             drawGraph(simIndex)
         } else if (selectionChanged) {
             redrawScreen()
