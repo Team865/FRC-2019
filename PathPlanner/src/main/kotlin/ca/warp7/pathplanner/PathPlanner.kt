@@ -55,11 +55,12 @@ class PathPlanner : PApplet() {
     var intermediate: List<QuinticSegment2D> = emptyList()
     var splines: List<CurvatureState<Pose2D>> = emptyList()
     var trajectory: List<TrajectoryPoint> = emptyList()
-    var controlPoints = mutableListOf<ControlPoint>()
+    var controlPoints: MutableList<ControlPoint> = mutableListOf()
+    var dynamics: List<Triple<WheelState, WheelState, Double>> = emptyList()
 
     var maxVRatio = 1.0
     var maxARatio = 1.0
-    var optimizing = true
+    var optimizing = false
 
     var curvatureSum = 0.0
     var arcLength = 0.0
@@ -168,6 +169,14 @@ class PathPlanner : PApplet() {
         trajectory = splines.timedTrajectory(model, 0.0, 0.0,
                 model.maxVelocity * maxVRatio, model.maxAcceleration * maxARatio)
         trajectoryTime = trajectory.last().t
+        dynamics = trajectory.map {
+            val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
+            val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
+            val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
+            val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
+            Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
+                    model.solve(KinematicState(velocity, acceleration)).voltage, it.t)
+        }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
         maxAngular = trajectory.map { Math.abs(it.velocity * it.state.curvature) }.max() ?: 1.0
         maxAngularAcc = trajectory.map { Math.abs(it.acceleration * it.state.curvature) }.max() ?: 1.0
@@ -235,21 +244,15 @@ class PathPlanner : PApplet() {
             map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
             map { v2T(it.velocity, it.t, maxVel, 290) }.connect()
-            val dynamics = map {
-                val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
-                val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
-                val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
-                val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
-                Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
-                        model.solve(KinematicState(velocity, acceleration)).voltage, it.t)
-            }
+        }
+        dynamics.subList(0, i + 1).apply {
             stroke(255f, 255f, 128f)
             strokeWeight(1f)
-            dynamics.map { v2T(it.first.left, it.third, 12.0, 175) }.connect()
-            dynamics.map { v2T(it.first.right, it.third, 12.0, 67) }.connect()
+            map { v2T(it.first.left, it.third, 12.0, 175) }.connect()
+            map { v2T(it.first.right, it.third, 12.0, 67) }.connect()
             stroke(128f, 255f, 255f)
-            dynamics.map { v2T(it.second.left, it.third, 12.0, 175) }.connect()
-            dynamics.map { v2T(it.second.right, it.third, 12.0, 67) }.connect()
+            map { v2T(it.second.left, it.third, 12.0, 175) }.connect()
+            map { v2T(it.second.right, it.third, 12.0, 67) }.connect()
         }
     }
 

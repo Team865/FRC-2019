@@ -67,7 +67,7 @@ fun quinticSplineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
     )
 }
 
-fun quinticSplinesOf(vararg waypoints: Pose2D, optimizing: Boolean = true): List<QuinticSegment2D> {
+fun quinticSplinesOf(vararg waypoints: Pose2D, optimizing: Boolean = false): List<QuinticSegment2D> {
     val path = waypoints.asIterable().zipWithNext { p0: Pose2D, p1: Pose2D -> quinticSplineFromPose(p0, p1) }
     if (optimizing) return path.optimized()
     return path
