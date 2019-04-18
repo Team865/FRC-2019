@@ -1,7 +1,10 @@
 package ca.warp7.pathplanner
 
 import ca.warp7.frc.*
+import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.drive.KinematicState
+import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.TrajectoryPoint
@@ -72,18 +75,18 @@ class PathPlanner : PApplet() {
     val bg = PImage(ImageIO.read(PathPlanner::class.java.getResource("/field.PNG")))
 
     val model = DifferentialDriveModel(
-            wheelRadius = 0.0,
+            wheelRadius = 0.07493,
             wheelbaseRadius = wheelBaseRadius * 1.35,
             maxVelocity = maxVel,
-            maxAcceleration = feetToMeters(9.0),
-            maxFreeSpeed = 0.0,
-            speedPerVolt = 0.0,
-            torquePerVolt = 0.0,
-            frictionVoltage = 0.0,
-            linearInertia = 0.0,
-            angularInertia = 0.0,
-            maxVoltage = 0.0,
-            angularDrag = 0.0
+            maxAcceleration = 2.7432,
+            maxFreeSpeed = 5.0292,
+            speedPerVolt = 6.101694915254239,
+            torquePerVolt = 16.3101367345,
+            frictionVoltage = 1.0,
+            linearInertia = 70.0,
+            angularInertia = 10.0,
+            maxVoltage = 12.0,
+            angularDrag = 20.0
     )
 
     var draggingPoint = false
@@ -193,11 +196,8 @@ class PathPlanner : PApplet() {
         }
     }
 
-    fun v2T(v: Double, t: Double, max: Double) =
-            Translation2D(529 + (t / trajectoryTime) * 478, 450 - (v / max) * 50)
-
-    fun a2T(v: Double, t: Double, max: Double) =
-            Translation2D(529 + (t / trajectoryTime) * 478, 300 - (v / max) * 50)
+    fun v2T(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(529 + (t / trajectoryTime) * 478, y - (v / max) * 50)
 
     fun List<Translation2D>.connect() = zipWithNext { a, b -> lineTo(a, b) }
 
@@ -211,15 +211,33 @@ class PathPlanner : PApplet() {
                 if (index % 2 == 0) line(x, 365f, x, 380f)
                 else line(x, 370f, x, 385f)
             }
-            strokeWeight(1.5f)
+            strokeWeight(2f)
             stroke(0f, 128f, 192f)
-            map { a2T(it.acceleration, it.t, model.maxAcceleration) }.connect()
+            map { v2T(it.acceleration, it.t, model.maxAcceleration, 300) }.connect()
             stroke(0f, 192f, 128f)
-            map { a2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc) }.connect()
+            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 300) }.connect()
             stroke(255f, 255f, 128f)
-            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular) }.connect()
+            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 450) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t, maxVel) }.connect()
+            map { v2T(it.velocity, it.t, maxVel, 450) }.connect()
+            val dynamics = map {
+                val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
+                val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
+                val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
+                val wa = model.solve(acceleration) * (7.0 / 1023 * 12)
+                Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
+                        model.solve(KinematicState(velocity, acceleration)).voltage, it.t)
+            }
+            strokeWeight(1f)
+            stroke(192f, 192f, 192f)
+            rect(529f, 17f, 478f, 100f)
+            rect(529f, 125f, 478f, 100f)
+            stroke(255f, 255f, 128f)
+            dynamics.map { v2T(it.first.left - 6, it.third, 6.0, 175) }.connect()
+            dynamics.map { v2T(it.first.right - 6, it.third, 6.0, 67) }.connect()
+            stroke(128f, 255f, 255f)
+            dynamics.map { v2T(it.second.left - 6, it.third, 6.0, 175) }.connect()
+            dynamics.map { v2T(it.second.right - 6, it.third, 6.0, 67) }.connect()
         }
     }
 
@@ -308,7 +326,8 @@ class PathPlanner : PApplet() {
                 val newPoint = waypoints[selectedIndex].run {
                     Pose2D(translation + rotation.norm.scaled(0.75).translation, rotation)
                 }
-                newWaypoints[selectedIndex + 1] = newPoint
+                selectedIndex++
+                newWaypoints[selectedIndex] = newPoint
                 waypoints = newWaypoints.requireNoNulls()
                 regenerate()
             }
