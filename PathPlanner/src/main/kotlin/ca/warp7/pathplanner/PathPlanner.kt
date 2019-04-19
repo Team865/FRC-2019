@@ -118,9 +118,9 @@ class PathPlanner : PApplet() {
     }
 
     fun drawText(t: String) {
-        fill(255f, 255f, 255f)
+        fill(192f, 192f, 192f)
         noStroke()
-        textSize(15f)
+        textSize(18f)
         text(t, 17f, 525f)
     }
 
@@ -145,8 +145,8 @@ class PathPlanner : PApplet() {
     override fun setup() {
         surface.setIcon(PImage(ImageIO.read(this::class.java.getResource("/icon.png"))))
         waypoints = arrayOf(
-                waypoint(6, -4, 0),
-                waypoint(16.8, -11.2, -32)
+                waypoint(6, 4, 0),
+                waypoint(16.8, 11.2, 32)
         )
         regenerate()
     }
@@ -326,8 +326,8 @@ class PathPlanner : PApplet() {
         if (key.toInt() == CODED) when (keyCode) {
             PConstants.UP -> translateAll(Translation2D(step, 0.0))
             PConstants.DOWN -> translateAll(Translation2D(-step, 0.0))
-            PConstants.LEFT -> translateAll(Translation2D(0.0, -step))
-            PConstants.RIGHT -> translateAll(Translation2D(0.0, step))
+            PConstants.LEFT -> translateAll(Translation2D(0.0, step))
+            PConstants.RIGHT -> translateAll(Translation2D(0.0, -step))
         }
     }
 
@@ -336,8 +336,8 @@ class PathPlanner : PApplet() {
             key.toInt() == CODED -> when (keyCode) {
                 PConstants.UP -> translateSelected(Translation2D(step, 0.0))
                 PConstants.DOWN -> translateSelected(Translation2D(-step, 0.0))
-                PConstants.LEFT -> translateSelected(Translation2D(0.0, -step))
-                PConstants.RIGHT -> translateSelected(Translation2D(0.0, step))
+                PConstants.LEFT -> translateSelected(Translation2D(0.0, step))
+                PConstants.RIGHT -> translateSelected(Translation2D(0.0, -step))
             }
             key == 'q' -> rotateSelected(pAng)
             key == 'w' -> rotateSelected(nAng)
@@ -534,6 +534,13 @@ class PathPlanner : PApplet() {
             val dir = heading.norm.translation
             drawArrow(ControlPoint(pos, headingXY, dir))
             drawGraph(simIndex)
+            stroke(255f, 0f, 0f)
+            val x1 = (531 + (t / trajectoryTime) * 474).toFloat()
+            line(x1, 233f, x1, 492f)
+            val x2 = (531 + (t / trajectoryTime) * 231).toFloat()
+            line(x2, 17f, x2, 225f)
+            val x3 = (774 + (t / trajectoryTime) * 231).toFloat()
+            line(x3, 17f, x3, 225f)
         } else if (selectionChanged) {
             redrawScreen()
             selectionChanged = false
