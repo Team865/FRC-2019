@@ -1,11 +1,14 @@
 package ca.warp7.pathplanner
 
-import ca.warp7.frc.*
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.KinematicState
 import ca.warp7.frc.drive.WheelState
+import ca.warp7.frc.f
 import ca.warp7.frc.geometry.*
+import ca.warp7.frc.interpolate
+import ca.warp7.frc.kMetersToFeet
+import ca.warp7.frc.metersToFeet
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.timedTrajectory
@@ -39,7 +42,6 @@ class PathPlanner : PApplet() {
     val wheelBaseRadius = kInchesToMeters * 12.4
     val robotLength = wheelBaseRadius * 1.3
     val robotDrawCenter = Translation2D(768.0, 100.0)
-    val maxVel = kFeetToMeters * 12.0
 
     val kPixelsPerMeter = 494 / 8.2296
     val Double.my2x: Double get() = (17.0 + (512.0 - 17.0) / 2 + kPixelsPerMeter * this)
@@ -77,18 +79,18 @@ class PathPlanner : PApplet() {
     val bg = PImage(ImageIO.read(PathPlanner::class.java.getResource("/field.PNG")))
 
     val model = DifferentialDriveModel(
-            wheelRadius = 0.07493,
-            wheelbaseRadius = wheelBaseRadius * 1.35,
-            maxVelocity = maxVel,
-            maxAcceleration = 2.7432,
-            maxFreeSpeed = 5.0292,
-            speedPerVolt = 6.101694915254239,
-            torquePerVolt = 16.3101367345,
-            frictionVoltage = 1.0,
-            linearInertia = 70.0,
-            angularInertia = 10.0,
-            maxVoltage = 12.0,
-            angularDrag = 20.0
+            wheelRadius = kWheelRadius,
+            wheelbaseRadius = kEffectiveWheelBaseRadius,
+            maxVelocity = kMaxVelocity,
+            maxAcceleration = kMaxAcceleration,
+            maxFreeSpeed = kMaxFreeSpeed,
+            speedPerVolt = kSpeedPerVolt,
+            torquePerVolt = kTorquePerVolt,
+            frictionVoltage = kFrictionVoltage,
+            linearInertia = kLinearInertia,
+            angularInertia = kAngularInertia,
+            maxVoltage = kMaxVolts,
+            angularDrag = kAngularDrag
     )
 
     var draggingPoint = false
@@ -195,13 +197,14 @@ class PathPlanner : PApplet() {
         line(17f, 492f, 512f, 492f)
         strokeWeight(1f)
         stroke(192f, 192f, 192f)
-        rect(529f, 17f, 478f, 100f)
-        rect(529f, 125f, 478f, 100f)
+        rect(529f, 17f, 235f, 208f)
+        line(529f, 121f, 764f, 121f)
+        rect(772f, 17f, 235f, 208f)
+        line(772f, 121f, 1007f, 121f)
         rect(529f, 233f, 478f, 259f)
     }
 
     fun redrawControlPoints() {
-        // draw control points
         controlPoints.forEachIndexed { index, controlPoint ->
             if (selectedIndex == index) {
                 stroke(90f, 138f, 222f)
@@ -218,6 +221,12 @@ class PathPlanner : PApplet() {
 
     fun v2T(v: Double, t: Double, max: Double, y: Int) =
             Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 50)
+
+    fun h2TL(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(531 + (t / trajectoryTime) * 231, y - (v / max) * 104)
+
+    fun h2TR(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(774 + (t / trajectoryTime) * 231, y - (v / max) * 104)
 
     fun List<Translation2D>.connect() {
         beginShape()
@@ -243,16 +252,16 @@ class PathPlanner : PApplet() {
             stroke(255f, 255f, 128f)
             map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t, maxVel, 290) }.connect()
+            map { v2T(it.velocity, it.t, model.maxVelocity, 290) }.connect()
         }
         dynamics.subList(0, i + 1).apply {
             stroke(255f, 255f, 128f)
-            strokeWeight(1f)
-            map { v2T(it.first.left, it.third, 12.0, 175) }.connect()
-            map { v2T(it.first.right, it.third, 12.0, 67) }.connect()
+            strokeWeight(2f)
+            map { h2TL(it.first.right, it.third, 12.0, 121) }.connect()
+            map { h2TR(it.first.left, it.third, 12.0, 121) }.connect()
             stroke(128f, 255f, 255f)
-            map { v2T(it.second.left, it.third, 12.0, 175) }.connect()
-            map { v2T(it.second.right, it.third, 12.0, 67) }.connect()
+            map { h2TL(it.second.right, it.third, 12.0, 121) }.connect()
+            map { h2TR(it.second.left, it.third, 12.0, 121) }.connect()
         }
     }
 
