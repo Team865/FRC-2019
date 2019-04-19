@@ -1,14 +1,10 @@
 package ca.warp7.pathplanner
 
-import ca.warp7.frc.drive.ChassisState
-import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.KinematicState
-import ca.warp7.frc.drive.WheelState
+import ca.warp7.frc.drive.*
 import ca.warp7.frc.f
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.kMetersToFeet
-import ca.warp7.frc.metersToFeet
 import ca.warp7.frc.path.*
 import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.timedTrajectory
@@ -58,7 +54,7 @@ class PathPlanner : PApplet() {
     var splines: List<CurvatureState<Pose2D>> = emptyList()
     var trajectory: List<TrajectoryPoint> = emptyList()
     var controlPoints: MutableList<ControlPoint> = mutableListOf()
-    var dynamics: List<Triple<WheelState, WheelState, Double>> = emptyList()
+    var dynamics: List<Triple<WheelState, DynamicState, Double>> = emptyList()
 
     var maxVRatio = 1.0
     var maxARatio = 1.0
@@ -177,7 +173,7 @@ class PathPlanner : PApplet() {
             val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
             val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
             Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
-                    model.solve(KinematicState(velocity, acceleration)).voltage, it.t)
+                    model.solve(KinematicState(velocity, acceleration)), it.t)
         }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
         maxAngular = trajectory.map { Math.abs(it.velocity * it.state.curvature) }.max() ?: 1.0
@@ -260,8 +256,8 @@ class PathPlanner : PApplet() {
             map { h2TL(it.first.right, it.third, 12.0, 121) }.connect()
             map { h2TR(it.first.left, it.third, 12.0, 121) }.connect()
             stroke(128f, 255f, 255f)
-            map { h2TL(it.second.right, it.third, 12.0, 121) }.connect()
-            map { h2TR(it.second.left, it.third, 12.0, 121) }.connect()
+            map { h2TL(it.second.voltage.right, it.third, 12.0, 121) }.connect()
+            map { h2TR(it.second.voltage.left, it.third, 12.0, 121) }.connect()
         }
     }
 
@@ -460,8 +456,8 @@ class PathPlanner : PApplet() {
             redrawScreen()
         } else if (key == 's') {
             showForCopy(waypoints.joinToString(",\n") {
-                "waypoint(${metersToFeet(it.translation.x).f}, " +
-                        "${metersToFeet(it.translation.y).f}, " +
+                "waypoint(${(kMetersToFeet * it.translation.x).f}, " +
+                        "${(kMetersToFeet * it.translation.y).f}, " +
                         "${it.rotation.degrees.f})"
             })
         }
