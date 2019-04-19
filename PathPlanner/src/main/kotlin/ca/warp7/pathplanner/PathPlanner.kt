@@ -40,14 +40,15 @@ class PathPlanner : PApplet() {
     val robotDrawCenter = Translation2D(768.0, 100.0)
 
     val kPixelsPerMeter = 494 / 8.2296
-    val Double.my2x: Double get() = (17.0 + (512.0 - 17.0) / 2 + kPixelsPerMeter * this)
+    val yCenterPx = 17.0 + (512.0 - 17.0) / 2
+    val Double.my2x: Double get() = (yCenterPx - kPixelsPerMeter * this)
     val Double.mx2y: Double get() = (493.0 - kPixelsPerMeter * this)
-    val Double.px2y: Double get() = (this - 17.0 - (512.0 - 17.0) / 2) / kPixelsPerMeter
+    val Double.px2y: Double get() = (yCenterPx - this) / kPixelsPerMeter
     val Double.py2x: Double get() = (493.0 - this) / kPixelsPerMeter
     val Translation2D.newXY get() = Translation2D(y.my2x, x.mx2y)
-    val Translation2D.newXYNoOffset get() = Translation2D(kPixelsPerMeter * y, -kPixelsPerMeter * x)
+    val Translation2D.newXYNoOffset get() = Translation2D(-kPixelsPerMeter * y, -kPixelsPerMeter * x)
     val Translation2D.oldXY get() = Translation2D(y.py2x, x.px2y)
-    val Translation2D.oldXYNoOffset get() = Translation2D(y / kPixelsPerMeter, -x / kPixelsPerMeter)
+    val Translation2D.oldXYNoOffset get() = Translation2D(-y / kPixelsPerMeter, -x / kPixelsPerMeter)
 
     var waypoints: Array<Pose2D> = emptyArray()
     var intermediate: List<QuinticSegment2D> = emptyList()
@@ -102,7 +103,7 @@ class PathPlanner : PApplet() {
         val r2 = r1.rotate(Rotation2D(0.0, 1.0)).scaled(kTriangleRatio)
         val r3 = r1.rotate(Rotation2D(0.0, -1.0)).scaled(kTriangleRatio)
         ellipse(point.pos.x.toFloat(), point.pos.y.toFloat(), 12f, 12f)
-        val start = point.pos + point.dir.scaled(6.0).run { Translation2D(y, -x) }
+        val start = point.pos - point.dir.scaled(6.0).transposed
         lineTo(start, point.heading)
         val a1 = point.heading + r1.newXYNoOffset
         val a2 = point.heading + r2.newXYNoOffset
@@ -253,11 +254,11 @@ class PathPlanner : PApplet() {
         dynamics.subList(0, i + 1).apply {
             stroke(255f, 255f, 128f)
             strokeWeight(2f)
-            map { h2TL(it.first.right, it.third, 12.0, 121) }.connect()
-            map { h2TR(it.first.left, it.third, 12.0, 121) }.connect()
+            map { h2TL(it.first.left, it.third, 12.0, 121) }.connect()
+            map { h2TR(it.first.right, it.third, 12.0, 121) }.connect()
             stroke(128f, 255f, 255f)
-            map { h2TL(it.second.voltage.right, it.third, 12.0, 121) }.connect()
-            map { h2TR(it.second.voltage.left, it.third, 12.0, 121) }.connect()
+            map { h2TL(it.second.voltage.left, it.third, 12.0, 121) }.connect()
+            map { h2TR(it.second.voltage.right, it.third, 12.0, 121) }.connect()
         }
     }
 
@@ -338,8 +339,8 @@ class PathPlanner : PApplet() {
                 PConstants.LEFT -> translateSelected(Translation2D(0.0, -step))
                 PConstants.RIGHT -> translateSelected(Translation2D(0.0, step))
             }
-            key == 'q' -> rotateSelected(nAng)
-            key == 'w' -> rotateSelected(pAng)
+            key == 'q' -> rotateSelected(pAng)
+            key == 'w' -> rotateSelected(nAng)
             key == 'n' -> {
                 val newWaypoints = arrayOfNulls<Pose2D>(waypoints.size + 1)
                 for (i in 0..selectedIndex) newWaypoints[i] = waypoints[i]
@@ -400,7 +401,7 @@ class PathPlanner : PApplet() {
         if ((controlPoint.heading - mouse).mag < 10 && !draggingPoint) draggingAngle = true
         if (draggingAngle) {
             redrawScreen()
-            val dir = -(mouse - controlPoint.pos).oldXYNoOffset.norm
+            val dir = (mouse - controlPoint.pos).oldXYNoOffset.norm
             val heading = controlPoint.pos + (mouse - controlPoint.pos).norm.scaled(0.5 * kPixelsPerMeter)
             stroke(255f, 128f, 255f)
             strokeWeight(2f)
