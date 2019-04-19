@@ -95,8 +95,13 @@ class PathPlanner : PApplet() {
     var draggedControlPoint: ControlPoint? = null
 
     var simulating = false
-    var simTime = 0.0
+    var simPaused = false
+    var simElapsed = 0.0
     var simIndex = 0
+    var simElapsedChanged = false
+
+    var lastTime = 0.0
+    var dt = 0.0
 
     fun drawArrow(point: ControlPoint): ControlPoint {
         val r1 = point.dir.scaled(0.1524 * kTriangleRatio * 2)
@@ -322,6 +327,54 @@ class PathPlanner : PApplet() {
         }
     }
 
+    fun processConstructing() {
+        when (key) {
+            '_' -> {
+                maxVRatio = (maxVRatio - 0.1).coerceIn(0.3, 1.0)
+                regenerate()
+            }
+            '+' -> {
+                maxVRatio = (maxVRatio + 0.1).coerceIn(0.3, 1.0)
+                regenerate()
+            }
+            '{' -> {
+                maxARatio = (maxARatio - 0.1).coerceIn(0.3, 1.0)
+                regenerate()
+            }
+            '}' -> {
+                maxARatio = (maxARatio + 0.1).coerceIn(0.3, 1.0)
+                regenerate()
+            }
+            'r' -> {
+                val newWaypoints = waypoints.reversedArray()
+                for (i in 0 until newWaypoints.size) {
+                    newWaypoints[i] = newWaypoints[i].run {
+                        Pose2D(translation, rotation.rotate(reversedRotation))
+                    }
+                }
+                waypoints = newWaypoints
+                if (selectedIndex != -1) {
+                    selectedIndex = waypoints.size - 1 - selectedIndex
+                }
+                regenerate()
+            }
+            'f' -> {
+                for (i in 0 until waypoints.size) {
+                    waypoints[i] = waypoints[i].run {
+                        Pose2D(Translation2D(translation.x, -translation.y), Rotation2D(rotation.cos, -rotation.sin))
+                    }
+                }
+                regenerate()
+            }
+            'o' -> {
+                optimizing = !optimizing
+                regenerate()
+            }
+        }
+        if (selectedIndex == -1) processDeselected()
+        else processSelected()
+    }
+
     fun processDeselected() {
         if (key.toInt() == CODED) when (keyCode) {
             PConstants.UP -> translateAll(Translation2D(step, 0.0))
@@ -360,6 +413,29 @@ class PathPlanner : PApplet() {
                 for (i in selectedIndex + 1 until waypoints.size) newWaypoints[i - 1] = waypoints[i]
                 waypoints = newWaypoints.requireNoNulls()
                 regenerate()
+            }
+        }
+    }
+
+    fun processSimulatePaused() {
+        when (key) {
+            '-' -> {
+                simElapsed = (simElapsed - 0.2).coerceAtLeast(0.0)
+                simIndex = 0
+                simElapsedChanged = true
+            }
+            '=' -> {
+                simElapsed = (simElapsed + 0.2).coerceAtMost(trajectoryTime)
+                simElapsedChanged = true
+            }
+            '[' -> {
+                simElapsed = (simElapsed - 0.02).coerceAtLeast(0.0)
+                simIndex = 0
+                simElapsedChanged = true
+            }
+            ']' -> {
+                simElapsed = (simElapsed + 0.02).coerceAtMost(trajectoryTime)
+                simElapsedChanged = true
             }
         }
     }
@@ -448,76 +524,49 @@ class PathPlanner : PApplet() {
     }
 
     override fun keyPressed() {
-        if (key == ' ') {
-            if (simulating) simulating = false else {
+        when (key) {
+            ' ' -> if (simulating) {
+                simPaused = !simPaused
+            } else {
                 simulating = true
                 simIndex = 0
-                simTime = System.currentTimeMillis() / 1000.0
+                simElapsed = 0.0
+                simPaused = false
+                lastTime = System.currentTimeMillis() / 1000.0
+                redrawScreen()
             }
-            redrawScreen()
-        } else if (key == 's') {
-            showForCopy(waypoints.joinToString(",\n") {
+            's' -> showForCopy(waypoints.joinToString(",\n") {
                 "waypoint(${(kMetersToFeet * it.translation.x).f}, " +
                         "${(kMetersToFeet * it.translation.y).f}, " +
                         "${it.rotation.degrees.f})"
             })
-        }
-        if (!simulating) {
-            when (key) {
-                '-' -> {
-                    maxVRatio = (maxVRatio - 0.1).coerceIn(0.3, 1.0)
-                    regenerate()
-                }
-                '=' -> {
-                    maxVRatio = (maxVRatio + 0.1).coerceIn(0.3, 1.0)
-                    regenerate()
-                }
-                '[' -> {
-                    maxARatio = (maxARatio - 0.1).coerceIn(0.3, 1.0)
-                    regenerate()
-                }
-                ']' -> {
-                    maxARatio = (maxARatio + 0.1).coerceIn(0.3, 1.0)
-                    regenerate()
-                }
-                'r' -> {
-                    val newWaypoints = waypoints.reversedArray()
-                    for (i in 0 until newWaypoints.size) {
-                        newWaypoints[i] = newWaypoints[i].run {
-                            Pose2D(translation, rotation.rotate(reversedRotation))
-                        }
-                    }
-                    waypoints = newWaypoints
-                    if (selectedIndex != -1) {
-                        selectedIndex = waypoints.size - 1 - selectedIndex
-                    }
-                    regenerate()
-                }
-                'f' -> {
-                    for (i in 0 until waypoints.size) {
-                        waypoints[i] = waypoints[i].run {
-                            Pose2D(Translation2D(translation.x, -translation.y), Rotation2D(rotation.cos, -rotation.sin))
-                        }
-                    }
-                    regenerate()
-                }
-                'o' -> {
-                    optimizing = !optimizing
-                    regenerate()
-                }
+            '0' -> {
+                simulating = false
+                simPaused = false
+                simIndex = 0
+                simElapsed = 0.0
+                redrawScreen()
             }
-            if (selectedIndex == -1) processDeselected()
-            else processSelected()
         }
+        if (simulating) {
+            if (simPaused) processSimulatePaused()
+        } else processConstructing()
     }
 
     override fun draw() {
         if (simulating) {
             val nt = System.currentTimeMillis() / 1000.0
-            val t = nt - simTime
+            dt = nt - lastTime
+            lastTime = nt
+            if (simPaused) {
+                if (!simElapsedChanged) return
+                simElapsedChanged = false
+            } else simElapsed += dt
+            val t = simElapsed
             while (simIndex < trajectory.size - 2 && trajectory[simIndex + 1].t < t) simIndex++
             if (t > trajectoryTime || simIndex >= trajectory.size) {
                 simulating = false
+                simPaused = false
                 redrawScreen()
                 return
             }
