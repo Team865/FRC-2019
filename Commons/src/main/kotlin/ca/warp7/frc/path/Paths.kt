@@ -50,7 +50,7 @@ val Path2DState.dCurvature2: Double
 
 
 fun quinticSplineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
-    val scale = p0.translation.distanceTo(p1.translation)
+    val scale = p0.translation.distanceTo(p1.translation) * 1.2
     return QuinticSegment2D(
             x0 = p0.translation.x,
             x1 = p1.translation.x,

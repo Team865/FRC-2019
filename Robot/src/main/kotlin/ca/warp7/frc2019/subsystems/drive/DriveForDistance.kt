@@ -2,11 +2,11 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.drive.LinearTrajectoryState
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
+import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
@@ -24,7 +24,7 @@ class DriveForDistance(
         private val kA: Double = 1.0 / 30
 ) : Action {
 
-    private val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
+    private val trajectory = LinearTrajectory(kFeetToMeters * distanceInFeet, DriveMotionPlanner.model)
 
     private val moments: List<Moment<LinearTrajectoryState<Translation2D>>> =
             if (velocityScale == 1.0) trajectory.moments

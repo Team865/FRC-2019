@@ -1,11 +1,11 @@
 package ca.warp7.frc2019.subsystems.drive.unused
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
+import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
@@ -16,7 +16,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
 class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
-    val trajectory = LinearTrajectory(feetToMeters(distanceInFeet), DriveMotionPlanner.model)
+    val trajectory = LinearTrajectory(kFeetToMeters * distanceInFeet, DriveMotionPlanner.model)
     val moments = trajectory.moments
     val totalTime = moments.last().t
     var t = 0.0

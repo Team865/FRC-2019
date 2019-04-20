@@ -3,11 +3,11 @@ package ca.warp7.frc2019.subsystems.drive.unused
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.drive.ChassisState
-import ca.warp7.frc.feetToMeters
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
+import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
@@ -42,8 +42,8 @@ class PIDTrajectory(
 
     val trajectory = parameterizedSplinesOf(*waypoints).timedTrajectory(
             model = model,
-            startVelocity = feetToMeters(startVelocity),
-            endVelocity = feetToMeters(endVelocity),
+            startVelocity = kFeetToMeters * startVelocity,
+            endVelocity = kFeetToMeters * endVelocity,
             maxVelocity = model.maxVelocity * maxVelocityRatio,
             maxAcceleration = model.maxAcceleration * maxAccelerationRatio
     )
