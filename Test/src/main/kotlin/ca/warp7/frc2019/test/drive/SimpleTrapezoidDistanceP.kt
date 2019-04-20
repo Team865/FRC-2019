@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.test.drive
 
-import ca.warp7.frc.config
-import ca.warp7.frc.followedBy
+import ca.warp7.frc.control.config
+import ca.warp7.frc.control.followedBy
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import java.lang.Math.pow
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.sqrt
+import kotlin.math.withSign
 
 class SimpleTrapezoidDistanceP : TimedRobot(){
     private val leftMaster: WPI_TalonSRX = WPI_TalonSRX(DriveConstants.kLeftMaster).apply {

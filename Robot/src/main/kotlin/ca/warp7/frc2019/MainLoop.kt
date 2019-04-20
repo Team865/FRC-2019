@@ -4,10 +4,10 @@ import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.action
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc.ControllerState.*
-import ca.warp7.frc.set
-import ca.warp7.frc.withDriver
-import ca.warp7.frc.withOperator
+import ca.warp7.frc.control.ControllerState.*
+import ca.warp7.frc.control.set
+import ca.warp7.frc.control.withDriver
+import ca.warp7.frc.control.withOperator
 import ca.warp7.frc2019.constants.*
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.drive.DriveState

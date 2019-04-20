@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc
+package ca.warp7.frc.control
 
 import edu.wpi.first.wpilibj.SpeedController
 import edu.wpi.first.wpilibj.TimedRobot

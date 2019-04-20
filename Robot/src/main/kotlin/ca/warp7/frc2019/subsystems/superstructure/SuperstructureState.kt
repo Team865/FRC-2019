@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.subsystems.superstructure
 
 import ca.warp7.actionkt.runOnce
-import ca.warp7.frc.set
+import ca.warp7.frc.control.set
 import ca.warp7.frc2019.subsystems.Conveyor
 import ca.warp7.frc2019.subsystems.Intake
 import ca.warp7.frc2019.subsystems.Lift

@@ -1,4 +1,4 @@
-package ca.warp7.frc
+package ca.warp7.frc.control
 
 internal class RobotControllerImpl : RobotController, BackController {
     override var backButton = ControllerState.None

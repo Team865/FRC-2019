@@ -1,9 +1,9 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
-import ca.warp7.frc.followedBy
-import ca.warp7.frc.talonSRX
-import ca.warp7.frc.victorSPX
+import ca.warp7.frc.control.Subsystem
+import ca.warp7.frc.control.followedBy
+import ca.warp7.frc.control.talonSRX
+import ca.warp7.frc.control.victorSPX
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode

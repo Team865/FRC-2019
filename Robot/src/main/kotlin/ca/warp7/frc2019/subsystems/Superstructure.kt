@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
-import ca.warp7.frc2019.subsystems.superstructure.PassThrough
+import ca.warp7.frc.control.Subsystem
 
 object Superstructure : Subsystem() {
     override fun onPostUpdate() {

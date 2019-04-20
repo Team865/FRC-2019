@@ -1,7 +1,9 @@
 @file:Suppress("unused")
 
-package ca.warp7.frc
+package ca.warp7.frc.control
 
+import ca.warp7.frc.PID
+import ca.warp7.frc.epsilonEquals
 import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.*
 import edu.wpi.first.wpilibj.SpeedController

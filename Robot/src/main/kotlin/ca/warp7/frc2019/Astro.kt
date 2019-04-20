@@ -1,9 +1,10 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.*
+import ca.warp7.frc.control.*
 import ca.warp7.frc2019.subsystems.*
 import ca.warp7.frc2019.subsystems.lift.MainDisplay
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
 class Astro : TimedRobot(0.02) {
 
@@ -72,6 +73,6 @@ class Astro : TimedRobot(0.02) {
     @Suppress("UnusedMainParameter")
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Astro() }
+        fun main(args: Array<String>) = startRobot { Astro() }
     }
 }

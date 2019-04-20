@@ -1,6 +1,6 @@
-package ca.warp7.frc
+package ca.warp7.frc.control
 
-import ca.warp7.frc.ControllerState.*
+import ca.warp7.frc.control.ControllerState.*
 import edu.wpi.first.wpilibj.GenericHID.Hand.kLeft
 import edu.wpi.first.wpilibj.GenericHID.Hand.kRight
 import edu.wpi.first.wpilibj.XboxController

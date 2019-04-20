@@ -2,8 +2,8 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
+import ca.warp7.frc.control.speedController
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.speedController
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive

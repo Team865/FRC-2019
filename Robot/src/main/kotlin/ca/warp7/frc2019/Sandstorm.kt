@@ -1,10 +1,10 @@
 package ca.warp7.frc2019
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.ControllerState
-import ca.warp7.frc.Controls
-import ca.warp7.frc.RobotControl
-import ca.warp7.frc.set
+import ca.warp7.frc.control.ControllerState
+import ca.warp7.frc.control.Controls
+import ca.warp7.frc.control.RobotControl
+import ca.warp7.frc.control.set
 import ca.warp7.frc2019.auton.DriveOnly
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Drive

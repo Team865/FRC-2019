@@ -1,4 +1,4 @@
-package ca.warp7.frc
+package ca.warp7.frc.control
 
 import ca.warp7.actionkt.ActionStateMachine
 import ca.warp7.actionkt.future

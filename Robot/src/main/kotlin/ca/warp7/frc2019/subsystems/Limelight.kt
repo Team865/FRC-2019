@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
+import ca.warp7.frc.control.Subsystem
 import edu.wpi.first.networktables.NetworkTable
 import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.networktables.NetworkTableInstance

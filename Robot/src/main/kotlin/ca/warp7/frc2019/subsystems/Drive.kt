@@ -2,8 +2,11 @@
 
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.*
-import ca.warp7.frc.geometry.degrees
+import ca.warp7.frc.PID
+import ca.warp7.frc.control.Subsystem
+import ca.warp7.frc.control.followedBy
+import ca.warp7.frc.control.setPID
+import ca.warp7.frc.control.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
