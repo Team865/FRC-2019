@@ -128,6 +128,10 @@ class DifferentialDriveModel(
      * If curvature is 0, we just return a ChassisState with no angular velocity.
      *
      * Future: Does this also work for acceleration???
+     *
+     * @param curvature the curvature of the path
+     * @param maxVel the maximum velocity of the faster wheel
+     * @return the maximum reachable chassis velocity
      */
     fun signedMaxAtCurvature(curvature: Double, maxVel: Double = maxVelocity): ChassisState {
         if (curvature.epsilonEquals(0.0, 1E-9)) {
@@ -184,19 +188,22 @@ class DifferentialDriveModel(
      * then convert to volts and add the signed friction voltage
      * Units: (N * m) / ((N * m) / V) + (rad/s) / ((rad/s) / V) + V = V
      *
-     * @param speed the desired speed in rad/s
-     * @param torque the desired torque in N * m
+     * @param chassisSpeed the speed of the chassis to determine friction voltage
+     * @param wheelSpeed the desired speed in rad/s
+     * @param wheelTorque the desired torque in N * m
      * @return voltage in V
      */
-    fun voltageForTorque(speed: Double, torque: Double): Double {
+    fun voltageForTorque(chassisSpeed: Double, wheelSpeed: Double, wheelTorque: Double): Double {
         val frictionVoltage = when {
-            speed > kEpsilon -> this.frictionVoltage
-            speed < -kEpsilon -> -this.frictionVoltage
-            torque > kEpsilon -> this.frictionVoltage
-            torque < -kEpsilon -> -this.frictionVoltage
+            chassisSpeed > kEpsilon -> frictionVoltage
+            chassisSpeed < -kEpsilon -> -frictionVoltage
+            wheelSpeed > kEpsilon -> frictionVoltage
+            wheelSpeed < -kEpsilon -> -frictionVoltage
+            wheelTorque > kEpsilon -> frictionVoltage
+            wheelTorque < -kEpsilon -> -frictionVoltage
             else -> return 0.0
         }
-        return torque / torquePerVolt + speed / speedPerVolt + frictionVoltage
+        return wheelTorque / torquePerVolt + wheelSpeed / speedPerVolt + frictionVoltage
     }
 
 
@@ -220,13 +227,11 @@ class DifferentialDriveModel(
      * = m * (N - N - N)
      * = N * m
      *
-     * @param kinematicState kinematic state in [(m/s, rad/s), (m/s^2, rad/s^2)]
+     * @param velocity required velocity in (m/s, rad/s)
+     * @param acceleration required acceleration in (m/s^2, rad/s^2)
      * @return dynamic state in [(V, V), (N * m, N * m)]
      */
-    fun solve(kinematicState: KinematicState): DynamicState {
-
-        val velocity = kinematicState.velocity // (m/s, rad/s)
-        val acceleration = kinematicState.acceleration // (m/s, rad/s)
+    fun solve(velocity: ChassisState, acceleration: ChassisState): DynamicState {
 
         val leftTorque = 0.5 * wheelRadius * (acceleration.linear * linearInertia -
                 acceleration.angular * angularInertia / wheelbaseRadius -
@@ -239,8 +244,8 @@ class DifferentialDriveModel(
         val wheelVelocity = solve(velocity) // (m/s, m/s)
         val wheelVelocityRadians = wheelVelocity / wheelRadius // (rad/s, rad/s)
 
-        val leftVoltage = voltageForTorque(wheelVelocityRadians.left, leftTorque) // V
-        val rightVoltage = voltageForTorque(wheelVelocityRadians.right, rightTorque) // V
+        val leftVoltage = voltageForTorque(velocity.linear, wheelVelocityRadians.left, leftTorque) // V
+        val rightVoltage = voltageForTorque(velocity.linear, wheelVelocityRadians.right, rightTorque) // V
 
         return DynamicState(
                 voltage = WheelState(left = leftVoltage, right = rightVoltage),
@@ -248,7 +253,7 @@ class DifferentialDriveModel(
         )
     }
 
-    fun solve(velocity: ChassisState, acceleration: ChassisState): DynamicState {
-        return solve(KinematicState(velocity, acceleration))
+    fun solve(kinematicState: KinematicState): DynamicState {
+        return solve(kinematicState.velocity, kinematicState.acceleration)
     }
 }
