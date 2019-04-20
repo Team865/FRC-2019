@@ -11,7 +11,7 @@ import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan
 
-class PursuePathNew(private val path: IndexedTrajectory<Pose2D, Pose2D>) : Action {
+class PursuePathNew(path: IndexedTrajectory<Pose2D, Pose2D>) : Action {
     //var path = Path(emptyList())
     var lookaheadDistance = 0.2
     var lookaheadGain = 0.05

@@ -12,14 +12,6 @@ data class PID(
         val maxOutput: Double = 1.0
 ) {
 
-    constructor(values: PIDValues,
-                kF: Double = 0.0,
-                errorEpsilon: Double = 0.1,
-                dErrorEpsilon: Double = 0.1,
-                minTimeInEpsilon: Double = 0.1,
-                dtNormalizer: Double = 50.0,
-                maxOutput: Double = 1.0) : this(values.p, values.i, values.d, kF, errorEpsilon, dErrorEpsilon, minTimeInEpsilon, dtNormalizer, maxOutput)
-
     var lastError = 0.0
     var dError = 0.0
     var sumError = 0.0
@@ -34,7 +26,7 @@ data class PID(
 
     fun updateByError(error: Double): Double {
         // normalize the change in time so kD doesn't need to be too high and kI doesn't need to be too low
-        val dt = dt * dtNormalizer
+        val normalizedDt = dt * dtNormalizer
         // calculate proportional gain
         val pGain = kP * error
         // calculate conditions for resetting integral sum
@@ -44,11 +36,11 @@ data class PID(
                 || (pGain < 0 && sumError > 0) // sumError is in forward while kP goes in reverse
         ) sumError = 0.0
         // otherwise add current error to the sum of errors
-        else sumError += error * dt
+        else sumError += error * normalizedDt
         // calculate the integral gain
         val iGain = kI * sumError
         // calculate change in error
-        dError = (error - lastError) / dt
+        dError = (error - lastError) / normalizedDt
         lastError = error
         // calculate derivative gain
         val dGain = kD * dError
@@ -56,7 +48,7 @@ data class PID(
         // by adding the unmodified dt to a sum
         if (error.epsilonEquals(0.0, errorEpsilon)
                 && dError.epsilonEquals(0.0, dErrorEpsilon)
-        ) timeInEpsilon += this.dt
+        ) timeInEpsilon += dt
         // reset timeInEpsilon
         else timeInEpsilon = 0.0
 
@@ -64,14 +56,14 @@ data class PID(
     }
 
     fun updateBySetpoint(actual: Double): Double {
-        // calculate error
-        val error = setpoint - actual
         // calculate feedforward gain
         val fGain = kF * setpoint
+        // calculate error
+        val error = setpoint - actual
         // calculate feedback gains
         val pidGain = updateByError(error)
         // add up gains to get the output
-        return (pidGain + fGain).coerceIn(-maxOutput, maxOutput)
+        return (fGain + pidGain).coerceIn(-maxOutput, maxOutput)
     }
 
     fun isDone(): Boolean = timeInEpsilon > minTimeInEpsilon
