@@ -5,7 +5,6 @@ import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.Timer
 
 @Suppress("unused")
 object GoToPositionMotionPlanning : Action {
@@ -20,7 +19,7 @@ object GoToPositionMotionPlanning : Action {
     }
 
     fun generateTragectory(targetHeightAbsolute: Double) {
-        timeStarted = Timer.getFPGATimestamp()
+        timeStarted = io.time
         heightInputAbsoluteInches = targetHeightAbsolute - LiftConstants.kHomeHeightInches
         LiftTrajectory.generateTrajectory(targetHeightFromHome)
     }

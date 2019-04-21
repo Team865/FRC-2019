@@ -10,7 +10,6 @@ import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.wpilibj.Timer
 
 class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) : Action {
     private val io: RobotIO = RobotIO
@@ -30,7 +29,7 @@ class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) 
     }
 
     override fun update() {
-        val nt = Timer.getFPGATimestamp()
+        val nt = io.time
         lastTime = nt
         t = nt - startTime
         while (i < moments.size - 3 && moments[i].t < t) i++

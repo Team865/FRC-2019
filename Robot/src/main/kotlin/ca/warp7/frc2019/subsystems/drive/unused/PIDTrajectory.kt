@@ -72,7 +72,7 @@ class PIDTrajectory(
     }
 
     override fun update() {
-        val nt = Timer.getFPGATimestamp()
+        val nt = io.time
         t = nt - startTime
 
         while (i < trajectory.size - 2 && trajectory[i + 1].t < t) i++

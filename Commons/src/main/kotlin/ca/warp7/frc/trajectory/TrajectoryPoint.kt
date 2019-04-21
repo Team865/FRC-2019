@@ -1,5 +1,6 @@
 package ca.warp7.frc.trajectory
 
+import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.f
 import ca.warp7.frc.geometry.CurvatureState
 import ca.warp7.frc.geometry.Pose2D
@@ -13,4 +14,7 @@ data class TrajectoryPoint(
     override fun toString(): String {
         return "T(t=${t.f}, $state, v=${velocity.f}, a=${acceleration.f})"
     }
+
+    val chassisVelocity get() = ChassisState(velocity, velocity * state.curvature)
+    val chassisAcceleration get() = ChassisState(acceleration, acceleration * state.curvature)
 }
