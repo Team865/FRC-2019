@@ -3,9 +3,9 @@ package ca.warp7.frc2019.subsystems.drive.unused
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.*
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
+import ca.warp7.frc2019.v2.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.absoluteValue
 import kotlin.math.sign
@@ -21,11 +21,13 @@ class PIDToPoint(
         val turnPID: PID = DriveConstants.kTurnPID
 ) : Action {
 
-    private val robotState get() = DriveMotionPlanner.robotState
+    private val io: RobotIO = RobotIO
+
+    private val robotState get() = Drive.robotState
     private var absoluteTarget = target
 
     override fun start() {
-        Drive.controlMode = ControlMode.Velocity
+        io.driveControlMode = ControlMode.Velocity
         // calculate the target relative to the robot's starting point
         absoluteTarget = if (absolute) target else robotState + target
     }
@@ -36,8 +38,8 @@ class PIDToPoint(
     override fun update() {
 
         // assign dt values
-        straightPID.dt = DriveMotionPlanner.dt
-        turnPID.dt = DriveMotionPlanner.dt
+        straightPID.dt = io.dt
+        turnPID.dt = io.dt
 
         // calculate the error from the robot to the target (in the perspective of the robot)
         val error = Pose2D((absoluteTarget.translation - robotState.translation).rotate(robotState.rotation),
@@ -76,12 +78,12 @@ class PIDToPoint(
         println("lato $lateralOffset")
 
         // convert to ticks/100ms and set the motor velocities
-        Drive.leftDemand = (forwardOutput - turningOutput) * DriveConstants.kTicksPerFootPer100ms
-        Drive.rightDemand = (forwardOutput + turningOutput) * DriveConstants.kTicksPerFootPer100ms
+        io.leftDemand = (forwardOutput - turningOutput) * DriveConstants.kTicksPerFootPer100ms
+        io.rightDemand = (forwardOutput + turningOutput) * DriveConstants.kTicksPerFootPer100ms
     }
 
     override fun stop() {
-        Drive.leftDemand = 0.0
-        Drive.rightDemand = 0.0
+        io.leftDemand = 0.0
+        io.rightDemand = 0.0
     }
 }

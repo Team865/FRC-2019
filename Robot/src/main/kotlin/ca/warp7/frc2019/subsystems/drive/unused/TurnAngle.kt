@@ -1,26 +1,29 @@
 package ca.warp7.frc2019.subsystems.drive.unused
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
 class TurnAngle(val angle: Double) : Action {
+
+    private val io: RobotIO = RobotIO
+
     private val totalAngle
-        get() = (Drive.leftPosition - Drive.rightPosition) /
+        get() = (io.leftPosition - io.rightPosition) /
                 (1024 * 2 * DriveConstants.kWheelCircumference)
     var tolerance = 1E-2 // angle
 
     private var initialAngle = 0.0
 
     override fun start() {
-        Drive.controlMode = ControlMode.Position
+        io.driveControlMode = ControlMode.Position
         initialAngle = totalAngle
 
         val distance = DriveConstants.kTurningCircumference * angle / 360
-        Drive.leftDemand = 1024 * distance
-        Drive.rightDemand = -1024 * distance
+        io.leftDemand = 1024 * distance
+        io.rightDemand = -1024 * distance
     }
 
     override val shouldFinish

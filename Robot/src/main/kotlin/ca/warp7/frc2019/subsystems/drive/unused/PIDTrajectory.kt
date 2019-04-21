@@ -10,9 +10,9 @@ import ca.warp7.frc.interpolate
 import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
+import ca.warp7.frc2019.v2.subsystems.Drive
 import edu.wpi.first.wpilibj.Timer
 
 class PIDTrajectory(
@@ -37,8 +37,11 @@ class PIDTrajectory(
                 errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
         )
 ) : Action {
-    private val robotState get() = DriveMotionPlanner.robotState
-    private val model = DriveMotionPlanner.model
+
+    private val io: RobotIO = RobotIO
+
+    private val robotState get() = Drive.robotState
+    private val model = Drive.model
 
     val trajectory = parameterizedSplinesOf(*waypoints).timedTrajectory(
             model = model,
@@ -57,15 +60,15 @@ class PIDTrajectory(
     override fun start() {
         i = 0
         startTime = Timer.getFPGATimestamp()
-        Drive.setPID(DriveConstants.kVelocityFeedforwardPID)
-        DriveMotionPlanner.setVelocity(startVelocity, startVelocity)
+        io.drivePID = DriveConstants.kVelocityFeedforwardPID
+        Drive.setVelocity(startVelocity, startVelocity)
     }
 
     override val shouldFinish: Boolean
         get() = t > trajectoryTime || i >= trajectory.size
 
     override fun stop() {
-        DriveMotionPlanner.setVelocity(endVelocity, endVelocity)
+        Drive.setVelocity(endVelocity, endVelocity)
     }
 
     override fun update() {
@@ -121,8 +124,8 @@ class PIDTrajectory(
 
             val lookahead = trajectory[j]
 
-            straightPID.dt = DriveMotionPlanner.dt
-            turnPID.dt = DriveMotionPlanner.dt
+            straightPID.dt = io.dt
+            turnPID.dt = io.dt
 
             val target = lookahead.state.state
 
@@ -151,6 +154,6 @@ class PIDTrajectory(
             }
         }
 
-        DriveMotionPlanner.setVelocity(leftVel, rightVel, leftAcc, rightAcc)
+        Drive.setVelocity(leftVel, rightVel, leftAcc, rightAcc)
     }
 }

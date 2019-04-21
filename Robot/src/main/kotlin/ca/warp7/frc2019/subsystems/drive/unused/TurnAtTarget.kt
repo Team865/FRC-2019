@@ -6,16 +6,16 @@ import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.Infrastructure
-import ca.warp7.frc2019.subsystems.Limelight
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
 
 class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0, val limeThreshold: Double = 10.0) : Action {
+
+    private val io: RobotIO = RobotIO
+
     private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
     private var startYaw = Rotation2D.identity
     private var error = 0.0
@@ -23,8 +23,8 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
     private var sumError = 0.0
 
     override fun start() {
-        Drive.controlMode = ControlMode.PercentOutput
-        startYaw = Infrastructure.yaw
+        io.driveControlMode = ControlMode.PercentOutput
+        startYaw = io.yaw
         error = targetYaw.radians
         targetYaw += startYaw
     }
@@ -36,8 +36,8 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
     private val integralZone = 10.0
 
     override fun update() {
-        val newError = (targetYaw - Infrastructure.yaw).degrees
-        dError = (newError - error) / DriveMotionPlanner.dt
+        val newError = (targetYaw - io.yaw).degrees
+        dError = (newError - error) / io.dt
 
         if (error.sign != newError.sign) sumError = 0.0
         else if (!error.epsilonEquals(0.0, integralZone)) sumError += integralZone.withSign(newError)
@@ -46,11 +46,11 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
         val angularGain = error * angularKp + dError * angularKd + sumError * angularKi
 
         var demand = angularGain
-        val apparantPercent = (Drive.leftVelocity + Drive.rightVelocity) / 2.0 / (DriveConstants.kMaxVelocity)
-        demand += (demand - apparantPercent) * kA / DriveMotionPlanner.dt
+        val apparantPercent = (io.leftVelocity + io.rightVelocity) / 2.0 / (DriveConstants.kMaxVelocity)
+        demand += (demand - apparantPercent) * kA / io.dt
 
-        Drive.leftDemand = demand
-        Drive.rightDemand = -demand
+        io.leftDemand = demand
+        io.rightDemand = -demand
 
         error = newError
 //        Drive.put("Qt Error", error)
@@ -63,13 +63,13 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
         get() = error.epsilonEquals(0.0, stopAngleThreshold)
                 && dError.epsilonEquals(0.0, 1.0)
                 ||
-                Limelight.hasTarget
+                io.foundVisionTarget
                 && error.epsilonEquals(0.0, limeThreshold)
-                && Limelight.x.epsilonEquals(0.0, limeThreshold)
+                && io.visionErrorX.epsilonEquals(0.0, limeThreshold)
 
 
     override fun stop() {
-        Drive.apply {
+        io.apply {
             leftDemand = 0.0
             rightDemand = 0.0
             leftFeedforward = 0.0

@@ -4,9 +4,8 @@ package ca.warp7.frc2019.subsystems.drive.unused
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.*
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
-import ca.warp7.frc2019.subsystems.drive.DriveState
+import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.v2.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class DriveToPointKt(
@@ -21,6 +20,8 @@ class DriveToPointKt(
         private val slowTurn: Boolean = true
 ) : Action {
 
+    private val io: RobotIO = RobotIO
+
     private val turnPID = PID(3.5, 0.08, 5.0, 0.25,
             0.0, 0.0, 0.0, 0.0, 0.0)
     private val straightPID = PID(0.15, 0.0015, 0.3, 0.25,
@@ -29,8 +30,8 @@ class DriveToPointKt(
     // rotates the xy coordinates to be relative to the angle of the target
     val rotatedError: Translation2D
         get() {
-            val currentX = DriveMotionPlanner.robotState.translation.x
-            val currentY = DriveMotionPlanner.robotState.translation.y
+            val currentX = Drive.robotState.translation.x
+            val currentY = Drive.robotState.translation.y
             val rotation = 90 - this.theta
 
             val currentPosition = Translation2D(currentX, currentY)
@@ -58,7 +59,7 @@ class DriveToPointKt(
         turningOffset = turningOffset.coerceIn(-maxTurn, maxTurn)
         targetHeading = this.theta - turningOffset
 
-        val angle = DriveMotionPlanner.robotState.rotation.degrees
+        val angle = Drive.robotState.rotation.degrees
         val offset = angle % 360
 
         // Corrects the target to work with Gyro position
@@ -69,19 +70,19 @@ class DriveToPointKt(
         }
 
         val yError = error.y
-        straightPID.dt = DriveMotionPlanner.dt
+        straightPID.dt = io.dt
 
         var yOutput: Double
         yOutput = straightPID.updateByError(yError)
 
-        var distanceFromTargetHeading = Math.abs(turnPID.setpoint - DriveMotionPlanner.robotState.rotation.degrees)
+        var distanceFromTargetHeading = Math.abs(turnPID.setpoint - Drive.robotState.rotation.degrees)
         // prevents the y output from being reversed in the next calculation
         if (distanceFromTargetHeading > 90) distanceFromTargetHeading = 90.0
 
         // slow down y if we aren't facing the correct angle
         if (slowTurn) yOutput *= (-1 * distanceFromTargetHeading / 90.0 + 1)
 
-        var xOutput = -turnPID.updateBySetpoint(DriveMotionPlanner.robotState.rotation.degrees)
+        var xOutput = -turnPID.updateBySetpoint(Drive.robotState.rotation.degrees)
 
         if (!this.slowTurn) {
             xOutput *= 0.85
@@ -90,9 +91,9 @@ class DriveToPointKt(
         val leftOut = yOutput + xOutput
         val rightOut = yOutput - xOutput
 
-        Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = leftOut
-        Drive.rightDemand = rightOut
+        io.driveControlMode = ControlMode.Velocity
+        io.leftDemand = leftOut
+        io.rightDemand = rightOut
 
         done = Math.abs(yError) < this.eps
     }
@@ -101,6 +102,11 @@ class DriveToPointKt(
         get() = done && minVelocity <= 0.5
 
     override fun stop() {
-        Drive.set(DriveState.kNeutralOutput)
+        io.apply {
+            leftDemand = 0.0
+            rightDemand = 0.0
+            leftFeedforward = 0.0
+            rightFeedforward = 0.0
+        }
     }
 }

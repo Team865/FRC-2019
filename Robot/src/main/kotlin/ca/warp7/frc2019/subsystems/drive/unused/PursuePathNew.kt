@@ -6,7 +6,7 @@ import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.trajectory.IndexedTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
+import ca.warp7.frc2019.v2.subsystems.Drive
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan
@@ -18,9 +18,9 @@ class PursuePathNew(path: IndexedTrajectory<Pose2D, Pose2D>) : Action {
     val points = path.points
 
     override fun update() {
-        val x = DriveMotionPlanner.robotState.translation.x
-        val y = DriveMotionPlanner.robotState.translation.y
-        val yaw = DriveMotionPlanner.robotState.rotation.radians
+        val x = Drive.robotState.translation.x
+        val y = Drive.robotState.translation.y
+        val yaw = Drive.robotState.rotation.radians
         val p = Translation2D(x, y)
 
         var i = points.map { (it.translation - p).mag }.let { it.indexOf(it.min()) }

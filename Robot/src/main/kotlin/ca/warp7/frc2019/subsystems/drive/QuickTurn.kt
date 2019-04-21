@@ -1,28 +1,30 @@
 package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.Infrastructure
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
 import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
+import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.v2.subsystems.Drive.robotState
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
+    private val io: RobotIO = RobotIO
+
     val turnPID = PID(
             kP = 1.5, kI = 0.004, kD = 5.0, kF = 0.0,
             errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3,
-            maxOutput=DriveConstants.kMaxVelocity
+            maxOutput = DriveConstants.kMaxVelocity
     )
+
     var initYaw: Rotation2D = Rotation2D.identity
 
     override fun start() {
-        Drive.controlMode = ControlMode.Velocity
+        io.driveControlMode = ControlMode.Velocity
         initYaw = robotState.rotation
-        println("ERROR start ${robotState}")
+        println("ERROR start $robotState")
     }
 
     private val angularKp = 0.029
@@ -34,13 +36,13 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
     override fun update() {
         val error = robotState.rotation - initYaw - Rotation2D.fromDegrees(angleInDegrees)
 
-        turnPID.dt=DriveMotionPlanner.dt
+        turnPID.dt = io.dt
         val angularGain = turnPID.updateByError(error.degrees)
 
         val demand = angularGain * DriveConstants.kTicksPerFootPer100ms
-        println("ERROR ${robotState}")
-        Drive.leftDemand = demand
-        Drive.rightDemand = -demand
+        println("ERROR $robotState")
+        io.leftDemand = demand
+        io.rightDemand = -demand
     }
 
     override val shouldFinish
@@ -48,7 +50,7 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
 
 
     override fun stop() {
-        Drive.apply {
+        io.apply {
             leftDemand = 0.0
             rightDemand = 0.0
             leftFeedforward = 0.0

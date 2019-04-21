@@ -2,7 +2,6 @@ package ca.warp7.frc2019.subsystems.drive
 
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
-import ca.warp7.frc.drive.KinematicState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
@@ -83,33 +82,5 @@ object DriveMotionPlanner {
         Drive.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
         Drive.leftFeedforward = leftAcc / 1023
         Drive.rightFeedforward = rightAcc / 1023
-    }
-
-    fun setDynamicVelocity(
-            leftVel: Double, rightVel: Double, // m/s
-            leftAcc: Double = 0.0, rightAcc: Double = 0.0 // m/s^2
-    ) {
-        val dynamicState = model.solve(KinematicState(
-                velocity = model.solve(wheels = WheelState(left = leftVel, right = rightVel)),
-                acceleration = model.solve(wheels = WheelState(left = leftAcc, right = rightAcc))
-        ))
-        Drive.controlMode = ControlMode.Velocity
-        Drive.leftDemand = leftVel * DriveConstants.kTicksPerMeterPer100ms
-        Drive.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
-        Drive.leftFeedforward = dynamicState.voltage.left / 12
-        Drive.rightFeedforward = dynamicState.voltage.right / 12
-    }
-
-    fun setDynamicFeedforward(
-            leftVel: Double, rightVel: Double, // m/s
-            leftAcc: Double = 0.0, rightAcc: Double = 0.0 // m/s^2
-    ) {
-        val dynamicState = model.solve(KinematicState(
-                velocity = model.solve(wheels = WheelState(left = leftVel, right = rightVel)),
-                acceleration = model.solve(wheels = WheelState(left = leftAcc, right = rightAcc))
-        ))
-        Drive.controlMode = ControlMode.PercentOutput
-        Drive.leftDemand = dynamicState.voltage.left / 12
-        Drive.rightDemand = dynamicState.voltage.right / 12
     }
 }
