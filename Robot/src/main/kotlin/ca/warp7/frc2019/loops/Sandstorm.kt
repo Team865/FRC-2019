@@ -7,7 +7,6 @@ import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.auton.DriveOnly
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.v2.loops.RobotStateEstimator
 import ca.warp7.frc2019.v2.subsystems.Lift
 
 class Sandstorm : Action {

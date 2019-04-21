@@ -9,7 +9,6 @@ import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.Limelight
 import ca.warp7.frc2019.v2.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
@@ -46,7 +45,7 @@ class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
         val kA = 1.0 / 23
         val accelerationGain = (a / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
-        val newYaw = Rotation2D.fromDegrees(Limelight.x)
+        val newYaw = Rotation2D.fromDegrees(io.visionErrorX)
         val angularKp = 400.0
         val angularGain = angularKp * (newYaw - lastYaw).radians / io.dt
         lastYaw = newYaw

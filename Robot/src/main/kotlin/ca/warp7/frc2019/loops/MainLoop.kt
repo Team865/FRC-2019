@@ -25,17 +25,17 @@ class MainLoop : Action {
     val timerControl = ActionControl()
 
     val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
-    val visionLog = RobotIO.getLogger("vision")
+    val visionLog = io.getLogger("vision")
     val visionLatch = LatchedBoolean()
     val liftTriggerLatch = LatchedBoolean()
 
     override fun start() {
-        RobotIO.enableTelemetry = true
-        RobotIO.readingDriveEncoders = false
-        RobotIO.readingLiftEncoder = true
-        RobotIO.readingGyro = false
-        RobotIO.readingLimelight = true
-        RobotIO.setDriveRampRate(0.15)
+        io.enableTelemetry = true
+        io.readingDriveEncoders = false
+        io.readingLiftEncoder = true
+        io.readingGyro = false
+        io.readingLimelight = true
+        io.setDriveRampRate(0.15)
         visionLog.writeHeaders("speedLimit", "correction",
                 "left", "right", "visionErrorX", "visionArea")
     }
@@ -48,7 +48,7 @@ class MainLoop : Action {
     }
 
     override fun update() {
-        RobotIO.driver.apply {
+        io.driver.apply {
             val speed = applyDeadband(-leftYAxis, 1.0, 0.2)
             val curvature = applyDeadband(rightXAxis, 1.0, 0.1)
             val quickTurn = leftBumper == HeldDown
@@ -60,60 +60,60 @@ class MainLoop : Action {
                 Drive.setNormalize(speed - turn, speed + turn)
             }
             when (rightBumper) {
-                Pressed -> RobotIO.limelightMode = LimelightMode.Vision
-                Released -> RobotIO.limelightMode = LimelightMode.Driver
+                Pressed -> io.limelightMode = LimelightMode.Vision
+                Released -> io.limelightMode = LimelightMode.Driver
                 else -> Unit
             }
             val wantAligning = rightBumper == HeldDown
-            val isAligning = wantAligning && RobotIO.foundVisionTarget && speed >= 0
-                    && !quickTurn && abs(RobotIO.visionErrorX) < 15
+            val isAligning = wantAligning && io.foundVisionTarget && speed >= 0
+                    && !quickTurn && abs(io.visionErrorX) < 15
             if (visionLatch.update(isAligning)) {
                 visionLog.writeData(0, 0, 0, 0)
             }
             if (isAligning) {
-                val speedLimit = 0.8 - 0.5 * RobotIO.visionArea
-                RobotIO.leftDemand = RobotIO.leftDemand.coerceAtMost(speedLimit)
-                RobotIO.rightDemand = RobotIO.rightDemand.coerceAtMost(speedLimit)
+                val speedLimit = 0.8 - 0.5 * io.visionArea
+                io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
+                io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
                 if (speed == 0.0) {
-                    RobotIO.leftDemand += Drive.model.frictionVoltage / 12.0
-                    RobotIO.rightDemand += Drive.model.frictionVoltage / 12.0
+                    io.leftDemand += Drive.model.frictionVoltage / 12.0
+                    io.rightDemand += Drive.model.frictionVoltage / 12.0
                 }
-                val correction = visionPID.updateByError(Math.toRadians(-RobotIO.visionErrorX), RobotIO.dt)
-                if (correction > 0) RobotIO.rightDemand += correction
-                else if (correction < 0) RobotIO.leftDemand -= correction
-                visionLog.writeData(speedLimit, correction, RobotIO.leftDemand,
-                        RobotIO.rightDemand, RobotIO.visionErrorX, RobotIO.visionArea)
+                val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
+                if (correction > 0) io.rightDemand += correction
+                else if (correction < 0) io.leftDemand -= correction
+                visionLog.writeData(speedLimit, correction, io.leftDemand,
+                        io.rightDemand, io.visionErrorX, io.visionArea)
             }
             when {
                 leftTriggerAxis > 0.2 -> {
-                    RobotIO.outtakeSpeed = -leftTriggerAxis * 0.8
-                    RobotIO.conveyorSpeed = -leftTriggerAxis * 0.9
-                    RobotIO.intakeSpeed = -leftTriggerAxis
+                    io.outtakeSpeed = -leftTriggerAxis * 0.8
+                    io.conveyorSpeed = -leftTriggerAxis * 0.9
+                    io.intakeSpeed = -leftTriggerAxis
                 }
                 rightTriggerAxis > 0.2 -> {
-                    RobotIO.outtakeSpeed = rightTriggerAxis * 0.8
-                    RobotIO.conveyorSpeed = rightTriggerAxis * 0.9
-                    RobotIO.intakeSpeed = rightTriggerAxis
+                    io.outtakeSpeed = rightTriggerAxis * 0.8
+                    io.conveyorSpeed = rightTriggerAxis * 0.9
+                    io.intakeSpeed = rightTriggerAxis
                 }
-                else -> RobotIO.intakeSpeed = 0.0
+                else -> io.intakeSpeed = 0.0
             }
             if (aButton == Pressed) {
-                if (!RobotIO.pushing) {
-                    RobotIO.grabbing = false
+                if (!io.pushing) {
+                    io.grabbing = false
                     timerControl.setAction(runAfter(0.3) {
-                        RobotIO.invertPushing()
+                        io.invertPushing()
                     })
                     Looper.add(timerControl)
-                } else RobotIO.pushing = !RobotIO.pushing
+                } else io.pushing = !io.pushing
             }
             if (Pressed == xButton) {
-                RobotIO.invertGrabbing()
-                RobotIO.pushing = false
+                io.invertGrabbing()
+                io.pushing = false
             }
-            if (bButton == Pressed) RobotIO.outtakeSpeed = 1.0
+            if (bButton == Pressed) io.outtakeSpeed = 1.0
         }
 
-        RobotIO.operator.apply {
+        io.operator.apply {
             if (abs(leftYAxis) > 0.2) {
                 Lift.manualSpeed = applyDeadband(leftYAxis, 1.0, 0.2)
                 Lift.isManual = true
