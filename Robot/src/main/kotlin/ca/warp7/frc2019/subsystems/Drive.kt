@@ -8,7 +8,6 @@ import ca.warp7.frc.control.followedBy
 import ca.warp7.frc.control.setPID
 import ca.warp7.frc.control.talonSRX
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
@@ -58,7 +57,6 @@ object Drive : Subsystem() {
 //        rightPosition = rightMaster.selectedSensorPosition * -1
 //        leftVelocity = leftMaster.selectedSensorVelocity
 //        rightVelocity = rightMaster.selectedSensorVelocity * -1
-        DriveMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {
