@@ -3,11 +3,11 @@ package ca.warp7.frc2019.auton
 import ca.warp7.actionkt.async
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.wait
+import ca.warp7.frc2019.actions.GoToSetpoint
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
-import ca.warp7.frc2019.subsystems.lift.GoToSetpoint
 
 object LeftRocketCloseHatch {
 

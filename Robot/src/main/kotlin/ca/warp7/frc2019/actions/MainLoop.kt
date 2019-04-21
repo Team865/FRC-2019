@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.loops
+package ca.warp7.frc2019.actions
 
 import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionControl
@@ -13,8 +13,8 @@ import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
-import ca.warp7.frc2019.v2.subsystems.Drive
-import ca.warp7.frc2019.v2.subsystems.Lift
+import ca.warp7.frc2019.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Lift
 import kotlin.math.abs
 import kotlin.math.withSign
 

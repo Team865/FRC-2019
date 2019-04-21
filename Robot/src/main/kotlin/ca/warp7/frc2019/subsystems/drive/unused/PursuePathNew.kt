@@ -6,7 +6,7 @@ import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.trajectory.IndexedTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.v2.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Drive
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan

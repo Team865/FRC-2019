@@ -1,7 +1,7 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc2019.loops.MainLoop
-import ca.warp7.frc2019.loops.Sandstorm
+import ca.warp7.frc2019.actions.MainLoop
+import ca.warp7.frc2019.actions.Sandstorm
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.TimedRobot.startRobot
 

@@ -8,7 +8,7 @@ import ca.warp7.frc.interpolate
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.v2.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 

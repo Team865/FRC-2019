@@ -12,7 +12,7 @@ import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.v2.subsystems.Drive
+import ca.warp7.frc2019.subsystems.Drive
 import edu.wpi.first.wpilibj.Timer
 
 class PIDTrajectory(

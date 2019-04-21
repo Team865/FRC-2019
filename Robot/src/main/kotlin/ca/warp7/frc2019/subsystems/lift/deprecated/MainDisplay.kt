@@ -1,8 +1,8 @@
-package ca.warp7.frc2019.subsystems.lift
+package ca.warp7.frc2019.subsystems.lift.deprecated
 
 import ca.warp7.frc.control.Subsystem
 import ca.warp7.frc2019.constants.HatchCargo
-import ca.warp7.frc2019.v2.subsystems.Lift
+import ca.warp7.frc2019.subsystems.Lift
 
 object MainDisplay : Subsystem() {
     override fun onOutput() {

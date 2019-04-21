@@ -7,7 +7,7 @@ import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.v2.subsystems.Drive.robotState
+import ca.warp7.frc2019.subsystems.Drive.robotState
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {

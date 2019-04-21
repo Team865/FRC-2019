@@ -1,59 +1,76 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.control.Subsystem
-import ca.warp7.frc.control.followedBy
-import ca.warp7.frc.control.talonSRX
-import ca.warp7.frc.control.victorSPX
+import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.can.TalonSRX
-import edu.wpi.first.wpilibj.DigitalInput
+import kotlin.math.withSign
 
-@Suppress("MemberVisibilityCanBePrivate")
-object Lift : Subsystem() {
+object Lift {
 
-    val master: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
-            .followedBy(victorSPX(LiftConstants.kFollower, inverted = true))
-            .apply { setSensorPhase(true) }
+    private val io: RobotIO = RobotIO
 
-    val hallEffect = DigitalInput(LiftConstants.kHallEffect)
+    var setpointLevel = 0
+    var setpointType = HatchCargo.Hatch
 
-    var demand = 0.0
-    var feedforward = 0.0
-    var position = 0
-    var velocity = 0
-    var hallEffectTriggered = true
-
-    var controlMode = ControlMode.PercentOutput
-        set(value) {
-            if (field != value) when (value) {
-                ControlMode.Position -> master.selectProfileSlot(0, 0)
-                ControlMode.Velocity -> master.selectProfileSlot(1, 0)
-                else -> Unit
-            }
-            field = value
+    fun getCoolSetpoint(): Double = when (setpointLevel) {
+        0 -> when (setpointType) {
+            HatchCargo.Hatch -> LiftConstants.kHomeHeightInches
+            HatchCargo.Cargo -> FieldConstants.kCargo1Height
         }
-
-    override fun onDisabled() = master.neutralOutput()
-    override fun onOutput() = master.set(controlMode, demand, DemandType.ArbitraryFeedForward, feedforward)
-
-    override fun onMeasure(dt: Double) {
-        position = master.selectedSensorPosition
-        velocity = master.selectedSensorVelocity
-        hallEffectTriggered = !hallEffect.get()
+        1 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.kHatch2Height
+            HatchCargo.Cargo -> FieldConstants.kCargo2Height
+        }
+        2 -> when (setpointType) {
+            HatchCargo.Hatch -> FieldConstants.kHatch3Height
+            HatchCargo.Cargo -> FieldConstants.kCargo3Height
+        }
+        else -> LiftConstants.kHomeHeightInches
     }
 
-    override fun onPostUpdate() {
-//        put("HallEffect", hallEffectTriggered)
-//        put("Demand", demand)
-//        put("Feedforward", feedforward)
-//        put("Raw ticks", position)
-//        put("Adjusted Height (encoder)", LiftMotionPlanner.adjustedPositionTicks)
-//        put("Adjusted Height (in)", LiftMotionPlanner.height)
-//        put("Velocity (in per s)", LiftMotionPlanner.velocity)
-//        put("Acceleration (in per s^2)", LiftMotionPlanner.acceleration)
-//        put("Cool Setpoint", LiftMotionPlanner.getCoolSetpoint())
-//        put("Setpoint", LiftMotionPlanner.setpointInches * LiftConstants.kTicksPerInch)
+    fun increaseSetpoint() {
+        setpointLevel = (setpointLevel + 1).coerceAtMost(2)
+    }
+
+    fun decreaseSetpoint() {
+        setpointLevel = (setpointLevel - 1).coerceAtLeast(0)
+    }
+
+    var nominalZero = 0
+    var feedforwardEnabled = true
+    var isManual = false
+    var manualSpeed = 0.0
+    var setpointInches = 0.0
+
+    val adjustedPositionTicks get() = io.liftPosition - nominalZero
+    val height get() = adjustedPositionTicks / LiftConstants.kTicksPerInch
+
+    fun setFeedforward() {
+        io.liftFeedforward = if (feedforwardEnabled) LiftConstants.kPrimaryFeedforward else 0.0
+    }
+
+    fun updateManualControl() {
+        io.liftControlMode = ControlMode.PercentOutput
+        io.liftDemand = (manualSpeed * manualSpeed).withSign(manualSpeed)
+        setFeedforward()
+    }
+
+    fun updatePositionControl() {
+        if (io.hallEffectTriggered) {
+            nominalZero = io.liftPosition
+        }
+        if (setpointInches < LiftConstants.kPIDDeadSpotHeight
+                || height < LiftConstants.kPIDDeadSpotHeight
+                || io.hallEffectTriggered) {
+            io.liftControlMode = ControlMode.Position
+            io.liftDemand = -(setpointInches * LiftConstants.kTicksPerInch) + nominalZero
+            setFeedforward()
+        } else {
+            io.liftControlMode = ControlMode.PercentOutput
+            io.liftDemand = LiftConstants.kMoveToBottomDemand
+            io.liftFeedforward = 0.0
+        }
     }
 }
