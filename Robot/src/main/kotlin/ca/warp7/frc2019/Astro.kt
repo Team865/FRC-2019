@@ -5,7 +5,7 @@ import ca.warp7.frc2019.actions.Sandstorm
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
-class Astro : TimedRobot() {
+class Astro : TimedRobot(0.02) {
 
     private val io: RobotIO by lazy { RobotIO }
     private val looper: Looper = Looper
