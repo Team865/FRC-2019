@@ -1,11 +1,12 @@
 package ca.warp7.frc2019.subsystems.lift.deprecated
 
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import kotlin.math.sign
 import kotlin.math.sqrt
 
 object LiftTrajectory {
+    private val io: RobotIO = RobotIO
     var relativeTargetHeight = 0.0
     var isTriangle = false
     var maxReachedVelocity = 0.0
@@ -14,8 +15,8 @@ object LiftTrajectory {
 
     fun generateTrajectory(relativeHeight: Double) {
         relativeTargetHeight = relativeHeight
-        val dtFromZeroVelocity = LiftMotionPlanner.velocity / LiftConstants.kMaxBaseAcceleration
-        val dxFromZeroVelocity = (LiftMotionPlanner.velocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
+        val dtFromZeroVelocity = io.liftVelocity / LiftConstants.kMaxBaseAcceleration
+        val dxFromZeroVelocity = (io.liftVelocity / 2 * dtFromZeroVelocity) * sign(relativeHeight)
         val linearChangeAtMaxTheoreticalVelocity = (relativeHeight + dxFromZeroVelocity) / 2
         val maxTheoreticallyReachableVelocity = sqrt(2 * LiftConstants.kMaxBaseAcceleration * linearChangeAtMaxTheoreticalVelocity) * sign(relativeHeight)
         if (LiftConstants.kMaxVelocityInchesPerSecond >= maxTheoreticallyReachableVelocity) {

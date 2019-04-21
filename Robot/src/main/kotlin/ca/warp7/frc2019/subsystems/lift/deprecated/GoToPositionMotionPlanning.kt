@@ -1,21 +1,22 @@
 package ca.warp7.frc2019.subsystems.lift.deprecated
 
 import ca.warp7.actionkt.Action
+import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.subsystems.Lift
-import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
+import ca.warp7.frc2019.v2.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.Timer
 
 @Suppress("unused")
 object GoToPositionMotionPlanning : Action {
+    private val io: RobotIO = RobotIO
     var heightInputAbsoluteInches = 0.0
     var targetHeightFromHome = 0.0
     var tragectory = LiftTrajectory
     var timeStarted = 0.0
 
     override fun start() {
-        Lift.controlMode = ControlMode.Velocity
+        io.liftControlMode = ControlMode.Velocity
     }
 
     fun generateTragectory(targetHeightAbsolute: Double) {
@@ -25,11 +26,11 @@ object GoToPositionMotionPlanning : Action {
     }
 
     override fun update() {
-        Lift.demand = LiftTrajectory.desiredVelocoity(Timer.getFPGATimestamp() - timeStarted)
+        io.liftDemand = LiftTrajectory.desiredVelocoity(io.time - timeStarted)
     }
 
     override val shouldFinish: Boolean
         get() {
-            return LiftMotionPlanner.height == targetHeightFromHome && LiftMotionPlanner.velocity == Lift.demand
+            return Lift.height == targetHeightFromHome && io.liftVelocity == io.liftDemand.toInt()
         }
 }

@@ -5,15 +5,16 @@ import ca.warp7.actionkt.runOnce
 import ca.warp7.actionkt.wait
 import ca.warp7.frc.PID
 import ca.warp7.frc.path.waypoint
-import ca.warp7.frc2019.subsystems.Limelight
-import ca.warp7.frc2019.subsystems.Outtake
-import ca.warp7.frc2019.subsystems.drive.*
-import ca.warp7.frc2019.subsystems.drive.DriveMotionPlanner.robotState
-import ca.warp7.frc2019.subsystems.drive.unused.PIDToPoint
+import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.subsystems.drive.AlignWithLimelight
+import ca.warp7.frc2019.subsystems.drive.DriveForDistance
+import ca.warp7.frc2019.subsystems.drive.QuickTurn
 import ca.warp7.frc2019.subsystems.drive.unused.PIDTrajectory
 
 object DriveOnly {
-    val driveForDistance = queue{}
+    private val io: RobotIO = RobotIO
+    val driveForDistance = queue {}
 
     val quickTurn
         get() = queue {
@@ -34,10 +35,10 @@ object DriveOnly {
 
     val leftCloseRocket
         get() = queue {
-//            //+SetRobotState(8.4717, 4.2358, 0.0000)
-            +runOnce{
-                Outtake.grabbing=true
-                Outtake.pushing=false
+            //            //+SetRobotState(8.4717, 4.2358, 0.0000)
+            +runOnce {
+                io.grabbing = true
+                io.pushing = false
             }
             +PIDTrajectory(
                     arrayOf(
@@ -65,19 +66,19 @@ object DriveOnly {
                             errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3
                     )
             )
-            +runOnce { Limelight.isDriver = false }
+            +runOnce { io.limelightMode = LimelightMode.Vision }
             +AlignWithLimelight()
             +wait(0.3)
             +DriveForDistance(1.9)
-            +runOnce{
-                Outtake.grabbing=false
-                Outtake.pushing=true
+            +runOnce {
+                io.grabbing = false
+                io.pushing = true
             }
             +wait(0.3)
             +DriveForDistance(3.0, isBackwards = true)
 
-            +runOnce{
-                Outtake.pushing=false
+            +runOnce {
+                io.pushing = false
             }
             //+QuickTurn(-135.0)
             //+PIDToPoint(waypoint(13, 0, -90))

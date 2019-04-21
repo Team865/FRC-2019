@@ -1,20 +1,22 @@
 package ca.warp7.frc2019.auton
 
 import ca.warp7.actionkt.*
-import ca.warp7.frc2019.subsystems.Limelight
-import ca.warp7.frc2019.subsystems.Outtake
+import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.constants.LimelightMode
 import ca.warp7.frc2019.subsystems.drive.AlignWithLimelight
 import ca.warp7.frc2019.subsystems.drive.DriveForDistance
 import ca.warp7.frc2019.subsystems.drive.QuickTurn
 
 object LeftCargoShipHatch {
+    private val io: RobotIO = RobotIO
+    
     fun get(isLimelight: Boolean = true): Action {
         return queue {
             // grab hatch
             +runOnce {
-                Outtake.grabbing = true
-                Outtake.pushing = false
-                Limelight.isDriver = false
+                io.grabbing = true
+                io.pushing = false
+                io.limelightMode = LimelightMode.Vision
             }
             +wait(0.5)
 
@@ -44,7 +46,7 @@ object LeftCargoShipHatch {
         get() = queue {
 
             // grab hatch
-            +runOnce { Outtake.grabbing = true }
+            +runOnce { io.grabbing = true }
             +wait(1.0)
 
             // drive to second cargo bay

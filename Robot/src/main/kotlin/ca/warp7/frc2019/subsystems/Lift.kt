@@ -5,7 +5,6 @@ import ca.warp7.frc.control.followedBy
 import ca.warp7.frc.control.talonSRX
 import ca.warp7.frc.control.victorSPX
 import ca.warp7.frc2019.constants.LiftConstants
-import ca.warp7.frc2019.subsystems.lift.LiftMotionPlanner
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
@@ -43,7 +42,6 @@ object Lift : Subsystem() {
         position = master.selectedSensorPosition
         velocity = master.selectedSensorVelocity
         hallEffectTriggered = !hallEffect.get()
-        LiftMotionPlanner.updateMeasurements(dt)
     }
 
     override fun onPostUpdate() {
