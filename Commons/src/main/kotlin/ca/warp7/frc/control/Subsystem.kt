@@ -50,7 +50,6 @@ abstract class Subsystem : ActionStateMachine() {
 
     private fun initialize() {
         initialized = true
-        InternalControl.addSubsystem(this)
     }
 
     /**

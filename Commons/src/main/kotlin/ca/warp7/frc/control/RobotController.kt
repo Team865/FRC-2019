@@ -9,6 +9,7 @@ interface RobotController {
     val rightBumper: ControllerState
     val leftStickButton: ControllerState
     val rightStickButton: ControllerState
+    val backButton: ControllerState
     val startButton: ControllerState
     val leftTriggerAxis: Double
     val rightTriggerAxis: Double
