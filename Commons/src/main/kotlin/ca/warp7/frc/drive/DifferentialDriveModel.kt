@@ -125,13 +125,13 @@ class DifferentialDriveModel(
      *
      * L is double of wheelBaseRadius, so calculations are simplified here.
      *
-     * If curvature is 0, we just return a ChassisState with no angular velocity.
+     * If curvature is 0, it just returns a ChassisState with no angular velocity.
      *
      * Future: Does this also work for acceleration???
      *
-     * @param curvature the curvature of the path
-     * @param maxVel the maximum velocity of the faster wheel
-     * @return the maximum reachable chassis velocity
+     * @param curvature the curvature of the path in m^-1
+     * @param maxVel the maximum velocity of the faster wheel in m/s
+     * @return the maximum reachable chassis velocity in (m/s, rad/s)
      */
     fun signedMaxAtCurvature(curvature: Double, maxVel: Double = maxVelocity): ChassisState {
         if (curvature.epsilonEquals(0.0, 1E-9)) {

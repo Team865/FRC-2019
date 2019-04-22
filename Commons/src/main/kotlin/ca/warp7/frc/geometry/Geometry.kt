@@ -16,6 +16,10 @@ fun Rotation2D.Companion.fromRadians(radians: Double): Rotation2D = Rotation2D(c
 
 fun Rotation2D.Companion.fromDegrees(degrees: Double) = fromRadians(Math.toRadians(degrees))
 
+val Number.radians: Rotation2D get() = Rotation2D.fromRadians(this.toDouble())
+
+val Number.degrees: Rotation2D get() = Rotation2D.fromDegrees(this.toDouble())
+
 val Rotation2D.radians: Double get() = atan2(y = sin, x = cos)
 
 val Rotation2D.degrees: Double get() = Math.toDegrees(radians)
