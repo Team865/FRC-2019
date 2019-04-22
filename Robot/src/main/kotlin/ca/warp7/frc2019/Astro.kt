@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
 class Astro : TimedRobot(0.02) {
 
-    private val io: RobotIO by lazy { RobotIO }
+    private val io: RobotIO = RobotIO
     private val looper: Looper = Looper
 
     override fun robotInit() {
@@ -38,6 +38,8 @@ class Astro : TimedRobot(0.02) {
 
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = startRobot(::Astro)
+        fun main(args: Array<String>) {
+            startRobot { Astro() }
+        }
     }
 }

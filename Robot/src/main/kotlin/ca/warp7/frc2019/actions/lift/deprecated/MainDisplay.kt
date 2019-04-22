@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.subsystems.lift.deprecated
+package ca.warp7.frc2019.actions.lift.deprecated
 
 import ca.warp7.frc.control.Subsystem
 import ca.warp7.frc2019.constants.HatchCargo

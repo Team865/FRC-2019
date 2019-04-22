@@ -49,24 +49,18 @@ class MainLoop : Action {
 
     override fun update() {
         io.driver.apply {
-            val speed = applyDeadband(-leftYAxis, 1.0, 0.2)
-            val curvature = applyDeadband(rightXAxis, 1.0, 0.1)
-            val quickTurn = leftBumper == HeldDown
-            if (quickTurn) {
-                val turn = (curvature * curvature).withSign(curvature)
-                Drive.setPercent(-turn, turn)
-            } else {
-                val turn = speed * curvature
-                Drive.setNormalize(speed - turn, speed + turn)
-            }
+            val xSpeed = applyDeadband(-leftYAxis, 1.0, 0.2)
+            val zRotation = applyDeadband(rightXAxis, 1.0, 0.1)
+            val isQuickTurn = leftBumper == HeldDown
+            curvatureDrive(xSpeed, zRotation, isQuickTurn)
             when (rightBumper) {
                 Pressed -> io.limelightMode = LimelightMode.Vision
                 Released -> io.limelightMode = LimelightMode.Driver
                 else -> Unit
             }
             val wantAligning = rightBumper == HeldDown
-            val isAligning = wantAligning && io.foundVisionTarget && speed >= 0
-                    && !quickTurn && abs(io.visionErrorX) < 15
+            val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0
+                    && !isQuickTurn && abs(io.visionErrorX) < 15
             if (visionLatch.update(isAligning)) {
                 visionLog.writeData(0, 0, 0, 0)
             }
@@ -74,7 +68,7 @@ class MainLoop : Action {
                 val speedLimit = 0.8 - 0.5 * io.visionArea
                 io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
                 io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
-                if (speed == 0.0) {
+                if (xSpeed == 0.0) {
                     io.leftDemand += Drive.model.frictionVoltage / 12.0
                     io.rightDemand += Drive.model.frictionVoltage / 12.0
                 }
@@ -151,5 +145,76 @@ class MainLoop : Action {
             if (Lift.isManual) Lift.updateManualControl()
             else Lift.updatePositionControl()
         }
+    }
+
+    private var quickStopAccumulator = 0.0
+
+    /**
+     * Curvature drive method for differential drive platform.
+     *
+     *
+     * The rotation argument controls the curvature of the robot's path rather than its rate of
+     * heading change. This makes the robot more controllable at high speeds. Also handles the
+     * robot's quick turn functionality - "quick turn" overrides constant-curvature turning for
+     * turn-in-place maneuvers.
+     *
+     * @param xSpeed      The robot's speed along the X axis [-1.0..1.0]. Forward is positive.
+     * @param zRotation   The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is
+     * positive.
+     * @param isQuickTurn If set, overrides constant-curvature turning for
+     * turn-in-place maneuvers.
+     */
+    fun curvatureDrive(xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
+
+        val angularPower: Double
+
+        if (isQuickTurn) {
+            if (Math.abs(xSpeed) < 0.2) {
+                val alpha = 0.1
+                quickStopAccumulator = (1 - alpha) * quickStopAccumulator + alpha * zRotation * 2.0
+            }
+            angularPower = (zRotation * zRotation).withSign(zRotation).coerceIn(-0.8, 0.8)
+        } else {
+            angularPower = Math.abs(xSpeed) * zRotation - quickStopAccumulator
+            when {
+                quickStopAccumulator > 1 -> quickStopAccumulator -= 1.0
+                quickStopAccumulator < -1 -> quickStopAccumulator += 1.0
+                else -> quickStopAccumulator = 0.0
+            }
+        }
+
+        var leftMotorOutput = xSpeed + angularPower
+        var rightMotorOutput = xSpeed - angularPower
+
+        // If rotation is overpowered, reduce both outputs to within acceptable range
+        if (isQuickTurn) {
+            when {
+                leftMotorOutput > 1.0 -> {
+                    rightMotorOutput -= leftMotorOutput - 1.0
+                    leftMotorOutput = 1.0
+                }
+                rightMotorOutput > 1.0 -> {
+                    leftMotorOutput -= rightMotorOutput - 1.0
+                    rightMotorOutput = 1.0
+                }
+                leftMotorOutput < -1.0 -> {
+                    rightMotorOutput -= leftMotorOutput + 1.0
+                    leftMotorOutput = -1.0
+                }
+                rightMotorOutput < -1.0 -> {
+                    leftMotorOutput -= rightMotorOutput + 1.0
+                    rightMotorOutput = -1.0
+                }
+            }
+        }
+
+        // Normalize the wheel speeds
+        val maxMagnitude = Math.max(Math.abs(leftMotorOutput), Math.abs(rightMotorOutput))
+        if (maxMagnitude > 1.0) {
+            leftMotorOutput /= maxMagnitude
+            rightMotorOutput /= maxMagnitude
+        }
+
+        Drive.setPercent(leftMotorOutput, rightMotorOutput)
     }
 }
