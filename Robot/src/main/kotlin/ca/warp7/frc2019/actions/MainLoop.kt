@@ -26,6 +26,8 @@ class MainLoop : Action {
 
     val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
     val visionLog = io.getLogger("vision")
+            .withHeaders("speedLimit", "correction",
+                    "left", "right", "visionErrorX", "visionArea")
     val visionLatch = LatchedBoolean()
     val liftTriggerLatch = LatchedBoolean()
 
@@ -36,8 +38,6 @@ class MainLoop : Action {
         io.readingGyro = false
         io.readingLimelight = true
         io.setDriveRampRate(0.15)
-        visionLog.writeHeaders("speedLimit", "correction",
-                "left", "right", "visionErrorX", "visionArea")
     }
 
     override val shouldFinish: Boolean

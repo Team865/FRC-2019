@@ -29,7 +29,7 @@ class Sandstorm : Action {
                 LiftConstants.kTicksPerInch / LiftConstants.kTicksPerRadian
         io.resetLiftPosition(positionRadians = initPos)
         Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
-        Lift.updatePositionControl() // todo repeat calls?
+        Lift.updatePositionControl()
     }
 
     override val shouldFinish: Boolean

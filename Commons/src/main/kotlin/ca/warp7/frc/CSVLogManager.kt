@@ -17,6 +17,7 @@ class CSVLogManager {
 
     private var logDir: File? = null
     private var loggers: MutableList<CSVLogger> = mutableListOf()
+    private var loggerNames: MutableMap<String, Int> = mutableMapOf()
 
     fun startSession(name: String) {
         val dateStr = format.format(Date())
@@ -29,8 +30,10 @@ class CSVLogManager {
     }
 
     fun getLogger(name: String): CSVLogger {
+        val count = loggerNames[name] ?: 0 + 1
+        loggerNames[name] = count
         val logDir = logDir!!
-        val file = File(logDir, "$name.csv")
+        val file = File(logDir, "$name-$count.csv")
         val writer = PrintWriter(BufferedWriter(FileWriter(file)), false)
         val logger = CSVLoggerImpl(writer)
         loggers.add(logger)

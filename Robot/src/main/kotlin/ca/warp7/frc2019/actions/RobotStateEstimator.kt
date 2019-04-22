@@ -25,17 +25,17 @@ class RobotStateEstimator : Action {
         )
 
         // solve into chassis velocity
-        val velocity = Drive.model.solve(wheelVelocity)
+        Drive.chassisVelocity = Drive.model.solve(wheelVelocity)
 
         // If gyro connected, use the yaw value from the gyro as the new angle
         // otherwise add the calculated angular velocity to current yaw
-        val newAngle = Drive.robotState.rotation + Rotation2D.fromRadians(io.dt *
-                (if (io.gyroConnected) io.angularVelocity else velocity.angular))
+        val theta = Drive.robotState.rotation + Rotation2D.fromRadians(io.dt *
+                (if (io.gyroConnected) io.angularVelocity else Drive.chassisVelocity.angular))
 
         // add displacement into current position
-        val newPosition = Drive.robotState.translation + newAngle.translation * (velocity.linear * io.dt)
+        val pos = Drive.robotState.translation + theta.translation * (Drive.chassisVelocity.linear * io.dt)
 
         // update the robot state
-        Drive.robotState = Pose2D(newPosition, newAngle)
+        Drive.robotState = Pose2D(pos, theta)
     }
 }

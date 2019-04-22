@@ -7,9 +7,10 @@ internal class CSVLoggerImpl(private val writer: PrintWriter) : CSVLogger {
     internal var isDone = false
     private var count = 0
 
-    override fun writeHeaders(vararg headers: String) {
+    override fun withHeaders(vararg headers: String): CSVLogger {
         writer.println(headers.joinToString(", "))
         writer.flush()
+        return this
     }
 
     override fun writeData(vararg data: Number) {

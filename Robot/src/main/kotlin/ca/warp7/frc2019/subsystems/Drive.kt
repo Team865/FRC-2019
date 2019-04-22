@@ -24,6 +24,7 @@ object Drive {
     private val io: RobotIO = RobotIO
 
     var robotState: Pose2D = Pose2D.identity
+    var chassisVelocity = ChassisState(0.0, 0.0)
 
     val model = DifferentialDriveModel(
             wheelRadius = DriveConstants.kWheelRadius,
