@@ -2,7 +2,6 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.CSVLogger
-import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.path.parameterizedSplinesOf
@@ -19,7 +18,7 @@ class DriveTrajectory(
         accRatio: Double = 0.8,
         val backwards: Boolean = false,
         val resetState: Boolean = true,
-        val followerType: FollowerType = FeedforwardOnly
+        val followerType: FollowerType = VoltageOnly
 ) : Action {
 
     private val io: RobotIO = RobotIO
@@ -40,7 +39,7 @@ class DriveTrajectory(
                     "v", "w")
 
     override fun start() {
-        Drive.initTrajectory(trajectory, resetState, backwards, PID(kP = 0.8, kD = 5.0))
+        Drive.initTrajectory(trajectory, resetState, backwards)
     }
 
     override fun update() {
@@ -48,8 +47,10 @@ class DriveTrajectory(
         val setpointState = setpoint.state.state
         val error = Drive.getError(setpoint.state.state)
         when (followerType) {
-            FeedforwardOnly -> Drive.setFeedforward(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            VelocityPD -> Drive.setDynamicState(setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            VoltageOnly -> Drive.setFeedforward(setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            SpeedDemand -> Drive.setDynamicState(setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            PosePID -> Drive.updatePID(error, setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            AnglePID -> Drive.updateAnglePID(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             Ramsete -> Drive.updateRamsete(error, setpoint.chassisVelocity)
         }
         logger.writeData(

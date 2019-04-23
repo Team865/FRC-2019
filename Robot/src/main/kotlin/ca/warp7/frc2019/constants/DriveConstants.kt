@@ -88,18 +88,8 @@ object DriveConstants {
     // Talon configuration
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {
-
-        slot0.apply {
-            kP = kVelocityFeedforwardPID.kP
-            kI = kVelocityFeedforwardPID.kI
-            kD = kVelocityFeedforwardPID.kD
-            kF = kVelocityFeedforwardPID.kF
-        }
-
         openloopRamp = kOpenLoopRamp
-
         voltageCompSaturation = kMaxVolts
-
         primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
     }
 }

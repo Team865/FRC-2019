@@ -2,6 +2,8 @@ package ca.warp7.frc.geometry
 
 data class Pose2D(val translation: Translation2D, val rotation: Rotation2D) : State<Pose2D> {
 
+    constructor(x: Double, y: Double, rotation: Rotation2D) : this(Translation2D(x, y), rotation)
+
     override fun unaryMinus(): Pose2D = inverse
 
     override fun unaryPlus(): Pose2D = copy

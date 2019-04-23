@@ -77,7 +77,6 @@ object RobotIO {
     var limelightConnected = false
     var foundVisionTarget = false
     var visionErrorX = 0.0 // deg
-    var visionErrorY = 0.0 // deg
     var visionArea = 0.0 // % of full image
 
     var gyroConnected = false
@@ -113,7 +112,6 @@ object RobotIO {
                 foundVisionTarget = limelight.getEntry("tv").getDouble(0.0).toInt() == 1
                 if (foundVisionTarget) {
                     visionErrorX = limelight.getEntry("tv").getDouble(0.0)
-                    visionErrorY = limelight.getEntry("ty").getDouble(0.0)
                     visionArea = limelight.getEntry("ta").getDouble(0.0)
                 }
             }
@@ -184,7 +182,6 @@ object RobotIO {
                 getEntry("limelightConnected").setBoolean(limelightConnected)
                 getEntry("foundVisionTarget").setBoolean(foundVisionTarget)
                 getEntry("visionErrorX").setNumber(visionErrorX)
-                getEntry("visionErrorY").setNumber(visionErrorY)
                 getEntry("visionArea").setNumber(visionArea)
             }
             if (readingGyro) {

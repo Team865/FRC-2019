@@ -74,7 +74,7 @@ class MainLoop : Action {
                 }
                 val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
                 if (correction > 0) io.rightDemand += correction
-                else if (correction < 0) io.leftDemand -= correction
+                else if (correction < 0) io.leftDemand += correction
                 visionLog.writeData(speedLimit, correction, io.leftDemand,
                         io.rightDemand, io.visionErrorX, io.visionArea)
             }
@@ -94,9 +94,7 @@ class MainLoop : Action {
             if (aButton == Pressed) {
                 if (!io.pushing) {
                     io.grabbing = false
-                    timerControl.setAction(runAfter(0.3) {
-                        io.invertPushing()
-                    })
+                    timerControl.setAction(runAfter(0.3) { io.invertPushing() })
                     Looper.add(timerControl)
                 } else io.pushing = !io.pushing
             }

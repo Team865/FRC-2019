@@ -3,7 +3,9 @@ package ca.warp7.frc2019.auton
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.runOnce
 import ca.warp7.actionkt.wait
-import ca.warp7.frc.path.waypoint
+import ca.warp7.frc.feet
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.actions.AlignWithLimelight
 import ca.warp7.frc2019.actions.DriveForDistance
@@ -41,9 +43,10 @@ object DriveOnly {
             }
             +DriveTrajectory(
                     arrayOf(
-                            waypoint(0, 0, 0),
-                            waypoint(2, 0, 0),
-                            waypoint(16.7, 0, -90)
+                            Pose2D(0.feet, 0.feet, 0.degrees),
+                            Pose2D(2.feet, 0.feet, 0.degrees),
+                            Pose2D(2.feet, 0.feet, 0.degrees),
+                            Pose2D(16.7.feet, 0.feet, 90.degrees)
                     )
             )
             +runOnce { io.limelightMode = LimelightMode.Vision }
