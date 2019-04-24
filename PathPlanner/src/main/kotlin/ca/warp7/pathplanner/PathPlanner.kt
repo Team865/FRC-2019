@@ -164,7 +164,7 @@ class PathPlanner : PApplet() {
             val dir = it.rotation.norm.translation
             controlPoints.add(ControlPoint(pos, heading, dir))
         }
-        intermediate = quinticSplinesOf(*waypoints, optimizing = optimizing)
+        intermediate = quinticSplinesOf(*waypoints, optimizePath = optimizing)
         curvatureSum = intermediate.sumDCurvature2()
         splines = intermediate.parameterized()
         arcLength = splines.zipWithNext { a: CurvatureState<Pose2D>, b: CurvatureState<Pose2D> ->

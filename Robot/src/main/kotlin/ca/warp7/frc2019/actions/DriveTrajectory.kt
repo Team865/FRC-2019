@@ -4,31 +4,22 @@ import ca.warp7.actionkt.Action
 import ca.warp7.frc.CSVLogger
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.path.parameterizedSplinesOf
-import ca.warp7.frc.trajectory.TrajectoryPoint
-import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.FollowerType
 import ca.warp7.frc2019.constants.FollowerType.*
 import ca.warp7.frc2019.subsystems.Drive
 
 class DriveTrajectory(
-        waypoints: Array<Pose2D>,
-        velRatio: Double = 0.8,
-        accRatio: Double = 0.8,
+        val waypoints: Array<Pose2D>,
+        val vRatio: Double = 0.8,
+        val aRatio: Double = 0.8,
         val backwards: Boolean = false,
-        val resetState: Boolean = true,
+        val insertRobotState: Boolean = false,
+        val resetInitialState: Boolean = true,
         val followerType: FollowerType = VoltageOnly
 ) : Action {
 
     private val io: RobotIO = RobotIO
-
-    private val trajectory: List<TrajectoryPoint> = parameterizedSplinesOf(*waypoints).timedTrajectory(
-            model = Drive.model,
-            startVelocity = 0.0,
-            endVelocity = 0.0,
-            maxVelocity = Drive.model.maxVelocity * velRatio,
-            maxAcceleration = Drive.model.maxAcceleration * accRatio)
 
     private val logger: CSVLogger = io.getLogger("DriveTrajectory")
             .withHeaders(
@@ -39,7 +30,7 @@ class DriveTrajectory(
                     "v", "w")
 
     override fun start() {
-        Drive.initTrajectory(trajectory, resetState, backwards)
+        Drive.initTrajectory(waypoints, vRatio, aRatio, backwards, insertRobotState, resetInitialState)
     }
 
     override fun update() {

@@ -11,7 +11,10 @@ import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.interpolate
+import ca.warp7.frc.path.parameterized
+import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.trajectory.TrajectoryPoint
+import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -150,10 +153,6 @@ object Drive {
         setAdjustedChassisState(model.solve(velocity, acceleration), linear, angular)
     }
 
-    fun getError(setpoint: Pose2D) =
-            Pose2D((setpoint.translation - robotState.translation)
-                    .rotate(-robotState.rotation), (setpoint.rotation - robotState.rotation))
-
     private const val kW = 5.0
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
@@ -169,16 +168,28 @@ object Drive {
     private var trajectory: List<TrajectoryPoint> = listOf()
     private var totalTime = 0.0
     private var direction = 0.0
+    private var initialState: Pose2D = Pose2D.identity
 
-    fun initTrajectory(trajectory: List<TrajectoryPoint>, backwards: Boolean, resetState: Boolean) {
-        this.trajectory = trajectory
-        this.direction = if (backwards) -1.0 else 1.0
-        this.totalTime = trajectory.last().t
+    fun initTrajectory(waypoints: Array<Pose2D>, vRatio: Double, aRatio: Double,
+                       backwards: Boolean, insertRobotState: Boolean, resetInitialState: Boolean) {
+        val maxVelocity = model.maxVelocity * vRatio
+        val maxAcceleration = model.maxAcceleration * aRatio
+        val path = if (insertRobotState) quinticSplinesOf(robotState, *waypoints) else quinticSplinesOf(*waypoints)
+        trajectory = path.parameterized().timedTrajectory(
+                model, 0.0, 0.0, maxVelocity, maxAcceleration)
+        direction = if (backwards) -1.0 else 1.0
+        totalTime = trajectory.last().t
         t = 0.0
-        if (resetState) robotState = trajectory.first().state.state
+        initialState = if (resetInitialState) trajectory.first().state.state else robotState
         previousVelocity = ChassisState(0.0, 0.0)
         neutralOutput()
         io.drivePID = PID(kP = 0.8, kI = 0.0, kD = 5.0)
+    }
+
+    fun getError(setpoint: Pose2D): Pose2D {
+        val pathToRobot = (robotState.translation - initialState.translation).rotate(-initialState.rotation)
+        val inverseTheta = initialState.rotation - robotState.rotation
+        return Pose2D((setpoint.translation - pathToRobot).rotate(inverseTheta), (setpoint.rotation + inverseTheta))
     }
 
     fun advanceTrajectory(dt: Double): TrajectoryPoint {
