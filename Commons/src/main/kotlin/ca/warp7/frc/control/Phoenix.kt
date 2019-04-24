@@ -90,6 +90,7 @@ fun talonSRX(
     setInverted(inverted)
     selectedSensorPosition = 0
     selectProfileSlot(0, 0)
+    setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 10)
 }
 
 private class LazyVictorSPX(deviceNumber: Int) : VictorSPX(deviceNumber) {

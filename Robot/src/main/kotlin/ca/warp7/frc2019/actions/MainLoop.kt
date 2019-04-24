@@ -37,72 +37,46 @@ class MainLoop : Action {
         io.readingLiftEncoder = true
         io.readingGyro = false
         io.readingLimelight = true
-        io.setDriveRampRate(0.15)
+        io.driveRampRate = 0.15
     }
 
     override val shouldFinish: Boolean
         get() = false
-
-    override fun stop() {
-        visionLog.close()
-    }
 
     override fun update() {
         io.driver.apply {
             val xSpeed = applyDeadband(-leftYAxis, 1.0, 0.2)
             val zRotation = applyDeadband(rightXAxis, 1.0, 0.1)
             val isQuickTurn = leftBumper == HeldDown
-            curvatureDrive(xSpeed, zRotation, isQuickTurn)
+            updateCurvatureDrive(xSpeed, zRotation, isQuickTurn)
+
             when (rightBumper) {
                 Pressed -> io.limelightMode = LimelightMode.Vision
                 Released -> io.limelightMode = LimelightMode.Driver
                 else -> Unit
             }
-            val wantAligning = rightBumper == HeldDown
-            val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0
-                    && !isQuickTurn && abs(io.visionErrorX) < 15
-            if (visionLatch.update(isAligning)) {
-                visionLog.writeData(0, 0, 0, 0)
-            }
-            if (isAligning) {
-                val speedLimit = 0.8 - 0.5 * io.visionArea
-                io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
-                io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
-                if (xSpeed == 0.0) {
-                    io.leftDemand += Drive.model.frictionVoltage / 12.0
-                    io.rightDemand += Drive.model.frictionVoltage / 12.0
-                }
-                val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
-                if (correction > 0) io.rightDemand += correction
-                else if (correction < 0) io.leftDemand += correction
-                visionLog.writeData(speedLimit, correction, io.leftDemand,
-                        io.rightDemand, io.visionErrorX, io.visionArea)
-            }
+            val wantAligning = rightBumper == HeldDown && !isQuickTurn
+            updateVisionAlignment(wantAligning, xSpeed)
+
             when {
-                leftTriggerAxis > 0.2 -> {
-                    io.outtakeSpeed = -leftTriggerAxis * 0.8
-                    io.conveyorSpeed = -leftTriggerAxis * 0.9
-                    io.intakeSpeed = -leftTriggerAxis
-                }
-                rightTriggerAxis > 0.2 -> {
-                    io.outtakeSpeed = rightTriggerAxis * 0.8
-                    io.conveyorSpeed = rightTriggerAxis * 0.9
-                    io.intakeSpeed = rightTriggerAxis
-                }
+                leftTriggerAxis > 0.2 -> updatePassthrough(-leftTriggerAxis)
+                rightTriggerAxis > 0.2 -> updatePassthrough(rightTriggerAxis)
                 else -> io.intakeSpeed = 0.0
             }
-            if (aButton == Pressed) {
-                if (!io.pushing) {
+            if (bButton == Pressed) io.outtakeSpeed = 1.0
+
+            when {
+                aButton == Pressed -> if (!io.pushing) {
                     io.grabbing = false
                     timerControl.setAction(runAfter(0.3) { io.invertPushing() })
                     Looper.add(timerControl)
-                } else io.pushing = !io.pushing
+                } else io.invertPushing()
+
+                xButton == Pressed -> {
+                    io.invertGrabbing()
+                    io.pushing = false
+                }
             }
-            if (Pressed == xButton) {
-                io.invertGrabbing()
-                io.pushing = false
-            }
-            if (bButton == Pressed) io.outtakeSpeed = 1.0
         }
 
         io.operator.apply {
@@ -110,6 +84,7 @@ class MainLoop : Action {
                 Lift.manualSpeed = applyDeadband(leftYAxis, 1.0, 0.2)
                 Lift.isManual = true
             } else Lift.manualSpeed = 0.0
+
             when (Pressed) {
                 rightBumper -> Lift.increaseSetpoint()
                 leftBumper -> Lift.decreaseSetpoint()
@@ -136,12 +111,41 @@ class MainLoop : Action {
                 }
                 else -> Unit
             }
+
             if (liftTriggerLatch.update(leftTriggerAxis > 0.2)) {
                 Lift.setpointInches = FieldConstants.kCargo2Height - 12.0
                 Lift.isManual = false
             }
+
             if (Lift.isManual) Lift.updateManualControl()
             else Lift.updatePositionControl()
+        }
+    }
+
+    fun updatePassthrough(speed: Double) {
+        io.outtakeSpeed = speed * 0.8
+        io.conveyorSpeed = speed * 0.9
+        io.intakeSpeed = speed
+    }
+
+    fun updateVisionAlignment(wantAligning: Boolean, xSpeed: Double) {
+        val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0 && abs(io.visionErrorX) < 15
+        if (visionLatch.update(isAligning)) {
+            visionLog.writeData(0, 0, 0, 0)
+        }
+        if (isAligning) {
+            val speedLimit = 0.8 - 0.5 * io.visionArea
+            io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
+            io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
+            if (xSpeed == 0.0) {
+                io.leftDemand += Drive.model.frictionVoltage / 12.0
+                io.rightDemand += Drive.model.frictionVoltage / 12.0
+            }
+            val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
+            if (correction > 0) io.rightDemand += correction
+            else if (correction < 0) io.leftDemand += correction
+            visionLog.writeData(speedLimit, correction, io.leftDemand,
+                    io.rightDemand, io.visionErrorX, io.visionArea)
         }
     }
 
@@ -162,7 +166,7 @@ class MainLoop : Action {
      * @param isQuickTurn If set, overrides constant-curvature turning for
      * turn-in-place maneuvers.
      */
-    fun curvatureDrive(xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
+    fun updateCurvatureDrive(xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
 
         val angularPower: Double
 

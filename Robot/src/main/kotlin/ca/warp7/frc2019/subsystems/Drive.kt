@@ -187,9 +187,12 @@ object Drive {
     }
 
     fun getError(setpoint: Pose2D): Pose2D {
-        val pathToRobot = (robotState.translation - initialState.translation).rotate(-initialState.rotation)
         val inverseTheta = initialState.rotation - robotState.rotation
-        return Pose2D((setpoint.translation - pathToRobot).rotate(inverseTheta), (setpoint.rotation + inverseTheta))
+        return Pose2D(
+                translation = (setpoint.translation - (robotState.translation - initialState.translation)
+                        .rotate(-initialState.rotation)).rotate(inverseTheta),
+                rotation = (setpoint.rotation + inverseTheta)
+        )
     }
 
     fun advanceTrajectory(dt: Double): TrajectoryPoint {

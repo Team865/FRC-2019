@@ -13,6 +13,10 @@ class CSVLogManager {
 
     init {
         if (!rootDir.exists()) rootDir.mkdir()
+        Thread.setDefaultUncaughtExceptionHandler { _, exception ->
+            val crashFile = File(rootDir, "CRASH.txt")
+            exception.printStackTrace(crashFile.printWriter())
+        }
     }
 
     private var logDir: File? = null

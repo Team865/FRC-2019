@@ -87,7 +87,8 @@ object DriveConstants {
 
     // Talon configuration
 
-    val kMasterTalonConfig = TalonSRXConfiguration().apply {
+    val kMasterTalonConfig
+        get() = TalonSRXConfiguration().apply {
         openloopRamp = kOpenLoopRamp
         voltageCompSaturation = kMaxVolts
         primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder

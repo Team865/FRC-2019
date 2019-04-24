@@ -215,15 +215,17 @@ object RobotIO {
             field = value
         }
 
+    var driveRampRate: Double = 0.0
+        set(value) {
+            leftMaster.configOpenloopRamp(value, 0)
+            rightMaster.configOpenloopRamp(value, 0)
+            field = value
+        }
+
     fun resetDrivePosition(positionRadians: Double) {
         val positionTicks = (positionRadians * DriveConstants.kTicksPerRadian).toInt()
         leftMaster.selectedSensorPosition = positionTicks
         rightMaster.selectedSensorPosition = -positionTicks
-    }
-
-    fun setDriveRampRate(secondsFromNeutralToFull: Double) {
-        leftMaster.configOpenloopRamp(secondsFromNeutralToFull, 0)
-        rightMaster.configOpenloopRamp(secondsFromNeutralToFull, 0)
     }
 
     var liftPID: PID = PID()
@@ -237,9 +239,11 @@ object RobotIO {
         liftMaster.selectedSensorPosition = positionTicks
     }
 
-    fun setLiftRampRate(secondsFromNeutralToFull: Double) {
-        liftMaster.configOpenloopRamp(secondsFromNeutralToFull, 0)
-    }
+    var liftRampRate: Double = 0.0
+        set(value) {
+            liftMaster.configOpenloopRamp(value, 0)
+            field = value
+        }
 
     var limelightMode = LimelightMode.Driver
         set(value) {

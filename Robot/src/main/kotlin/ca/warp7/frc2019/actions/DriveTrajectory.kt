@@ -3,11 +3,13 @@ package ca.warp7.frc2019.actions
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.CSVLogger
 import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.FollowerType
 import ca.warp7.frc2019.constants.FollowerType.*
 import ca.warp7.frc2019.subsystems.Drive
+import kotlin.math.abs
 
 class DriveTrajectory(
         val waypoints: Array<Pose2D>,
@@ -18,6 +20,12 @@ class DriveTrajectory(
         val resetInitialState: Boolean = true,
         val followerType: FollowerType = VoltageOnly
 ) : Action {
+
+    constructor(distance: Double) : this(
+            arrayOf(Pose2D.identity, Pose2D(abs(distance), 0.0, Rotation2D.identity)),
+            backwards = distance < 0,
+            followerType = AnglePID
+    )
 
     private val io: RobotIO = RobotIO
 
@@ -35,7 +43,6 @@ class DriveTrajectory(
 
     override fun update() {
         val setpoint = Drive.advanceTrajectory(io.dt)
-        val setpointState = setpoint.state.state
         val error = Drive.getError(setpoint.state.state)
         when (followerType) {
             VoltageOnly -> Drive.setFeedforward(setpoint.chassisVelocity, setpoint.chassisAcceleration)
@@ -44,13 +51,15 @@ class DriveTrajectory(
             AnglePID -> Drive.updateAnglePID(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             Ramsete -> Drive.updateRamsete(error, setpoint.chassisVelocity)
         }
+        val setpointState = setpoint.state.state
+        val robotState = Drive.robotState
         logger.writeData(
                 // "t"
                 setpoint.t,
                 // "s_x", "s_y", "s_theta",
                 setpointState.translation.x, setpointState.translation.y, setpointState.rotation.radians,
                 // "r_x", "r_y", "r_theta"
-                Drive.robotState.translation.x, Drive.robotState.translation.y, Drive.robotState.rotation.radians,
+                robotState.translation.x, robotState.translation.y, robotState.rotation.radians,
                 // "left", "right"
                 io.leftFeedforward * 12.0, io.rightFeedforward * 12.0,
                 // "v", "w"

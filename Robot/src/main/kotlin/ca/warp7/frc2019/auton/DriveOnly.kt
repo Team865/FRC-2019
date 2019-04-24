@@ -52,14 +52,13 @@ object DriveOnly {
             +runOnce { io.limelightMode = LimelightMode.Vision }
             +AlignWithLimelight()
             +wait(0.3)
-            +DriveForDistance(1.9)
+            +DriveTrajectory(1.9.feet)
             +runOnce {
                 io.grabbing = false
                 io.pushing = true
             }
             +wait(0.3)
-            +DriveForDistance(3.0, isBackwards = true)
-
+            +DriveTrajectory((-3.0).feet)
             +runOnce {
                 io.pushing = false
             }
