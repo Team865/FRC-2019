@@ -6,10 +6,7 @@ import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.DynamicState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.geometry.CurvatureState
-import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.geometry.rotate
+import ca.warp7.frc.geometry.*
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
@@ -30,18 +27,11 @@ object Drive {
     var chassisVelocity = ChassisState(0.0, 0.0)
 
     val model = DifferentialDriveModel(
-            wheelRadius = DriveConstants.kWheelRadius,
-            wheelbaseRadius = DriveConstants.kEffectiveWheelBaseRadius,
-            maxVelocity = DriveConstants.kMaxVelocity,
-            maxAcceleration = DriveConstants.kMaxAcceleration,
-            maxFreeSpeed = DriveConstants.kMaxFreeSpeed,
-            speedPerVolt = DriveConstants.kSpeedPerVolt,
-            torquePerVolt = DriveConstants.kTorquePerVolt,
-            frictionVoltage = DriveConstants.kFrictionVoltage,
-            linearInertia = DriveConstants.kLinearInertia,
-            angularInertia = DriveConstants.kAngularInertia,
-            maxVoltage = DriveConstants.kMaxVolts,
-            angularDrag = DriveConstants.kAngularDrag
+            DriveConstants.kWheelRadius, DriveConstants.kEffectiveWheelBaseRadius,
+            DriveConstants.kMaxVelocity, DriveConstants.kMaxAcceleration, DriveConstants.kMaxFreeSpeed,
+            DriveConstants.kSpeedPerVolt, DriveConstants.kTorquePerVolt, DriveConstants.kFrictionVoltage,
+            DriveConstants.kLinearInertia, DriveConstants.kAngularInertia,
+            DriveConstants.kMaxVolts, DriveConstants.kAngularDrag
     )
 
     fun neutralOutput() {
@@ -108,6 +98,23 @@ object Drive {
         setDynamicState(DynamicState(WheelState(leftVoltage, rightVoltage), dynamics.velocity))
     }
 
+    fun estimateRobotState() {
+        // convert rad/s into m/s
+        val wheelVelocity = WheelState(
+                io.leftVelocity * Drive.model.wheelRadius,
+                io.rightVelocity * Drive.model.wheelRadius
+        )
+        // solve into chassis velocity
+        chassisVelocity = Drive.model.solve(wheelVelocity)
+        // If gyro connected, use the yaw value from the gyro as the new angle
+        // otherwise add the calculated angular velocity to current yaw
+        val theta = robotState.rotation + Rotation2D.fromRadians(io.dt *
+                (if (io.gyroConnected) io.angularVelocity else chassisVelocity.angular))
+        // add displacement into current position
+        val pos = robotState.translation + theta.translation * (chassisVelocity.linear * io.dt)
+        // update the robot state
+        robotState = Pose2D(pos, theta)
+    }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
     private const val kBeta = 2.0  // Correction coefficient, β > 0
@@ -145,7 +152,7 @@ object Drive {
     private const val kY = 1.0
     private const val kTheta = 5.0
 
-    fun updatePID(error: Pose2D, velocity: ChassisState, acceleration: ChassisState) {
+    fun updatePosePID(error: Pose2D, velocity: ChassisState, acceleration: ChassisState) {
 
         val linear = velocity.linear + kX * error.translation.x
         val angular = velocity.angular + velocity.linear * kY * error.translation.y + kTheta * error.rotation.radians

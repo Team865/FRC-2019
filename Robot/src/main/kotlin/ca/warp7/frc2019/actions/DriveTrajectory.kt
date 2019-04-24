@@ -47,7 +47,7 @@ class DriveTrajectory(
         when (followerType) {
             VoltageOnly -> Drive.setFeedforward(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             SpeedDemand -> Drive.setDynamicState(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            PosePID -> Drive.updatePID(error, setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            PosePID -> Drive.updatePosePID(error, setpoint.chassisVelocity, setpoint.chassisAcceleration)
             AnglePID -> Drive.updateAnglePID(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             Ramsete -> Drive.updateRamsete(error, setpoint.chassisVelocity)
         }

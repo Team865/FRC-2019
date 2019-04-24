@@ -48,19 +48,23 @@ object RobotIO {
     private val controlInput = ControlInput()
     private val csvLogManager = CSVLogManager()
 
+    private var enableOutputs = false
+
     val ds: DriverStation = DriverStation.getInstance()
     val driver: RobotController = controlInput.driver
     val operator: RobotController = controlInput.operator
 
-    var enableOutputs = false
-    var enableTelemetry = true
+    class Config {
+        var enableTelemetryOutput = true
+        var enableDriverInput = true
+        var enableOperatorInput = true
+        var enableDriveEncoderInput = true
+        var enableLiftEncoderInput = true
+        var enableGyroInput = true
+        var enableLimelightInput = true
+    }
 
-    var readingDriverInput = true
-    var readingOperatorInput = true
-    var readingDriveEncoders = true
-    var readingLiftEncoder = true
-    var readingGyro = true
-    var readingLimelight = true
+    val config = Config()
 
     var time = 0.0 // s
     var dt = 0.02 // s
@@ -89,24 +93,24 @@ object RobotIO {
         val newTime = Timer.getFPGATimestamp()
         dt = newTime - time
         time = newTime
-        if (readingDriverInput) {
+        if (config.enableDriverInput) {
             controlInput.updateDriver()
         }
-        if (readingOperatorInput) {
+        if (config.enableOperatorInput) {
             controlInput.updateOperator()
         }
-        if (readingLiftEncoder) {
+        if (config.enableLiftEncoderInput) {
             liftPosition = liftMaster.selectedSensorPosition
             liftVelocity = liftMaster.selectedSensorVelocity
             hallEffectTriggered = !liftHallEffect.get()
         }
-        if (readingDriveEncoders) {
+        if (config.enableDriveEncoderInput) {
             leftPosition = leftMaster.selectedSensorPosition / DriveConstants.kTicksPerRadian
             rightPosition = -rightMaster.selectedSensorPosition / DriveConstants.kTicksPerRadian
             leftVelocity = leftMaster.selectedSensorVelocity / DriveConstants.kTicksPerRadian * 10
             rightVelocity = -rightMaster.selectedSensorVelocity / DriveConstants.kTicksPerRadian * 10
         }
-        if (readingLimelight) {
+        if (config.enableLimelightInput) {
             if (!limelightConnected && limelight.getEntry("tv").exists()) limelightConnected = true
             if (limelightConnected) {
                 foundVisionTarget = limelight.getEntry("tv").getDouble(0.0).toInt() == 1
@@ -116,7 +120,7 @@ object RobotIO {
                 }
             }
         }
-        if (readingGyro) {
+        if (config.enableGyroInput) {
             if (!gyroConnected && ahrs.isConnected && !ahrs.isCalibrating) gyroConnected = true
             if (gyroConnected) {
                 fusedHeading = Math.toRadians(ahrs.fusedHeading.toDouble())
@@ -146,7 +150,7 @@ object RobotIO {
 
     fun writeOutputs() {
         if (enableOutputs) writeEnabledOutputs()
-        if (enableTelemetry) writeTelemetry()
+        if (config.enableTelemetryOutput) writeTelemetry()
     }
 
     private fun writeEnabledOutputs() {
@@ -164,27 +168,27 @@ object RobotIO {
 
     private fun writeTelemetry() {
         telemetry.apply {
-            getEntry("readingDriveEncoders").setBoolean(readingDriveEncoders)
-            getEntry("readingLiftEncoder").setBoolean(readingLiftEncoder)
-            getEntry("readingGyro").setBoolean(readingGyro)
-            getEntry("readingLimelight").setBoolean(readingLimelight)
-            if (readingDriveEncoders) {
+            getEntry("enableDriveEncoderInput").setBoolean(config.enableDriveEncoderInput)
+            getEntry("enableLiftEncoderInput").setBoolean(config.enableLiftEncoderInput)
+            getEntry("enableGyroInput").setBoolean(config.enableGyroInput)
+            getEntry("enableLimelightInput").setBoolean(config.enableLimelightInput)
+            if (config.enableDriveEncoderInput) {
                 getEntry("leftPosition").setNumber(leftPosition)
                 getEntry("rightPosition").setNumber(rightPosition)
                 getEntry("leftVelocity").setNumber(leftVelocity)
                 getEntry("rightVelocity").setNumber(rightVelocity)
             }
-            if (readingLiftEncoder) {
+            if (config.enableLiftEncoderInput) {
                 getEntry("liftPosition").setNumber(liftPosition)
                 getEntry("liftVelocity").setNumber(liftVelocity)
             }
-            if (readingLimelight) {
+            if (config.enableLimelightInput) {
                 getEntry("limelightConnected").setBoolean(limelightConnected)
                 getEntry("foundVisionTarget").setBoolean(foundVisionTarget)
                 getEntry("visionErrorX").setNumber(visionErrorX)
                 getEntry("visionArea").setNumber(visionArea)
             }
-            if (readingGyro) {
+            if (config.enableGyroInput) {
                 getEntry("gyroConnected").setBoolean(gyroConnected)
                 getEntry("fusedHeading").setNumber(fusedHeading)
                 getEntry("angularVelocity").setNumber(angularVelocity)
@@ -263,14 +267,7 @@ object RobotIO {
     fun getLogger(name: String): CSVLogger = csvLogManager.getLogger(name)
 
     fun initialize() {
-        enableOutputs = false
-        enableTelemetry = true
-        readingDriveEncoders = true
-        readingLiftEncoder = true
-        readingGyro = true
-        readingLimelight = true
         time = Timer.getFPGATimestamp()
-        previousYaw = Rotation2D.identity
         LiveWindow.disableAllTelemetry()
     }
 

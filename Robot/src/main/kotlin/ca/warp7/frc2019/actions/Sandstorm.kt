@@ -7,6 +7,7 @@ import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.auton.DriveOnly
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 
 class Sandstorm : Action {
@@ -16,20 +17,25 @@ class Sandstorm : Action {
 
     override fun start() {
         autonControl.setAction(DriveOnly.leftCloseRocket)
-        Looper.add(RobotStateEstimator())
         Looper.add(autonControl)
-        io.readingLimelight = true
-        io.readingGyro = true
-        io.readingLiftEncoder = true
-        io.readingDriveEncoders = true
-        io.readingDriverInput = true
-        io.readingOperatorInput = true
+        io.config.apply {
+            enableLimelightInput = true
+            enableGyroInput = true
+            enableLiftEncoderInput = true
+            enableDriveEncoderInput = true
+            enableDriverInput = true
+            enableOperatorInput = true
+        }
 
         val initPos = LiftConstants.kHatchStartHeightInches *
                 LiftConstants.kTicksPerInch / LiftConstants.kTicksPerRadian
         io.resetLiftPosition(positionRadians = initPos)
         Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
         Lift.updatePositionControl()
+    }
+
+    override fun update() {
+        Drive.estimateRobotState()
     }
 
     override val shouldFinish: Boolean

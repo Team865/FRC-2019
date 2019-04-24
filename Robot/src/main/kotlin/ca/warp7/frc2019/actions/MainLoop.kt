@@ -32,11 +32,13 @@ class MainLoop : Action {
     val liftTriggerLatch = LatchedBoolean()
 
     override fun start() {
-        io.enableTelemetry = true
-        io.readingDriveEncoders = false
-        io.readingLiftEncoder = true
-        io.readingGyro = false
-        io.readingLimelight = true
+        io.config.apply {
+            enableTelemetryOutput = true
+            enableDriveEncoderInput = false
+            enableLiftEncoderInput = true
+            enableGyroInput = false
+            enableLimelightInput = true
+        }
         io.driveRampRate = 0.15
     }
 
