@@ -15,8 +15,6 @@ import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
-import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.pow
 
 object Drive {
@@ -40,14 +38,6 @@ object Drive {
         io.rightDemand = 0.0
         io.leftFeedforward = 0.0
         io.rightFeedforward = 0.0
-    }
-
-    fun setNormalize(left: Double, right: Double) {
-        var mag = max(abs(left), abs(right))
-        if (mag <= 1.0) {
-            mag = 1.0
-        }
-        setPercent(left / mag, right / mag)
     }
 
     fun setPercent(left: Double, right: Double) {
@@ -153,21 +143,17 @@ object Drive {
     private const val kTheta = 5.0
 
     fun updatePosePID(error: Pose2D, velocity: ChassisState, acceleration: ChassisState) {
-
         val linear = velocity.linear + kX * error.translation.x
         val angular = velocity.angular + velocity.linear * kY * error.translation.y + kTheta * error.rotation.radians
-
         setAdjustedChassisState(model.solve(velocity, acceleration), linear, angular)
     }
 
     private const val kW = 5.0
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
-
         val error = velocity.angular - io.angularVelocity
         val linear = velocity.linear
         val angular = velocity.angular + velocity.linear * kW * error
-
         setAdjustedChassisState(model.solve(velocity, acceleration), linear, angular)
     }
 
@@ -194,11 +180,11 @@ object Drive {
     }
 
     fun getError(setpoint: Pose2D): Pose2D {
-        val inverseTheta = initialState.rotation - robotState.rotation
+        val theta = robotState.rotation - initialState.rotation
         return Pose2D(
                 translation = (setpoint.translation - (robotState.translation - initialState.translation)
-                        .rotate(-initialState.rotation)).rotate(inverseTheta),
-                rotation = (setpoint.rotation + inverseTheta)
+                        .rotate(-initialState.rotation)).rotate(-theta),
+                rotation = setpoint.rotation - theta
         )
     }
 
