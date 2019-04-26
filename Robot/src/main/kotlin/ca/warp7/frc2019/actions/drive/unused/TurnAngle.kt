@@ -1,14 +1,15 @@
 package ca.warp7.frc2019.actions.drive.unused
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
 class TurnAngle(val angle: Double) : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     private val totalAngle
         get() = (io.leftPosition - io.rightPosition) /

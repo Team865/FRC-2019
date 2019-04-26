@@ -10,8 +10,9 @@ import ca.warp7.frc.interpolate
 import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.path.parameterizedSplinesOf
 import ca.warp7.frc.trajectory.timedTrajectory
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import edu.wpi.first.wpilibj.Timer
 
@@ -38,7 +39,7 @@ class PIDTrajectory(
         )
 ) : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     private val robotState get() = Drive.robotState
     private val model = Drive.model

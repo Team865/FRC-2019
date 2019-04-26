@@ -1,15 +1,16 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.withSign
 
 object Lift {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     var setpointLevel = 0
     var setpointType = HatchCargo.Hatch

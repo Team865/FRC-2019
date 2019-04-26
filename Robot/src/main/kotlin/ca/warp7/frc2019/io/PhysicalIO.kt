@@ -1,4 +1,4 @@
-package ca.warp7.frc2019
+package ca.warp7.frc2019.io
 
 import ca.warp7.frc.CSVLogManager
 import ca.warp7.frc.CSVLogger
@@ -21,7 +21,7 @@ import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 
-object RobotIO {
+class PhysicalIO : BaseIO {
     private val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
             .followedBy(VictorSPX(DriveConstants.kLeftFollowerA), VictorSPX(DriveConstants.kLeftFollowerB))
     private val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
@@ -50,46 +50,37 @@ object RobotIO {
 
     private var enableOutputs = false
 
-    val ds: DriverStation = DriverStation.getInstance()
-    val driver: RobotController = controlInput.driver
-    val operator: RobotController = controlInput.operator
+    private val ds: DriverStation = DriverStation.getInstance()
 
-    class Config {
-        var enableTelemetryOutput = true
-        var enableDriverInput = true
-        var enableOperatorInput = true
-        var enableDriveEncoderInput = true
-        var enableLiftEncoderInput = true
-        var enableGyroInput = true
-        var enableLimelightInput = true
-    }
+    override val driverInput: RobotController = controlInput.driver
+    override val operatorInput: RobotController = controlInput.operator
 
-    val config = Config()
+    override val config = IOConfig()
 
-    var time = 0.0 // s
-    var dt = 0.02 // s
+    override var time = 0.0 // s
+    override var dt = 0.02 // s
 
-    var leftPosition = 0.0 // rad
-    var rightPosition = 0.0 // rad
-    var leftVelocity = 0.0 // rad/s
-    var rightVelocity = 0.0 // rad/s
+    override var leftPosition = 0.0 // rad
+    override var rightPosition = 0.0 // rad
+    override var leftVelocity = 0.0 // rad/s
+    override var rightVelocity = 0.0 // rad/s
 
-    var liftPosition = 0 // ticks
-    var liftVelocity = 0 // ticks/100ms
-    var hallEffectTriggered = false
+    override var liftPosition = 0 // ticks
+    override var liftVelocity = 0 // ticks/100ms
+    override var hallEffectTriggered = false
 
-    var limelightConnected = false
-    var foundVisionTarget = false
-    var visionErrorX = 0.0 // deg
-    var visionArea = 0.0 // % of full image
+    override var limelightConnected = false
+    override var foundVisionTarget = false
+    override var visionErrorX = 0.0 // deg
+    override var visionArea = 0.0 // % of full image
 
-    var gyroConnected = false
-    var fusedHeading = 0.0 // rad
-    var previousYaw = Rotation2D.identity
-    var yaw: Rotation2D = Rotation2D.identity
-    var angularVelocity = 0.0 // rad/s
+    override var gyroConnected = false
+    override var fusedHeading = 0.0 // rad
+    override var previousYaw = Rotation2D.identity
+    override var yaw: Rotation2D = Rotation2D.identity
+    override var angularVelocity = 0.0 // rad/s
 
-    fun readInputs() {
+    override fun readInputs() {
         val newTime = Timer.getFPGATimestamp()
         dt = newTime - time
         time = newTime
@@ -131,24 +122,24 @@ object RobotIO {
         }
     }
 
-    var driveControlMode = PercentOutput
-    var leftDemand = 0.0
-    var rightDemand = 0.0
-    var leftFeedforward = 0.0
-    var rightFeedforward = 0.0
+    override var driveControlMode = PercentOutput
+    override var leftDemand = 0.0
+    override var rightDemand = 0.0
+    override var leftFeedforward = 0.0
+    override var rightFeedforward = 0.0
 
-    var liftControlMode = PercentOutput
-    var liftDemand = 0.0
-    var liftFeedforward = 0.0
+    override var liftControlMode = PercentOutput
+    override var liftDemand = 0.0
+    override var liftFeedforward = 0.0
 
-    var intakeSpeed = 0.0
-    var conveyorSpeed = 0.0
-    var outtakeSpeed = 0.0
+    override var intakeSpeed = 0.0
+    override var conveyorSpeed = 0.0
+    override var outtakeSpeed = 0.0
 
-    var pushing = false
-    var grabbing = true
+    override var pushing = false
+    override var grabbing = true
 
-    fun writeOutputs() {
+    override fun writeOutputs() {
         if (enableOutputs) writeEnabledOutputs()
         if (config.enableTelemetryOutput) writeTelemetry()
     }
@@ -212,66 +203,66 @@ object RobotIO {
         }
     }
 
-    var drivePID: PID = DriveConstants.kVelocityFeedforwardPID
+    override var drivePID: PID = DriveConstants.kVelocityFeedforwardPID
         set(value) {
             leftMaster.setPID(value)
             rightMaster.setPID(value)
             field = value
         }
 
-    var driveRampRate: Double = 0.0
+    override var driveRampRate: Double = 0.0
         set(value) {
             leftMaster.configOpenloopRamp(value, 0)
             rightMaster.configOpenloopRamp(value, 0)
             field = value
         }
 
-    fun resetDrivePosition(positionRadians: Double) {
+    override fun resetDrivePosition(positionRadians: Double) {
         val positionTicks = (positionRadians * DriveConstants.kTicksPerRadian).toInt()
         leftMaster.selectedSensorPosition = positionTicks
         rightMaster.selectedSensorPosition = -positionTicks
     }
 
-    var liftPID: PID = PID()
+    override var liftPID: PID = PID()
         set(value) {
             liftMaster.setPID(value)
             field = value
         }
 
-    fun resetLiftPosition(positionRadians: Double) {
+    override fun resetLiftPosition(positionRadians: Double) {
         val positionTicks = (positionRadians * LiftConstants.kTicksPerRadian).toInt()
         liftMaster.selectedSensorPosition = positionTicks
     }
 
-    var liftRampRate: Double = 0.0
+    override var liftRampRate: Double = 0.0
         set(value) {
             liftMaster.configOpenloopRamp(value, 0)
             field = value
         }
 
-    var limelightMode = LimelightMode.Driver
+    override var limelightMode = LimelightMode.Driver
         set(value) {
             limelight.getEntry("camMode").setDouble(value.value)
             limelight.getEntry("ledMode").setDouble(value.value)
             field = value
         }
 
-    fun invertGrabbing() {
+    override fun invertGrabbing() {
         grabbing = !grabbing
     }
 
-    fun invertPushing() {
+    override fun invertPushing() {
         pushing = !pushing
     }
 
-    fun getLogger(name: String): CSVLogger = csvLogManager.getLogger(name)
+    override fun getLogger(name: String): CSVLogger = csvLogManager.getLogger(name)
 
-    fun initialize() {
+    override fun initialize() {
         time = Timer.getFPGATimestamp()
         LiveWindow.disableAllTelemetry()
     }
 
-    fun enable() {
+    override fun enable() {
         enableOutputs = true
         ahrs.zeroYaw()
         resetDrivePosition(0.0)
@@ -285,7 +276,7 @@ object RobotIO {
         } else "Test")
     }
 
-    fun disable() {
+    override fun disable() {
         enableOutputs = false
 
         leftMaster.neutralOutput()

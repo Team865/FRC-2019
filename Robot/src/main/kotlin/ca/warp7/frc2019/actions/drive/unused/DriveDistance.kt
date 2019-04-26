@@ -1,14 +1,14 @@
 package ca.warp7.frc2019.actions.drive.unused
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.abs
 
 class DriveDistance : Action {
-
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     var distance = 0.0 // distance in inches
     var tolerance = 1E-2 //distance

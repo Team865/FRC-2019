@@ -4,15 +4,16 @@ import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionControl
 import ca.warp7.frc.control.ControllerState
 import ca.warp7.frc2019.Looper
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.auton.DriveOnly
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 
 class Sandstorm : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
     private val autonControl = ActionControl()
 
     override fun start() {
@@ -39,7 +40,7 @@ class Sandstorm : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = autonControl.shouldFinish || io.driver.yButton == ControllerState.Pressed
+        get() = autonControl.shouldFinish || io.driverInput.yButton == ControllerState.Pressed
 
     override fun stop() {
         Looper.add(MainLoop())

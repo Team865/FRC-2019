@@ -1,15 +1,16 @@
 package ca.warp7.frc2019.auton
 
 import ca.warp7.actionkt.*
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.actions.AlignWithLimelight
 import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 
 object LeftCargoShipHatch {
-    private val io: RobotIO = RobotIO
-    
+    private val io: BaseIO = ioInstance()
+
     fun get(isLimelight: Boolean = true): Action {
         return queue {
             // grab hatch

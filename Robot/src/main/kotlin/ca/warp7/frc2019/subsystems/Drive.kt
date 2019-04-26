@@ -12,14 +12,15 @@ import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.timedTrajectory
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.pow
 
 object Drive {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     var robotState: Pose2D = Pose2D.identity
     var chassisVelocity = ChassisState(0.0, 0.0)

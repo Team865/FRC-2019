@@ -1,12 +1,13 @@
 package ca.warp7.frc2019.actions.lift.deprecated
 
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import kotlin.math.sign
 import kotlin.math.sqrt
 
 object LiftTrajectory {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
     var relativeTargetHeight = 0.0
     var isTriangle = false
     var maxReachedVelocity = 0.0

@@ -5,13 +5,14 @@ import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive.robotState
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     val turnPID = PID(
             kP = 1.5, kI = 0.004, kD = 5.0, kF = 0.0,

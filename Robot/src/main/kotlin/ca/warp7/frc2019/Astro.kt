@@ -2,12 +2,14 @@ package ca.warp7.frc2019
 
 import ca.warp7.frc2019.actions.MainLoop
 import ca.warp7.frc2019.actions.Sandstorm
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.TimedRobot.startRobot
 
 class Astro : TimedRobot(0.02) {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
     private val looper: Looper = Looper
 
     override fun robotInit() {

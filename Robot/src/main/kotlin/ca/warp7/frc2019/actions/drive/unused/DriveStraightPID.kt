@@ -5,8 +5,9 @@ import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.Translation2D
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
@@ -15,7 +16,7 @@ class DriveStraightPID(val distance: Double, val straightPID: PID = PID(
         errorEpsilon = 0.07, dErrorEpsilon = 0.04, minTimeInEpsilon = 0.3,
         maxOutput = DriveConstants.kMaxVelocity
 )) : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     override fun start() {
         io.driveControlMode = ControlMode.Velocity

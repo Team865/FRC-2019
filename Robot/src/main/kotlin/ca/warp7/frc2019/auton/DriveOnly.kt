@@ -6,15 +6,17 @@ import ca.warp7.actionkt.wait
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.actions.AlignWithLimelight
 import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.DriveTrajectory
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 
 object DriveOnly {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
+
     val driveForDistance = queue {}
 
     val quickTurn

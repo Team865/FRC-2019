@@ -8,11 +8,12 @@ import ca.warp7.frc.PID
 import ca.warp7.frc.applyDeadband
 import ca.warp7.frc.control.ControllerState.*
 import ca.warp7.frc2019.Looper
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import kotlin.math.abs
@@ -20,7 +21,7 @@ import kotlin.math.withSign
 
 class MainLoop : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     val timerControl = ActionControl()
 
@@ -46,7 +47,7 @@ class MainLoop : Action {
         get() = false
 
     override fun update() {
-        io.driver.apply {
+        io.driverInput.apply {
             val xSpeed = applyDeadband(-leftYAxis, 1.0, 0.2)
             val zRotation = applyDeadband(rightXAxis, 1.0, 0.1)
             val isQuickTurn = leftBumper == HeldDown
@@ -81,7 +82,7 @@ class MainLoop : Action {
             }
         }
 
-        io.operator.apply {
+        io.operatorInput.apply {
             if (abs(leftYAxis) > 0.2) {
                 Lift.manualSpeed = applyDeadband(leftYAxis, 1.0, 0.2)
                 Lift.isManual = true

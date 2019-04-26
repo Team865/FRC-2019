@@ -4,15 +4,16 @@ import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.control.speedController
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import kotlin.math.withSign
 
 class AlignedCurvature : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     var xSpeed = 0.0
     var zRotation = 0.0

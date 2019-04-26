@@ -2,12 +2,13 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc2019.RobotIO
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.withSign
 
 class AlignWithLimelight : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     var left = 0.0
     var right = 0.0

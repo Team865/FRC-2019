@@ -1,8 +1,9 @@
 package ca.warp7.frc2019.actions.lift.deprecated
 
 import ca.warp7.actionkt.Action
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 import java.lang.Math.signum
@@ -10,7 +11,7 @@ import kotlin.math.abs
 import kotlin.math.pow
 
 object GoToPositionMotionPlanningSimple : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
     var heightInputAbsoluteInches = 0.0
     var targetHeightFromHome = 0.0
 

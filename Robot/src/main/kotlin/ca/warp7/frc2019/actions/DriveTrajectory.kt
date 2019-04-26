@@ -5,9 +5,10 @@ import ca.warp7.frc.CSVLogger
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.FollowerType
 import ca.warp7.frc2019.constants.FollowerType.*
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import kotlin.math.abs
 
@@ -27,7 +28,7 @@ class DriveTrajectory(
             followerType = AnglePID
     )
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     private val logger: CSVLogger = io.getLogger("DriveTrajectory")
             .withHeaders(

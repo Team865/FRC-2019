@@ -3,8 +3,9 @@ package ca.warp7.frc2019.actions.drive.unused
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.geometry.*
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.absoluteValue
@@ -21,7 +22,7 @@ class PIDToPoint(
         val turnPID: PID = DriveConstants.kTurnPID
 ) : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     private val robotState get() = Drive.robotState
     private var absoluteTarget = target

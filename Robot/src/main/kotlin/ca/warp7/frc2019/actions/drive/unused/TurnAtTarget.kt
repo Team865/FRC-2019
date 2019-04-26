@@ -6,15 +6,16 @@ import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import kotlin.math.sign
 import kotlin.math.withSign
 
 class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0, val limeThreshold: Double = 10.0) : Action {
 
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     private var targetYaw = Rotation2D.fromDegrees(angleInDegrees)
     private var startYaw = Rotation2D.identity

@@ -7,13 +7,14 @@ import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.kFeetToMeters
 import ca.warp7.frc.trajectory.LinearTrajectory
-import ca.warp7.frc2019.RobotIO
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
-    private val io: RobotIO = RobotIO
+    private val io: BaseIO = ioInstance()
 
     val trajectory = LinearTrajectory(kFeetToMeters * distanceInFeet, Drive.model)
     val moments = trajectory.moments
