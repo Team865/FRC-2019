@@ -16,50 +16,64 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         maxVelocity: Double = model.maxVelocity,
         maxAcceleration: Double = model.maxAcceleration
 ): List<TrajectoryPoint> {
+    // Compute isolated velocity constraints at a given curvature
     val constraints = map {
         val driveKinematicConstraint = model.signedMaxAtCurvature(it.curvature, maxVelocity).linear
         val k = abs(it.curvature)
         val centripetalAccelerationConstraint = if (k > 1E-5) maxAcceleration / k else maxVelocity
         minOf(driveKinematicConstraint, centripetalAccelerationConstraint)
     }
-    val distances = zipWithNext { a, b ->
+    // Compute arc length between each pair of points in the path
+    val arcLengths = zipWithNext { a, b ->
         val chordLength = (a.state.translation - b.state.translation).mag
         if (a.curvature.epsilonEquals(0.0)) chordLength else
             abs(asin(chordLength * a.curvature / 2) / a.curvature * 2)
     }
-    val timedStates = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }
-    timedStates.first().velocity = startVelocity
-    val forwardMoments = Array(size) { 0.0 }
+    // Create list of states with everything set to max, then limit it afterwards
+    val states = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }
+    // Assign the initial velocity
+    states.first().velocity = startVelocity
+    // Forward pass
+    val forwardTiming = Array(size) { 0.0 }
     for (i in 0 until size - 1) {
-        val dist = distances[i]
-        val now = timedStates[i]
-        val next = timedStates[i + 1]
+        val arcLength = arcLengths[i]
+        val currentState = states[i]
+        val nextState = states[i + 1]
         val constrainedVelocity = constraints[i + 1]
-        val maxReachableVelocity = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
-        next.velocity = minOf(next.velocity, constrainedVelocity, maxReachableVelocity)
-        val t = (2 * dist) / (now.velocity + next.velocity)
-        forwardMoments[i + 1] = t
+        // Apply kinematic equation vf^2 = vi^2 + 2ax, solve for vf
+        val maxReachableVelocity = sqrt(currentState.velocity.pow(2) + 2 * maxAcceleration * arcLength)
+        // Limit velocity based on curvature constraint and forward acceleration
+        nextState.velocity = minOf(nextState.velocity, constrainedVelocity, maxReachableVelocity)
+        // Calculate the forward dt
+        forwardTiming[i + 1] = (2 * arcLength) / (currentState.velocity + nextState.velocity)
     }
-    timedStates.last().velocity = endVelocity
-    val reverseMoments = Array(size) { 0.0 }
+    // Assign the final velocity
+    states.last().velocity = endVelocity
+    // Reverse pass
+    val reverseTiming = Array(size) { 0.0 }
     for (i in size - 1 downTo 1) {
-        val dist = distances[i - 1]
-        val now = timedStates[i]
-        val next = timedStates[i - 1]
-        val constrainedVelocity = constraints[i - 1]
-        val maxReachableVelocity = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
-        next.velocity = minOf(next.velocity, constrainedVelocity, maxReachableVelocity)
-        val t = (2 * dist) / (now.velocity + next.velocity)
-        reverseMoments[i] = t
+        val arcLength = arcLengths[i - 1]
+        val currentState = states[i]
+        val nextState = states[i - 1]
+        // Apply kinematic equation vf^2 = vi^2 + 2ax, solve for vf
+        val maxReachableVelocity = sqrt(currentState.velocity.pow(2) + 2 * maxAcceleration * arcLength)
+        // Limit velocity based on reverse acceleration
+        nextState.velocity = minOf(nextState.velocity, maxReachableVelocity)
+        // Calculate the reverse dt
+        reverseTiming[i] = (2 * arcLength) / (currentState.velocity + nextState.velocity)
     }
-    val moments = forwardMoments.zip(reverseMoments, Math::max).toTypedArray()
+    // take the max of the forward dt and the reverse dt
+    val maxedTiming = forwardTiming.zip(reverseTiming, Math::max).toTypedArray()
+    // calculate acceleration based on final dt
     for (i in 0 until size - 2) {
-        timedStates[i + 1].acceleration = (timedStates[i + 1].velocity - timedStates[i].velocity) / moments[i + 1]
+        states[i + 1].acceleration = (states[i + 1].velocity - states[i].velocity) / maxedTiming[i + 1]
     }
-    timedStates.last().acceleration = 0.0
-    for (i in 1 until moments.size) {
-        moments[i] += moments[i - 1]
-        timedStates[i].t = moments[i]
+    // Set the last state's acceleration to 0 to allow the motor to stop
+    states.last().acceleration = 0.0
+    // Integrate dt array into timestamps
+    for (i in 1 until maxedTiming.size) {
+        maxedTiming[i] += maxedTiming[i - 1]
+        states[i].t = maxedTiming[i]
     }
-    return timedStates
+    return states
 }
