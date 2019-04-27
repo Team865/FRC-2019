@@ -1,8 +1,11 @@
 package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.CurvatureState
 import ca.warp7.frc.geometry.Pose2D
+import kotlin.math.abs
+import kotlin.math.asin
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -13,9 +16,16 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         maxVelocity: Double = model.maxVelocity,
         maxAcceleration: Double = model.maxAcceleration
 ): List<TrajectoryPoint> {
-    val curvatureConstraints = map { model.signedMaxAtCurvature(it.curvature, maxVelocity) }
+    val constraints = map {
+        val driveKinematicConstraint = model.signedMaxAtCurvature(it.curvature, maxVelocity).linear
+        val k = abs(it.curvature)
+        val centripetalAccelerationConstraint = if (k > 1E-5) maxAcceleration / k else maxVelocity
+        minOf(driveKinematicConstraint, centripetalAccelerationConstraint)
+    }
     val distances = zipWithNext { a, b ->
-        (a.state.translation - b.state.translation).mag
+        val chordLength = (a.state.translation - b.state.translation).mag
+        if (a.curvature.epsilonEquals(0.0)) chordLength else
+            abs(asin(chordLength * a.curvature / 2) / a.curvature * 2)
     }
     val timedStates = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }
     timedStates.first().velocity = startVelocity
@@ -24,9 +34,9 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val dist = distances[i]
         val now = timedStates[i]
         val next = timedStates[i + 1]
-        val c = curvatureConstraints[i + 1]
-        val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
-        next.velocity = minOf(next.velocity, c.linear, maxLinear)
+        val constrainedVelocity = constraints[i + 1]
+        val maxReachableVelocity = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
+        next.velocity = minOf(next.velocity, constrainedVelocity, maxReachableVelocity)
         val t = (2 * dist) / (now.velocity + next.velocity)
         forwardMoments[i + 1] = t
     }
@@ -36,9 +46,9 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val dist = distances[i - 1]
         val now = timedStates[i]
         val next = timedStates[i - 1]
-        val c = curvatureConstraints[i - 1]
-        val maxLinear = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
-        next.velocity = minOf(next.velocity, c.linear, maxLinear)
+        val constrainedVelocity = constraints[i - 1]
+        val maxReachableVelocity = sqrt(now.velocity.pow(2) + 2 * maxAcceleration * dist)
+        next.velocity = minOf(next.velocity, constrainedVelocity, maxReachableVelocity)
         val t = (2 * dist) / (now.velocity + next.velocity)
         reverseMoments[i] = t
     }
