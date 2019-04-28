@@ -18,6 +18,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
 ): List<TrajectoryPoint> {
     // Compute isolated velocity constraints at a given curvature
     val constraints = map {
+        // Alternative Implementation: maxVelocity / (1 + model.wheelbaseRadius * it.curvature / 2 )
         val driveKinematicConstraint = model.signedMaxAtCurvature(it.curvature, maxVelocity).linear
         val k = abs(it.curvature)
         val centripetalAccelerationConstraint = if (k > 1E-5) maxAcceleration / k else maxVelocity

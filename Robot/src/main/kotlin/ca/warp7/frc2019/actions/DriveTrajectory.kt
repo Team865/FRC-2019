@@ -32,7 +32,7 @@ class DriveTrajectory(
 
     private val logger: CSVLogger = io.getLogger("DriveTrajectory")
             .withHeaders(
-                    "t",
+                    "leftRear",
                     "s_x", "s_y", "s_theta",
                     "r_x", "r_y", "r_theta",
                     "left", "right",

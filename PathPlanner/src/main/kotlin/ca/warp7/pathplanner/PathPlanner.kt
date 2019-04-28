@@ -1,6 +1,9 @@
 package ca.warp7.pathplanner
 
-import ca.warp7.frc.drive.*
+import ca.warp7.frc.drive.ChassisState
+import ca.warp7.frc.drive.DifferentialDriveModel
+import ca.warp7.frc.drive.DynamicState
+import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.f
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.interpolate
@@ -179,7 +182,7 @@ class PathPlanner : PApplet() {
             val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
             val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
             Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
-                    model.solve(KinematicState(velocity, acceleration)), it.t)
+                    model.solve(velocity, acceleration), it.t)
         }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
         maxAngular = trajectory.map { Math.abs(it.velocity * it.state.curvature) }.max() ?: 1.0
@@ -317,7 +320,7 @@ class PathPlanner : PApplet() {
                 "ΣΔd=${(kMetersToFeet * arcLength).f}ft  " +
                 "ΣΔt=${trajectory.last().t.f}s  " +
                 "V=${(maxVRatio * 100).toInt()}%  " +
-                "A=${(maxARatio * 100).toInt()}%  " +
+                "a=${(maxARatio * 100).toInt()}%  " +
                 "O=$optimizing  "
         drawText(msg)
 

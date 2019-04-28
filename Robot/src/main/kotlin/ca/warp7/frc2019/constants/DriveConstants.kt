@@ -85,12 +85,14 @@ object DriveConstants {
 
     val kVelocityFeedforwardPID = PID(kP = 0.8, kI = 0.0, kD = 5.0, kF = 1.0)
 
+    val kTrajectoryPID = PID(kP = 1.0, kI = 0.0, kD = 10.0, kF = 0.0)
+
     // Talon configuration
 
     val kMasterTalonConfig
         get() = TalonSRXConfiguration().apply {
-        openloopRamp = kOpenLoopRamp
-        voltageCompSaturation = kMaxVolts
-        primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-    }
+            openloopRamp = kOpenLoopRamp
+            voltageCompSaturation = kMaxVolts
+            primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
+        }
 }

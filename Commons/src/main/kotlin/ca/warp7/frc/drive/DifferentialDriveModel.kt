@@ -253,7 +253,4 @@ class DifferentialDriveModel(
         )
     }
 
-    fun solve(kinematicState: KinematicState): DynamicState {
-        return solve(kinematicState.velocity, kinematicState.acceleration)
-    }
 }
