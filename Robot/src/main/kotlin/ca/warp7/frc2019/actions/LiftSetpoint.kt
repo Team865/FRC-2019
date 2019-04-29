@@ -6,7 +6,7 @@ import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Lift
 
-class GoToSetpoint(var setpoint: Double = 0.0) : Action {
+class LiftSetpoint(var setpoint: Double = 0.0) : Action {
     private val io: BaseIO = ioInstance()
 
     override val shouldFinish: Boolean

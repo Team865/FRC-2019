@@ -36,7 +36,7 @@ class Sandstorm : Action {
     }
 
     override fun update() {
-        Drive.estimateRobotState()
+        Drive.updateRobotStateEstimation()
     }
 
     override val shouldFinish: Boolean

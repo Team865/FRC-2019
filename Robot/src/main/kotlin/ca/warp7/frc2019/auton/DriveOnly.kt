@@ -47,7 +47,6 @@ object DriveOnly {
                     arrayOf(
                             Pose2D(0.feet, 0.feet, 0.degrees),
                             Pose2D(2.feet, 0.feet, 0.degrees),
-                            Pose2D(2.feet, 0.feet, 0.degrees),
                             Pose2D(16.7.feet, 0.feet, 90.degrees)
                     )
             )

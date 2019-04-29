@@ -3,13 +3,27 @@ package ca.warp7.frc2019.auton
 import ca.warp7.actionkt.async
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.wait
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.DriveForDistance
-import ca.warp7.frc2019.actions.GoToSetpoint
+import ca.warp7.frc2019.actions.DriveTrajectory
+import ca.warp7.frc2019.actions.LiftSetpoint
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.FieldConstants
+import ca.warp7.frc2019.constants.FollowerType
 import ca.warp7.frc2019.constants.LiftConstants
 
 object LeftRocketCloseHatch {
+
+
+    val level1
+        get() = queue {
+            +DriveTrajectory(arrayOf(
+                    Pose2D(6.0, 4.0, 0.degrees),
+                    Pose2D(16.8, 11.2, 32.degrees)
+            ), followerType = FollowerType.Ramsete)
+            +SubActions.outtakeHatch
+        }
 
     val level2
         get() = queue {
@@ -27,7 +41,7 @@ object LeftRocketCloseHatch {
                     +SubActions.outtakeHatch
                     +stopSignal
                 }
-                +GoToSetpoint(FieldConstants.kHatch2Height)
+                +LiftSetpoint(FieldConstants.kHatch2Height)
             }
 
             // back off and lower lift
@@ -39,7 +53,7 @@ object LeftRocketCloseHatch {
                 }
                 +queue {
                     wait(0.5)
-                    +GoToSetpoint(LiftConstants.kHomeHeightInches)
+                    +LiftSetpoint(LiftConstants.kHomeHeightInches)
                 }
             }
 

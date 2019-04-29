@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.meta
+package ca.warp7.frc2019
 
 /*
 TODO("Template)
