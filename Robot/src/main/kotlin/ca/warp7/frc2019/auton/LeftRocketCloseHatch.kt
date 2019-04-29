@@ -1,28 +1,42 @@
 package ca.warp7.frc2019.auton
 
+import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.async
 import ca.warp7.actionkt.queue
 import ca.warp7.actionkt.wait
+import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.DriveTrajectory
 import ca.warp7.frc2019.actions.LiftSetpoint
 import ca.warp7.frc2019.actions.QuickTurn
+import ca.warp7.frc2019.constants.DriveFollower.Ramsete
 import ca.warp7.frc2019.constants.FieldConstants
-import ca.warp7.frc2019.constants.FollowerType
 import ca.warp7.frc2019.constants.LiftConstants
 
 object LeftRocketCloseHatch {
 
+    val startPose = Pose2D(6.0.feet, 4.0.feet, 0.degrees)
+    val rocketPose = Pose2D(16.8.feet, 11.2.feet, 32.degrees)
+    val turnPose = Pose2D(14.0.feet, 7.0.feet, 90.degrees)
+    val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
+
+    val startToRocket: Action
+        get() = DriveTrajectory(arrayOf(startPose, rocketPose), follower = Ramsete)
+
+    val rocketToLoadingStation: Action
+        get() = queue {
+            +DriveTrajectory(arrayOf(rocketPose, turnPose), backwards = true, follower = Ramsete)
+            +DriveTrajectory(arrayOf(turnPose, loadingStationPose), follower = Ramsete)
+        }
 
     val level1
         get() = queue {
-            +DriveTrajectory(arrayOf(
-                    Pose2D(6.0, 4.0, 0.degrees),
-                    Pose2D(16.8, 11.2, 32.degrees)
-            ), followerType = FollowerType.Ramsete)
+            +startToRocket
             +SubActions.outtakeHatch
+            +rocketToLoadingStation
+            +SubActions.intakeHatch
         }
 
     val level2

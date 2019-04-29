@@ -57,7 +57,7 @@ object Drive {
         io.rightFeedforward = rightAcc / 1023
     }
 
-    fun setFeedforward(dynamicState: DynamicState) {
+    fun setVoltage(dynamicState: DynamicState) {
         io.driveControlMode = ControlMode.PercentOutput
         io.leftDemand = 0.0
         io.rightDemand = 0.0
@@ -65,11 +65,11 @@ object Drive {
         io.rightFeedforward = dynamicState.voltage.right / 12
     }
 
-    fun setFeedforward(velocity: ChassisState, acceleration: ChassisState) {
-        setFeedforward(model.solve(velocity, acceleration))
+    fun setVoltage(velocity: ChassisState, acceleration: ChassisState) {
+        setVoltage(model.solve(velocity, acceleration))
     }
 
-    fun setDynamicState(dynamicState: DynamicState) {
+    fun setDynamics(dynamicState: DynamicState) {
         io.driveControlMode = ControlMode.Velocity
         io.leftDemand = dynamicState.velocity.left * DriveConstants.kTicksPerMeterPer100ms
         io.rightDemand = dynamicState.velocity.right * DriveConstants.kTicksPerMeterPer100ms
@@ -77,15 +77,15 @@ object Drive {
         io.rightFeedforward = dynamicState.voltage.right / 12
     }
 
-    fun setDynamicState(velocity: ChassisState, acceleration: ChassisState) {
-        setDynamicState(model.solve(velocity, acceleration))
+    fun setDynamics(velocity: ChassisState, acceleration: ChassisState) {
+        setDynamics(model.solve(velocity, acceleration))
     }
 
     fun setAdjustedChassisState(dynamics: DynamicState, adjustedLinear: Double, adjustedAngular: Double) {
         val (adjustedLeft, adjustedRight) = model.solve(ChassisState(adjustedLinear, adjustedAngular))
         val leftVoltage = dynamics.voltage.left + (adjustedLeft - dynamics.velocity.left) / model.speedPerVolt
         val rightVoltage = dynamics.voltage.right + (adjustedRight - dynamics.velocity.right) / model.speedPerVolt
-        setDynamicState(DynamicState(WheelState(leftVoltage, rightVoltage), dynamics.velocity))
+        setDynamics(DynamicState(WheelState(leftVoltage, rightVoltage), dynamics.velocity))
     }
 
     private var quickStopAccumulator = 0.0 // gain for stopping from quick turn
@@ -243,10 +243,9 @@ object Drive {
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
         val error = velocity.angular - io.angularVelocity
-        val adjustedLinear = velocity.linear
         val adjustedAngular = velocity.angular +
                 velocity.linear * kW * error
-        setAdjustedChassisState(model.solve(velocity, acceleration), adjustedLinear, adjustedAngular)
+        setAdjustedChassisState(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
     }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
@@ -270,6 +269,6 @@ object Drive {
         val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
         val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
         val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
-        setDynamicState(adjustedVelocity, adjustedAcceleration)
+        setDynamics(adjustedVelocity, adjustedAcceleration)
     }
 }

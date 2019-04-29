@@ -5,10 +5,14 @@ import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.DynamicState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.f
+import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.kMetersToFeet
-import ca.warp7.frc.path.*
+import ca.warp7.frc.path.QuinticSegment2D
+import ca.warp7.frc.path.parameterized
+import ca.warp7.frc.path.quinticSplinesOf
+import ca.warp7.frc.path.sumDCurvature2
 import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.timedTrajectory
 import processing.core.PApplet
@@ -153,8 +157,8 @@ class PathPlanner : PApplet() {
     override fun setup() {
         surface.setIcon(PImage(ImageIO.read(this::class.java.getResource("/icon.png"))))
         waypoints = arrayOf(
-                waypoint(6, 4, 0),
-                waypoint(16.8, 11.2, 32)
+                Pose2D(6.feet, 4.feet, 0.degrees),
+                Pose2D(16.8.feet, 11.2.feet, 32.degrees)
         )
         regenerate()
     }
@@ -539,9 +543,9 @@ class PathPlanner : PApplet() {
                 redrawScreen()
             }
             's' -> showForCopy(waypoints.joinToString(",\n") {
-                "waypoint(${(kMetersToFeet * it.translation.x).f}, " +
-                        "${(kMetersToFeet * it.translation.y).f}, " +
-                        "${it.rotation.degrees.f})"
+                "Pose2D(${(kMetersToFeet * it.translation.x).f}.feet, " +
+                        "${(kMetersToFeet * it.translation.y).f}.feet, " +
+                        "${it.rotation.degrees.f}.degrees)"
             })
             '0' -> {
                 simulating = false

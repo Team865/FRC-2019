@@ -15,7 +15,7 @@ const val kTurningDiameter = 24.75 * kInchesToMeters // m
 
 const val kMaxVelocity = 12.0 * kFeetToMeters // m/s
 const val kMaxAcceleration = 9.0 * kFeetToMeters //  m/s^2
-const val kMaxFreeSpeed = 17.0 * kFeetToMeters// m/s
+const val kMaxFreeSpeed = 16.5 * kFeetToMeters// m/s
 
 const val kScrubFactor = 1.45
 const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor // m

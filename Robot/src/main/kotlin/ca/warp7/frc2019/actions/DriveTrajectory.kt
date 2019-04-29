@@ -5,8 +5,8 @@ import ca.warp7.frc.CSVLogger
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc2019.constants.FollowerType
-import ca.warp7.frc2019.constants.FollowerType.*
+import ca.warp7.frc2019.constants.DriveFollower
+import ca.warp7.frc2019.constants.DriveFollower.*
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
@@ -19,13 +19,13 @@ class DriveTrajectory(
         val backwards: Boolean = false,
         val insertRobotState: Boolean = false,
         val resetInitialState: Boolean = true,
-        val followerType: FollowerType = VoltageOnly
+        val follower: DriveFollower = VoltageOnly
 ) : Action {
 
     constructor(distance: Double) : this(
             arrayOf(Pose2D.identity, Pose2D(abs(distance), 0.0, Rotation2D.identity)),
             backwards = distance < 0,
-            followerType = AnglePID
+            follower = AnglePID
     )
 
     private val io: BaseIO = ioInstance()
@@ -45,9 +45,9 @@ class DriveTrajectory(
     override fun update() {
         val setpoint = Drive.advanceTrajectory(io.dt)
         val error = Drive.getError(setpoint.state.state)
-        when (followerType) {
-            VoltageOnly -> Drive.setFeedforward(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            SpeedDemand -> Drive.setDynamicState(setpoint.chassisVelocity, setpoint.chassisAcceleration)
+        when (follower) {
+            VoltageOnly -> Drive.setVoltage(setpoint.chassisVelocity, setpoint.chassisAcceleration)
+            SpeedDemand -> Drive.setDynamics(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             PosePID -> Drive.updatePosePID(error, setpoint.chassisVelocity, setpoint.chassisAcceleration)
             AnglePID -> Drive.updateAnglePID(setpoint.chassisVelocity, setpoint.chassisAcceleration)
             Ramsete -> Drive.updateRamsete(error, setpoint.chassisVelocity)
