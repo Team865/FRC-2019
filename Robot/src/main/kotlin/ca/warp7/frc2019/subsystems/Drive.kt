@@ -53,16 +53,16 @@ object Drive {
         io.driveControlMode = ControlMode.Velocity
         io.leftDemand = leftVel * DriveConstants.kTicksPerMeterPer100ms
         io.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
-        io.leftFeedforward = leftAcc / 1023
-        io.rightFeedforward = rightAcc / 1023
+        io.leftFeedforward = leftAcc / DriveConstants.kMaxTalonPIDOutput
+        io.rightFeedforward = rightAcc / DriveConstants.kMaxTalonPIDOutput
     }
 
     fun setVoltage(dynamicState: DynamicState) {
         io.driveControlMode = ControlMode.PercentOutput
         io.leftDemand = 0.0
         io.rightDemand = 0.0
-        io.leftFeedforward = dynamicState.voltage.left / 12
-        io.rightFeedforward = dynamicState.voltage.right / 12
+        io.leftFeedforward = dynamicState.voltage.left / model.maxVoltage
+        io.rightFeedforward = dynamicState.voltage.right / model.maxVoltage
     }
 
     fun setVoltage(velocity: ChassisState, acceleration: ChassisState) {
@@ -73,8 +73,8 @@ object Drive {
         io.driveControlMode = ControlMode.Velocity
         io.leftDemand = dynamicState.velocity.left * DriveConstants.kTicksPerMeterPer100ms
         io.rightDemand = dynamicState.velocity.right * DriveConstants.kTicksPerMeterPer100ms
-        io.leftFeedforward = dynamicState.voltage.left / 12
-        io.rightFeedforward = dynamicState.voltage.right / 12
+        io.leftFeedforward = dynamicState.voltage.left / model.maxVoltage
+        io.rightFeedforward = dynamicState.voltage.right / model.maxVoltage
     }
 
     fun setDynamics(velocity: ChassisState, acceleration: ChassisState) {
@@ -98,7 +98,7 @@ object Drive {
             if (Math.abs(xSpeed) < 0.2) {
                 quickStopAccumulator = (1 - kQuickStopAlpha) * quickStopAccumulator + kQuickStopAlpha * zRotation * 2.0
             }
-            angularPower = (zRotation * zRotation + model.frictionVoltage / 12.0)
+            angularPower = (zRotation * zRotation + model.frictionVoltage / model.maxVoltage)
                     .withSign(zRotation).coerceIn(-0.8, 0.8)
         } else {
             angularPower = Math.abs(xSpeed) * zRotation - quickStopAccumulator
@@ -225,43 +225,35 @@ object Drive {
         return t > totalTime
     }
 
-    private const val kX = 5.0
-    private const val kY = 1.0
-    private const val kTheta = 5.0
-
     fun updatePosePID(error: Pose2D, velocity: ChassisState, acceleration: ChassisState) {
         val adjustedLinear = velocity.linear +
-                kX * error.translation.x
+                DriveConstants.kPoseX * error.translation.x
         val adjustedAngular = velocity.angular +
-                velocity.linear * kY * error.translation.y +
-                kTheta * error.rotation.radians
+                velocity.linear * DriveConstants.kPoseY * error.translation.y +
+                DriveConstants.kPoseTheta * error.rotation.radians
         setAdjustedChassisState(model.solve(velocity, acceleration), adjustedLinear, adjustedAngular)
     }
-
-    private const val kW = 5.0
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
         val error = velocity.angular - io.angularVelocity
         val adjustedAngular = velocity.angular +
-                velocity.linear * kW * error
+                velocity.linear * DriveConstants.kAngleP * error
         setAdjustedChassisState(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
     }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
-    private const val kBeta = 2.0  // Correction coefficient, β > 0
-    private const val kZeta = 0.7  // Damping coefficient, 0 < ζ < 1
-
     private var previousVelocity = ChassisState(0.0, 0.0)
 
     fun updateRamsete(error: Pose2D, velocity: ChassisState) {
-        val k = 2.0 * kZeta * Math.sqrt(kBeta * velocity.linear.pow(2) + velocity.angular.pow(2)) // gain
+        val k = 2.0 * DriveConstants.kRamseteZeta * Math.sqrt(
+                DriveConstants.kRamseteBeta * velocity.linear.pow(2) + velocity.angular.pow(2)) // gain term
         val turnError = error.rotation.radians
         val sinRatio = if (turnError.epsilonEquals(0.0, 1E-2)) 1.0 else error.rotation.sin / turnError
         val adjustedLinear = velocity.linear * error.rotation.cos + // current linear velocity
                 k * error.translation.x // forward error correction
         val adjustedAngular = velocity.angular + // current angular velocity
                 k * turnError + // turn error correction
-                velocity.linear * kBeta * sinRatio * error.translation.y // lateral error correction
+                velocity.linear * DriveConstants.kRamseteBeta * sinRatio * error.translation.y // lateral correction
         val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
         previousVelocity = adjustedVelocity
         // re-calculate acceleration

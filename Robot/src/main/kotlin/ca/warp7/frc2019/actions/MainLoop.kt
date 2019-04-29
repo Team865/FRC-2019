@@ -143,8 +143,8 @@ class MainLoop : Action {
             io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
             io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
             if (xSpeed == 0.0) {
-                io.leftDemand += Drive.model.frictionVoltage / 12.0
-                io.rightDemand += Drive.model.frictionVoltage / 12.0
+                io.leftDemand += Drive.model.frictionVoltage / Drive.model.maxVoltage
+                io.rightDemand += Drive.model.frictionVoltage / Drive.model.maxVoltage
             }
             val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
             if (correction > 0) io.rightDemand += correction
