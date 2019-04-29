@@ -14,8 +14,9 @@ import kotlin.math.abs
 
 class DriveTrajectory(
         val waypoints: Array<Pose2D>,
-        val vRatio: Double = 0.8,
-        val aRatio: Double = 0.8,
+        val maxVelocity: Double = 0.8 * Drive.model.maxVelocity,
+        val maxAcceleration: Double = 0.8 * Drive.model.maxAcceleration,
+        val maxCentripetalAcceleration: Double = maxAcceleration,
         val backwards: Boolean = false,
         val insertRobotState: Boolean = false,
         val resetInitialState: Boolean = true,
@@ -39,7 +40,8 @@ class DriveTrajectory(
                     "v", "w")
 
     override fun start() {
-        Drive.initTrajectory(waypoints, vRatio, aRatio, backwards, insertRobotState, resetInitialState)
+        Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
+                backwards, insertRobotState, resetInitialState)
     }
 
     override fun update() {

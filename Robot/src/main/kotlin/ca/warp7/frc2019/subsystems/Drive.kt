@@ -181,17 +181,16 @@ object Drive {
     private var direction = 0.0
     private var initialState: Pose2D = Pose2D.identity
 
-    fun initTrajectory(waypoints: Array<Pose2D>, vRatio: Double, aRatio: Double,
+    fun initTrajectory(waypoints: Array<Pose2D>,
+                       maxVelocity: Double, maxAcceleration: Double, maxCentripetalAcceleration: Double,
                        backwards: Boolean, insertRobotState: Boolean, resetInitialState: Boolean) {
-        // resolve ratios and direction
-        val maxVelocity = model.maxVelocity * vRatio
-        val maxAcceleration = model.maxAcceleration * aRatio
+        // resolve direction
         direction = if (backwards) -1.0 else 1.0
         // make path based on insertRobotState
         val path = if (insertRobotState) quinticSplinesOf(robotState, *waypoints) else quinticSplinesOf(*waypoints)
         // distance-parameterize, then time-parameterize the path into a trajectory
         trajectory = path.parameterized().timedTrajectory(
-                model, 0.0, 0.0, maxVelocity, maxAcceleration)
+                model, 0.0, 0.0, maxVelocity, maxAcceleration, maxCentripetalAcceleration)
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0

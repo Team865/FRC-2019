@@ -14,14 +14,15 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         startVelocity: Double = 0.0,
         endVelocity: Double = 0.0,
         maxVelocity: Double = model.maxVelocity,
-        maxAcceleration: Double = model.maxAcceleration
+        maxAcceleration: Double = model.maxAcceleration,
+        maxCentripetalAcceleration: Double = maxAcceleration
 ): List<TrajectoryPoint> {
     // Compute isolated velocity constraints at a given curvature
     val constraints = map {
         // Alternative Implementation: maxVelocity / (1 + model.wheelbaseRadius * it.curvature / 2 )
         val driveKinematicConstraint = model.signedMaxAtCurvature(it.curvature, maxVelocity).linear
         val k = abs(it.curvature)
-        val centripetalAccelerationConstraint = if (k > 1E-5) maxAcceleration / k else maxVelocity
+        val centripetalAccelerationConstraint = if (k > 1E-5) maxCentripetalAcceleration / k else maxVelocity
         minOf(driveKinematicConstraint, centripetalAccelerationConstraint)
     }
     // Compute arc length between each pair of points in the path
