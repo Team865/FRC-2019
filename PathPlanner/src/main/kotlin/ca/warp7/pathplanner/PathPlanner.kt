@@ -1,14 +1,11 @@
 package ca.warp7.pathplanner
 
+import ca.warp7.frc.*
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.DynamicState
 import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.f
-import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
-import ca.warp7.frc.interpolate
-import ca.warp7.frc.kMetersToFeet
 import ca.warp7.frc.path.QuinticSegment2D
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
@@ -66,6 +63,7 @@ class PathPlanner : PApplet() {
 
     var maxVRatio = 1.0
     var maxARatio = 1.0
+    var maxAcRatio = 1.0
     var optimizing = false
 
     var curvatureSum = 0.0
@@ -175,10 +173,14 @@ class PathPlanner : PApplet() {
         curvatureSum = intermediate.sumDCurvature2()
         splines = intermediate.parameterized()
         arcLength = splines.zipWithNext { a: CurvatureState<Pose2D>, b: CurvatureState<Pose2D> ->
-            (b.state.translation - a.state.translation).mag
+            val chordLength = (a.state.translation - b.state.translation).mag
+            if (a.curvature.epsilonEquals(0.0)) chordLength else
+                kotlin.math.abs(kotlin.math.asin(chordLength * a.curvature / 2) / a.curvature * 2)
         }.sum()
         trajectory = splines.timedTrajectory(model, 0.0, 0.0,
-                model.maxVelocity * maxVRatio, model.maxAcceleration * maxARatio)
+                model.maxVelocity * maxVRatio,
+                model.maxAcceleration * maxARatio,
+                model.maxAcceleration * maxAcRatio)
         trajectoryTime = trajectory.last().t
         dynamics = trajectory.map {
             val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
@@ -320,11 +322,12 @@ class PathPlanner : PApplet() {
         lineTo(left, af)
         lineTo(right, bf)
         val msg = "K=${maxK.f}  " +
-                "ΣΔk2=${curvatureSum.f}  " +
+                "ΣΔk²=${curvatureSum.f1}  " +
                 "ΣΔd=${(kMetersToFeet * arcLength).f}ft  " +
-                "ΣΔt=${trajectory.last().t.f}s  " +
-                "V=${(maxVRatio * 100).toInt()}%  " +
-                "a=${(maxARatio * 100).toInt()}%  " +
+                "ΣΔt=${trajectory.last().t.f1}s  " +
+                "V=${maxVRatio.f1}  " +
+                "A=${maxARatio.f1}  " +
+                "Ac=${maxAcRatio.f1}  " +
                 "O=$optimizing  "
         drawText(msg)
 
@@ -337,19 +340,27 @@ class PathPlanner : PApplet() {
     fun processConstructing() {
         when (key) {
             '_' -> {
-                maxVRatio = (maxVRatio - 0.1).coerceIn(0.3, 1.0)
+                maxVRatio = (maxVRatio - 0.1).coerceIn(0.3, 1.2)
                 regenerate()
             }
             '+' -> {
-                maxVRatio = (maxVRatio + 0.1).coerceIn(0.3, 1.0)
+                maxVRatio = (maxVRatio + 0.1).coerceIn(0.3, 1.2)
                 regenerate()
             }
             '{' -> {
-                maxARatio = (maxARatio - 0.1).coerceIn(0.3, 1.0)
+                maxARatio = (maxARatio - 0.1).coerceIn(0.3, 1.2)
                 regenerate()
             }
             '}' -> {
-                maxARatio = (maxARatio + 0.1).coerceIn(0.3, 1.0)
+                maxARatio = (maxARatio + 0.1).coerceIn(0.3, 1.2)
+                regenerate()
+            }
+            '\"' -> {
+                maxAcRatio = (maxAcRatio - 0.1).coerceIn(0.3, 1.2)
+                regenerate()
+            }
+            '|' -> {
+                maxAcRatio = (maxAcRatio + 0.1).coerceIn(0.3, 1.2)
                 regenerate()
             }
             'r' -> {

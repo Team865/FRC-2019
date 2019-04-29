@@ -7,6 +7,7 @@ fun Double.epsilonEquals(other: Double) = epsilonEquals(other, 1E-12)
 fun interpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
 
 val Double.f get() = "%.4f".format(this)
+val Double.f1 get() = "%.1f".format(this)
 
 fun applyDeadband(value: Double, max: Double, deadband: Double): Double {
     val v = value.coerceIn(-max, max)
