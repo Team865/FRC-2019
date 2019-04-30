@@ -94,19 +94,21 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         val jerkPoints = mutableListOf<Int>()
         for (i in 1 until size) if (abs(states[i].jerk) > maxJerk) jerkPoints.add(i)
         for (i in 0 until jerkPoints.size) {
-            println()
-            val si = jerkPoints[i]
-            val range = abs(states[si].jerk / (2 * maxJerk)).toInt() * 2 + 1
-            val accLast = states[si - 1].acceleration
-            val start = maxOf(if (i == 0) 0 else jerkPoints[i - 1], si - range)
-            val end = minOf(if (i == jerkPoints.size - 1) states.size - 1 else jerkPoints[i + 1], si + range)
-            val jerkStep = states[si].jerk * states[si].t / (end - start)
-            var t = 0.0
+            val stateIndex = jerkPoints[i]
+            val range = abs(states[stateIndex].jerk / (2 * maxJerk)).toInt() * 2 + 1
+            val accLast = states[stateIndex - 1].acceleration
+            val start = maxOf(jerkPoints.getOrNull(i - 1) ?: 0, stateIndex - range)
+            val end = minOf(jerkPoints.getOrNull(i + 1) ?: states.size - 1, stateIndex + range)
+            val step = (states[end].acceleration - states[start].acceleration) / (end - start + 1)
             for (j in start..end) {
                 val next = states[j + 1]
-                next.jerk = jerkStep
-                t += next.t
-                next.acceleration = accLast + jerkStep * (j - start)
+                val current = states[j]
+                current.jerk = step
+                current.acceleration = accLast + step * (j - start)
+                val arcLength = arcLengths[j]
+                // Apply kinematic equation vf^2 = vi^2 + 2ax, solve for vf
+                next.velocity = minOf(next.velocity, sqrt(current.velocity.squared + 2 * current.acceleration * arcLength))
+                next.t = maxOf(next.t, 2 * arcLength) / abs(current.velocity + next.velocity)
             }
         }
     }

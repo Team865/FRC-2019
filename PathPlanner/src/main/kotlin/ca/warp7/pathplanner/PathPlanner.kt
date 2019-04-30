@@ -64,6 +64,7 @@ class PathPlanner : PApplet() {
     var maxVRatio = 1.0
     var maxARatio = 1.0
     var maxAcRatio = 1.0
+    var jerkLimiting = false
     var optimizing = false
 
     var curvatureSum = 0.0
@@ -180,7 +181,8 @@ class PathPlanner : PApplet() {
         trajectory = splines.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
                 model.maxVelocity * maxVRatio,
                 model.maxAcceleration * maxARatio,
-                model.maxAcceleration * maxAcRatio)
+                model.maxAcceleration * maxAcRatio,
+                if (jerkLimiting) 40.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
         dynamics = trajectory.map {
             val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
@@ -233,6 +235,9 @@ class PathPlanner : PApplet() {
     fun v2T(v: Double, t: Double, max: Double, y: Int) =
             Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 50)
 
+    fun v2T2(v: Double, t: Double, max: Double, y: Int) =
+            Translation2D(531 + (t / trajectoryTime) * 474, y - (v / max) * 100)
+
     fun h2TL(v: Double, t: Double, max: Double, y: Int) =
             Translation2D(531 + (t / trajectoryTime) * 231, y - (v / max) * 104)
 
@@ -258,12 +263,12 @@ class PathPlanner : PApplet() {
             strokeWeight(2f)
             stroke(0f, 128f, 192f)
             map { v2T(it.acceleration, it.t, model.maxAcceleration, 434) }.connect()
-            stroke(0f, 192f, 128f)
-            map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
+            //stroke(0f, 192f, 128f)
+            //map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
             stroke(255f, 255f, 128f)
             map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T(it.velocity, it.t, model.maxVelocity, 290) }.connect()
+            map { v2T2(it.velocity, it.t, model.maxVelocity, 340) }.connect()
         }
         dynamics.subList(0, i + 1).apply {
             stroke(255f, 255f, 128f)
@@ -321,14 +326,14 @@ class PathPlanner : PApplet() {
         lineTo(af, bf)
         lineTo(left, af)
         lineTo(right, bf)
-        val msg = "K=${maxK.f}  " +
-                "ΣΔk²=${curvatureSum.f1}  " +
-                "ΣΔd=${(kMetersToFeet * arcLength).f}ft  " +
+        val msg = "ΣΔk²=${curvatureSum.f1}  " +
+                "ΣΔd=${(kMetersToFeet * arcLength).f1}ft  " +
                 "ΣΔt=${trajectory.last().t.f1}s  " +
+                "O=$optimizing  " +
                 "V=${maxVRatio.f1}  " +
                 "A=${maxARatio.f1}  " +
                 "Ac=${maxAcRatio.f1}  " +
-                "O=$optimizing  "
+                "J=$jerkLimiting"
         drawText(msg)
 
         if (!simulating) {
@@ -386,6 +391,10 @@ class PathPlanner : PApplet() {
             }
             'o' -> {
                 optimizing = !optimizing
+                regenerate()
+            }
+            'j' -> {
+                jerkLimiting = !jerkLimiting
                 regenerate()
             }
         }
