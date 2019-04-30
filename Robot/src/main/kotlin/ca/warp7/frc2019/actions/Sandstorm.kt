@@ -4,7 +4,7 @@ import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionControl
 import ca.warp7.frc.control.ControllerState
 import ca.warp7.frc2019.Looper
-import ca.warp7.frc2019.auton.DriveOnly
+import ca.warp7.frc2019.auton.LeftRocketCloseHatch
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -17,7 +17,7 @@ class Sandstorm : Action {
     private val autonControl = ActionControl()
 
     override fun start() {
-        autonControl.setAction(DriveOnly.leftCloseRocket)
+        autonControl.setAction(LeftRocketCloseHatch.startToRocket)
         Looper.add(autonControl)
         io.config.apply {
             enableLimelightInput = true
