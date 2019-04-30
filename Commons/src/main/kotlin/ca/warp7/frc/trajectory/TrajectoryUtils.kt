@@ -1,6 +1,5 @@
 package ca.warp7.frc.trajectory
 
-import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.CurvatureState
 import ca.warp7.frc.geometry.Pose2D
@@ -10,12 +9,12 @@ import kotlin.math.asin
 import kotlin.math.sqrt
 
 fun List<CurvatureState<Pose2D>>.timedTrajectory(
-        model: DifferentialDriveModel,
-        startVelocity: Double = 0.0,
-        endVelocity: Double = 0.0,
-        maxVelocity: Double = model.maxVelocity,
-        maxAcceleration: Double = model.maxAcceleration,
-        maxCentripetalAcceleration: Double = maxAcceleration
+        wheelbaseRadius: Double,
+        startVelocity: Double,
+        endVelocity: Double,
+        maxVelocity: Double,
+        maxAcceleration: Double,
+        maxCentripetalAcceleration: Double
 ): List<TrajectoryPoint> {
     // Create list of states with everything set to max, then limit it afterwards
     val states = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }
@@ -37,7 +36,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
          * 3. Substitute left and right into equation 2: v = (2 * V_max - w(2 * L)) / 2
          * 5. Substitute w = v * k into equation 2, v = (2 * V_max - v * k * 2 * L) / 2
          * 6. Solve: v = V_max - v * k * L; v + v * k * L = V_max; v * (1 + k * L) = V_max; v = V_max / (1 + k * L)*/
-        val driveKinematicConstraint = maxVelocity / (1 + k * model.wheelbaseRadius)
+        val driveKinematicConstraint = maxVelocity / (1 + k * wheelbaseRadius)
         // Velocity constrained inversely proportional to the curvature
         val centripetalAccelerationConstraint = if (k > 1E-5) maxCentripetalAcceleration / k else maxVelocity
         return@map minOf(driveKinematicConstraint, centripetalAccelerationConstraint)

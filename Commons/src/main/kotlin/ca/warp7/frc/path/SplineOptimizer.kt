@@ -1,6 +1,8 @@
 package ca.warp7.frc.path
 
+import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
+import ca.warp7.frc.trajectory.timedTrajectory
 
 /**
  * @author Team 254
@@ -138,11 +140,17 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
 }
 
 fun main() {
-    val splines = parameterizedSplinesOf(
-            waypoint(0, 0, 0),
-            waypoint(8, 0, 0),
-            waypoint(16, -6, -60),
-            waypoint(18, -8, -45)
+    val splines = quinticSplinesOf(
+            Pose2D(0.feet, 0.feet, 0.degrees),
+            Pose2D(8.feet, 0.feet, 0.degrees),
+            Pose2D(16.feet, 6.feet, 60.degrees),
+            Pose2D(18.feet, 8.feet, 45.degrees)
     )
-    splines.forEach { println(it) }
+
+    val p = splines.parameterized()
+
+    val trajectory = p.timedTrajectory(0.45577125, 0.0, 0.0, 12.feet, 9.feet, 9.feet)
+
+
+    //println(trajectory.joinToString("\n"))
 }

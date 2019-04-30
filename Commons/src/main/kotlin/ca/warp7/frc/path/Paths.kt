@@ -2,8 +2,10 @@
 
 package ca.warp7.frc.path
 
-import ca.warp7.frc.geometry.*
-import ca.warp7.frc.kFeetToMeters
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.Translation2D
+import ca.warp7.frc.geometry.norm
 import kotlin.math.hypot
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -17,12 +19,6 @@ internal fun Double.checkBounds(): Double {
     if (this < 0 || this > 1) throw IndexOutOfBoundsException("Path cannot be interpolated beyond [0, 1]")
     return this
 }
-
-fun waypoint(xInFeet: Number, yInFeet: Number, angleInDegrees: Number) =
-        Pose2D(
-                Translation2D(kFeetToMeters * xInFeet.toDouble(), kFeetToMeters * yInFeet.toDouble()),
-                Rotation2D.fromDegrees(angleInDegrees.toDouble())
-        )
 
 val Path2DState.curvature get() = (vx * ay - ax * vy) / (vx * vx + vy * vy).pow(1.5)
 
@@ -68,7 +64,8 @@ fun quinticSplineFromPose(p0: Pose2D, p1: Pose2D): QuinticSegment2D {
 }
 
 fun quinticSplinesOf(vararg waypoints: Pose2D, optimizePath: Boolean = false): List<QuinticSegment2D> {
-    val path = waypoints.asIterable().zipWithNext { p0: Pose2D, p1: Pose2D -> quinticSplineFromPose(p0, p1) }
+    val path = mutableListOf<QuinticSegment2D>()
+    for (i in 0 until waypoints.size - 1) path.add(quinticSplineFromPose(waypoints[i], waypoints[i + 1]))
     if (optimizePath) return path.optimized()
     return path
 }

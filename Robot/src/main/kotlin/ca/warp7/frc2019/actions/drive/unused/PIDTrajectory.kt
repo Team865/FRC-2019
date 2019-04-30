@@ -45,11 +45,12 @@ class PIDTrajectory(
     private val model = Drive.model
 
     val trajectory = parameterizedSplinesOf(*waypoints).timedTrajectory(
-            model = model,
+            wheelbaseRadius = model.wheelbaseRadius,
             startVelocity = kFeetToMeters * startVelocity,
             endVelocity = kFeetToMeters * endVelocity,
             maxVelocity = model.maxVelocity * maxVelocityRatio,
-            maxAcceleration = model.maxAcceleration * maxAccelerationRatio
+            maxAcceleration = model.maxAcceleration * maxAccelerationRatio,
+            maxCentripetalAcceleration = model.maxAcceleration
     )
 
     val trajectoryTime = trajectory.last().t

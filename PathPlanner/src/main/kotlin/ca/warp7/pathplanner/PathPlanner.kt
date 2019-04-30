@@ -177,7 +177,7 @@ class PathPlanner : PApplet() {
             if (a.curvature.epsilonEquals(0.0)) chordLength else
                 kotlin.math.abs(kotlin.math.asin(chordLength * a.curvature / 2) / a.curvature * 2)
         }.sum()
-        trajectory = splines.timedTrajectory(model, 0.0, 0.0,
+        trajectory = splines.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
                 model.maxVelocity * maxVRatio,
                 model.maxAcceleration * maxARatio,
                 model.maxAcceleration * maxAcRatio)

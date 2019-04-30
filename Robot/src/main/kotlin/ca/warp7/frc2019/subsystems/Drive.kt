@@ -189,8 +189,8 @@ object Drive {
         // make path based on insertRobotState
         val path = if (insertRobotState) quinticSplinesOf(robotState, *waypoints) else quinticSplinesOf(*waypoints)
         // distance-parameterize, then time-parameterize the path into a trajectory
-        trajectory = path.parameterized().timedTrajectory(
-                model, 0.0, 0.0, maxVelocity, maxAcceleration, maxCentripetalAcceleration)
+        trajectory = path.parameterized().timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
+                maxVelocity, maxAcceleration, maxCentripetalAcceleration)
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0
