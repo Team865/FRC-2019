@@ -58,6 +58,7 @@ class DifferentialDriveModel(
         const val kEpsilon = 1E-9
     }
 
+    val frictionPercent: Double = frictionVoltage / maxVoltage
 
     /**
      * Solves the forward kinematics of the drive train by converting the
@@ -74,7 +75,7 @@ class DifferentialDriveModel(
      * @param wheels the wheel state
      * @return the chassis state
      */
-    fun solve(wheels: WheelState) = ChassisState(
+    fun solve(wheels: WheelState): ChassisState = ChassisState(
             linear = (wheels.left + wheels.right) / 2.0,
             angular = (wheels.right - wheels.left) / (2 * wheelbaseRadius)
     )
@@ -91,7 +92,7 @@ class DifferentialDriveModel(
      * @param chassis the chassis state
      * @return the wheel state
      */
-    fun solve(chassis: ChassisState) = WheelState(
+    fun solve(chassis: ChassisState): WheelState = WheelState(
             left = chassis.linear - chassis.angular * wheelbaseRadius,
             right = chassis.linear + chassis.angular * wheelbaseRadius
     )
@@ -110,7 +111,7 @@ class DifferentialDriveModel(
      * @param angular the angular velocity of the robot in rad/s
      * @return the effective wheelbase radius
      */
-    fun solveWheelbase(wheels: WheelState, angular: Double) =
+    fun solveWheelbase(wheels: WheelState, angular: Double): Double =
             (wheels.right - wheels.left) / (2 * angular)
 
 
@@ -148,7 +149,7 @@ class DifferentialDriveModel(
      *
      * @param voltage desired voltage in V
      */
-    fun freeSpeedAtVoltage(voltage: Double) = when {
+    fun freeSpeedAtVoltage(voltage: Double): Double = when {
         voltage > kEpsilon -> max(0.0, voltage - frictionVoltage) * speedPerVolt
         voltage < kEpsilon -> min(0.0, voltage + frictionVoltage) * speedPerVolt
         else -> 0.0

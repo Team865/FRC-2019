@@ -1,8 +1,6 @@
 package ca.warp7.frc2019.constants
 
 internal object ElectricalConstants {
-    const val kCompressorModule = 0
-    const val kPDPModule = 0
 
     /*
     =====================================================

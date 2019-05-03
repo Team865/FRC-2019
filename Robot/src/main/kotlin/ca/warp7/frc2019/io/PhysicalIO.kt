@@ -8,7 +8,10 @@ import ca.warp7.frc.control.RobotController
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc2019.constants.*
+import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.constants.IOConstants
+import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.constants.LimelightMode
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.DemandType.ArbitraryFeedForward
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -22,23 +25,23 @@ import edu.wpi.first.wpilibj.*
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 
 class PhysicalIO : BaseIO {
-    private val leftMaster: TalonSRX = talonSRX(DriveConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kLeftFollowerA), VictorSPX(DriveConstants.kLeftFollowerB))
-    private val rightMaster: TalonSRX = talonSRX(DriveConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
-            .followedBy(VictorSPX(DriveConstants.kRightFollowerA), VictorSPX(DriveConstants.kRightFollowerB))
+    private val leftMaster: TalonSRX = talonSRX(IOConstants.kLeftMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(IOConstants.kLeftFollowerA), VictorSPX(IOConstants.kLeftFollowerB))
+    private val rightMaster: TalonSRX = talonSRX(IOConstants.kRightMaster, DriveConstants.kMasterTalonConfig)
+            .followedBy(VictorSPX(IOConstants.kRightFollowerA), VictorSPX(IOConstants.kRightFollowerB))
 
-    private val intakeMaster: VictorSPX = victorSPX(IntakeConstants.kMaster, neutralMode = NeutralMode.Coast)
-    private val conveyorLeftMaster: VictorSPX = victorSPX(ConveyorConstants.kLeftMaster)
-    private val conveyorRightMaster: VictorSPX = victorSPX(ConveyorConstants.kRightMaster)
-    private val outtakeLeftMaster: VictorSPX = victorSPX(OuttakeConstants.kLeftMaster)
-    private val outtakeRightMaster: VictorSPX = victorSPX(OuttakeConstants.kRightMaster)
-    private val pusher: Solenoid = lazySolenoid(HatchConstants.kPusherSolenoid)
-    private val grabber: Solenoid = lazySolenoid(HatchConstants.kGrabberSolenoid)
+    private val intakeMaster: VictorSPX = victorSPX(IOConstants.kIntakeMaster, neutralMode = NeutralMode.Coast)
+    private val conveyorLeftMaster: VictorSPX = victorSPX(IOConstants.kConveyorLeftMaster)
+    private val conveyorRightMaster: VictorSPX = victorSPX(IOConstants.kConveyorRightMaster)
+    private val outtakeLeftMaster: VictorSPX = victorSPX(IOConstants.kOuttakeLeftMaster)
+    private val outtakeRightMaster: VictorSPX = victorSPX(IOConstants.kOuttakeRightMaster)
+    private val pusher: Solenoid = lazySolenoid(IOConstants.kPusherSolenoid)
+    private val grabber: Solenoid = lazySolenoid(IOConstants.kGrabberSolenoid)
 
-    private val liftMaster: TalonSRX = talonSRX(LiftConstants.kMaster, LiftConstants.kMasterTalonConfig)
-            .followedBy(victorSPX(LiftConstants.kFollower, inverted = true)).apply { setSensorPhase(true) }
+    private val liftMaster: TalonSRX = talonSRX(IOConstants.kLiftMaster, LiftConstants.kMasterTalonConfig)
+            .followedBy(victorSPX(IOConstants.kLiftFollower, inverted = true)).apply { setSensorPhase(true) }
 
-    private val liftHallEffect = DigitalInput(LiftConstants.kHallEffect)
+    private val liftHallEffect = DigitalInput(IOConstants.kLiftHallEffect)
     private val ahrs = AHRS(SPI.Port.kMXP)
 
     private val networkTableInstance: NetworkTableInstance = NetworkTableInstance.getDefault()

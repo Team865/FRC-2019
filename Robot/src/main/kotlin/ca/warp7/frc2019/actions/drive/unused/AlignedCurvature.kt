@@ -4,7 +4,6 @@ import ca.warp7.actionkt.Action
 import ca.warp7.frc.PID
 import ca.warp7.frc.control.speedController
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc2019.constants.ControlConstants
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -45,7 +44,7 @@ class AlignedCurvature : Action {
     override fun update() {
         // Reverse the curvature direction when drive train is going in
         // reverse or when it's quick turning
-        if (xSpeed < -ControlConstants.kControlDeadband) zRotation *= -1
+        if (xSpeed < -0.2) zRotation *= -1
         else if (isQuickTurn) zRotation *= DriveConstants.kQuickTurnMultiplier
         differentialDrive.curvatureDrive(xSpeed, zRotation, isQuickTurn)
 

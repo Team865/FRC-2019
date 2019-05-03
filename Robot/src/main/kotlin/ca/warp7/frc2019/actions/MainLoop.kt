@@ -4,7 +4,6 @@ import ca.warp7.actionkt.Action
 import ca.warp7.actionkt.ActionControl
 import ca.warp7.actionkt.runAfter
 import ca.warp7.frc.LatchedBoolean
-import ca.warp7.frc.PID
 import ca.warp7.frc.applyDeadband
 import ca.warp7.frc.control.ControllerState.*
 import ca.warp7.frc2019.Looper
@@ -16,6 +15,7 @@ import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
+import ca.warp7.frc2019.subsystems.Limelight
 import kotlin.math.abs
 
 class MainLoop : Action {
@@ -56,7 +56,7 @@ class MainLoop : Action {
                 else -> Unit
             }
             val wantAligning = rightBumper == HeldDown && !isQuickTurn
-            updateVisionAlignment(wantAligning, xSpeed)
+            Limelight.updateDriveAlignment(wantAligning, xSpeed)
 
             when {
                 leftTriggerAxis > 0.2 -> updatePassthrough(-leftTriggerAxis)
@@ -127,33 +127,5 @@ class MainLoop : Action {
         io.outtakeSpeed = speed * 0.8
         io.conveyorSpeed = speed * 0.9
         io.intakeSpeed = speed
-    }
-
-
-    val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
-    val visionLog = io.getLogger("vision")
-            .withHeaders("speedLimit", "correction",
-                    "left", "right", "visionErrorX", "visionArea")
-    val visionLatch = LatchedBoolean()
-
-    fun updateVisionAlignment(wantAligning: Boolean, xSpeed: Double) {
-        val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0 && abs(io.visionErrorX) < 15
-        if (visionLatch.update(isAligning)) {
-            visionLog.writeData(0, 0, 0, 0)
-        }
-        if (isAligning) {
-            val speedLimit = 0.8 - 0.5 * io.visionArea
-            io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
-            io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
-            if (xSpeed == 0.0) {
-                io.leftDemand += Drive.model.frictionVoltage / Drive.model.maxVoltage
-                io.rightDemand += Drive.model.frictionVoltage / Drive.model.maxVoltage
-            }
-            val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
-            if (correction > 0) io.rightDemand += correction
-            else if (correction < 0) io.leftDemand += correction
-            visionLog.writeData(speedLimit, correction, io.leftDemand,
-                    io.rightDemand, io.visionErrorX, io.visionArea)
-        }
     }
 }
