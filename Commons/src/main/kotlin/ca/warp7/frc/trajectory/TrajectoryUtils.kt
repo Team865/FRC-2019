@@ -14,7 +14,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
         maxVelocity: Double,
         maxAcceleration: Double,
         maxCentripetalAcceleration: Double,
-        maxJerk: Double = 60.0
+        maxJerk: Double
 ): List<TrajectoryPoint> {
     // Create list of states with everything set to max, then limit it afterwards
     val states = map { TrajectoryPoint(it, maxVelocity, maxAcceleration) }

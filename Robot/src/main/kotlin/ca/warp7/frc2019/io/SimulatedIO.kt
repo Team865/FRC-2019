@@ -4,11 +4,14 @@ import ca.warp7.frc.CSVLogger
 import ca.warp7.frc.PID
 import ca.warp7.frc.control.ControlInput
 import ca.warp7.frc.control.RobotController
+import ca.warp7.frc.f
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc2019.constants.LimelightMode
 import com.ctre.phoenix.motorcontrol.ControlMode
 
 class SimulatedIO : BaseIO {
+
+    var enabled = false
 
     private val input = ControlInput()
 
@@ -16,9 +19,14 @@ class SimulatedIO : BaseIO {
     override val operatorInput: RobotController = input.operator
 
     override fun readInputs() {
+        val newTime = System.nanoTime() * 1E-9
+        dt = newTime - time
+        time = newTime
     }
 
     override fun writeOutputs() {
+        if (enabled)
+            println(arrayOf(liftDemand, liftFeedforward).joinToString("\t") { it.f })
     }
 
     override var time: Double = 0.0
@@ -101,8 +109,11 @@ class SimulatedIO : BaseIO {
     }
 
     override fun enable() {
+        enabled = true
+        time = System.nanoTime() * 1E-9
     }
 
     override fun disable() {
+        enabled = false
     }
 }

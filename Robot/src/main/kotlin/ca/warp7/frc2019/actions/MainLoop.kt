@@ -32,7 +32,10 @@ class MainLoop : Action {
             enableLiftEncoderInput = true
             enableGyroInput = false
             enableLimelightInput = true
+            enableDriverInput = true
+            enableOperatorInput = true
         }
+        Lift.feedforwardEnabled = false
         io.driveRampRate = 0.15
     }
 

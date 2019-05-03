@@ -26,7 +26,9 @@ class CSVLogManager {
 
     fun startSession(name: String) {
         val dateStr = format.format(Date())
-        logDir = File(rootDir, "$dateStr $name/")
+        val dir = File(rootDir, "$dateStr $name/")
+        if (!dir.exists()) dir.mkdir()
+        logDir = dir
     }
 
     fun endSession() {

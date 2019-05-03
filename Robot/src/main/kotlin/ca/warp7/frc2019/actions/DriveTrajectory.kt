@@ -33,11 +33,11 @@ class DriveTrajectory(
 
     private val logger: CSVLogger = io.getLogger("DriveTrajectory")
             .withHeaders(
-                    "leftRear",
+                    "t",
+                    "s_v", "s_a", "s_k",
                     "s_x", "s_y", "s_theta",
                     "r_x", "r_y", "r_theta",
-                    "left", "right",
-                    "v", "w")
+                    "left", "right")
 
     override fun start() {
         Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
@@ -56,18 +56,19 @@ class DriveTrajectory(
         }
         val setpointState = setpoint.state.state
         val robotState = Drive.robotState
-        logger.writeData(
+        val data = arrayOf(
                 // "t"
                 setpoint.t,
+                setpoint.velocity, setpoint.acceleration, setpoint.state.curvature,
                 // "s_x", "s_y", "s_theta",
-                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.radians,
-                // "r_x", "r_y", "r_theta"
                 robotState.translation.x, robotState.translation.y, robotState.rotation.radians,
+                // "r_x", "r_y", "r_theta"
+                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.radians,
                 // "left", "right"
-                io.leftFeedforward * 12.0, io.rightFeedforward * 12.0,
-                // "v", "w"
-                Drive.chassisVelocity.linear, Drive.chassisVelocity.angular
+                io.leftFeedforward * 12.0, io.rightFeedforward * 12.0
         )
+        logger.writeData(*data)
+        //println(data.joinToString("\t") { it.f })
     }
 
     override val shouldFinish: Boolean get() = Drive.isDoneTrajectory()

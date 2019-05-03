@@ -50,7 +50,8 @@ class PIDTrajectory(
             endVelocity = kFeetToMeters * endVelocity,
             maxVelocity = model.maxVelocity * maxVelocityRatio,
             maxAcceleration = model.maxAcceleration * maxAccelerationRatio,
-            maxCentripetalAcceleration = model.maxAcceleration
+            maxCentripetalAcceleration = model.maxAcceleration,
+            maxJerk = Double.POSITIVE_INFINITY
     )
 
     val trajectoryTime = trajectory.last().t

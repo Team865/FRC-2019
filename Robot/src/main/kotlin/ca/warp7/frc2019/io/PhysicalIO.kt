@@ -309,5 +309,10 @@ class PhysicalIO : BaseIO {
         liftFeedforward = 0.0
 
         csvLogManager.endSession()
+
+        config.apply {
+            enableDriverInput = false
+            enableOperatorInput = false
+        }
     }
 }

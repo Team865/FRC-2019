@@ -167,7 +167,7 @@ object Drive {
         // reduce the extra encoder distance when driving in an arc
         val dThetaRad = dTheta.radians
         val chordDistance =
-                if (dThetaRad.epsilonEquals(0.01)) arcDistance
+                if (dThetaRad.epsilonEquals(0.0, 0.01)) arcDistance
                 else sin(dThetaRad / 2) * arcDistance / dThetaRad * 2
         // add displacement into current position
         val pos = robotState.translation + theta.translation * chordDistance
@@ -190,7 +190,7 @@ object Drive {
         val path = if (insertRobotState) quinticSplinesOf(robotState, *waypoints) else quinticSplinesOf(*waypoints)
         // distance-parameterize, then time-parameterize the path into a trajectory
         trajectory = path.parameterized().timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
-                maxVelocity, maxAcceleration, maxCentripetalAcceleration)
+                maxVelocity, maxAcceleration, maxCentripetalAcceleration, Double.POSITIVE_INFINITY)
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0
@@ -214,11 +214,11 @@ object Drive {
         val next = trajectory[index + 1]
         val x = if (last.t.epsilonEquals(next.t)) 1.0 else (t - last.t) / (next.t - last.t)
         val a = direction * interpolate(last.acceleration, next.acceleration, x)
-        val v = direction * last.velocity + a * (t - last.t)
+        val v = direction * interpolate(last.velocity, next.velocity, x)
         val k = interpolate(last.state.curvature, next.state.curvature, x)
         val p = last.state.state.translation.interpolate(next.state.state.translation, x)
         val h = last.state.state.rotation.interpolate(next.state.state.rotation, x)
-        return TrajectoryPoint(CurvatureState(Pose2D(p, h), k, 0.0), v, a, t)
+        return TrajectoryPoint(CurvatureState(Pose2D(p, h), k, 0.0), v, a, 0.0, t)
     }
 
     fun isDoneTrajectory(): Boolean {

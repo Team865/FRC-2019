@@ -149,7 +149,7 @@ fun main() {
 
     val p = splines.parameterized()
 
-    p.timedTrajectory(0.45577125, 0.0, 0.0, 12.feet, 9.feet, 9.feet)
+    p.timedTrajectory(0.45577125, 0.0, 0.0, 12.feet, 9.feet, 9.feet, 60.0)
 
 
     //println(trajectory.joinToString("\n"))
