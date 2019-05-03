@@ -9,12 +9,12 @@ object DriveConstants {
 
     // Electrical constants
 
-    const val kLeftMaster = ElectricalConstants.kDriveLeftMasterTalonId
-    const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerAVictorId
-    const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBVictorId
-    const val kRightMaster = ElectricalConstants.kDriveRightMasterTalonId
-    const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerAVictorId
-    const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBVictorId
+    const val kLeftMaster = IOConstants.kLeftMaster
+    const val kLeftFollowerA = IOConstants.kLeftFollowerA
+    const val kLeftFollowerB = IOConstants.kLeftFollowerB
+    const val kRightMaster = IOConstants.kRightMaster
+    const val kRightFollowerA = IOConstants.kRightFollowerA
+    const val kRightFollowerB = IOConstants.kRightFollowerB
 
     // Teleop Control constants
 
