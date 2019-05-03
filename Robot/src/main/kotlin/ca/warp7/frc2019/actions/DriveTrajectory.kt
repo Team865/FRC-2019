@@ -21,6 +21,7 @@ class DriveTrajectory(
         val insertRobotState: Boolean = false,
         val resetInitialState: Boolean = true,
         val enableJerkLimiting: Boolean = false,
+        val optimizeDkSquared: Boolean = false,
         val follower: DriveFollower = VoltageOnly
 ) : Action {
 
@@ -42,7 +43,7 @@ class DriveTrajectory(
 
     override fun start() {
         Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
-                backwards, insertRobotState, resetInitialState, enableJerkLimiting)
+                backwards, insertRobotState, resetInitialState, enableJerkLimiting, optimizeDkSquared)
     }
 
     override fun update() {

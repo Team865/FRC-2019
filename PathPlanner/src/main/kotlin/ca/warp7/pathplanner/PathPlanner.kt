@@ -182,7 +182,7 @@ class PathPlanner : PApplet() {
                 model.maxVelocity * maxVRatio,
                 model.maxAcceleration * maxARatio,
                 model.maxAcceleration * maxAcRatio,
-                if (jerkLimiting) 40.0 else Double.POSITIVE_INFINITY)
+                if (jerkLimiting) 45.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
         dynamics = trajectory.map {
             val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)

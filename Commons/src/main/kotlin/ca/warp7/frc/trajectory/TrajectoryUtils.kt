@@ -32,7 +32,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
             // arcLength = theta * r = theta / k
             // theta = asin(half_chord / r) * 2 = asin(half_chord * k) * 2
             // arcLength = asin(half_chord * k) * 2 / k
-            else -> asin((chordLength / 2) * a.curvature) * 2 / a.curvature
+            else -> asin((chordLength / 2) * k) * 2 / k
         }
     }
     // Compute isolated velocity constraints at a given curvature
@@ -91,23 +91,31 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
     }
     // Limit jerk if it's enabled
     if (maxJerk.isFinite()) {
+        // Find a list of points that exceeds the max jerk
         val jerkPoints = mutableListOf<Int>()
         for (i in 1 until size) if (abs(states[i].jerk) > maxJerk) jerkPoints.add(i)
+        // Limit jerk at each of these points
         for (i in 0 until jerkPoints.size) {
             val stateIndex = jerkPoints[i]
+            // Calculate a range of points to spread out the required acceleration
             val range = abs(states[stateIndex].jerk / (2 * maxJerk)).toInt() * 2 + 1
-            val accLast = states[stateIndex - 1].acceleration
+            // Calculate the bounds of the actual range with respect to other jerk points
             val start = maxOf(jerkPoints.getOrNull(i - 1) ?: 0, stateIndex - range)
             val end = minOf(jerkPoints.getOrNull(i + 1) ?: states.size - 1, stateIndex + range)
-            val step = (states[end].acceleration - states[start].acceleration) / (end - start + 1)
+            val accStart = states[start].acceleration
+            val accEnd = states[end].acceleration
+            // Calculate the individual step size
+            val step = (accEnd - accStart) / (end - start + 1)
             for (j in start..end) {
                 val next = states[j + 1]
                 val current = states[j]
                 current.jerk = step
-                current.acceleration = accLast + step * (j - start)
-                val arcLength = arcLengths[j]
+                // Interpolate the acceleration
+                current.acceleration = accStart + step * (j - start + 1)
                 // Apply kinematic equation vf^2 = vi^2 + 2ax, solve for vf
+                val arcLength = arcLengths[j]
                 next.velocity = minOf(next.velocity, sqrt(current.velocity.squared + 2 * current.acceleration * arcLength))
+                // Set the new dt
                 next.t = maxOf(next.t, 2 * arcLength) / abs(current.velocity + next.velocity)
             }
         }
