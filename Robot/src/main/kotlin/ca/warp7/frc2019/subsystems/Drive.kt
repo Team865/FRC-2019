@@ -181,15 +181,14 @@ object Drive {
     private var direction = 0.0
     private var initialState: Pose2D = Pose2D.identity
 
-    fun initTrajectory(waypoints: Array<Pose2D>,
-                       maxVelocity: Double, maxAcceleration: Double, maxCentripetalAcceleration: Double,
-                       backwards: Boolean, insertRobotState: Boolean, resetInitialState: Boolean,
+    fun initTrajectory(waypoints: Array<Pose2D>, maxVelocity: Double, maxAcceleration: Double,
+                       maxCentripetalAcceleration: Double, backwards: Boolean, absolute: Boolean,
                        enableJerkLimiting: Boolean, optimizeDkSquared: Boolean) {
         // resolve direction
         direction = if (backwards) -1.0 else 1.0
-        // make path based on insertRobotState
+        // make path
         val path =
-                if (insertRobotState) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
+                if (absolute) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
                 else quinticSplinesOf(*waypoints, optimizePath = optimizeDkSquared)
         // distance-parameterize, then time-parameterize the path into a trajectory
         val maxJerk = if (enableJerkLimiting) DriveConstants.kMaxJerk else Double.POSITIVE_INFINITY
@@ -199,7 +198,9 @@ object Drive {
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0
-        initialState = if (resetInitialState) trajectory.first().state.state else robotState
+        val firstState = trajectory.first().state.state
+        initialState = Pose2D((robotState.translation - firstState.translation).rotate(-firstState.rotation),
+                robotState.rotation - firstState.rotation)
         previousVelocity = ChassisState(0.0, 0.0)
         neutralOutput()
         io.drivePID = DriveConstants.kTrajectoryPID
