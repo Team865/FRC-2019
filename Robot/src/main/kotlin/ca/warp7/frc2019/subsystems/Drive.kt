@@ -183,14 +183,17 @@ object Drive {
 
     fun initTrajectory(waypoints: Array<Pose2D>,
                        maxVelocity: Double, maxAcceleration: Double, maxCentripetalAcceleration: Double,
-                       backwards: Boolean, insertRobotState: Boolean, resetInitialState: Boolean) {
+                       backwards: Boolean, insertRobotState: Boolean, resetInitialState: Boolean,
+                       enableJerkLimiting: Boolean) {
         // resolve direction
         direction = if (backwards) -1.0 else 1.0
         // make path based on insertRobotState
         val path = if (insertRobotState) quinticSplinesOf(robotState, *waypoints) else quinticSplinesOf(*waypoints)
         // distance-parameterize, then time-parameterize the path into a trajectory
-        trajectory = path.parameterized().timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
-                maxVelocity, maxAcceleration, maxCentripetalAcceleration, Double.POSITIVE_INFINITY)
+        val maxJerk = if (enableJerkLimiting) DriveConstants.kMaxJerk else Double.POSITIVE_INFINITY
+        val pathStates = path.parameterized()
+        trajectory = pathStates.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
+                maxVelocity, maxAcceleration, maxCentripetalAcceleration, maxJerk)
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0

@@ -49,6 +49,7 @@ object DriveConstants {
     const val kMaxVelocity = 12.0 * kFeetToMeters // m/s
     const val kMaxAcceleration = 9.0 * kFeetToMeters //  m/s^2
     const val kMaxFreeSpeed = 16.5 * kFeetToMeters// m/s
+    const val kMaxJerk = 45.0 // m/s^3
 
     private const val kScrubFactor = 1.45
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor // m
