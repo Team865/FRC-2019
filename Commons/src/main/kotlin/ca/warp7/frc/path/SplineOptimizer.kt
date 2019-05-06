@@ -71,12 +71,12 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
         val next = this[i + 1]
 
         //calculate partial derivatives of sumDCurvature2
-        this[i] = now.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1 + kEpsilon, y0, y1, dy0, dy1, ddy0, ddy1) }
-        this[i + 1] = next.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0 + kEpsilon, ddx1, y0, y1, dy0, dy1, ddy0, ddy1) }
+        this[i] = now.copy(ddx1 = now.ddx1 + kEpsilon)
+        this[i + 1] = next.copy(ddx0 = next.ddx0 + kEpsilon)
         controlPoints[i].ddx = (sumDCurvature2() - original) / kEpsilon
 
-        this[i] = now.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1, y0, y1, dy0, dy1, ddy0, ddy1 + kEpsilon) }
-        this[i + 1] = next.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1, y0, y1, dy0, dy1, ddy0 + kEpsilon, ddy1) }
+        this[i] = now.copy(ddy1 = now.ddy1 + kEpsilon)
+        this[i + 1] = next.copy(ddy0 = next.ddy0 + kEpsilon)
         controlPoints[i].ddy = (sumDCurvature2() - original) / kEpsilon
 
         this[i] = now
