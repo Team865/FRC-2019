@@ -206,7 +206,7 @@ object Drive {
         io.drivePID = DriveConstants.kTrajectoryPID
     }
 
-    fun getError(setpoint: Pose2D): Pose2D {
+    fun getError(setpoint: ArcPose2D): Pose2D {
         val theta = robotState.rotation - initialState.rotation
         return Pose2D((setpoint.translation - (robotState.translation - initialState.translation)
                 .rotate(-initialState.rotation)).rotate(-theta), setpoint.rotation - theta)

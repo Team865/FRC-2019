@@ -91,7 +91,7 @@ class PIDTrajectory(
 
         if (enableFeedforward) {
 
-            val curvature = interpolate(thisMoment.state.curvature, nextMoment.state.curvature, tx)
+            val curvature = interpolate(thisMoment.arcPose.curvature, nextMoment.arcPose.curvature, tx)
 
             val linearVel = interpolate(thisMoment.velocity, nextMoment.velocity, tx)
             val angularVel = linearVel * curvature
@@ -116,12 +116,12 @@ class PIDTrajectory(
 
         if (true) {
 
-            val currentPos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx)
-            var trackingDist = (nextMoment.state.state.translation - currentPos).mag
+            val currentPos = thisMoment.arcPose.translation.interpolate(nextMoment.arcPose.translation, tx)
+            var trackingDist = (nextMoment.arcPose.translation - currentPos).mag
             var j = i + 1
 
             while (j < trajectory.size - 2 && trackingDist < lookaheadDist) {
-                trackingDist += (trajectory[j + 1].state.state.translation - trajectory[j].state.state.translation).mag
+                trackingDist += (trajectory[j + 1].arcPose.translation - trajectory[j].arcPose.translation).mag
                 j++
             }
 
@@ -130,7 +130,7 @@ class PIDTrajectory(
             straightPID.dt = io.dt
             turnPID.dt = io.dt
 
-            val target = lookahead.state.state
+            val target = lookahead.arcPose
 
             val error = Pose2D((target.translation - robotState.translation).rotate(robotState.rotation),
                     (target.rotation - robotState.rotation))
