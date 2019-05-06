@@ -2,6 +2,7 @@
 
 package ca.warp7.frc.path
 
+import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.geometry.Pose2D
 
 operator fun Path2D.get(t: Double): Path2DState {
@@ -33,4 +34,5 @@ fun quinticSplinesOf(vararg waypoints: Pose2D, optimizePath: Boolean = false): L
     return path
 }
 
-fun parameterizedSplinesOf(vararg waypoints: Pose2D) = quinticSplinesOf(*waypoints).parameterized()
+fun parameterizedSplinesOf(vararg waypoints: Pose2D): List<ArcPose2D> =
+        quinticSplinesOf(*waypoints).parameterized()

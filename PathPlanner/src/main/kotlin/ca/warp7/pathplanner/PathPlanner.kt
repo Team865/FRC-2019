@@ -56,7 +56,7 @@ class PathPlanner : PApplet() {
 
     var waypoints: Array<Pose2D> = emptyArray()
     var intermediate: List<QuinticSegment2D> = emptyList()
-    var splines: List<CurvatureState<Pose2D>> = emptyList()
+    var splines: List<ArcPose2D> = emptyList()
     var trajectory: List<TrajectoryPoint> = emptyList()
     var controlPoints: MutableList<ControlPoint> = mutableListOf()
     var dynamics: List<Triple<WheelState, DynamicState, Double>> = emptyList()
@@ -173,8 +173,8 @@ class PathPlanner : PApplet() {
         intermediate = quinticSplinesOf(*waypoints, optimizePath = optimizing)
         curvatureSum = intermediate.sumDCurvature2()
         splines = intermediate.parameterized()
-        arcLength = splines.zipWithNext { a: CurvatureState<Pose2D>, b: CurvatureState<Pose2D> ->
-            val chordLength = (a.state.translation - b.state.translation).mag
+        arcLength = splines.zipWithNext { a: ArcPose2D, b: ArcPose2D ->
+            val chordLength = (a.translation - b.translation).mag
             if (a.curvature.epsilonEquals(0.0)) chordLength else
                 kotlin.math.abs(kotlin.math.asin(chordLength * a.curvature / 2) / a.curvature * 2)
         }.sum()
@@ -185,16 +185,16 @@ class PathPlanner : PApplet() {
                 if (jerkLimiting) 45.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
         dynamics = trajectory.map {
-            val velocity = ChassisState(it.velocity, it.velocity * it.state.curvature)
-            val acceleration = ChassisState(it.acceleration, it.acceleration * it.state.curvature)
+            val velocity = ChassisState(it.velocity, it.velocity * it.arcPose.curvature)
+            val acceleration = ChassisState(it.acceleration, it.acceleration * it.arcPose.curvature)
             val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
             val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
             Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
                     model.solve(velocity, acceleration), it.t)
         }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
-        maxAngular = trajectory.map { Math.abs(it.velocity * it.state.curvature) }.max() ?: 1.0
-        maxAngularAcc = trajectory.map { Math.abs(it.acceleration * it.state.curvature) }.max() ?: 1.0
+        maxAngular = trajectory.map { Math.abs(it.velocity * it.arcPose.curvature) }.max() ?: 1.0
+        maxAngularAcc = trajectory.map { Math.abs(it.acceleration * it.arcPose.curvature) }.max() ?: 1.0
         redrawScreen()
     }
 
@@ -266,7 +266,7 @@ class PathPlanner : PApplet() {
             //stroke(0f, 192f, 128f)
             //map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
             stroke(255f, 255f, 128f)
-            map { v2T(it.state.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
+            map { v2T(it.arcPose.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
             map { v2T2(it.velocity, it.t, model.maxVelocity, 340) }.connect()
         }
@@ -286,15 +286,15 @@ class PathPlanner : PApplet() {
 
         // draw the start of the curve
         val s0 = splines.first()
-        val t0 = s0.state.translation
-        var normal = (s0.state.rotation.normal * wheelBaseRadius).translation
+        val t0 = s0.translation
+        var normal = (s0.rotation.normal * wheelBaseRadius).translation
         var left = (t0 - normal).newXY
         var right = (t0 + normal).newXY
 
         strokeWeight(2f)
         stroke(0f, 255f, 0f)
-        val a0 = t0.newXY - Translation2D(robotLength, wheelBaseRadius).rotate(s0.state.rotation).newXYNoOffset
-        val b0 = t0.newXY + Translation2D(-robotLength, wheelBaseRadius).rotate(s0.state.rotation).newXYNoOffset
+        val a0 = t0.newXY - Translation2D(robotLength, wheelBaseRadius).rotate(s0.rotation).newXYNoOffset
+        val b0 = t0.newXY + Translation2D(-robotLength, wheelBaseRadius).rotate(s0.rotation).newXYNoOffset
         lineTo(a0, b0)
         lineTo(left, a0)
         lineTo(right, b0)
@@ -302,8 +302,8 @@ class PathPlanner : PApplet() {
         // draw the curve
         for (i in 1 until splines.size) {
             val s = splines[i]
-            val t = s.state.translation
-            normal = (s.state.rotation.normal * wheelBaseRadius).translation
+            val t = s.translation
+            normal = (s.rotation.normal * wheelBaseRadius).translation
             val newLeft = (t - normal).newXY
             val newRight = (t + normal).newXY
             val kx = s.curvature.absoluteValue / maxK
@@ -320,9 +320,9 @@ class PathPlanner : PApplet() {
 
         val sf = splines.last()
         stroke(0f, 255f, 0f)
-        val tf = sf.state.translation.newXY
-        val af = tf - Translation2D(-robotLength, wheelBaseRadius).rotate(sf.state.rotation).newXYNoOffset
-        val bf = tf + Translation2D(robotLength, wheelBaseRadius).rotate(sf.state.rotation).newXYNoOffset
+        val tf = sf.translation.newXY
+        val af = tf - Translation2D(-robotLength, wheelBaseRadius).rotate(sf.rotation).newXYNoOffset
+        val bf = tf + Translation2D(robotLength, wheelBaseRadius).rotate(sf.rotation).newXYNoOffset
         lineTo(af, bf)
         lineTo(left, af)
         lineTo(right, bf)
@@ -600,9 +600,9 @@ class PathPlanner : PApplet() {
             val thisMoment = trajectory[simIndex]
             val nextMoment = trajectory[simIndex + 1]
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
-            val pos = thisMoment.state.state.translation.interpolate(nextMoment.state.state.translation, tx).newXY
+            val pos = thisMoment.arcPose.translation.interpolate(nextMoment.arcPose.translation, tx).newXY
             redrawScreen()
-            val heading = thisMoment.state.state.rotation.interpolate(nextMoment.state.state.rotation, tx)
+            val heading = thisMoment.arcPose.rotation.interpolate(nextMoment.arcPose.rotation, tx)
             drawRobot(pos, heading)
             stroke(255f, 255f, 255f)
             noFill()

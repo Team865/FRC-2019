@@ -198,7 +198,7 @@ object Drive {
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0
-        val firstState = trajectory.first().state.state
+        val firstState = trajectory.first().arcPose
         initialState = Pose2D((robotState.translation - firstState.translation).rotate(-firstState.rotation),
                 robotState.rotation - firstState.rotation)
         previousVelocity = ChassisState(0.0, 0.0)
@@ -221,10 +221,10 @@ object Drive {
         val x = if (last.t.epsilonEquals(next.t)) 1.0 else (t - last.t) / (next.t - last.t)
         val a = direction * interpolate(last.acceleration, next.acceleration, x)
         val v = direction * interpolate(last.velocity, next.velocity, x)
-        val k = interpolate(last.state.curvature, next.state.curvature, x)
-        val p = last.state.state.translation.interpolate(next.state.state.translation, x)
-        val h = last.state.state.rotation.interpolate(next.state.state.rotation, x)
-        return TrajectoryPoint(CurvatureState(Pose2D(p, h), k, 0.0), v, a, 0.0, t)
+        val k = interpolate(last.arcPose.curvature, next.arcPose.curvature, x)
+        val p = last.arcPose.translation.interpolate(next.arcPose.translation, x)
+        val h = last.arcPose.rotation.interpolate(next.arcPose.rotation, x)
+        return TrajectoryPoint(ArcPose2D(Pose2D(p, h), k, 0.0), v, a, 0.0, t)
     }
 
     fun isDoneTrajectory(): Boolean {

@@ -64,7 +64,7 @@ class ArcPose2D(
     override val inverse: ArcPose2D get() = ArcPose2D(pose.inverse, curvature, dk_ds)
 
     override fun toString(): String {
-        return "Pose($translation, $rotation)"
+        return "Arc($pose, $curvature)"
     }
 
     companion object {

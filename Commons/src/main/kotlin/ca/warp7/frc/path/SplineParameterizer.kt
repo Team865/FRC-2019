@@ -1,28 +1,28 @@
 package ca.warp7.frc.path
 
-import ca.warp7.frc.geometry.CurvatureState
+import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.rotate
 
-fun List<QuinticSegment2D>.parameterized(): List<CurvatureState<Pose2D>> {
-    val points = mutableListOf<CurvatureState<Pose2D>>()
+fun List<QuinticSegment2D>.parameterized(): List<ArcPose2D> {
+    val points = mutableListOf<ArcPose2D>()
     forEach { points.addAll(it.parameterized()) }
     return points
 }
 
-fun QuinticSegment2D.parameterized(): List<CurvatureState<Pose2D>> =
+fun QuinticSegment2D.parameterized(): List<ArcPose2D> =
         parameterized(0.1, 0.01, 0.1)
 
-fun QuinticSegment2D.parameterized(maxDx: Double, maxDy: Double, maxDTheta: Double): List<CurvatureState<Pose2D>> {
-    val points = mutableListOf<CurvatureState<Pose2D>>()
+fun QuinticSegment2D.parameterized(maxDx: Double, maxDy: Double, maxDTheta: Double): List<ArcPose2D> {
+    val points = mutableListOf<ArcPose2D>()
     val p0 = get(0.0)
-    points.add(CurvatureState(p0.toPose(), p0.curvature, 0.0))
+    points.add(ArcPose2D(p0.toPose(), p0.curvature, 0.0))
     parameterize(points, 0.0, 1.0, maxDx, maxDy, maxDTheta)
     return points
 }
 
 fun QuinticSegment2D.parameterize(
-        points: MutableList<CurvatureState<Pose2D>>,
+        points: MutableList<ArcPose2D>,
         t0: Double,
         t1: Double,
         maxDx: Double,
@@ -43,6 +43,6 @@ fun QuinticSegment2D.parameterize(
         parameterize(points, t0, (t0 + t1) / 2.0, maxDx, maxDy, maxDTheta)
         parameterize(points, (t0 + t1) / 2.0, t1, maxDx, maxDy, maxDTheta)
     } else {
-        points.add(CurvatureState(Pose2D(point1, heading1), p1.curvature, 0.0))
+        points.add(ArcPose2D(Pose2D(point1, heading1), p1.curvature, 0.0))
     }
 }

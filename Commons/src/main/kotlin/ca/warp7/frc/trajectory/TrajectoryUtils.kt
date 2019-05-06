@@ -1,13 +1,12 @@
 package ca.warp7.frc.trajectory
 
-import ca.warp7.frc.geometry.CurvatureState
-import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.squared
 import kotlin.math.abs
 import kotlin.math.asin
 import kotlin.math.sqrt
 
-fun List<CurvatureState<Pose2D>>.timedTrajectory(
+fun List<ArcPose2D>.timedTrajectory(
         wheelbaseRadius: Double,
         startVelocity: Double,
         endVelocity: Double,
@@ -22,7 +21,7 @@ fun List<CurvatureState<Pose2D>>.timedTrajectory(
     val arcLengths = zipWithNext { a, b ->
         val k = abs(a.curvature)
         // get the chord length (translational distance)
-        val chordLength = a.state.translation.distanceTo(b.state.translation)
+        val chordLength = a.translation.distanceTo(b.translation)
         when {
             // Going straight, arcLength = chordLength
             k < 1E-6 -> chordLength
