@@ -48,12 +48,15 @@ class DriveTrajectory(
     override fun update() {
         val setpoint = Drive.advanceTrajectory(io.dt)
         val error = Drive.getError(setpoint.arcPose)
+        val velocity = setpoint.chassisVelocity
+        val acceleration = setpoint.chassisAcceleration
         when (follower) {
-            VoltageOnly -> Drive.setVoltage(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            SpeedDemand -> Drive.setDynamics(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            PosePID -> Drive.updatePosePID(error, setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            AnglePID -> Drive.updateAnglePID(setpoint.chassisVelocity, setpoint.chassisAcceleration)
-            Ramsete -> Drive.updateRamsete(error, setpoint.chassisVelocity)
+            VoltageOnly -> Drive.setVoltage(velocity, acceleration)
+            SpeedDemand -> Drive.setDynamics(velocity, acceleration)
+            PosePID -> Drive.updatePosePID(error, velocity, acceleration)
+            AnglePID -> Drive.updateAnglePID(velocity, acceleration)
+            PurePursuit -> Drive.updatePurePursuit(error, setpoint)
+            Ramsete -> Drive.updateRamsete(error, velocity)
         }
         val setpointState = setpoint.arcPose
         val robotState = Drive.robotState

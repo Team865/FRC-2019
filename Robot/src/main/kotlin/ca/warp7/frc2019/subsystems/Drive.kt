@@ -11,6 +11,7 @@ import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.trajectory.TrajectoryPoint
+import ca.warp7.frc.trajectory.findRadius
 import ca.warp7.frc.trajectory.timedTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
@@ -212,8 +213,7 @@ object Drive {
                 .rotate(-initialState.rotation)).rotate(-theta), setpoint.rotation - theta)
     }
 
-    fun advanceTrajectory(dt: Double): TrajectoryPoint {
-        t += dt
+    fun interpolatedTimeView(t: Double): TrajectoryPoint {
         var index = 0
         while (index < trajectory.size - 2 && trajectory[index + 1].t < t) index++
         val last = trajectory[index]
@@ -225,6 +225,11 @@ object Drive {
         val p = last.arcPose.translation.interpolate(next.arcPose.translation, x)
         val h = last.arcPose.rotation.interpolate(next.arcPose.rotation, x)
         return TrajectoryPoint(ArcPose2D(Pose2D(p, h), k, 0.0), v, a, 0.0, t)
+    }
+
+    fun advanceTrajectory(dt: Double): TrajectoryPoint {
+        t += dt
+        return interpolatedTimeView(t)
     }
 
     fun isDoneTrajectory(): Boolean {
@@ -245,6 +250,43 @@ object Drive {
         val adjustedAngular = velocity.angular +
                 velocity.linear * DriveConstants.kAngleP * error
         setAdjustedChassisState(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
+    }
+
+    fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+
+        var lookaheadTime = DriveConstants.kPathLookaheadTime
+        var lookahead = interpolatedTimeView(lookaheadTime)
+        var actualLook: Double = setpoint.arcPose.distanceTo(lookahead.arcPose)
+
+        while (actualLook < DriveConstants.kMinLookDist && (totalTime - t) > lookaheadTime) {
+            lookaheadTime += DriveConstants.kLookaheadSearchDt
+            lookahead = interpolatedTimeView(lookaheadTime)
+            actualLook = setpoint.arcPose.distanceTo(lookahead.arcPose)
+        }
+
+        if (actualLook < DriveConstants.kMinLookDist) lookahead = trajectory.last()
+
+        val velocity = setpoint.chassisVelocity
+        val adjustedLinear: Double
+        val adjustedAngular: Double
+        val currentState = Pose2D((robotState.translation - initialState.translation)
+                .rotate(-initialState.rotation), robotState.rotation - initialState.rotation)
+        val curvature = 1.0 / findRadius(currentState, lookahead.arcPose)
+        if (curvature.isInfinite()) {
+            adjustedLinear = 0.0
+            adjustedAngular = velocity.angular
+        } else {
+            adjustedLinear = velocity.linear + DriveConstants.kPoseX * error.translation.x
+            adjustedAngular = curvature * velocity.linear
+        }
+
+        val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
+        previousVelocity = adjustedVelocity
+        // re-calculate acceleration
+        val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
+        val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
+        val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
+        setDynamics(adjustedVelocity, adjustedAcceleration)
     }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf

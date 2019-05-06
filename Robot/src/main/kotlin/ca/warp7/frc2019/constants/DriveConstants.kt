@@ -90,6 +90,12 @@ object DriveConstants {
 
     const val kAngleP = 5.0
 
+    // Pure pursuit
+    const val kPathLookaheadTime = 0.4  // seconds to look ahead along the path for steering
+    const val kMinLookDist = 24.0  // inches
+    const val kLookaheadSearchDt = 0.01
+
+    // Ramsete
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
     const val kRamseteBeta = 2.0  // Correction coefficient, β > 0
     const val kRamseteZeta = 0.7  // Damping coefficient, 0 < ζ < 1
