@@ -4,7 +4,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.f
 import kotlin.math.hypot
 
-data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
+class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
     override val state: Translation2D get() = this
 
