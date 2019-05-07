@@ -75,6 +75,7 @@ class PhysicalIO : BaseIO {
     override var limelightConnected = false
     override var foundVisionTarget = false
     override var visionErrorX = 0.0 // deg
+    override var visionErrorY = 0.0 // deg
     override var visionArea = 0.0 // % of full image
 
     override var gyroConnected = false
@@ -109,7 +110,8 @@ class PhysicalIO : BaseIO {
             if (limelightConnected) {
                 foundVisionTarget = limelight.getEntry("tv").getDouble(0.0).toInt() == 1
                 if (foundVisionTarget) {
-                    visionErrorX = limelight.getEntry("tv").getDouble(0.0)
+                    visionErrorX = limelight.getEntry("tx").getDouble(0.0)
+                    visionErrorY = limelight.getEntry("ty").getDouble(0.0)
                     visionArea = limelight.getEntry("ta").getDouble(0.0)
                 }
             }
