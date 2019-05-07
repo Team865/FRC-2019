@@ -97,7 +97,7 @@ fun List<ArcPose2D>.timedTrajectory(
         for (i in 0 until jerkPoints.size) {
             val stateIndex = jerkPoints[i]
             // Calculate a range of points to spread out the required acceleration
-            val range = abs(states[stateIndex].jerk / (2 * maxJerk)).toInt() * 2 + 1
+            val range = abs(states[stateIndex].jerk / (2 * maxJerk)).toInt() * 3 + 1
             // Calculate the bounds of the actual range with respect to other jerk points
             val start = maxOf(jerkPoints.getOrNull(i - 1) ?: 0, stateIndex - range)
             val end = minOf(jerkPoints.getOrNull(i + 1) ?: states.size - 1, stateIndex + range)

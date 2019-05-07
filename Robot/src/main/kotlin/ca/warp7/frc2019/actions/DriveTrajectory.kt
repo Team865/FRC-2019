@@ -55,6 +55,7 @@ class DriveTrajectory(
             SpeedDemand -> Drive.setDynamics(velocity, acceleration)
             PosePID -> Drive.updatePosePID(error, velocity, acceleration)
             AnglePID -> Drive.updateAnglePID(velocity, acceleration)
+            SimplePurePursuit -> Drive.updateSimplePurePursuit(error, setpoint)
             PurePursuit -> Drive.updatePurePursuit(error, setpoint)
             Ramsete -> Drive.updateRamsete(error, velocity)
         }

@@ -10,6 +10,7 @@ import ca.warp7.frc.geometry.*
 import ca.warp7.frc.interpolate
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
+import ca.warp7.frc.squared
 import ca.warp7.frc.trajectory.TrajectoryPoint
 import ca.warp7.frc.trajectory.findRadius
 import ca.warp7.frc.trajectory.timedTrajectory
@@ -215,10 +216,15 @@ object Drive {
         io.drivePID = DriveConstants.kTrajectoryPID
     }
 
+    fun getInitialToRobot(): Pose2D {
+        return Pose2D((robotState.translation - initialState.translation)
+                .rotate(-initialState.rotation), robotState.rotation - initialState.rotation)
+    }
+
     fun getError(setpoint: ArcPose2D): Pose2D {
-        val theta = robotState.rotation - initialState.rotation
-        return Pose2D((setpoint.translation - (robotState.translation - initialState.translation)
-                .rotate(-initialState.rotation)).rotate(-theta), setpoint.rotation - theta)
+        val initialToRobot = getInitialToRobot()
+        return Pose2D((setpoint.translation - initialToRobot.translation)
+                .rotate(-initialToRobot.rotation), setpoint.rotation - initialToRobot.rotation)
     }
 
     fun interpolatedTimeView(t: Double): TrajectoryPoint {
@@ -255,37 +261,52 @@ object Drive {
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
         val error = velocity.angular - io.angularVelocity
-        val adjustedAngular = velocity.angular +
-                velocity.linear * DriveConstants.kAngleP * error
+        val adjustedAngular = velocity.angular + velocity.linear * DriveConstants.kAngleP * error
         setAdjustedDynamics(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
     }
 
-    fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+    fun getLookahead(setpoint: TrajectoryPoint): TrajectoryPoint {
         var lookaheadTime = DriveConstants.kPathLookaheadTime
         var lookahead = interpolatedTimeView(lookaheadTime)
-        var actualLook: Double = setpoint.arcPose.distanceTo(lookahead.arcPose)
-
-        while (actualLook < DriveConstants.kMinLookDist && (totalTime - t) > lookaheadTime) {
+        var lookaheadDistance = setpoint.arcPose.distanceTo(lookahead.arcPose)
+        while (lookaheadDistance < DriveConstants.kMinLookDist && (totalTime - t) > lookaheadTime) {
             lookaheadTime += DriveConstants.kLookaheadSearchDt
             lookahead = interpolatedTimeView(lookaheadTime)
-            actualLook = setpoint.arcPose.distanceTo(lookahead.arcPose)
+            lookaheadDistance = setpoint.arcPose.distanceTo(lookahead.arcPose)
         }
+        if (lookaheadDistance < DriveConstants.kMinLookDist) lookahead = trajectory.last()
+        return lookahead
+    }
 
-        if (actualLook < DriveConstants.kMinLookDist) lookahead = trajectory.last()
-        val velocity = setpoint.chassisVelocity
+    fun setAdjustedCurvature(velocity: ChassisState, curvature: Double, xError: Double) {
         val adjustedLinear: Double
         val adjustedAngular: Double
-        val currentState = Pose2D((robotState.translation - initialState.translation)
-                .rotate(-initialState.rotation), robotState.rotation - initialState.rotation)
-        val curvature = 1.0 / findRadius(currentState, lookahead.arcPose)
         if (curvature.isInfinite()) {
             adjustedLinear = 0.0
             adjustedAngular = velocity.angular
         } else {
-            adjustedLinear = velocity.linear + DriveConstants.kPoseX * error.translation.x
+            adjustedLinear = velocity.linear + DriveConstants.kPoseX * xError
             adjustedAngular = curvature * velocity.linear
         }
         setAdjustedVelocity(adjustedLinear, adjustedAngular)
+    }
+
+    fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+        val lookahead = getLookahead(setpoint)
+        val initialToRobot = getInitialToRobot()
+        val velocity = setpoint.chassisVelocity
+        val curvature = 1.0 / findRadius(initialToRobot, lookahead.arcPose)
+        setAdjustedCurvature(velocity, curvature, error.translation.x)
+    }
+
+    fun updateSimplePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+        val lookahead = getLookahead(setpoint)
+        val initialToRobot = getInitialToRobot()
+        val velocity = setpoint.chassisVelocity
+        val y = (lookahead.arcPose.translation - initialToRobot.translation).rotate(-initialToRobot.rotation).y
+        val l = initialToRobot.distanceTo(lookahead.arcPose.pose)
+        val curvature = (2 * y) / l.squared
+        setAdjustedCurvature(velocity, curvature, error.translation.x)
     }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
