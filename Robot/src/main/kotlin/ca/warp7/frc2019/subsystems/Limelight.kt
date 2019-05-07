@@ -1,14 +1,22 @@
 package ca.warp7.frc2019.subsystems
 
 import ca.warp7.frc.PID
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.fromDegrees
+import ca.warp7.frc.geometry.tan
+import ca.warp7.frc2019.constants.LimelightConstants.hatchTargetHeightDiff
+import ca.warp7.frc2019.constants.LimelightConstants.limelightAngleY
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import kotlin.math.abs
 
 object Limelight {
-
     private val io: BaseIO = ioInstance()
 
+    val dist get() = hatchTargetHeightDiff / ((Rotation2D.fromDegrees(io.visionErrorY) + limelightAngleY).tan)
+    val lateral get() = dist * Rotation2D.fromDegrees(io.visionErrorX).sin
+
+    var isDriver = false
     val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
 
     fun updateDriveAlignment(wantAligning: Boolean, xSpeed: Double) {

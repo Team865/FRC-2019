@@ -3,13 +3,15 @@ package ca.warp7.frc.path
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc.trajectory.timedTrajectory
+import kotlin.math.absoluteValue
+import kotlin.math.pow
 
 /**
  * @author Team 254
  */
 
 fun QuinticSegment2D.sumDCurvature2(): Double =
-        (0 until 100).sumByDouble { 0.01 * get(0.01 * it).dCurvature2 }
+        (0 until 100).map { get(it / 100.0) }.map { it.dCurvature2 }.sum()
 
 fun List<QuinticSegment2D>.sumDCurvature2(): Double = this.sumByDouble { it.sumDCurvature2() }
 

@@ -29,6 +29,7 @@ interface BaseIO {
     val limelightConnected: Boolean
     val foundVisionTarget: Boolean
     val visionErrorX: Double // deg
+    val visionErrorY: Double // deg
     val visionArea: Double // % of full image
 
     val gyroConnected: Boolean
