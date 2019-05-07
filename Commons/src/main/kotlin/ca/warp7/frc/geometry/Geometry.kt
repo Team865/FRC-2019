@@ -26,8 +26,6 @@ val Rotation2D.degrees: Double get() = Math.toDegrees(radians)
 
 val Rotation2D.mag: Double get() = hypot(sin, cos)
 
-val Rotation2D.tan: Double get() = sin / cos
-
 val Rotation2D.norm: Rotation2D get() = scaled(by = 1 / mag)
 
 val Rotation2D.translation: Translation2D get() = Translation2D(cos, sin)

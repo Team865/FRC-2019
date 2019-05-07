@@ -22,9 +22,7 @@ import kotlin.math.sin
 import kotlin.math.withSign
 
 object Drive {
-
     private val io: BaseIO = ioInstance()
-
     val model = DifferentialDriveModel(
             DriveConstants.kWheelRadius, DriveConstants.kEffectiveWheelBaseRadius,
             DriveConstants.kMaxVelocity, DriveConstants.kMaxAcceleration, DriveConstants.kMaxFreeSpeed,
@@ -82,16 +80,26 @@ object Drive {
         setDynamics(model.solve(velocity, acceleration))
     }
 
-    fun setAdjustedChassisState(dynamics: DynamicState, adjustedLinear: Double, adjustedAngular: Double) {
+    fun setAdjustedDynamics(dynamics: DynamicState, adjustedLinear: Double, adjustedAngular: Double) {
         val (adjustedLeft, adjustedRight) = model.solve(ChassisState(adjustedLinear, adjustedAngular))
         val leftVoltage = dynamics.voltage.left + (adjustedLeft - dynamics.velocity.left) / model.speedPerVolt
         val rightVoltage = dynamics.voltage.right + (adjustedRight - dynamics.velocity.right) / model.speedPerVolt
         setDynamics(DynamicState(WheelState(leftVoltage, rightVoltage), dynamics.velocity))
     }
 
+    private var previousVelocity = ChassisState(0.0, 0.0)
+    fun setAdjustedVelocity(adjustedLinear: Double, adjustedAngular: Double) {
+        val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
+        previousVelocity = adjustedVelocity
+        // re-calculate acceleration
+        val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
+        val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
+        val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
+        setDynamics(adjustedVelocity, adjustedAcceleration)
+    }
+
     private var quickStopAccumulator = 0.0 // gain for stopping from quick turn
     private const val kQuickStopAlpha = 0.1
-
     fun updateCurvatureDrive(xSpeed: Double, zRotation: Double, isQuickTurn: Boolean) {
         val angularPower: Double
 
@@ -242,18 +250,17 @@ object Drive {
         val adjustedAngular = velocity.angular +
                 velocity.linear * DriveConstants.kPoseY * error.translation.y +
                 DriveConstants.kPoseTheta * error.rotation.radians
-        setAdjustedChassisState(model.solve(velocity, acceleration), adjustedLinear, adjustedAngular)
+        setAdjustedDynamics(model.solve(velocity, acceleration), adjustedLinear, adjustedAngular)
     }
 
     fun updateAnglePID(velocity: ChassisState, acceleration: ChassisState) {
         val error = velocity.angular - io.angularVelocity
         val adjustedAngular = velocity.angular +
                 velocity.linear * DriveConstants.kAngleP * error
-        setAdjustedChassisState(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
+        setAdjustedDynamics(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
     }
 
     fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
-
         var lookaheadTime = DriveConstants.kPathLookaheadTime
         var lookahead = interpolatedTimeView(lookaheadTime)
         var actualLook: Double = setpoint.arcPose.distanceTo(lookahead.arcPose)
@@ -265,7 +272,6 @@ object Drive {
         }
 
         if (actualLook < DriveConstants.kMinLookDist) lookahead = trajectory.last()
-
         val velocity = setpoint.chassisVelocity
         val adjustedLinear: Double
         val adjustedAngular: Double
@@ -279,19 +285,10 @@ object Drive {
             adjustedLinear = velocity.linear + DriveConstants.kPoseX * error.translation.x
             adjustedAngular = curvature * velocity.linear
         }
-
-        val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
-        previousVelocity = adjustedVelocity
-        // re-calculate acceleration
-        val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
-        val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
-        val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
-        setDynamics(adjustedVelocity, adjustedAcceleration)
+        setAdjustedVelocity(adjustedLinear, adjustedAngular)
     }
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
-    private var previousVelocity = ChassisState(0.0, 0.0)
-
     fun updateRamsete(error: Pose2D, velocity: ChassisState) {
         val k = 2.0 * DriveConstants.kRamseteZeta * Math.sqrt(
                 DriveConstants.kRamseteBeta * velocity.linear.pow(2) + velocity.angular.pow(2)) // gain term
@@ -302,12 +299,6 @@ object Drive {
         val adjustedAngular = velocity.angular + // current angular velocity
                 k * turnError + // turn error correction
                 velocity.linear * DriveConstants.kRamseteBeta * sinRatio * error.translation.y // lateral correction
-        val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
-        previousVelocity = adjustedVelocity
-        // re-calculate acceleration
-        val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
-        val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
-        val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
-        setDynamics(adjustedVelocity, adjustedAcceleration)
+        setAdjustedVelocity(adjustedLinear, adjustedAngular)
     }
 }

@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 
 class SimulatedIO : BaseIO {
 
+
     var enabled = false
 
     private val input = ControlInput()
@@ -43,6 +44,7 @@ class SimulatedIO : BaseIO {
     override var limelightConnected: Boolean = false
     override var foundVisionTarget: Boolean = false
     override var visionErrorX: Double = 0.0
+    override var visionErrorY: Double = 0.0
     override var visionArea: Double = 0.0
 
     override var gyroConnected: Boolean = false
