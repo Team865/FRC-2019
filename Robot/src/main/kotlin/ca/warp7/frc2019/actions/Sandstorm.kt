@@ -5,11 +5,9 @@ import ca.warp7.actionkt.ActionControl
 import ca.warp7.frc.control.ControllerState
 import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.auton.LeftRocketCloseHatch
-import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
-import ca.warp7.frc2019.subsystems.Lift
 
 class Sandstorm : Action {
 
@@ -28,11 +26,11 @@ class Sandstorm : Action {
             enableOperatorInput = true
         }
 
-        val initPos = LiftConstants.kHatchStartHeightInches *
-                LiftConstants.kTicksPerInch / LiftConstants.kTicksPerRadian
-        io.resetLiftPosition(positionRadians = initPos)
-        Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
-        Lift.updatePositionControl()
+//        val initPos = LiftConstants.kHatchStartHeightInches *
+//                LiftConstants.kTicksPerInch / LiftConstants.kTicksPerRadian
+//        io.resetLiftPosition(positionRadians = initPos)
+        //Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
+        //Lift.updatePositionControl()
     }
 
     override fun update() {

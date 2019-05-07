@@ -12,7 +12,7 @@ import ca.warp7.frc2019.actions.DriveTrajectory
 import ca.warp7.frc2019.actions.LiftSetpoint
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.DriveFollower.Ramsete
-import ca.warp7.frc2019.constants.DriveFollower.VoltageOnly
+import ca.warp7.frc2019.constants.DriveFollower.SpeedDemand
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.LiftConstants
 
@@ -24,7 +24,7 @@ object LeftRocketCloseHatch {
     val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
 
     val startToRocket: Action
-        get() = DriveTrajectory(arrayOf(startPose, rocketPose), follower = VoltageOnly)
+        get() = DriveTrajectory(arrayOf(startPose, rocketPose), follower = SpeedDemand)
 
     val rocketToLoadingStation: Action
         get() = queue {

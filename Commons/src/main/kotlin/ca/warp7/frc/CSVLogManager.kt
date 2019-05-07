@@ -10,7 +10,7 @@ import java.util.*
 
 class CSVLogManager {
     private val rootDir: File = File(Filesystem.getOperatingDirectory(), "/RobotLogs/")
-    private val format = SimpleDateFormat("yyyy_MM_dd hh_mm_ss")
+    private val format = SimpleDateFormat("yyyy_MM_dd HH_mm_ss")
 
     init {
         if (!rootDir.exists()) rootDir.mkdir()
@@ -31,7 +31,7 @@ class CSVLogManager {
         logDir = dir
     }
 
-    fun endSession() {
+    fun closeLoggers() {
         for (logger in loggers) logger.close()
         loggers.clear()
     }

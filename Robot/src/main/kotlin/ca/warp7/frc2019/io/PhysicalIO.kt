@@ -265,6 +265,12 @@ class PhysicalIO : BaseIO {
     override fun initialize() {
         time = Timer.getFPGATimestamp()
         LiveWindow.disableAllTelemetry()
+        csvLogManager.startSession(if (ds.isFMSAttached) {
+            val allianceStation = HAL.getAllianceStation()?.toString() ?: "None"
+            val matchNumber = ds.matchNumber
+            val type = ds.matchType
+            "${type}_${matchNumber}_$allianceStation"
+        } else "Test")
     }
 
     override fun enable() {
@@ -273,12 +279,6 @@ class PhysicalIO : BaseIO {
         resetDrivePosition(0.0)
         resetLiftPosition(0.0)
         limelightMode = LimelightMode.Driver
-        csvLogManager.startSession(if (ds.isFMSAttached) {
-            val allianceStation = HAL.getAllianceStation()?.toString() ?: "None"
-            val matchNumber = ds.matchNumber
-            val type = ds.matchType
-            "${type}_${matchNumber}_$allianceStation"
-        } else "Test")
     }
 
     override fun disable() {
@@ -313,7 +313,7 @@ class PhysicalIO : BaseIO {
         liftDemand = 0.0
         liftFeedforward = 0.0
 
-        csvLogManager.endSession()
+        csvLogManager.closeLoggers()
 
         config.apply {
             enableDriverInput = false

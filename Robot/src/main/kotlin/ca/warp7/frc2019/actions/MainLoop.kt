@@ -28,7 +28,7 @@ class MainLoop : Action {
     override fun start() {
         io.config.apply {
             enableTelemetryOutput = true
-            enableDriveEncoderInput = false
+            enableDriveEncoderInput = true
             enableLiftEncoderInput = true
             enableGyroInput = false
             enableLimelightInput = true
@@ -36,6 +36,8 @@ class MainLoop : Action {
             enableOperatorInput = true
         }
         Lift.feedforwardEnabled = false
+        Lift.setpointInches = 0.0
+        Lift.isManual = true
         io.driveRampRate = 0.15
     }
 
@@ -61,7 +63,7 @@ class MainLoop : Action {
             when {
                 leftTriggerAxis > 0.2 -> updatePassthrough(-leftTriggerAxis)
                 rightTriggerAxis > 0.2 -> updatePassthrough(rightTriggerAxis)
-                else -> io.intakeSpeed = 0.0
+                else -> updatePassthrough(0.0)
             }
             if (bButton == Pressed) io.outtakeSpeed = 1.0
 
