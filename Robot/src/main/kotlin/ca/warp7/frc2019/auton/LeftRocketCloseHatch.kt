@@ -24,7 +24,7 @@ object LeftRocketCloseHatch {
     val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
 
     val startToRocket: Action
-        get() = DriveTrajectory(arrayOf(startPose, rocketPose), follower = SpeedDemand)
+        get() = DriveTrajectory(arrayOf(Pose2D.identity, Pose2D(16.feet, 0.0, (-90).degrees)), follower = SpeedDemand)
 
     val rocketToLoadingStation: Action
         get() = queue {

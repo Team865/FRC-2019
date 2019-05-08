@@ -51,7 +51,7 @@ object DriveConstants {
     const val kMaxFreeSpeed = 16.5 * kFeetToMeters// m/s
     const val kMaxJerk = 45.0 // m/s^3
 
-    private const val kScrubFactor = 1.45
+    private const val kScrubFactor = 1.4
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor // m
 
     // Dynamic constants
@@ -61,7 +61,7 @@ object DriveConstants {
     const val kLinearInertia = 60.0 // kg
     const val kAngularInertia = 10.0 // kg * m^2
     const val kAngularDrag = 20.0 // (N * m) / (rad/s)
-    const val kSpeedPerVolt = (kMaxFreeSpeed / kWheelRadius) / (kMaxVolts - kFrictionVoltage) // (rad/s) / V
+    const val kSpeedPerVolt = (kMaxFreeSpeed / kWheelRadius) / kMaxVolts // (rad/s) / V
     const val kA = 83.0 // // (rad/s^2) / V
     const val kTorquePerVolt = 0.5 * kWheelRadius * kWheelRadius * kLinearInertia * kA  // (N * m) / V
 
