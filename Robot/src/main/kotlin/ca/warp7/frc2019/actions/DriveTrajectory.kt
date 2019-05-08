@@ -2,7 +2,6 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.CSVLogger
-import ca.warp7.frc.f
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
@@ -22,7 +21,7 @@ class DriveTrajectory(
         val maxCentripetalAcceleration: Double = maxAcceleration,
         val backwards: Boolean = false,
         val absolute: Boolean = false,
-        val enableJerkLimiting: Boolean = false,
+        val enableJerkLimiting: Boolean = true,
         val optimizeDkSquared: Boolean = false,
         val follower: DriveFollower = VoltageOnly
 ) : Action {
@@ -70,14 +69,14 @@ class DriveTrajectory(
                 setpoint.t,
                 setpoint.velocity, setpoint.acceleration, setpoint.arcPose.curvature,
                 // "s_x", "s_y", "s_theta",
-                robotState.translation.x, robotState.translation.y, robotState.rotation.degrees,
-                // "r_x", "r_y", "r_theta"
                 setpointState.translation.x, setpointState.translation.y, setpointState.rotation.degrees,
+                // "r_x", "r_y", "r_theta"
+                robotState.translation.x, robotState.translation.y, robotState.rotation.degrees,
                 // "left", "right"
                 io.leftFeedforward * 12.0, io.rightFeedforward * 12.0
         )
         logger.writeData(*data)
-        println(data.joinToString("\t") { it.f })
+        // println(data.joinToString("\t") { it.f })
     }
 
     override fun start() {

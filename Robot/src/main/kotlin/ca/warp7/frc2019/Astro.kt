@@ -40,17 +40,10 @@ class Astro : TimedRobot(0.2) {
         looper.add(MainLoop())
     }
 
-    override fun disabledPeriodic() {
-    }
-
-    override fun autonomousPeriodic() {
-    }
-
-    override fun teleopPeriodic() {
-    }
-
-    override fun robotPeriodic() {
-    }
+    override fun disabledPeriodic() {}
+    override fun autonomousPeriodic() {}
+    override fun teleopPeriodic() {}
+    override fun robotPeriodic() {}
 
     companion object {
         @JvmStatic

@@ -307,8 +307,8 @@ class PathPlanner : PApplet() {
             val newLeft = (t - normal).newXY
             val newRight = (t + normal).newXY
             val kx = s.curvature.absoluteValue / maxK
-            val r = interpolate(0.0, 192.0, kx).toFloat() + 64
-            val g = 255 - interpolate(0.0, 192.0, kx).toFloat()
+            val r = linearInterpolate(0.0, 192.0, kx).toFloat() + 64
+            val g = 255 - linearInterpolate(0.0, 192.0, kx).toFloat()
             stroke(r, g, 0f)
             lineTo(left, newLeft)
             lineTo(right, newRight)

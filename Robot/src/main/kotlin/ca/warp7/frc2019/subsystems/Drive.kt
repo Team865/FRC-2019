@@ -7,7 +7,7 @@ import ca.warp7.frc.drive.DynamicState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.*
-import ca.warp7.frc.interpolate
+import ca.warp7.frc.linearInterpolate
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.squared
@@ -20,18 +20,17 @@ import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
-import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.math.sqrt
 import kotlin.math.withSign
 
 object Drive {
     private val io: BaseIO = ioInstance()
     val model = DifferentialDriveModel(
-            DriveConstants.kWheelRadius, DriveConstants.kEffectiveWheelBaseRadius,
-            DriveConstants.kMaxVelocity, DriveConstants.kMaxAcceleration, DriveConstants.kMaxFreeSpeed,
-            DriveConstants.kSpeedPerVolt, DriveConstants.kTorquePerVolt, DriveConstants.kFrictionVoltage,
-            DriveConstants.kLinearInertia, DriveConstants.kAngularInertia,
-            DriveConstants.kMaxVolts, DriveConstants.kAngularDrag
+            DriveConstants.kWheelRadius, DriveConstants.kEffectiveWheelBaseRadius, DriveConstants.kMaxVelocity,
+            DriveConstants.kMaxAcceleration, DriveConstants.kMaxFreeSpeed, DriveConstants.kSpeedPerVolt,
+            DriveConstants.kTorquePerVolt, DriveConstants.kFrictionVoltage, DriveConstants.kLinearInertia,
+            DriveConstants.kAngularInertia, DriveConstants.kMaxVolts, DriveConstants.kAngularDrag
     )
 
     fun neutralOutput() {
@@ -40,12 +39,6 @@ object Drive {
         io.rightDemand = 0.0
         io.leftFeedforward = 0.0
         io.rightFeedforward = 0.0
-    }
-
-    fun setPercent(left: Double, right: Double) {
-        io.driveControlMode = ControlMode.PercentOutput
-        io.leftDemand = left
-        io.rightDemand = right
     }
 
     fun setVelocity(
@@ -94,7 +87,6 @@ object Drive {
     fun setAdjustedVelocity(adjustedLinear: Double, adjustedAngular: Double) {
         val adjustedVelocity = ChassisState(adjustedLinear, adjustedAngular)
         previousVelocity = adjustedVelocity
-        // re-calculate acceleration
         val linearAcc = (adjustedLinear - previousVelocity.linear) / io.dt
         val angularAcc = (adjustedAngular - previousVelocity.angular) / io.dt
         val adjustedAcceleration = ChassisState(linearAcc, angularAcc)
@@ -110,8 +102,7 @@ object Drive {
             if (Math.abs(xSpeed) < 0.2) {
                 quickStopAccumulator = (1 - kQuickStopAlpha) * quickStopAccumulator + kQuickStopAlpha * zRotation * 2.0
             }
-            angularPower = (zRotation * zRotation + model.frictionVoltage / model.maxVoltage)
-                    .withSign(zRotation).coerceIn(-0.8, 0.8)
+            angularPower = (zRotation * zRotation + model.frictionPercent).withSign(zRotation).coerceIn(-0.8, 0.8)
         } else {
             angularPower = Math.abs(xSpeed) * zRotation - quickStopAccumulator
             when {
@@ -151,7 +142,9 @@ object Drive {
             rightMotorOutput /= maxMagnitude
         }
 
-        setPercent(leftMotorOutput, rightMotorOutput)
+        io.driveControlMode = ControlMode.PercentOutput
+        io.leftDemand = leftMotorOutput
+        io.rightDemand = rightMotorOutput
     }
 
     var robotState: Pose2D = Pose2D.identity
@@ -161,29 +154,18 @@ object Drive {
     private val dRight = Delta()
 
     fun updateRobotStateEstimation() {
-        // convert rad/s into m/s
-        val wheelVelocity = WheelState(
-                io.leftVelocity * model.wheelRadius,
-                io.rightVelocity * model.wheelRadius
-        )
-        // solve into chassis velocity
-        chassisVelocity = model.solve(wheelVelocity)
-        // If gyro connected, use the yaw value from the gyro as the new angle
-        // otherwise add the calculated angular velocity to current yaw
+        val wheels = WheelState(io.leftVelocity * model.wheelRadius, io.rightVelocity * model.wheelRadius)
+        chassisVelocity = model.solve(wheels)
         val dTheta =
                 if (io.gyroConnected) io.yaw - io.previousYaw
                 else Rotation2D.fromRadians(io.dt * chassisVelocity.angular)
         val theta = robotState.rotation + dTheta
-        // find the linear distance traveled by the chassis
-        val arcDistance = (dLeft.update(io.leftPosition) + dRight.update(io.rightPosition)) * model.wheelRadius / 2
-        // reduce the extra encoder distance when driving in an arc
+        val arcLength = (dLeft.update(io.leftPosition) + dRight.update(io.rightPosition)) * model.wheelRadius / 2
         val dThetaRad = dTheta.radians
-        val chordDistance =
-                if (dThetaRad.epsilonEquals(0.0, 0.01)) arcDistance
-                else sin(dThetaRad / 2) * arcDistance / dThetaRad * 2
-        // add displacement into current position
-        val pos = robotState.translation + theta.translation * chordDistance
-        // update the robot state
+        val chordLength =
+                if (dThetaRad.epsilonEquals(0.0, 0.01)) arcLength
+                else sin(dThetaRad / 2) * arcLength / dThetaRad * 2
+        val pos = robotState.translation + theta.translation * chordLength
         robotState = Pose2D(pos, theta)
     }
 
@@ -197,17 +179,13 @@ object Drive {
     fun initTrajectory(waypoints: Array<Pose2D>, maxVelocity: Double, maxAcceleration: Double,
                        maxCentripetalAcceleration: Double, backwards: Boolean, absolute: Boolean,
                        enableJerkLimiting: Boolean, optimizeDkSquared: Boolean) {
-        // resolve direction
         direction = if (backwards) -1.0 else 1.0
-        // resolve actual jerk value
         val maxJerk = if (enableJerkLimiting) DriveConstants.kMaxJerk else Double.POSITIVE_INFINITY
-        // create a future task because it takes too long to generate for each loop
         trajectoryGenerator = FutureTask {
-            // make path
+            // create a future task because it takes too long for each loop
             val path =
                     if (absolute) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
                     else quinticSplinesOf(*waypoints, optimizePath = optimizeDkSquared)
-            // distance-parameterize, then time-parameterize the path into a trajectory
             val pathStates = path.parameterized()
             pathStates.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
                     maxVelocity, maxAcceleration, maxCentripetalAcceleration, maxJerk)
@@ -219,11 +197,9 @@ object Drive {
 
     fun tryFinishGeneratingTrajectory(): Boolean {
         val generator = trajectoryGenerator
-        // Check if generator is done generating
-        if (generator == null || !generator.isDone) return false
+        if (generator == null || !generator.isDone) return false // Check if generator is done generating
         trajectory = generator.get()
-        // reset tracking state
-        totalTime = trajectory.last().t
+        totalTime = trajectory.last().t // reset tracking state
         t = 0.0
         val firstState = trajectory.first().arcPose
         initialState = Pose2D((robotState.translation - firstState.translation).rotate(-firstState.rotation),
@@ -247,13 +223,14 @@ object Drive {
         while (index < trajectory.size - 2 && trajectory[index + 1].t < t) index++
         val last = trajectory[index]
         val next = trajectory[index + 1]
-        val x = if (last.t.epsilonEquals(next.t)) 1.0 else (t - last.t) / (next.t - last.t)
-        val a = direction * interpolate(last.acceleration, next.acceleration, x)
-        val v = direction * interpolate(last.velocity, next.velocity, x)
-        val k = interpolate(last.arcPose.curvature, next.arcPose.curvature, x)
-        val p = last.arcPose.translation.interpolate(next.arcPose.translation, x)
-        val h = last.arcPose.rotation.interpolate(next.arcPose.rotation, x)
-        return TrajectoryPoint(ArcPose2D(Pose2D(p, h), k, 0.0), v, a, 0.0, t)
+        val interpolant = if (last.t.epsilonEquals(next.t)) 1.0 else (t - last.t) / (next.t - last.t)
+        val acceleration = direction * linearInterpolate(last.acceleration, next.acceleration, interpolant)
+        val velocity = direction * linearInterpolate(last.velocity, next.velocity, interpolant)
+        val curvature = linearInterpolate(last.arcPose.curvature, next.arcPose.curvature, interpolant)
+        val position = last.arcPose.translation.interpolate(next.arcPose.translation, interpolant)
+        val heading = last.arcPose.rotation.interpolate(next.arcPose.rotation, interpolant)
+        val arcPose = ArcPose2D(Pose2D(position, heading), curvature, 0.0)
+        return TrajectoryPoint(arcPose, velocity, acceleration, 0.0, t)
     }
 
     fun advanceTrajectory(dt: Double): TrajectoryPoint {
@@ -326,8 +303,8 @@ object Drive {
 
     // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
     fun updateRamsete(error: Pose2D, velocity: ChassisState) {
-        val k = 2.0 * DriveConstants.kRamseteZeta * Math.sqrt(
-                DriveConstants.kRamseteBeta * velocity.linear.pow(2) + velocity.angular.pow(2)) // gain term
+        val k = 2.0 * DriveConstants.kRamseteZeta * sqrt(
+                DriveConstants.kRamseteBeta * velocity.linear.squared + velocity.angular.squared) // gain term
         val turnError = error.rotation.radians
         val sinRatio = if (turnError.epsilonEquals(0.0, 1E-2)) 1.0 else error.rotation.sin / turnError
         val adjustedLinear = velocity.linear * error.rotation.cos + // current linear velocity

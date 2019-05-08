@@ -42,7 +42,7 @@ class PhysicalIO : BaseIO {
             .followedBy(victorSPX(IOConstants.kLiftFollower, inverted = true)).apply { setSensorPhase(true) }
 
     private val liftHallEffect = DigitalInput(IOConstants.kLiftHallEffect)
-    private val ahrs = AHRS(SPI.Port.kMXP)
+    private val ahrs = AHRS(SPI.Port.kMXP, 100)
 
     private val networkTableInstance: NetworkTableInstance = NetworkTableInstance.getDefault()
     private val limelight: NetworkTable = networkTableInstance.getTable("limelight")

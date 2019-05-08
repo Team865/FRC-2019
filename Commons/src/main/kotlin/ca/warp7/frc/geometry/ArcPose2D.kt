@@ -1,7 +1,7 @@
 package ca.warp7.frc.geometry
 
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.interpolate
+import ca.warp7.frc.linearInterpolate
 
 class ArcPose2D(
         val pose: Pose2D,
@@ -56,8 +56,8 @@ class ArcPose2D(
         x >= 1 -> other.copy
         else -> ArcPose2D(
                 pose.interpolate(other.pose, x),
-                interpolate(curvature, other.curvature, x),
-                interpolate(dk_ds, other.dk_ds, x)
+                linearInterpolate(curvature, other.curvature, x),
+                linearInterpolate(dk_ds, other.dk_ds, x)
         )
     }
 

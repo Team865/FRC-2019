@@ -5,8 +5,8 @@ import ca.warp7.frc.drive.LinearTrajectoryState
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.interpolate
 import ca.warp7.frc.kFeetToMeters
+import ca.warp7.frc.linearInterpolate
 import ca.warp7.frc.trajectory.LinearTrajectory
 import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
@@ -59,11 +59,11 @@ class DriveForDistance(
         val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
 
         // calculate velocity feedforward gain
-        val expectedVelocity = interpolate(thisMoment.v.velocity, nextMoment.v.velocity, tx)
+        val expectedVelocity = linearInterpolate(thisMoment.v.velocity, nextMoment.v.velocity, tx)
         val velocityGain = (expectedVelocity / 0.0254 * DriveConstants.kTicksPerInch) / 10
 
         // calculate acceleration feedforward gain
-        val expectedAcceleration = interpolate(thisMoment.v.acceleration, nextMoment.v.acceleration, tx)
+        val expectedAcceleration = linearInterpolate(thisMoment.v.acceleration, nextMoment.v.acceleration, tx)
         val accelerationGain = (expectedAcceleration / 0.0254 * DriveConstants.kTicksPerInch) * kA
 
         // calculate linear feedback gain
