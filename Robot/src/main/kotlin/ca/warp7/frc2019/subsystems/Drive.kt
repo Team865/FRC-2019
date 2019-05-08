@@ -18,6 +18,8 @@ import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
+import java.util.concurrent.Future
+import java.util.concurrent.FutureTask
 import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.withSign
@@ -190,30 +192,43 @@ object Drive {
     private var totalTime = 0.0
     private var direction = 0.0
     private var initialState: Pose2D = Pose2D.identity
+    private var trajectoryGenerator: Future<List<TrajectoryPoint>>? = null
 
     fun initTrajectory(waypoints: Array<Pose2D>, maxVelocity: Double, maxAcceleration: Double,
                        maxCentripetalAcceleration: Double, backwards: Boolean, absolute: Boolean,
                        enableJerkLimiting: Boolean, optimizeDkSquared: Boolean) {
         // resolve direction
         direction = if (backwards) -1.0 else 1.0
-        // make path
-        val path =
-                if (absolute) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
-                else quinticSplinesOf(*waypoints, optimizePath = optimizeDkSquared)
-        // distance-parameterize, then time-parameterize the path into a trajectory
+        // resolve actual jerk value
         val maxJerk = if (enableJerkLimiting) DriveConstants.kMaxJerk else Double.POSITIVE_INFINITY
-        val pathStates = path.parameterized()
-        trajectory = pathStates.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
-                maxVelocity, maxAcceleration, maxCentripetalAcceleration, maxJerk)
+        // create a future task because it takes too long to generate for each loop
+        trajectoryGenerator = FutureTask {
+            // make path
+            val path =
+                    if (absolute) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
+                    else quinticSplinesOf(*waypoints, optimizePath = optimizeDkSquared)
+            // distance-parameterize, then time-parameterize the path into a trajectory
+            val pathStates = path.parameterized()
+            pathStates.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
+                    maxVelocity, maxAcceleration, maxCentripetalAcceleration, maxJerk)
+        }.also { Thread(it).start() }
+        previousVelocity = ChassisState(0.0, 0.0)
+        neutralOutput()
+        io.drivePID = DriveConstants.kTrajectoryPID
+    }
+
+    fun tryFinishGeneratingTrajectory(): Boolean {
+        val generator = trajectoryGenerator
+        // Check if generator is done generating
+        if (generator == null || !generator.isDone) return false
+        trajectory = generator.get()
         // reset tracking state
         totalTime = trajectory.last().t
         t = 0.0
         val firstState = trajectory.first().arcPose
         initialState = Pose2D((robotState.translation - firstState.translation).rotate(-firstState.rotation),
                 robotState.rotation - firstState.rotation)
-        previousVelocity = ChassisState(0.0, 0.0)
-        neutralOutput()
-        io.drivePID = DriveConstants.kTrajectoryPID
+        return true
     }
 
     fun getInitialToRobot(): Pose2D {

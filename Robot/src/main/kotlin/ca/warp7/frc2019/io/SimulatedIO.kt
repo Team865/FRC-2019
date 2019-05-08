@@ -7,6 +7,9 @@ import ca.warp7.frc.control.RobotController
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc2019.constants.LimelightMode
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.networktables.NetworkTable
+import edu.wpi.first.networktables.NetworkTableInstance
+import edu.wpi.first.wpilibj.Timer
 
 class SimulatedIO : BaseIO {
 
@@ -18,13 +21,17 @@ class SimulatedIO : BaseIO {
     override val driverInput: RobotController = input.driver
     override val operatorInput: RobotController = input.operator
 
+    private val networkTableInstance: NetworkTableInstance = NetworkTableInstance.getDefault()
+    private val telemetry: NetworkTable = networkTableInstance.getTable("RobotIO")
+
     override fun readInputs() {
-        val newTime = System.nanoTime() * 1E-9
+        val newTime = Timer.getFPGATimestamp()
         dt = newTime - time
         time = newTime
     }
 
     override fun writeOutputs() {
+        writeTelemetry()
 //        if (enabled)
 //            println(arrayOf(liftDemand, liftFeedforward).joinToString("\t") { it.f })
     }
@@ -109,9 +116,55 @@ class SimulatedIO : BaseIO {
     override fun initialize() {
     }
 
+    private fun writeTelemetry() {
+        telemetry.apply {
+            getEntry("enableDriveEncoderInput").setBoolean(config.enableDriveEncoderInput)
+            getEntry("enableLiftEncoderInput").setBoolean(config.enableLiftEncoderInput)
+            getEntry("enableGyroInput").setBoolean(config.enableGyroInput)
+            getEntry("enableLimelightInput").setBoolean(config.enableLimelightInput)
+            if (config.enableDriveEncoderInput) {
+                getEntry("leftPosition").setNumber(leftPosition)
+                getEntry("rightPosition").setNumber(rightPosition)
+                getEntry("leftVelocity").setNumber(leftVelocity)
+                getEntry("rightVelocity").setNumber(rightVelocity)
+            }
+            if (config.enableLiftEncoderInput) {
+                getEntry("liftPosition").setNumber(liftPosition)
+                getEntry("liftVelocity").setNumber(liftVelocity)
+            }
+            if (config.enableLimelightInput) {
+                getEntry("limelightConnected").setBoolean(limelightConnected)
+                getEntry("foundVisionTarget").setBoolean(foundVisionTarget)
+                getEntry("visionErrorX").setNumber(visionErrorX)
+                getEntry("visionArea").setNumber(visionArea)
+            }
+            if (config.enableGyroInput) {
+                getEntry("gyroConnected").setBoolean(gyroConnected)
+                getEntry("fusedHeading").setNumber(fusedHeading)
+                getEntry("angularVelocity").setNumber(angularVelocity)
+            }
+            getEntry("driveControlMode").setString(driveControlMode.name)
+            getEntry("leftDemand").setNumber(leftDemand)
+            getEntry("rightDemand").setNumber(rightDemand)
+            getEntry("leftFeedforward").setNumber(leftFeedforward)
+            getEntry("rightFeedforward").setNumber(rightFeedforward)
+
+            getEntry("liftControlMode").setString(liftControlMode.name)
+            getEntry("liftDemand").setNumber(liftDemand)
+            getEntry("liftFeedforward").setNumber(liftFeedforward)
+
+            getEntry("intakeSpeed").setNumber(intakeSpeed)
+            getEntry("conveyorSpeed").setNumber(conveyorSpeed)
+            getEntry("outtakeSpeed").setNumber(outtakeSpeed)
+
+            getEntry("pushing").setBoolean(pushing)
+            getEntry("grabbing").setBoolean(grabbing)
+        }
+    }
+
     override fun enable() {
         enabled = true
-        time = System.nanoTime() * 1E-9
+        time = Timer.getFPGATimestamp()
     }
 
     override fun disable() {

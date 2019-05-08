@@ -2,14 +2,17 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.actionkt.Action
 import ca.warp7.frc.CSVLogger
+import ca.warp7.frc.f
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.radians
+import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.constants.DriveFollower
 import ca.warp7.frc2019.constants.DriveFollower.*
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
+import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.Timer
 import kotlin.math.abs
 
 class DriveTrajectory(
@@ -40,13 +43,14 @@ class DriveTrajectory(
                     "r_x", "r_y", "r_theta",
                     "left", "right")
 
-    override fun start() {
-        Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
-                backwards, absolute, enableJerkLimiting, optimizeDkSquared)
-    }
+    var time = 0.0
+    var notifierStarted = false
 
-    override fun update() {
-        val setpoint = Drive.advanceTrajectory(io.dt)
+    private val updateNotifier = Notifier {
+        val newTime = Timer.getFPGATimestamp()
+        val dt = newTime - time
+        time = newTime
+        val setpoint = Drive.advanceTrajectory(dt)
         val error = Drive.getError(setpoint.arcPose)
         val velocity = setpoint.chassisVelocity
         val acceleration = setpoint.chassisAcceleration
@@ -66,19 +70,33 @@ class DriveTrajectory(
                 setpoint.t,
                 setpoint.velocity, setpoint.acceleration, setpoint.arcPose.curvature,
                 // "s_x", "s_y", "s_theta",
-                robotState.translation.x, robotState.translation.y, robotState.rotation.radians,
+                robotState.translation.x, robotState.translation.y, robotState.rotation.degrees,
                 // "r_x", "r_y", "r_theta"
-                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.radians,
+                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.degrees,
                 // "left", "right"
                 io.leftFeedforward * 12.0, io.rightFeedforward * 12.0
         )
         logger.writeData(*data)
-        //println(data.joinToString("\t") { it.f })
+        println(data.joinToString("\t") { it.f })
     }
 
-    override val shouldFinish: Boolean get() = Drive.isDoneTrajectory()
+    override fun start() {
+        Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
+                backwards, absolute, enableJerkLimiting, optimizeDkSquared)
+    }
+
+    override fun update() {
+        if (!notifierStarted && Drive.tryFinishGeneratingTrajectory()) { // Wait on the generator future task
+            updateNotifier.startPeriodic(0.01)
+            time = Timer.getFPGATimestamp()
+            notifierStarted = true
+        }
+    }
+
+    override val shouldFinish: Boolean get() = notifierStarted && Drive.isDoneTrajectory()
 
     override fun stop() {
+        if (notifierStarted) updateNotifier.stop()
         Drive.neutralOutput()
     }
 }
