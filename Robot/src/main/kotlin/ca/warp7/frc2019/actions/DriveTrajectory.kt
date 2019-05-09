@@ -17,11 +17,11 @@ import kotlin.math.abs
 class DriveTrajectory(
         val waypoints: Array<Pose2D>,
         val maxVelocity: Double = 0.8 * Drive.model.maxVelocity,
-        val maxAcceleration: Double = 0.8 * Drive.model.maxAcceleration,
+        val maxAcceleration: Double = 0.7 * Drive.model.maxAcceleration,
         val maxCentripetalAcceleration: Double = maxAcceleration,
         val backwards: Boolean = false,
         val absolute: Boolean = false,
-        val enableJerkLimiting: Boolean = true,
+        val enableJerkLimiting: Boolean = false,
         val optimizeDkSquared: Boolean = false,
         val follower: DriveFollower = VoltageOnly
 ) : Action {

@@ -48,7 +48,8 @@ class WheelbaseRadius : TimedRobot(0.2) {
 
         override fun start() {
             accumulator = 0.0
-            startDist = (io.leftPosition + io.rightPosition) / 2
+
+            startDist = (io.leftPosition + io.rightPosition) * DriveConstants.kWheelRadius / 2
             io.driveControlMode = ControlMode.PercentOutput
         }
 
@@ -56,7 +57,7 @@ class WheelbaseRadius : TimedRobot(0.2) {
             io.leftDemand = 0.4
             io.rightDemand = -0.4
             accumulator += (io.yaw - io.previousYaw).radians
-            val newDist = (io.leftPosition + io.rightPosition) / 2
+            val newDist = (io.leftPosition + io.rightPosition) * DriveConstants.kWheelRadius / 2
             val dist = newDist - startDist
             if (accumulator > 10 * 2 * PI) {
                 io.leftDemand = 0.0
@@ -68,6 +69,8 @@ class WheelbaseRadius : TimedRobot(0.2) {
             }
             SmartDashboard.putNumber("WheelbaseNow", dist / accumulator)
             SmartDashboard.putNumber("ScrubNow", (dist / accumulator) / (DriveConstants.kTurningDiameter / 2))
+            // 0.62865
+            // 0.07493 wheelRadius
         }
 
         override val shouldFinish: Boolean
