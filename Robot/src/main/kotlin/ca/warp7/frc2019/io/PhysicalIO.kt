@@ -88,10 +88,10 @@ class PhysicalIO : BaseIO {
         val newTime = Timer.getFPGATimestamp()
         dt = newTime - time
         time = newTime
-        if (config.enableDriverInput) {
+        if (config.enableDriverInput && controlInput.driverIsXbox) {
             controlInput.updateDriver()
         }
-        if (config.enableOperatorInput) {
+        if (config.enableOperatorInput && controlInput.operatorIsXbox) {
             controlInput.updateOperator()
         }
         if (config.enableLiftEncoderInput) {
@@ -279,6 +279,7 @@ class PhysicalIO : BaseIO {
         resetDrivePosition(0.0)
         resetLiftPosition(0.0)
         limelightMode = LimelightMode.Driver
+        controlInput.updateState()
     }
 
     override fun disable() {
@@ -314,6 +315,7 @@ class PhysicalIO : BaseIO {
         liftFeedforward = 0.0
 
         csvLogManager.closeLoggers()
+        controlInput.reset()
 
         config.apply {
             enableDriverInput = false

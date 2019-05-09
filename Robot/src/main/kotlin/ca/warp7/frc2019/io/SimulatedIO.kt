@@ -16,10 +16,10 @@ class SimulatedIO : BaseIO {
 
     var enabled = false
 
-    private val input = ControlInput()
+    private val controlInput = ControlInput()
 
-    override val driverInput: RobotController = input.driver
-    override val operatorInput: RobotController = input.operator
+    override val driverInput: RobotController = controlInput.driver
+    override val operatorInput: RobotController = controlInput.operator
 
     private val networkTableInstance: NetworkTableInstance = NetworkTableInstance.getDefault()
     private val telemetry: NetworkTable = networkTableInstance.getTable("RobotIO")
@@ -28,6 +28,12 @@ class SimulatedIO : BaseIO {
         val newTime = Timer.getFPGATimestamp()
         dt = newTime - time
         time = newTime
+        if (controlInput.driverIsXbox) {
+            controlInput.updateDriver()
+        }
+        if (controlInput.driverIsXbox) {
+            controlInput.updateOperator()
+        }
     }
 
     override fun writeOutputs() {
@@ -165,6 +171,7 @@ class SimulatedIO : BaseIO {
     override fun enable() {
         enabled = true
         time = Timer.getFPGATimestamp()
+        controlInput.updateState()
     }
 
     override fun disable() {
