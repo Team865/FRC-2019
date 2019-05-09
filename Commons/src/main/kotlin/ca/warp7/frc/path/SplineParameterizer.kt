@@ -6,6 +6,8 @@ import ca.warp7.frc.geometry.rotate
 
 fun List<QuinticSegment2D>.parameterized(): List<ArcPose2D> {
     val points = mutableListOf<ArcPose2D>()
+    val p0 = first()[0.0]
+    points.add(ArcPose2D(p0.toPose(), p0.curvature, 0.0))
     forEach { points.addAll(it.parameterized()) }
     return points
 }
@@ -15,8 +17,6 @@ fun QuinticSegment2D.parameterized(): List<ArcPose2D> =
 
 fun QuinticSegment2D.parameterized(maxDx: Double, maxDy: Double, maxDTheta: Double): List<ArcPose2D> {
     val points = mutableListOf<ArcPose2D>()
-    val p0 = get(0.0)
-    points.add(ArcPose2D(p0.toPose(), p0.curvature, 0.0))
     parameterize(points, 0.0, 1.0, maxDx, maxDy, maxDTheta)
     return points
 }
