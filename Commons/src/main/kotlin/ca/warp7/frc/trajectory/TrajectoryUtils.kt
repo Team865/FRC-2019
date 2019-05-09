@@ -1,6 +1,7 @@
 package ca.warp7.frc.trajectory
 
 import ca.warp7.frc.geometry.ArcPose2D
+import ca.warp7.frc.linearInterpolate
 import ca.warp7.frc.squared
 import kotlin.math.abs
 import kotlin.math.asin
@@ -104,13 +105,15 @@ fun List<ArcPose2D>.timedTrajectory(
             val accStart = states[start].acceleration
             val accEnd = states[end].acceleration
             // Calculate the individual step size
-            val step = (accEnd - accStart) / (end - start + 1)
+            val maxTime = states.subList(start, end + 1).sumByDouble { it.t }
+            var t = 0.0
             for (j in start..end) {
                 val next = states[j + 1]
                 val current = states[j]
-                current.jerk = step
+                t += current.t
+                val interpolant = t / maxTime
                 // Interpolate the acceleration
-                current.acceleration = accStart + step * (j - start + 1)
+                current.acceleration = linearInterpolate(accStart, accEnd, interpolant)
                 // Apply kinematic equation vf^2 = vi^2 + 2ax, solve for vf
                 val arcLength = arcLengths[j]
                 next.velocity = minOf(next.velocity, sqrt(current.velocity.squared + 2 * current.acceleration * arcLength))
