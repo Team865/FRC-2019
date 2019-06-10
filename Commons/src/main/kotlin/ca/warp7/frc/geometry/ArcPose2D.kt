@@ -1,6 +1,7 @@
 package ca.warp7.frc.geometry
 
 import ca.warp7.frc.epsilonEquals
+import ca.warp7.frc.f
 import ca.warp7.frc.linearInterpolate
 
 class ArcPose2D(
@@ -64,7 +65,7 @@ class ArcPose2D(
     override val inverse: ArcPose2D get() = ArcPose2D(pose.inverse, curvature, dk_ds)
 
     override fun toString(): String {
-        return "Arc($pose, $curvature)"
+        return "Arc($pose, ${curvature.f})"
     }
 
     companion object {

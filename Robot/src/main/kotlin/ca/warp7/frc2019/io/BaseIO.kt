@@ -43,8 +43,8 @@ interface BaseIO {
     var driveControlMode: ControlMode
     var leftDemand: Double
     var rightDemand: Double
-    var leftFeedforward: Double
-    var rightFeedforward: Double
+    var leftFeedforward: Double // [-1, 1]
+    var rightFeedforward: Double // [-1, 1]
 
     var liftControlMode: ControlMode
     var liftDemand: Double

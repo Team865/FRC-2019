@@ -41,17 +41,6 @@ object Drive {
         io.rightFeedforward = 0.0
     }
 
-    fun setVelocity(
-            leftVel: Double, rightVel: Double, // m/s
-            leftAcc: Double = 0.0, rightAcc: Double = 0.0 // m/s^2 * kA
-    ) {
-        io.driveControlMode = ControlMode.Velocity
-        io.leftDemand = leftVel * DriveConstants.kTicksPerMeterPer100ms
-        io.rightDemand = rightVel * DriveConstants.kTicksPerMeterPer100ms
-        io.leftFeedforward = leftAcc / DriveConstants.kMaxTalonPIDOutput
-        io.rightFeedforward = rightAcc / DriveConstants.kMaxTalonPIDOutput
-    }
-
     fun setVoltage(dynamicState: DynamicState) {
         io.driveControlMode = ControlMode.PercentOutput
         io.leftDemand = 0.0

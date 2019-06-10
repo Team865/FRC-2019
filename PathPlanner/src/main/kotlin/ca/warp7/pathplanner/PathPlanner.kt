@@ -29,8 +29,7 @@ class PathPlanner : PApplet() {
     )
 
     override fun settings() {
-        size(1024, 540)
-        noSmooth()
+        size(1024, 540, PConstants.P3D)
     }
 
     val kTriangleRatio = 1 / sqrt(3.0)
