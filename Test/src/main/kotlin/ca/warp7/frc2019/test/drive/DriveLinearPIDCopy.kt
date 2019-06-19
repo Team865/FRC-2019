@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.test.drive
 
-import ca.warp7.frc.config
+import ca.warp7.frc.control.config
+import ca.warp7.frc.control.followedBy
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.followedBy
 import ca.warp7.frc2019.constants.DriveConstants
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode

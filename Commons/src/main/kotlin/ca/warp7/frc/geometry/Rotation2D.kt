@@ -3,7 +3,7 @@ package ca.warp7.frc.geometry
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.f
 
-data class Rotation2D(val cos: Double, val sin: Double) : State<Rotation2D> {
+class Rotation2D(val cos: Double, val sin: Double) : State<Rotation2D> {
 
     override fun unaryMinus(): Rotation2D = inverse
 
@@ -49,7 +49,7 @@ data class Rotation2D(val cos: Double, val sin: Double) : State<Rotation2D> {
     override val inverse: Rotation2D get() = Rotation2D(cos, -sin)
 
     override fun toString(): String {
-        return "Rotation(${degrees.f}°)"
+        return "⟳${degrees.f}°"
     }
 
     companion object {

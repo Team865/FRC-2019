@@ -1,47 +1,32 @@
 package ca.warp7.frc
 
-import ca.warp7.actionkt.ActionStateMachine
-import ca.warp7.actionkt.future
-import ca.warp7.actionkt.runOnce
-import edu.wpi.first.wpilibj.Timer
-import kotlin.math.abs
-
-fun runPeriodicLoop() {
-    val time = Timer.getFPGATimestamp()
-    InternalControl.haltingPeriodicLoop()
-    val loopTime = Timer.getFPGATimestamp() - time
-    if (loopTime > 0.02){
-        println("Slow loop time$loopTime")
-    }
-}
-
-fun disableRobot() = InternalControl.disableOutputs()
-
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
 fun Double.epsilonEquals(other: Double) = epsilonEquals(other, 1E-12)
 
-fun getShuffleboardTab(subsystem: Subsystem) = subsystem.tab
+fun linearInterpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
 
-inline fun withDriver(block: RobotController.() -> Unit) = block(Controls.robotDriver)
+val Double.f get() = "%.3f".format(this)
+val Double.f1 get() = "%.1f".format(this)
 
-inline fun withOperator(block: RobotController.() -> Unit) = block(Controls.robotOperator)
-
-fun <T : ActionStateMachine> T.set(block: T.() -> Unit) = set(runOnce(block))
-
-fun <T : ActionStateMachine> T.future(block: T.() -> Unit) = future(runOnce(block))
-
-fun feetToMeters(feet: Double) = feet * 0.3048
-
-fun inchesToMeters(inches: Double) = inches * 0.0254
-
-fun metersToFeet(meters: Double) = meters / 0.3048
-
-fun interpolate(a: Double, b: Double, x: Double) = a + (b - a) * x.coerceIn(0.0, 1.0)
-
-val Double.f get() = "%.4f".format(this)
-
-fun applyDeadband(value: Double, max: Double, deadband: Double) = when {
-    abs(value) > deadband -> (abs(value) - deadband) / (max - deadband)
-    else -> 0.0
+fun applyDeadband(value: Double, max: Double, deadband: Double): Double {
+    val v = value.coerceIn(-max, max)
+    return if (Math.abs(v) > deadband) {
+        if (v > 0.0) (v - deadband) / (max - deadband)
+        else (v + deadband) / (max - deadband)
+    } else 0.0
 }
+
+const val kFeetToMeters: Double = 0.3048
+
+const val kInchesToMeters: Double = 0.0254
+
+const val kMetersToFeet: Double = 1 / kFeetToMeters
+
+const val kMetersToInches: Double = 1 / kInchesToMeters
+
+val Number.feet: Double get() = this.toDouble() * kFeetToMeters
+
+val Number.inches: Double get() = this.toDouble() * kInchesToMeters
+
+val Double.squared: Double get() = this * this

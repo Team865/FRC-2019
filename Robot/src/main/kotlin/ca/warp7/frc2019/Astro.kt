@@ -1,77 +1,54 @@
 package ca.warp7.frc2019
 
-import ca.warp7.frc.*
-import ca.warp7.frc2019.subsystems.*
-import ca.warp7.frc2019.subsystems.lift.MainDisplay
+import ca.warp7.frc2019.actions.MainLoop
+import ca.warp7.frc2019.actions.Sandstorm
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
+import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.RobotBase
 import edu.wpi.first.wpilibj.TimedRobot
 
-class Astro : TimedRobot(0.02) {
+class Astro : TimedRobot(0.2) {
 
-    /**
-     * Initializes the robot by setting the state of subsystems
-     * directly or transitively and activating the controllers.
-     * Comment out the controller lines to disable them
-     */
-    override fun robotInit() {
-        println("Hello me is robit!")
-        RobotControl.set { mode = ControllerMode.DriverAndOperator }
-        MainDisplay.set { }
-        Drive.set { }
-        Infrastructure.set { }
-        Limelight.set { isDriver = false }
-        Conveyor.set { speed = 0.0 }
-        Outtake.set {
-            speed = 0.0
-            grabbing = true
-            pushing = true
-        }
-        Intake.set { extended = false }
-        Lift.set {}
-        Superstructure.set { }
+    private val io: BaseIO = ioInstance()
+    private val looper: Looper = Looper
+
+    private val notifier: Notifier = Notifier {
+        io.readInputs()
+        looper.update()
+        io.writeOutputs()
     }
 
-    /**
-     * Runs a periodic loop that collects inputs, updates controller loop,
-     * processes subsystem states, send output signals, and send telemetry
-     */
-    override fun robotPeriodic() = runPeriodicLoop()
+    override fun robotInit() {
+        println("Hello me is robit!")
+        io.initialize()
+        notifier.startPeriodic(0.01)
+    }
 
-    /**
-     * Disables the robot by disabling each subsystem and not calling
-     * output methods.
-     */
-    override fun disabledInit() = disableRobot()
+    override fun disabledInit() {
+        io.disable()
+        looper.reset()
+    }
 
-    /*
-    =====================================================
-    Starts various modes of the robot using control loops
-    =====================================================
-     */
+    override fun autonomousInit() {
+        io.enable()
+        looper.add(Sandstorm())
+    }
 
-    override fun autonomousInit() = RobotControl.set(Sandstorm)
-    override fun teleopInit() = RobotControl.set(MainLoop)
-    override fun testInit() = RobotControl.set(MainLoop)
+    override fun teleopInit() {
+        io.enable()
+        looper.add(MainLoop())
+    }
 
-    /*
-    =====================================================
-    The following periodic functions are not used because
-    they are all handled by the `robotPeriodic` function
-    =====================================================
-     */
+    override fun disabledPeriodic() {}
+    override fun autonomousPeriodic() {}
+    override fun teleopPeriodic() {}
+    override fun robotPeriodic() {}
 
-    override fun disabledPeriodic() = Unit
-    override fun autonomousPeriodic() = Unit
-    override fun teleopPeriodic() = Unit
-    override fun testPeriodic() = Unit
-
-    /**
-     * The main function that is executed from the `Main-Class` of the jar file.
-     * It calls on RobotBase to initialize system hardware and start the main
-     * loop that calls the other functions
-     */
-    @Suppress("UnusedMainParameter")
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) = TimedRobot.startRobot { Astro() }
+        fun main(args: Array<String>) {
+            RobotBase.startRobot { Astro() }
+        }
     }
 }

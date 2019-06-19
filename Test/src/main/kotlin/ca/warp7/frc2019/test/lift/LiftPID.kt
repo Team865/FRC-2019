@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.test.lift
 
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.networktables.NetworkTableEntry
 import edu.wpi.first.wpilibj.GenericHID

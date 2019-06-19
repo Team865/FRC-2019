@@ -4,9 +4,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
 object LiftConstants {
-    const val kMaster = ElectricalConstants.kLiftMasterTalonId
-    const val kFollower = ElectricalConstants.kLiftFollowerVictorId
-    const val kHallEffect = ElectricalConstants.kLiftHallEffectSensorDIO
+    const val kMaster = IOConstants.kLiftMaster
+    const val kFollower = IOConstants.kLiftFollower
+    const val kHallEffect = IOConstants.kLiftHallEffect
 
     const val kHatchStartHeightInches = 5.0
 
@@ -38,7 +38,7 @@ object LiftConstants {
 
     const val kMaxHeightEncoderTicks = -42268.0
 
-    const val kPIDDeadSpotHeight = -2.5
+    const val kPIDDeadSpotHeight = 2.5
     const val kMoveToBottomDemand = 0.06
 
     val kMasterTalonConfig = TalonSRXConfiguration().apply {

@@ -1,13 +1,17 @@
 package ca.warp7.frc.path
 
+import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
+import ca.warp7.frc.trajectory.timedTrajectory
+import kotlin.math.absoluteValue
+import kotlin.math.pow
 
 /**
  * @author Team 254
  */
 
 fun QuinticSegment2D.sumDCurvature2(): Double =
-        (0 until 100).sumByDouble { 0.01 * get(0.01 * it).dCurvature2 }
+        (0 until 100).map { get(it / 100.0) }.map { it.dCurvature2 }.sum()
 
 fun List<QuinticSegment2D>.sumDCurvature2(): Double = this.sumByDouble { it.sumDCurvature2() }
 
@@ -69,12 +73,12 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
         val next = this[i + 1]
 
         //calculate partial derivatives of sumDCurvature2
-        this[i] = now.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1 + kEpsilon, y0, y1, dy0, dy1, ddy0, ddy1) }
-        this[i + 1] = next.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0 + kEpsilon, ddx1, y0, y1, dy0, dy1, ddy0, ddy1) }
+        this[i] = now.copy(ddx1 = now.ddx1 + kEpsilon)
+        this[i + 1] = next.copy(ddx0 = next.ddx0 + kEpsilon)
         controlPoints[i].ddx = (sumDCurvature2() - original) / kEpsilon
 
-        this[i] = now.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1, y0, y1, dy0, dy1, ddy0, ddy1 + kEpsilon) }
-        this[i + 1] = next.run { QuinticSegment2D(x0, x1, dx0, dx1, ddx0, ddx1, y0, y1, dy0, dy1, ddy0 + kEpsilon, ddy1) }
+        this[i] = now.copy(ddy1 = now.ddy1 + kEpsilon)
+        this[i + 1] = next.copy(ddy0 = next.ddy0 + kEpsilon)
         controlPoints[i].ddy = (sumDCurvature2() - original) / kEpsilon
 
         this[i] = now
@@ -138,11 +142,17 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
 }
 
 fun main() {
-    val splines = parameterizedSplinesOf(
-            waypoint(0, 0, 0),
-            waypoint(8, 0, 0),
-            waypoint(16, -6, -60),
-            waypoint(18, -8, -45)
+    val splines = quinticSplinesOf(
+            Pose2D(0.feet, 0.feet, 0.degrees),
+            Pose2D(8.feet, 0.feet, 0.degrees),
+            Pose2D(16.feet, 6.feet, 60.degrees),
+            Pose2D(18.feet, 8.feet, 45.degrees)
     )
-    splines.forEach { println(it) }
+
+    val p = splines.parameterized()
+
+    p.timedTrajectory(0.45577125, 0.0, 0.0, 12.feet, 9.feet, 9.feet, 60.0)
+
+
+    //println(trajectory.joinToString("\n"))
 }

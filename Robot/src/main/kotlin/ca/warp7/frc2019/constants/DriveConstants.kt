@@ -9,12 +9,12 @@ object DriveConstants {
 
     // Electrical constants
 
-    const val kLeftMaster = ElectricalConstants.kDriveLeftMasterTalonId
-    const val kLeftFollowerA = ElectricalConstants.kDriveLeftFollowerAVictorId
-    const val kLeftFollowerB = ElectricalConstants.kDriveLeftFollowerBVictorId
-    const val kRightMaster = ElectricalConstants.kDriveRightMasterTalonId
-    const val kRightFollowerA = ElectricalConstants.kDriveRightFollowerAVictorId
-    const val kRightFollowerB = ElectricalConstants.kDriveRightFollowerBVictorId
+    const val kLeftMaster = IOConstants.kLeftMaster
+    const val kLeftFollowerA = IOConstants.kLeftFollowerA
+    const val kLeftFollowerB = IOConstants.kLeftFollowerB
+    const val kRightMaster = IOConstants.kRightMaster
+    const val kRightFollowerA = IOConstants.kRightFollowerA
+    const val kRightFollowerB = IOConstants.kRightFollowerB
 
     // Teleop Control constants
 
@@ -35,39 +35,37 @@ object DriveConstants {
     const val kTurningDiameter = 24.75 * kInchesToMeters // m
     const val kTurningCircumference = kTurningDiameter * Math.PI // m
 
-    // Encoder unit constants
+    // Talon unit constants
 
     const val kTicksPerRevolution = 1024 // ticks/rev
     const val kTicksPerRadian = kTicksPerRevolution / (2 * Math.PI)
     const val kTicksPerInch = kTicksPerRevolution / (kWheelCircumference / kInchesToMeters) // ticks/in
     const val kTicksPerFootPer100ms = 12 * kTicksPerInch * 0.1 // ticks/(ft/100ms)
     const val kTicksPerMeterPer100ms = kTicksPerInch / kInchesToMeters * 0.1 // ticks(m/100ms)
+    const val kMaxTalonPIDOutput = 1023.0
 
     // Kinematic constants
 
     const val kMaxVelocity = 12.0 * kFeetToMeters // m/s
     const val kMaxAcceleration = 9.0 * kFeetToMeters //  m/s^2
     const val kMaxFreeSpeed = 16.5 * kFeetToMeters// m/s
+    const val kMaxJerk = 45.0 // m/s^3
 
-    private const val kScrubFactor = 1.45
+    private const val kScrubFactor = 1.4
     const val kEffectiveWheelBaseRadius = kTurningDiameter / 2 * kScrubFactor // m
 
     // Dynamic constants
 
     const val kMaxVolts = 12.0 // V
     const val kFrictionVoltage = 1.0 // V
-    const val kLinearInertia = 70.0 // kg
+    const val kLinearInertia = 60.0 // kg
     const val kAngularInertia = 10.0 // kg * m^2
     const val kAngularDrag = 20.0 // (N * m) / (rad/s)
-    const val kSpeedPerVolt = (kMaxFreeSpeed / kWheelRadius) / (kMaxVolts - kFrictionVoltage) // (rad/s) / V
+    const val kSpeedPerVolt = (kMaxFreeSpeed / kWheelRadius) / kMaxVolts // (rad/s) / V
     const val kA = 83.0 // // (rad/s^2) / V
     const val kTorquePerVolt = 0.5 * kWheelRadius * kWheelRadius * kLinearInertia * kA  // (N * m) / V
 
-    // Trajectory constants
-
-    const val kMaxDx = 0.0254 // m
-
-    // PID constants
+    // Feedback constants
 
     val kStraightPID: PID
         get() = PID(
@@ -84,22 +82,30 @@ object DriveConstants {
         )//degrees
 
     val kVelocityFeedforwardPID = PID(kP = 0.8, kI = 0.0, kD = 5.0, kF = 1.0)
+    val kTrajectoryPID = PID(kP = 1.0, kI = 0.0, kD = 10.0, kF = 0.0)
+
+    const val kPoseX = 5.0
+    const val kPoseY = 5.0
+    const val kPoseTheta = 1.0
+
+    const val kAngleP = 5.0
+
+    // Pure pursuit
+    const val kPathLookaheadTime = 0.4  // seconds to look ahead along the path for steering
+    const val kMinLookDist = 24.0  // inches
+    const val kLookaheadSearchDt = 0.01
+
+    // Ramsete
+    // Equation 5.12 from https://www.dis.uniroma1.it/~labrob/pub/papers/Ramsete01.pdf
+    const val kRamseteBeta = 2.0  // Correction coefficient, β > 0
+    const val kRamseteZeta = 0.7  // Damping coefficient, 0 < ζ < 1
 
     // Talon configuration
 
-    val kMasterTalonConfig = TalonSRXConfiguration().apply {
-
-        slot0.apply {
-            kP = kVelocityFeedforwardPID.kP
-            kI = kVelocityFeedforwardPID.kI
-            kD = kVelocityFeedforwardPID.kD
-            kF = kVelocityFeedforwardPID.kF
+    val kMasterTalonConfig
+        get() = TalonSRXConfiguration().apply {
+            openloopRamp = kOpenLoopRamp
+            voltageCompSaturation = kMaxVolts
+            primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
         }
-
-        openloopRamp = kOpenLoopRamp
-
-        voltageCompSaturation = kMaxVolts
-
-        primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder
-    }
 }

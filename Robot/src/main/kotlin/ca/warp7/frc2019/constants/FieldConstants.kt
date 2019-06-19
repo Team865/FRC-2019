@@ -1,5 +1,8 @@
 package ca.warp7.frc2019.constants
 
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.fromDegrees
+
 @Suppress("unused")
 object FieldConstants {
 
@@ -10,4 +13,6 @@ object FieldConstants {
     const val kHatch1Height = 19.0 // firstHatchPortCenterHeightInches + centerToCenterInches
     const val kHatch2Height = 47.0 // firstHatchPortCenterHeightInches + centerToCenterInches
     const val kHatch3Height = 75.0 //kHatch2Height + centerToCenterInches
+
+    val hatchTargetHeight: Double = TODO()
 }

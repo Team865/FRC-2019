@@ -1,66 +1,37 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Subsystem
-import edu.wpi.first.networktables.NetworkTable
-import edu.wpi.first.networktables.NetworkTableEntry
-import edu.wpi.first.networktables.NetworkTableInstance
+import ca.warp7.frc.PID
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.fromDegrees
+import ca.warp7.frc.geometry.tan
+import ca.warp7.frc2019.constants.LimelightConstants.hatchTargetHeightDiff
+import ca.warp7.frc2019.constants.LimelightConstants.limelightAngleY
+import ca.warp7.frc2019.io.BaseIO
+import ca.warp7.frc2019.io.ioInstance
+import kotlin.math.abs
 
-object Limelight : Subsystem() {
-    private val table: NetworkTable = NetworkTableInstance.getDefault().getTable("limelight")
-    private val tv: NetworkTableEntry = table.getEntry("tv")
-    private val tx: NetworkTableEntry = table.getEntry("tx")
-    private val ty: NetworkTableEntry = table.getEntry("ty")
-    private val ta: NetworkTableEntry = table.getEntry("ta")
-    private val tl: NetworkTableEntry = table.getEntry("tl")
-    private val camMode: NetworkTableEntry = table.getEntry("camMode")
-    private val ledMode: NetworkTableEntry = table.getEntry("ledMode")
+object Limelight {
+    private val io: BaseIO = ioInstance()
 
-    var hasTarget = false
-    var x = 0.0
-    var y = 0.0
-    var area = 0.0
-    var latency = 0.0
-
-    var connected = false
+    val dist get() = hatchTargetHeightDiff / ((Rotation2D.fromDegrees(io.visionErrorY) + limelightAngleY).tan)
+    val lateral get() = dist * Rotation2D.fromDegrees(io.visionErrorX).sin
 
     var isDriver = false
-//        set(value) {
-//            //if (field != value) {
-//                if (value) {
-//                    camMode.setDouble(1.0)
-//                    ledMode.setDouble(1.0)
-//                } else {
-//                    camMode.setDouble(0.0)
-//                    ledMode.setDouble(0.0)
-//                }
-//            //}
-//            field = value
-//        }
+    val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
 
-    override fun onOutput() {
-        (if (isDriver) 1.0 else 0.0).also{
-            camMode.setDouble(it)
-            ledMode.setDouble(it)
-        }
-    }
-    override fun onMeasure(dt: Double) {
-        if (!connected && tv.exists()) connected = true
-        if (connected && !isDriver) {
-            hasTarget = tv.getDouble(0.0).toInt() == 1
-            if (hasTarget) {
-                x = tx.getDouble(0.0)
-                y = ty.getDouble(0.0)
-                area = ta.getDouble(0.0)
-                latency = tl.getDouble(0.0)
+    fun updateDriveAlignment(wantAligning: Boolean, xSpeed: Double) {
+        val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0 && abs(io.visionErrorX) < 15
+        if (isAligning) {
+            val speedLimit = 0.8 - 0.5 * io.visionArea
+            io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
+            io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
+            if (xSpeed == 0.0) {
+                io.leftDemand += Drive.model.frictionPercent
+                io.rightDemand += Drive.model.frictionPercent
             }
+            val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
+            if (correction > 0) io.rightDemand += correction
+            else if (correction < 0) io.leftDemand += correction
         }
-    }
-
-    override fun onPostUpdate() {
-        /*
-        graph("x", x)
-        graph("y", y)
-        graph("area", area)
-        */
     }
 }

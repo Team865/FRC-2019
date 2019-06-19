@@ -4,7 +4,7 @@ import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.f
 import kotlin.math.hypot
 
-data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
+class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
 
     override val state: Translation2D get() = this
 
@@ -43,7 +43,7 @@ data class Translation2D(val x: Double, val y: Double) : State<Translation2D> {
     override fun minus(by: Translation2D): Translation2D = transform(by.inverse)
 
     override fun toString(): String {
-        return "Translation(${x.f}, ${y.f})"
+        return "↘(${x.f}, ${y.f})"
     }
 
     override fun scaled(by: Double): Translation2D = Translation2D(x * by, y * by)
