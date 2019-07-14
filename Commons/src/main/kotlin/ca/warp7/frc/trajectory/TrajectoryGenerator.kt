@@ -30,6 +30,9 @@ import kotlin.math.withSign
  * 5. Apply jerk limiting
  * 6. Integrate dt of each state into total trajectory time
  *
+ * Complexity based on path size: O(n)
+ * [generateTrajectory] is a pure function; the other functions in this file are not
+ *
  * @param path the target path of the trajectory.
  *
  * @param wheelbaseRadius the effect wheel base radius in metres
@@ -43,7 +46,7 @@ import kotlin.math.withSign
  * significantly than [maxVelocity]
  *
  * @param maxCentripetalAcceleration the maximum centripetal acceleration in hertz. This value
- * can reduce maximum velocity at high curvatures and is useful to prevent tipping
+ * can reduce maximum velocity at high curvatures and is useful to prevent tipping when the CoG is high
  *
  * @param maxJerk the maximum linear jerk allowed in this trajectory in metres/second^3. This value can
  * reduce spikes in voltages on the drive train to increase stability. [Double.POSITIVE_INFINITY] may
@@ -63,32 +66,77 @@ fun generateTrajectory(
         maxJerk: Double // m/s^3
 ): List<TrajectoryState> {
 
-    // Calculate the angular kinematic constraints using the wheel base radius
     val maxAngularVelocity = maxVelocity / wheelbaseRadius // rad/s
     val maxAngularAcceleration = maxAcceleration / wheelbaseRadius // rad/s^2
 
-    // Create list of states with everything set to max, then limit it afterwards
-    // during the forward, reverse, and accumulative passes
-    val states = path.map { pose ->
-        TrajectoryState(pose, maxVelocity, maxAngularVelocity, maxAcceleration, maxAngularAcceleration)
-    }
+    val states = path.map { TrajectoryState(it) }
 
-    // Algorithm :)
     val arcLengths = computeArcLengths(path)
+
     forwardPass(states, arcLengths, wheelbaseRadius, maxVelocity, maxAcceleration,
             maxAngularVelocity, maxAngularAcceleration, maxCentripetalAcceleration)
-    reversePass(states, arcLengths, maxAcceleration, maxAngularAcceleration)
-    accumulativePass(states)
-    if (maxJerk.isFinite()) {
-        limitJerk(states, arcLengths, maxJerk)
-    }
-    for (i in 1 until states.size) states[i].t += states[i - 1].t
 
-    // Set the endpoints' acceleration to 0 to allow the motor to stop if voltage is applied for torque
-    states.first().dv = 0.0
-    states.last().dv = 0.0
+    reversePass(states, arcLengths, maxAcceleration, maxAngularAcceleration)
+
+    accumulativePass(states)
+
+    if (maxJerk.isFinite()) {
+        rampedAccelerationPass(states, arcLengths, maxJerk)
+    }
+
+    integrationPass(states)
 
     return states
+}
+
+
+/**
+ * Compute arc length between each pair of poses in the path
+ */
+private fun computeArcLengths(
+        path: List<ArcPose2D> // (((x, y), θ), k, dk_ds)
+): List<Double> = path.zipWithNext { current, next ->
+
+    check(!current.pose.epsilonEquals(next.pose)) {
+        "Trajectory Generator - Two consecutive points contain the same pose"
+    }
+
+    // Get the magnitude of curvature on the next state
+    // Note that the curvature is taken from the `next` state to predict
+    // changing from and to infinity so that it doesn't result in a very
+    // small arc length
+    val k = abs(next.curvature)
+
+    when {
+
+        // Robot is turning in place, arcLength = 0.0
+        // Returns the magnitude of the angular distance in radians
+        k.isInfinite() -> abs((next.rotation - current.rotation).radians)
+
+        // Robot is moving in a curve or straight line
+        // Returns the linear distance in meters
+        else -> {
+
+            // Get the chord length (translational distance)
+            val distance = current.translation.distanceTo(next.translation)
+
+            check(distance != 0.0) {
+                "Trajectory Generator - Overlapping points without infinite curvature"
+            }
+
+            when {
+
+                // Going straight, arcLength = distance
+                k < 1E-6 -> distance
+
+                // Moving on a radius:
+                // arcLength = theta * r = theta / k
+                // theta = asin(half_chord / r) * 2 = asin(half_chord * k) * 2
+                // arcLength = asin(half_chord * k) * 2 / k
+                else -> asin((distance / 2) * k) * 2 / k
+            }
+        }
+    }
 }
 
 /**
@@ -122,7 +170,7 @@ private fun forwardPass(
             // Robot is turning in place; using angular values instead
             k.isInfinite() -> {
                 val maxReachableAngularVelocity = sqrt(current.w.squared + 2 * maxAngularAcceleration * arcLength)
-                next.w = minOf(next.w, maxAngularVelocity, maxReachableAngularVelocity)
+                next.w = minOf(maxAngularVelocity, maxReachableAngularVelocity)
 
                 // Make sure that the linear velocity is taken care of
                 next.v = 0.0
@@ -167,7 +215,7 @@ private fun forwardPass(
                 val maxReachableVelocity = sqrt(current.v.squared + 2 * maxAcceleration * arcLength)
 
                 // Limit velocity based on curvature constraint and forward acceleration
-                next.v = minOf(next.v, constrainedVelocity, maxReachableVelocity)
+                next.v = minOf(maxVelocity, constrainedVelocity, maxReachableVelocity)
 
                 // Make sure that the angular velocity is taken care of
                 next.w = next.v * k
@@ -230,56 +278,6 @@ private fun reversePass(
 
 
 /**
- * Compute arc length between each pair of poses in the path
- */
-private fun computeArcLengths(
-        path: List<ArcPose2D> // (((x, y), θ), k, dk_ds)
-): List<Double> = path.zipWithNext { current, next ->
-
-    check(!current.pose.epsilonEquals(next.pose)) {
-        "Trajectory - Two consecutive points contain the same pose"
-    }
-
-    // Get the magnitude of curvature on the next state
-    // Note that the curvature is taken from the `next` state to predict
-    // changing from and to infinity so that it doesn't result in a very
-    // small arc length
-    val k = abs(next.curvature)
-
-    when {
-
-        // Robot is turning in place, arcLength = 0.0
-        // Returns the magnitude of the angular distance in radians
-        k.isInfinite() -> abs((next.rotation - current.rotation).radians)
-
-        // Robot is moving in a curve or straight line
-        // Returns the linear distance in meters
-        else -> {
-
-            // Get the chord length (translational distance)
-            val distance = current.translation.distanceTo(next.translation)
-
-            check(distance != 0.0) {
-                "Trajectory Generator - Overlapping points without infinite curvature"
-            }
-
-            when {
-
-                // Going straight, arcLength = distance
-                k < 1E-6 -> distance
-
-                // Moving on a radius:
-                // arcLength = theta * r = theta / k
-                // theta = asin(half_chord / r) * 2 = asin(half_chord * k) * 2
-                // arcLength = asin(half_chord * k) * 2 / k
-                else -> asin((distance / 2) * k) * 2 / k
-            }
-        }
-    }
-}
-
-
-/**
  * Accumulative Pass for calculating higher-order derivatives
  * (acceleration and jerk), as well as giving back the sign
  * of the curvature
@@ -317,7 +315,7 @@ private fun accumulativePass(states: List<TrajectoryState>) {
 /**
  * Limits jerk in a trajectory
  */
-private fun limitJerk(states: List<TrajectoryState>, arcLengths: List<Double>, maxJerk: Double) {
+private fun rampedAccelerationPass(states: List<TrajectoryState>, arcLengths: List<Double>, maxJerk: Double) {
 
     // Find a list of points that exceeds the max jerk
     val jerkPoints = mutableListOf<Int>()
@@ -368,5 +366,27 @@ private fun limitJerk(states: List<TrajectoryState>, arcLengths: List<Double>, m
             // Set the new dt
             next.t = maxOf(next.t, 2 * arcLength) / abs(current.v + next.v)
         }
+    }
+}
+
+/**
+ * Integrate dt into trajectory time
+ */
+fun integrationPass(states: List<TrajectoryState>) {
+    for (i in 1 until states.size) states[i].t += states[i - 1].t
+
+    // Set the endpoints' acceleration and jerk to 0 to allow the motor to
+    // stop if voltage is applied for torque
+    states.first().apply {
+        dv = 0.0
+        dw = 0.0
+        ddv = 0.0
+        ddw = 0.0
+    }
+    states.last().apply {
+        dv = 0.0
+        dw = 0.0
+        ddv = 0.0
+        ddw = 0.0
     }
 }

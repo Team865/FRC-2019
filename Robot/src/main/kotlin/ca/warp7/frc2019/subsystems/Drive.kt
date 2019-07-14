@@ -11,9 +11,9 @@ import ca.warp7.frc.linearInterpolate
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.squared
-import ca.warp7.frc.trajectory.TrajectoryPoint
+import ca.warp7.frc.trajectory.TrajectoryState
 import ca.warp7.frc.trajectory.findRadius
-import ca.warp7.frc.trajectory.timedTrajectory
+import ca.warp7.frc.trajectory.generateTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -159,26 +159,27 @@ object Drive {
     }
 
     private var t = 0.0
-    private var trajectory: List<TrajectoryPoint> = listOf()
+    private var trajectory: List<TrajectoryState> = listOf()
     private var totalTime = 0.0
     private var direction = 0.0
     private var initialState: Pose2D = Pose2D.identity
-    private var trajectoryGenerator: Future<List<TrajectoryPoint>>? = null
+    private var trajectoryGenerator: Future<List<TrajectoryState>>? = null
 
     fun initTrajectory(waypoints: Array<Pose2D>, maxVelocity: Double, maxAcceleration: Double,
                        maxCentripetalAcceleration: Double, backwards: Boolean, absolute: Boolean,
                        enableJerkLimiting: Boolean, optimizeDkSquared: Boolean) {
         direction = if (backwards) -1.0 else 1.0
         val maxJerk = if (enableJerkLimiting) DriveConstants.kMaxJerk else Double.POSITIVE_INFINITY
+
         trajectoryGenerator = FutureTask {
-            // create a future task because it takes too long for each loop
             val path =
                     if (absolute) quinticSplinesOf(robotState, *waypoints, optimizePath = optimizeDkSquared)
                     else quinticSplinesOf(*waypoints, optimizePath = optimizeDkSquared)
-            val pathStates = path.parameterized()
-            pathStates.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
+            val parameterizedPath = path.parameterized()
+            generateTrajectory(parameterizedPath, model.wheelbaseRadius,
                     maxVelocity, maxAcceleration, maxCentripetalAcceleration, maxJerk)
         }.also { Thread(it).start() }
+
         previousVelocity = ChassisState(0.0, 0.0)
         neutralOutput()
         io.drivePID = DriveConstants.kTrajectoryPID
@@ -207,22 +208,27 @@ object Drive {
                 .rotate(-initialToRobot.rotation), setpoint.rotation - initialToRobot.rotation)
     }
 
-    fun interpolatedTimeView(t: Double): TrajectoryPoint {
+    fun interpolatedTimeView(t: Double): TrajectoryState {
         var index = 0
         while (index < trajectory.size - 2 && trajectory[index + 1].t < t) index++
         val last = trajectory[index]
         val next = trajectory[index + 1]
         val interpolant = if (last.t.epsilonEquals(next.t)) 1.0 else (t - last.t) / (next.t - last.t)
-        val acceleration = direction * linearInterpolate(last.acceleration, next.acceleration, interpolant)
-        val velocity = direction * linearInterpolate(last.velocity, next.velocity, interpolant)
+
+        val v = direction * linearInterpolate(last.v, next.v, interpolant)
+        val dv = direction * linearInterpolate(last.dv, next.dv, interpolant)
+        val w = linearInterpolate(last.w, next.w, interpolant)
+        val dw = linearInterpolate(last.dw, next.dw, interpolant)
+
         val curvature = linearInterpolate(last.arcPose.curvature, next.arcPose.curvature, interpolant)
         val position = last.arcPose.translation.interpolate(next.arcPose.translation, interpolant)
         val heading = last.arcPose.rotation.interpolate(next.arcPose.rotation, interpolant)
-        val arcPose = ArcPose2D(Pose2D(position, heading), curvature, 0.0)
-        return TrajectoryPoint(arcPose, velocity, acceleration, 0.0, t)
+        val pose = ArcPose2D(Pose2D(position, heading), curvature, 0.0)
+
+        return TrajectoryState(pose, v, w, dv, dw, 0.0, 0.0, t)
     }
 
-    fun advanceTrajectory(dt: Double): TrajectoryPoint {
+    fun advanceTrajectory(dt: Double): TrajectoryState {
         t += dt
         return interpolatedTimeView(t)
     }
@@ -246,7 +252,7 @@ object Drive {
         setAdjustedDynamics(model.solve(velocity, acceleration), velocity.linear, adjustedAngular)
     }
 
-    fun getLookahead(setpoint: TrajectoryPoint): TrajectoryPoint {
+    fun getLookahead(setpoint: TrajectoryState): TrajectoryState {
         var lookaheadTime = DriveConstants.kPathLookaheadTime
         var lookahead = interpolatedTimeView(lookaheadTime)
         var lookaheadDistance = setpoint.arcPose.distanceTo(lookahead.arcPose)
@@ -272,18 +278,18 @@ object Drive {
         setAdjustedVelocity(adjustedLinear, adjustedAngular)
     }
 
-    fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+    fun updatePurePursuit(error: Pose2D, setpoint: TrajectoryState) {
         val lookahead = getLookahead(setpoint)
         val initialToRobot = getInitialToRobot()
-        val velocity = setpoint.chassisVelocity
+        val velocity = setpoint.velocity
         val curvature = 1.0 / findRadius(initialToRobot, lookahead.arcPose)
         setAdjustedCurvature(velocity, curvature, error.translation.x)
     }
 
-    fun updateSimplePurePursuit(error: Pose2D, setpoint: TrajectoryPoint) {
+    fun updateSimplePurePursuit(error: Pose2D, setpoint: TrajectoryState) {
         val lookahead = getLookahead(setpoint)
         val initialToRobot = getInitialToRobot()
-        val velocity = setpoint.chassisVelocity
+        val velocity = setpoint.velocity
         val y = (lookahead.arcPose.translation - initialToRobot.translation).rotate(-initialToRobot.rotation).y
         val l = initialToRobot.distanceTo(lookahead.arcPose.pose)
         val curvature = (2 * y) / l.squared

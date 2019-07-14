@@ -1,10 +1,6 @@
 package ca.warp7.frc.path
 
-import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.*
-import ca.warp7.frc.trajectory.timedTrajectory
-import kotlin.math.absoluteValue
-import kotlin.math.pow
 
 /**
  * @author Team 254
@@ -139,20 +135,4 @@ fun MutableList<QuinticSegment2D>.runOptimizationIteration() {
         this[i] = this[i].updateD2End(controlPoints[i].ddx, controlPoints[i].ddy)
         this[i + 1] = this[i + 1].updateD2Start(controlPoints[i].ddx, controlPoints[i].ddy)
     }
-}
-
-fun main() {
-    val splines = quinticSplinesOf(
-            Pose2D(0.feet, 0.feet, 0.degrees),
-            Pose2D(8.feet, 0.feet, 0.degrees),
-            Pose2D(16.feet, 6.feet, 60.degrees),
-            Pose2D(18.feet, 8.feet, 45.degrees)
-    )
-
-    val p = splines.parameterized()
-
-    p.timedTrajectory(0.45577125, 0.0, 0.0, 12.feet, 9.feet, 9.feet, 60.0)
-
-
-    //println(trajectory.joinToString("\n"))
 }

@@ -1,7 +1,6 @@
 package ca.warp7.pathplanner
 
 import ca.warp7.frc.*
-import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.DynamicState
 import ca.warp7.frc.drive.WheelState
@@ -10,8 +9,8 @@ import ca.warp7.frc.path.QuinticSegment2D
 import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.path.sumDCurvature2
-import ca.warp7.frc.trajectory.TrajectoryPoint
-import ca.warp7.frc.trajectory.timedTrajectory
+import ca.warp7.frc.trajectory.TrajectoryState
+import ca.warp7.frc.trajectory.generateTrajectory
 import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PImage
@@ -30,6 +29,9 @@ class PathPlanner : PApplet() {
 
     override fun settings() {
         size(1024, 540, PConstants.P3D)
+    }
+
+    override fun frameResized(w: Int, h: Int) {
     }
 
     val kTriangleRatio = 1 / sqrt(3.0)
@@ -56,7 +58,7 @@ class PathPlanner : PApplet() {
     var waypoints: Array<Pose2D> = emptyArray()
     var intermediate: List<QuinticSegment2D> = emptyList()
     var splines: List<ArcPose2D> = emptyList()
-    var trajectory: List<TrajectoryPoint> = emptyList()
+    var trajectory: List<TrajectoryState> = emptyList()
     var controlPoints: MutableList<ControlPoint> = mutableListOf()
     var dynamics: List<Triple<WheelState, DynamicState, Double>> = emptyList()
 
@@ -177,23 +179,23 @@ class PathPlanner : PApplet() {
             if (a.curvature.epsilonEquals(0.0)) chordLength else
                 kotlin.math.abs(kotlin.math.asin(chordLength * a.curvature / 2) / a.curvature * 2)
         }.sum()
-        trajectory = splines.timedTrajectory(model.wheelbaseRadius, 0.0, 0.0,
+        trajectory = generateTrajectory(splines, model.wheelbaseRadius,
                 model.maxVelocity * maxVRatio,
                 model.maxAcceleration * maxARatio,
                 model.maxAcceleration * maxAcRatio,
                 if (jerkLimiting) 45.0 else Double.POSITIVE_INFINITY)
         trajectoryTime = trajectory.last().t
         dynamics = trajectory.map {
-            val velocity = ChassisState(it.velocity, it.velocity * it.arcPose.curvature)
-            val acceleration = ChassisState(it.acceleration, it.acceleration * it.arcPose.curvature)
+            val velocity = it.velocity
+            val acceleration = it.acceleration
             val wv = model.solve(velocity) * (217.5025513493939 / 1023 * 12)
             val wa = model.solve(acceleration) * (6.0 / 1023 * 12)
             Triple(WheelState(wv.left + wa.left, wv.right + wa.right),
                     model.solve(velocity, acceleration), it.t)
         }
         maxK = splines.maxBy { it.curvature.absoluteValue }?.curvature?.absoluteValue ?: 1.0
-        maxAngular = trajectory.map { Math.abs(it.velocity * it.arcPose.curvature) }.max() ?: 1.0
-        maxAngularAcc = trajectory.map { Math.abs(it.acceleration * it.arcPose.curvature) }.max() ?: 1.0
+        maxAngular = trajectory.map { kotlin.math.abs(it.w) }.max() ?: 1.0
+        maxAngularAcc = trajectory.map { kotlin.math.abs(it.dw) }.max() ?: 1.0
         redrawScreen()
     }
 
@@ -261,13 +263,13 @@ class PathPlanner : PApplet() {
             }
             strokeWeight(2f)
             stroke(0f, 128f, 192f)
-            map { v2T(it.acceleration, it.t, model.maxAcceleration, 434) }.connect()
+            map { v2T(it.dv, it.t, model.maxAcceleration, 434) }.connect()
             //stroke(0f, 192f, 128f)
             //map { v2T((it.state.curvature * it.acceleration), it.t, maxAngularAcc, 434) }.connect()
             stroke(255f, 255f, 128f)
-            map { v2T(it.arcPose.curvature * it.velocity, it.t, maxAngular, 290) }.connect()
+            map { v2T(it.w, it.t, maxAngular, 290) }.connect()
             stroke(128f, 128f, 255f)
-            map { v2T2(it.velocity, it.t, model.maxVelocity, 340) }.connect()
+            map { v2T2(it.v, it.t, model.maxVelocity, 340) }.connect()
         }
         dynamics.subList(0, i + 1).apply {
             stroke(255f, 255f, 128f)
