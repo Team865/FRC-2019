@@ -602,8 +602,18 @@ class PathPlanner : PApplet() {
             val nextMoment = trajectory[simIndex + 1]
             val tx = (t - thisMoment.t) / (nextMoment.t - thisMoment.t)
             val pos = thisMoment.arcPose.translation.interpolate(nextMoment.arcPose.translation, tx).newXY
-            redrawScreen()
             val heading = thisMoment.arcPose.rotation.interpolate(nextMoment.arcPose.rotation, tx)
+            val curvature = linearInterpolate(thisMoment.arcPose.curvature, nextMoment.arcPose.curvature, tx)
+            redrawScreen()
+            if (curvature.isFinite() && curvature != 0.0) {
+                val radius = 1 / curvature
+                val offset = heading.normal.translation.scaled(radius).newXYNoOffset
+                val center = pos + offset
+                val rad2 = (radius * kPixelsPerMeter * 2).toFloat()
+                noFill()
+                stroke(255f, 255f, 0f)
+                ellipse(center.x.toFloat(), center.y.toFloat(), rad2, rad2)
+            }
             drawRobot(pos, heading)
             stroke(255f, 255f, 255f)
             noFill()

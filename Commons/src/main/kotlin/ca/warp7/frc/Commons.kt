@@ -1,5 +1,7 @@
 package ca.warp7.frc
 
+import kotlin.math.abs
+
 fun Double.epsilonEquals(other: Double, epsilon: Double) = this - epsilon <= other && this + epsilon >= other
 
 fun Double.epsilonEquals(other: Double) = epsilonEquals(other, 1E-12)
@@ -11,7 +13,7 @@ val Double.f1 get() = "%.1f".format(this)
 
 fun applyDeadband(value: Double, max: Double, deadband: Double): Double {
     val v = value.coerceIn(-max, max)
-    return if (Math.abs(v) > deadband) {
+    return if (abs(v) > deadband) {
         if (v > 0.0) (v - deadband) / (max - deadband)
         else (v + deadband) / (max - deadband)
     } else 0.0

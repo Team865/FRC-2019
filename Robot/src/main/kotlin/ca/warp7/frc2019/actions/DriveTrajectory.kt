@@ -51,8 +51,8 @@ class DriveTrajectory(
         time = newTime
         val setpoint = Drive.advanceTrajectory(dt)
         val error = Drive.getError(setpoint.arcPose)
-        val velocity = setpoint.chassisVelocity
-        val acceleration = setpoint.chassisAcceleration
+        val velocity = setpoint.velocity
+        val acceleration = setpoint.acceleration
         when (follower) {
             VoltageOnly -> Drive.setVoltage(velocity, acceleration)
             SpeedDemand -> Drive.setDynamics(velocity, acceleration)
@@ -67,7 +67,7 @@ class DriveTrajectory(
         val data = arrayOf(
                 // "t"
                 setpoint.t,
-                setpoint.velocity, setpoint.acceleration, setpoint.arcPose.curvature,
+                setpoint.v, setpoint.dv, setpoint.arcPose.curvature,
                 // "s_x", "s_y", "s_theta",
                 setpointState.translation.x, setpointState.translation.y, setpointState.rotation.degrees,
                 // "r_x", "r_y", "r_theta"
