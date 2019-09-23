@@ -1,10 +1,12 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
     id "edu.wpi.first.GradleRIO"
+    id 'org.jetbrains.dokka' version '0.9.18'
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/dokka' }
 }
 
 buildDir = new File(rootProject.projectDir, "build/" + project.name)
@@ -17,4 +19,11 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.jetbrains.kotlin:kotlin-test"
+    testImplementation("junit:junit:4.12")
+}
+
+dokka {
+    outputFormat = 'html' 
+    outputDirectory = "$buildDir/javadoc"
+    samples = ['src/test/kotlin/ca/warp7/frc/geometry']    
 }
