@@ -3,6 +3,7 @@
 build/
 
 *.iml
+.idea/misc.xml
 
 # For Mac users
 
