@@ -2,6 +2,8 @@
 .gradle/
 build/
 
+*.iml
+
 # For Mac users
 
 *.DS_STORE
