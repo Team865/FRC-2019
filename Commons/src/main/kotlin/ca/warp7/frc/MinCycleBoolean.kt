@@ -7,6 +7,6 @@ class MinCycleBoolean(val minCycles: Int = 1) {
     fun update(newValue: Boolean): Boolean {
         if (newValue) cycleCount++
         else cycleCount = 0
-        return cycleCount > minCycles
+        return cycleCount >= minCycles
     }
 }

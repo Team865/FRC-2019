@@ -6,6 +6,6 @@ class Delta {
     fun update(newValue: Double): Double {
         val oldValue = value
         value = newValue
-        return oldValue - newValue
+        return newValue - oldValue
     }
 }
