@@ -23,7 +23,7 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
     private var dError = 0.0
     private var sumError = 0.0
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.PercentOutput
         startYaw = io.yaw
         error = targetYaw.radians

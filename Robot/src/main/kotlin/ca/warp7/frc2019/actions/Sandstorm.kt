@@ -14,7 +14,7 @@ class Sandstorm : Action {
     private val io: BaseIO = ioInstance()
     private val autonControl = ActionControl()
 
-    override fun start() {
+    override fun firstCycle() {
         autonControl.setAction(LeftRocketCloseHatch.startToRocket)
         Looper.add(autonControl)
         io.config.apply {
@@ -37,10 +37,11 @@ class Sandstorm : Action {
         Drive.updateRobotStateEstimation()
     }
 
-    override val shouldFinish: Boolean
-        get() = autonControl.shouldFinish() || io.driverInput.yButton == ButtonState.Pressed
+    override fun shouldFinish(): Boolean {
+        return autonControl.shouldFinish() || io.driverInput.yButton == ButtonState.Pressed
+    }
 
-    override fun stop() {
+    override fun lastCycle() {
         Looper.add(MainLoop())
     }
 }

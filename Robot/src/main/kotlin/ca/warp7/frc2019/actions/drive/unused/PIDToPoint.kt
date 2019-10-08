@@ -27,7 +27,7 @@ class PIDToPoint(
     private val robotState get() = Drive.robotState
     private var absoluteTarget = target
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.Velocity
         // calculate the target relative to the robot's starting point
         absoluteTarget = if (absolute) target else robotState + target

@@ -15,7 +15,7 @@ class DriveDistance : Action {
 
     private var initialDistance: Double = 0.0
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.Position
         val leftInitialSensorTicks = io.leftPosition
         val rightInitialSensorTicks = io.rightPosition

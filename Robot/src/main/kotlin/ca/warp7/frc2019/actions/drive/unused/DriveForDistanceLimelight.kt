@@ -25,7 +25,7 @@ class DriveForDistanceLimelight(distanceInFeet: Double) : Action {
     var lastTime = 0.0
     var lastYaw: Rotation2D = Rotation2D.identity
 
-    override fun start() {
+    override fun firstCycle() {
         startTime = io.time
         lastYaw = io.yaw
     }

@@ -18,7 +18,7 @@ class TurnAngle(val angle: Double) : Action {
 
     private var initialAngle = 0.0
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.Position
         initialAngle = totalAngle
 

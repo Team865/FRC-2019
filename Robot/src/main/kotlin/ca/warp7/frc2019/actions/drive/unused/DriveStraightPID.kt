@@ -19,7 +19,7 @@ class DriveStraightPID(val distance: Double, val straightPID: PIDControl = PIDCo
 )) : Action {
     private val io: BaseIO = ioInstance()
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.Velocity
         Drive.robotState = Pose2D(Translation2D.identity, Rotation2D.identity)
     }

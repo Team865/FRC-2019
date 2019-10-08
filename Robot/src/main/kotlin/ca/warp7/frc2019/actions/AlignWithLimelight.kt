@@ -16,7 +16,7 @@ class AlignWithLimelight : Action {
     private var lastError = 0.0
     private var lastTime = 0.0
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.PercentOutput
     }
 

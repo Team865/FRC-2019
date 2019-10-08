@@ -2,7 +2,6 @@ package ca.warp7.frc2019.lib
 
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.geometry.Interpolator
 import ca.warp7.frc.geometry.Translation2D
 import kotlin.math.min
 import kotlin.math.pow
@@ -22,11 +21,10 @@ class LinearTrajectory(distance: Double = 0.0, model: DifferentialDriveModel) {
     val segmentLength: Double = 0.01 / (targetState - initialState).mag
     val segmentCount: Int = (1 / segmentLength).toInt() + 1
 
-    // Interpolator between current state and target state
-    val diff: Interpolator<Translation2D> = initialState..targetState
-
     // Generate the path
-    val path: List<Translation2D> = (0 until segmentCount).map { diff[it * segmentLength] }
+    val path: List<Translation2D> = (0 until segmentCount).map {
+        initialState.interpolate(targetState, it * segmentLength)
+    }
 
     // Generate a list of timed states
     val timedStates: List<LinearTrajectoryState<Translation2D>> = path.map { LinearTrajectoryState(it) }

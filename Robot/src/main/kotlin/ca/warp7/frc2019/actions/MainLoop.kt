@@ -22,7 +22,7 @@ class MainLoop : Action {
     val timerControl = ActionControl()
     val liftTriggerLatch = ca.warp7.frc.control.LatchedBoolean()
 
-    override fun start() {
+    override fun firstCycle() {
         io.config.apply {
             enableTelemetryOutput = true
             enableDriveEncoderInput = true
@@ -38,8 +38,9 @@ class MainLoop : Action {
         io.driveRampRate = 0.15
     }
 
-    override val shouldFinish: Boolean
-        get() = false
+    override fun shouldFinish(): Boolean {
+        return false
+    }
 
     override fun update() {
         io.driverInput.apply {

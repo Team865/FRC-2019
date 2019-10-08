@@ -42,7 +42,7 @@ class DriveForDistance(
 
     private val trajectorySign = if (isBackwards) -1.0 else 1.0
 
-    override fun start() {
+    override fun firstCycle() {
         startTime = io.time
         lastYaw = io.yaw
     }

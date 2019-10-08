@@ -35,7 +35,7 @@ class AlignedCurvature : Action {
         }
     }
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.PercentOutput
         xSpeed = 0.0
         zRotation = 0.0

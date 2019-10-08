@@ -25,7 +25,7 @@ class TurnForAngle(angleInDegrees: Double, val stopVelThreshold: Double = 0.01) 
     var lastTime = 0.0
     var initYaw = Rotation2D.identity
 
-    override fun start() {
+    override fun firstCycle() {
         startTime = io.time
         initYaw = io.yaw
     }

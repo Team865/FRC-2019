@@ -79,7 +79,7 @@ class DriveTrajectory(
         // println(data.joinToString("\t") { it.f })
     }
 
-    override fun start() {
+    override fun firstCycle() {
         Drive.initTrajectory(waypoints, maxVelocity, maxAcceleration, maxCentripetalAcceleration,
                 backwards, absolute, enableJerkLimiting, optimizeDkSquared)
     }

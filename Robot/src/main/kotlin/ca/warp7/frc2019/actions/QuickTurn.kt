@@ -23,7 +23,7 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
 
     var initYaw: Rotation2D = Rotation2D.identity
 
-    override fun start() {
+    override fun firstCycle() {
         io.driveControlMode = ControlMode.Velocity
         initYaw = robotState.rotation
         println("ERROR start $robotState")

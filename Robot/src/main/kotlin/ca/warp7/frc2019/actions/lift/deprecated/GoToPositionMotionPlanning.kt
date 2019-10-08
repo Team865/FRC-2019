@@ -15,7 +15,7 @@ object GoToPositionMotionPlanning : Action {
     var tragectory = LiftTrajectory
     var timeStarted = 0.0
 
-    override fun start() {
+    override fun firstCycle() {
         io.liftControlMode = ControlMode.Velocity
     }
 
