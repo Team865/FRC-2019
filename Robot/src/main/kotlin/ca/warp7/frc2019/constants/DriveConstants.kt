@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.constants
 
-import ca.warp7.frc.PID
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.PIDControl
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration
 
@@ -67,16 +68,16 @@ object DriveConstants {
 
     // Feedback constants
 
-    val kStraightPID: PID
-        get() = PID(
-                kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0,
+    val kStraightPID: PIDControl
+        get() = PIDControl(
+                PID(kP = 3.0, kI = 0.00001, kD = 16.0, kF = 0.0),
                 errorEpsilon = 0.07, dErrorEpsilon = 0.04, minTimeInEpsilon = 0.3,
                 maxOutput = kMaxVelocity * 2
         )//meters
 
-    val kTurnPID: PID
-        get() = PID(
-                kP = 0.5, kI = 0.0001, kD = 1.5, kF = 0.0,
+    val kTurnPID: PIDControl
+        get() = PIDControl(
+                PID(kP = 0.5, kI = 0.0001, kD = 1.5, kF = 0.0),
                 errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.5,
                 maxOutput = kMaxVelocity * 2
         )//degrees

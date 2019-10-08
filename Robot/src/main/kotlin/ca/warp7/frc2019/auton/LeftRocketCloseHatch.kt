@@ -1,9 +1,9 @@
 package ca.warp7.frc2019.auton
 
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.async
-import ca.warp7.actionkt.queue
-import ca.warp7.actionkt.wait
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.action.parallel
+import ca.warp7.frc.action.sequential
+import ca.warp7.frc.action.wait
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
@@ -27,13 +27,13 @@ object LeftRocketCloseHatch {
         get() = DriveTrajectory(arrayOf(Pose2D.identity, Pose2D(16.feet, 0.0, (-90).degrees)), follower = SpeedDemand)
 
     val rocketToLoadingStation: Action
-        get() = queue {
+        get() = sequential {
             +DriveTrajectory(arrayOf(rocketPose, turnPose), backwards = true, follower = Ramsete)
             +DriveTrajectory(arrayOf(turnPose, loadingStationPose), follower = Ramsete)
         }
 
     val level1
-        get() = queue {
+        get() = sequential {
             +startToRocket
             +SubActions.outtakeHatch
             +rocketToLoadingStation
@@ -41,7 +41,7 @@ object LeftRocketCloseHatch {
         }
 
     val level2
-        get() = queue {
+        get() = sequential {
             // off platform and turn
             +DriveForDistance(88.0 / 12 + 1.0)
             +QuickTurn(-90.0)
@@ -49,24 +49,23 @@ object LeftRocketCloseHatch {
 
             // turn to rocket and raise lift
             +QuickTurn(70.0)
-            +async {
-                val stopSignal = stopSignal
-                +queue {
+            +parallel {
+                +sequential {
                     +DriveForDistance(50.0 / 12)
                     +SubActions.outtakeHatch
-                    +stopSignal
+                    //+stopSignal
                 }
                 +LiftSetpoint(FieldConstants.kHatch2Height)
             }
 
             // back off and lower lift
-            +async {
-                +queue {
+            +parallel {
+                +sequential {
                     +DriveForDistance(3.0, isBackwards = true)
                     +QuickTurn(-160.0)
                     +DriveForDistance(160.0 / 12)
                 }
-                +queue {
+                +sequential {
                     wait(0.5)
                     +LiftSetpoint(LiftConstants.kHomeHeightInches)
                 }

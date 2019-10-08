@@ -1,7 +1,8 @@
 package ca.warp7.frc2019.actions
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.PID
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.geometry.fromDegrees
@@ -14,8 +15,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0) : Action {
     private val io: BaseIO = ioInstance()
 
-    val turnPID = PID(
-            kP = 1.5, kI = 0.004, kD = 5.0, kF = 0.0,
+    val turnPID = PIDControl(
+            PID(kP = 1.5, kI = 0.004, kD = 5.0, kF = 0.0),
             errorEpsilon = 2.0, dErrorEpsilon = 1.0, minTimeInEpsilon = 0.3,
             maxOutput = DriveConstants.kMaxVelocity
     )

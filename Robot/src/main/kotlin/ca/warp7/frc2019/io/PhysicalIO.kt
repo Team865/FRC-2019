@@ -1,17 +1,21 @@
 package ca.warp7.frc2019.io
 
-import ca.warp7.frc.CSVLogManager
-import ca.warp7.frc.CSVLogger
-import ca.warp7.frc.PID
-import ca.warp7.frc.control.*
-import ca.warp7.frc.control.RobotController
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.lazySolenoid
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.radians
+import ca.warp7.frc.inputs.RobotController
+import ca.warp7.frc.log.CSVLogManager
+import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.constants.IOConstants
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.lib.followedBy
+import ca.warp7.frc2019.lib.setPID
+import ca.warp7.frc2019.lib.talonSRX
+import ca.warp7.frc2019.lib.victorSPX
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.DemandType.ArbitraryFeedForward
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -279,7 +283,6 @@ class PhysicalIO : BaseIO {
         resetDrivePosition(0.0)
         resetLiftPosition(0.0)
         limelightMode = LimelightMode.Driver
-        controlInput.updateState()
     }
 
     override fun disable() {

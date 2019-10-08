@@ -1,10 +1,10 @@
 package ca.warp7.frc2019.actions
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.CSVLogger
+import ca.warp7.frc.action.Action
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
+import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc2019.constants.DriveFollower
 import ca.warp7.frc2019.constants.DriveFollower.*
 import ca.warp7.frc2019.io.BaseIO

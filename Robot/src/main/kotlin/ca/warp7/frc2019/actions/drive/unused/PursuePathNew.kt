@@ -1,21 +1,20 @@
 package ca.warp7.frc2019.actions.drive.unused
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.trajectory.IndexedTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan
 
-class PursuePathNew(path: IndexedTrajectory<Pose2D, Pose2D>) : Action {
+class PursuePathNew(path: List<ArcPose2D>) : Action {
     //var path = Path(emptyList())
     var lookaheadDistance = 0.2
     var lookaheadGain = 0.05
-    val points = path.points
+    val points = path
 
     override fun update() {
         val x = Drive.robotState.translation.x

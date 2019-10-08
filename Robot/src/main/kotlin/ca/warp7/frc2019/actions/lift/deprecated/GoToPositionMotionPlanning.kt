@@ -1,6 +1,6 @@
 package ca.warp7.frc2019.actions.lift.deprecated
 
-import ca.warp7.actionkt.Action
+import ca.warp7.frc.action.Action
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance

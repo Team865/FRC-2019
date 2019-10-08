@@ -1,6 +1,5 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.Delta
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.DifferentialDriveModel
 import ca.warp7.frc.drive.DynamicState
@@ -12,11 +11,11 @@ import ca.warp7.frc.path.parameterized
 import ca.warp7.frc.path.quinticSplinesOf
 import ca.warp7.frc.squared
 import ca.warp7.frc.trajectory.TrajectoryState
-import ca.warp7.frc.trajectory.findRadius
 import ca.warp7.frc.trajectory.generateTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
+import ca.warp7.frc2019.lib.findRadius
 import com.ctre.phoenix.motorcontrol.ControlMode
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
@@ -139,8 +138,8 @@ object Drive {
     var robotState: Pose2D = Pose2D.identity
     var chassisVelocity = ChassisState(0.0, 0.0)
 
-    private val dLeft = Delta()
-    private val dRight = Delta()
+    private val dLeft = ca.warp7.frc.control.Delta()
+    private val dRight = ca.warp7.frc.control.Delta()
 
     fun updateRobotStateEstimation() {
         val wheels = WheelState(io.leftVelocity * model.wheelRadius, io.rightVelocity * model.wheelRadius)

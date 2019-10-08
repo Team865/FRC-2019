@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.actions.drive.unused
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.PID
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
@@ -18,8 +18,8 @@ class PIDToPoint(
         val maxTurn: Double = 90.0,
         val lateralKp: Double = 25.0,
         val turningOutputKp: Double = 0.1,
-        val straightPID: PID = DriveConstants.kStraightPID,
-        val turnPID: PID = DriveConstants.kTurnPID
+        val straightPID: PIDControl = DriveConstants.kStraightPID,
+        val turnPID: PIDControl = DriveConstants.kTurnPID
 ) : Action {
 
     private val io: BaseIO = ioInstance()

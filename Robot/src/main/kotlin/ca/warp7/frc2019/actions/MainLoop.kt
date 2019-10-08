@@ -1,11 +1,8 @@
 package ca.warp7.frc2019.actions
 
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.ActionControl
-import ca.warp7.actionkt.runAfter
-import ca.warp7.frc.LatchedBoolean
+import ca.warp7.frc.action.*
 import ca.warp7.frc.applyDeadband
-import ca.warp7.frc.control.ControllerState.*
+import ca.warp7.frc.inputs.ButtonState.*
 import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
@@ -23,7 +20,7 @@ class MainLoop : Action {
     private val io: BaseIO = ioInstance()
 
     val timerControl = ActionControl()
-    val liftTriggerLatch = LatchedBoolean()
+    val liftTriggerLatch = ca.warp7.frc.control.LatchedBoolean()
 
     override fun start() {
         io.config.apply {
@@ -47,8 +44,8 @@ class MainLoop : Action {
     override fun update() {
         io.driverInput.apply {
 
-            val xSpeed = applyDeadband(-leftYAxis, 1.0, 0.2)
-            val zRotation = applyDeadband(rightXAxis, 1.0, 0.2)
+            val xSpeed = applyDeadband(-leftY, 1.0, 0.2)
+            val zRotation = applyDeadband(rightX, 1.0, 0.2)
             val isQuickTurn = leftBumper == HeldDown
             Drive.updateCurvatureDrive(xSpeed, zRotation, isQuickTurn)
 
@@ -61,8 +58,8 @@ class MainLoop : Action {
             Limelight.updateDriveAlignment(wantAligning, xSpeed)
 
             when {
-                leftTriggerAxis > 0.2 -> updatePassthrough(-leftTriggerAxis)
-                rightTriggerAxis > 0.2 -> updatePassthrough(rightTriggerAxis)
+                leftTrigger > 0.2 -> updatePassthrough(-leftTrigger)
+                rightTrigger > 0.2 -> updatePassthrough(rightTrigger)
                 else -> updatePassthrough(0.0)
             }
             if (bButton == Pressed) io.outtakeSpeed = 1.0
@@ -70,7 +67,10 @@ class MainLoop : Action {
             when {
                 aButton == Pressed -> if (!io.pushing) {
                     io.grabbing = false
-                    timerControl.setAction(runAfter(0.3) { io.invertPushing() })
+                    timerControl.setAction(sequential {
+                        +wait(0.3)
+                        +runOnce { io.invertPushing() }
+                    })
                     Looper.add(timerControl)
                 } else io.invertPushing()
 
@@ -83,8 +83,8 @@ class MainLoop : Action {
 
         io.operatorInput.apply {
 
-            if (abs(leftYAxis) > 0.2) {
-                Lift.manualSpeed = applyDeadband(leftYAxis, 1.0, 0.2)
+            if (abs(leftY) > 0.2) {
+                Lift.manualSpeed = applyDeadband(leftY, 1.0, 0.2)
                 Lift.isManual = true
             } else Lift.manualSpeed = 0.0
 
@@ -115,7 +115,7 @@ class MainLoop : Action {
                 else -> Unit
             }
 
-            if (liftTriggerLatch.update(leftTriggerAxis > 0.2)) {
+            if (liftTriggerLatch.update(leftTrigger > 0.2)) {
                 Lift.setpointInches = FieldConstants.kCargo2Height - 12.0
                 Lift.isManual = false
             }

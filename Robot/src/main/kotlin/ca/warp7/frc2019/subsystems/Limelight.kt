@@ -1,6 +1,7 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.PID
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.tan
@@ -17,7 +18,7 @@ object Limelight {
     val lateral get() = dist * Rotation2D.fromDegrees(io.visionErrorX).sin
 
     var isDriver = false
-    val visionPID = PID(kP = 0.2, kI = 0.06, kD = 0.0, maxOutput = 0.4)
+    val visionPID = PIDControl(PID(kP = 0.2, kI = 0.06, kD = 0.0), maxOutput = 0.4)
 
     fun updateDriveAlignment(wantAligning: Boolean, xSpeed: Double) {
         val isAligning = wantAligning && io.foundVisionTarget && xSpeed >= 0 && abs(io.visionErrorX) < 15

@@ -1,8 +1,9 @@
 package ca.warp7.frc2019.actions.drive.unused
 
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.PID
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.*
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -23,9 +24,9 @@ class DriveToPointKt(
 
     private val io: BaseIO = ioInstance()
 
-    private val turnPID = PID(3.5, 0.08, 5.0, 0.25,
+    private val turnPID = PIDControl(PID(3.5, 0.08, 5.0, 0.25),
             0.0, 0.0, 0.0, 0.0, 0.0)
-    private val straightPID = PID(0.15, 0.0015, 0.3, 0.25,
+    private val straightPID = PIDControl(PID(0.15, 0.0015, 0.3, 0.25),
             0.0, 0.0, 0.0, 0.0, 0.0)
 
     // rotates the xy coordinates to be relative to the angle of the target

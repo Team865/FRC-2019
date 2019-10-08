@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.actions
 
-import ca.warp7.actionkt.Action
-import ca.warp7.actionkt.ActionControl
-import ca.warp7.frc.control.ControllerState
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.action.ActionControl
+import ca.warp7.frc.inputs.ButtonState
 import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.auton.LeftRocketCloseHatch
 import ca.warp7.frc2019.io.BaseIO
@@ -38,7 +38,7 @@ class Sandstorm : Action {
     }
 
     override val shouldFinish: Boolean
-        get() = autonControl.shouldFinish || io.driverInput.yButton == ControllerState.Pressed
+        get() = autonControl.shouldFinish() || io.driverInput.yButton == ButtonState.Pressed
 
     override fun stop() {
         Looper.add(MainLoop())

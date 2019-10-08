@@ -1,18 +1,22 @@
 package ca.warp7.frc2019.auton
 
-import ca.warp7.actionkt.*
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.action.runOnce
+import ca.warp7.frc.action.sequential
+import ca.warp7.frc.action.wait
 import ca.warp7.frc2019.actions.AlignWithLimelight
 import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.LimelightMode
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
+import ca.warp7.frc2019.lib.withTimeout
 
 object LeftCargoShipHatch {
     private val io: BaseIO = ioInstance()
 
     fun get(isLimelight: Boolean = true): Action {
-        return queue {
+        return sequential {
             // grab hatch
             +runOnce {
                 io.grabbing = true
@@ -32,7 +36,7 @@ object LeftCargoShipHatch {
 
             // drive to loading station
             +DriveForDistance(55.0 / 12, isBackwards = true)
-            +QuickTurn(93.0).withTimeout(1.0)
+            +QuickTurn(93.0)//.withTimeout(1.0)
             if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
             +DriveForDistance(215.0 / 12)
             if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
@@ -44,7 +48,7 @@ object LeftCargoShipHatch {
     }
 
     val leftSideCargoShipHatchLimelight
-        get() = queue {
+        get() = sequential {
 
             // grab hatch
             +runOnce { io.grabbing = true }

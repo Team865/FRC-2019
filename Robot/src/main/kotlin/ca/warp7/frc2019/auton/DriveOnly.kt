@@ -1,8 +1,9 @@
 package ca.warp7.frc2019.auton
 
-import ca.warp7.actionkt.queue
-import ca.warp7.actionkt.runOnce
-import ca.warp7.actionkt.wait
+
+import ca.warp7.frc.action.runOnce
+import ca.warp7.frc.action.sequential
+import ca.warp7.frc.action.wait
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
@@ -17,16 +18,16 @@ import ca.warp7.frc2019.io.ioInstance
 object DriveOnly {
     private val io: BaseIO = ioInstance()
 
-    val driveForDistance = queue {}
+    val driveForDistance = sequential {}
 
     val quickTurn
-        get() = queue {
+        get() = sequential {
             +QuickTurn(1.0)
             +QuickTurn(-180.0)
         }
 
     val driveBackingStoreException
-        get() = queue {
+        get() = sequential {
             +DriveForDistance(8.0)
             +wait(0.5)
             +QuickTurn(180.0)
@@ -37,7 +38,7 @@ object DriveOnly {
         }
 
     val leftCloseRocket
-        get() = queue {
+        get() = sequential {
             //            //+SetRobotState(8.4717, 4.2358, 0.0000)
             +runOnce {
                 io.grabbing = true

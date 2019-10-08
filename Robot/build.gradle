@@ -32,7 +32,6 @@ repositories {
 buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 dependencies {
-    compile project(":Robot-Commons")
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)

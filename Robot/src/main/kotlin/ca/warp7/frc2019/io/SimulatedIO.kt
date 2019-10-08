@@ -1,10 +1,9 @@
 package ca.warp7.frc2019.io
 
-import ca.warp7.frc.CSVLogger
-import ca.warp7.frc.PID
-import ca.warp7.frc.control.ControlInput
-import ca.warp7.frc.control.RobotController
+import ca.warp7.frc.control.PID
 import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.inputs.RobotController
+import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc2019.constants.LimelightMode
 import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.networktables.NetworkTable
@@ -123,55 +122,11 @@ class SimulatedIO : BaseIO {
     }
 
     private fun writeTelemetry() {
-        telemetry.apply {
-            getEntry("enableDriveEncoderInput").setBoolean(config.enableDriveEncoderInput)
-            getEntry("enableLiftEncoderInput").setBoolean(config.enableLiftEncoderInput)
-            getEntry("enableGyroInput").setBoolean(config.enableGyroInput)
-            getEntry("enableLimelightInput").setBoolean(config.enableLimelightInput)
-            if (config.enableDriveEncoderInput) {
-                getEntry("leftPosition").setNumber(leftPosition)
-                getEntry("rightPosition").setNumber(rightPosition)
-                getEntry("leftVelocity").setNumber(leftVelocity)
-                getEntry("rightVelocity").setNumber(rightVelocity)
-            }
-            if (config.enableLiftEncoderInput) {
-                getEntry("liftPosition").setNumber(liftPosition)
-                getEntry("liftVelocity").setNumber(liftVelocity)
-            }
-            if (config.enableLimelightInput) {
-                getEntry("limelightConnected").setBoolean(limelightConnected)
-                getEntry("foundVisionTarget").setBoolean(foundVisionTarget)
-                getEntry("visionErrorX").setNumber(visionErrorX)
-                getEntry("visionArea").setNumber(visionArea)
-            }
-            if (config.enableGyroInput) {
-                getEntry("gyroConnected").setBoolean(gyroConnected)
-                getEntry("fusedHeading").setNumber(fusedHeading)
-                getEntry("angularVelocity").setNumber(angularVelocity)
-            }
-            getEntry("driveControlMode").setString(driveControlMode.name)
-            getEntry("leftDemand").setNumber(leftDemand)
-            getEntry("rightDemand").setNumber(rightDemand)
-            getEntry("leftFeedforward").setNumber(leftFeedforward)
-            getEntry("rightFeedforward").setNumber(rightFeedforward)
-
-            getEntry("liftControlMode").setString(liftControlMode.name)
-            getEntry("liftDemand").setNumber(liftDemand)
-            getEntry("liftFeedforward").setNumber(liftFeedforward)
-
-            getEntry("intakeSpeed").setNumber(intakeSpeed)
-            getEntry("conveyorSpeed").setNumber(conveyorSpeed)
-            getEntry("outtakeSpeed").setNumber(outtakeSpeed)
-
-            getEntry("pushing").setBoolean(pushing)
-            getEntry("grabbing").setBoolean(grabbing)
-        }
     }
 
     override fun enable() {
         enabled = true
         time = Timer.getFPGATimestamp()
-        controlInput.updateState()
     }
 
     override fun disable() {

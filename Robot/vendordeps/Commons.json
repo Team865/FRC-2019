@@ -1,0 +1,19 @@
+{
+  "fileName": "Commons.json",
+  "name": "FRC-Commons-Kotlin",
+  "version": "2019.3.0",
+  "uuid": "ab676553-b602-441f-a38d-f1296eff6538",
+  "mavenUrls": [
+    "https://jitpack.io/"
+  ],
+  "jsonUrl": "",
+  "javaDependencies": [
+    {
+      "groupId": "com.github.Team865",
+      "artifactId": "FRC-Commons-Kotlin",
+      "version": "2019.3.0"
+    }
+  ],
+  "jniDependencies": [],
+  "cppDependencies": []
+}

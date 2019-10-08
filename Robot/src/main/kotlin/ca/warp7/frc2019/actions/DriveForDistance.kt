@@ -1,20 +1,21 @@
 package ca.warp7.frc2019.actions
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.drive.LinearTrajectoryState
+import ca.warp7.frc.action.Action
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.kFeetToMeters
+import ca.warp7.frc.kFeetToMetres
 import ca.warp7.frc.linearInterpolate
-import ca.warp7.frc.trajectory.LinearTrajectory
-import ca.warp7.frc.trajectory.Moment
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
+import ca.warp7.frc2019.lib.LinearTrajectory
+import ca.warp7.frc2019.lib.LinearTrajectoryState
+import ca.warp7.frc2019.lib.Moment
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
 
+@Deprecated("")
 class DriveForDistance(
         distanceInFeet: Double,
         val isBackwards: Boolean = distanceInFeet < 0,
@@ -26,7 +27,7 @@ class DriveForDistance(
 
     private val io: BaseIO = ioInstance()
 
-    private val trajectory = LinearTrajectory(kFeetToMeters * distanceInFeet, Drive.model)
+    private val trajectory = LinearTrajectory(kFeetToMetres * distanceInFeet, Drive.model)
 
     private val moments: List<Moment<LinearTrajectoryState<Translation2D>>> =
             if (velocityScale == 1.0) trajectory.moments

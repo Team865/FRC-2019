@@ -1,7 +1,8 @@
 package ca.warp7.frc2019.actions.drive.unused
 
-import ca.warp7.actionkt.Action
-import ca.warp7.frc.PID
+import ca.warp7.frc.action.Action
+import ca.warp7.frc.control.PID
+import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.control.speedController
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.DriveConstants
@@ -22,7 +23,7 @@ class AlignedCurvature : Action {
     var left = 0.0
     var right = 0.0
 
-    val anglePID = PID(kP = 0.6, kD = 0.05)
+    val anglePID = PIDControl(PID(kP = 0.6, kD = 0.05))
 
     private val differentialDrive = DifferentialDrive(speedController { left = it }, speedController { right = it })
 
@@ -51,14 +52,14 @@ class AlignedCurvature : Action {
         if (isAligning && io.foundVisionTarget) {
             val kVi: Double
             if (xSpeed.epsilonEquals(0.0, 0.2)) {
-                anglePID.kP = 0.6
-                anglePID.kD = 0.05
+                anglePID.pid.kP = 0.6
+                anglePID.pid.kD = 0.05
                 kVi = 0.2
             } else {
                 left = 0.4
                 right = 0.4
-                anglePID.kP = 0.01
-                anglePID.kD = 2.0 / (io.visionArea)
+                anglePID.pid.kP = 0.01
+                anglePID.pid.kD = 2.0 / (io.visionArea)
                 kVi = 0.05
             }
 
