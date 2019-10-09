@@ -8,7 +8,6 @@ import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.AlignWithLimelight
-import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.DriveTrajectory
 import ca.warp7.frc2019.actions.QuickTurn
 import ca.warp7.frc2019.constants.LimelightMode
@@ -28,11 +27,11 @@ object DriveOnly {
 
     val driveBackingStoreException
         get() = sequential {
-            +DriveForDistance(8.0)
+            +DriveTrajectory(8.0)
             +wait(0.5)
             +QuickTurn(180.0)
             +wait(0.5)
-            +DriveForDistance(8.0)
+            +DriveTrajectory(8.0)
             +wait(0.5)
             +QuickTurn(180.0)
         }
