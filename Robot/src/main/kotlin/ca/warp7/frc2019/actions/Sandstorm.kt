@@ -2,7 +2,7 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.action.Looper
-import ca.warp7.frc.inputs.ButtonState
+import ca.warp7.frc.input.ButtonState
 import ca.warp7.frc2019.auton.LeftRocketCloseHatch
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance

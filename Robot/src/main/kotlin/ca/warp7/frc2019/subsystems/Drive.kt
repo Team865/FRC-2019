@@ -15,7 +15,6 @@ import ca.warp7.frc.trajectory.generateTrajectory
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
-import ca.warp7.frc2019.lib.findRadius
 import com.ctre.phoenix.motorcontrol.ControlMode
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask

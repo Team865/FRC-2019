@@ -3,7 +3,7 @@ package ca.warp7.frc2019.actions
 import ca.warp7.frc.action.*
 import ca.warp7.frc.applyDeadband
 import ca.warp7.frc.control.LatchedBoolean
-import ca.warp7.frc.inputs.ButtonState.*
+import ca.warp7.frc.input.ButtonState.*
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants

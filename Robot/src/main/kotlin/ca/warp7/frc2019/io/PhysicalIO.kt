@@ -5,7 +5,7 @@ import ca.warp7.frc.control.lazySolenoid
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc.inputs.RobotController
+import ca.warp7.frc.input.RobotController
 import ca.warp7.frc.log.CSVLogManager
 import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc2019.constants.DriveConstants

@@ -2,7 +2,7 @@ package ca.warp7.frc2019.io
 
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.inputs.RobotController
+import ca.warp7.frc.input.RobotController
 import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc2019.constants.LimelightMode
 import com.ctre.phoenix.motorcontrol.ControlMode

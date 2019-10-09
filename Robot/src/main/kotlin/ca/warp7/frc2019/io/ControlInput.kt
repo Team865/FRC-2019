@@ -1,7 +1,7 @@
 package ca.warp7.frc2019.io
 
-import ca.warp7.frc.inputs.ControllerImpl
-import ca.warp7.frc.inputs.RobotController
+import ca.warp7.frc.input.ControllerImpl
+import ca.warp7.frc.input.RobotController
 import edu.wpi.first.wpilibj.GenericHID.Hand.kLeft
 import edu.wpi.first.wpilibj.GenericHID.Hand.kRight
 import edu.wpi.first.wpilibj.XboxController
