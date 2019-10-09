@@ -87,9 +87,11 @@ class DriveForDistance(
         io.rightDemand = pvaOutput * velocityScale + angularGain
     }
 
-    override val shouldFinish: Boolean get() = (t > totalTime || i >= moments.size)
+    override fun shouldFinish(): Boolean {
+        return (t > totalTime || i >= moments.size)
+    }
 
-    override fun stop() {
+    override fun interrupt() {
         io.apply {
             leftDemand = 0.0
             rightDemand = 0.0

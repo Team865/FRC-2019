@@ -92,9 +92,12 @@ class DriveTrajectory(
         }
     }
 
-    override val shouldFinish: Boolean get() = notifierStarted && Drive.isDoneTrajectory()
+    override fun shouldFinish(): Boolean {
+        return notifierStarted && Drive.isDoneTrajectory()
+    }
 
-    override fun stop() {
+
+    override fun interrupt() {
         if (notifierStarted) updateNotifier.stop()
         Drive.neutralOutput()
     }

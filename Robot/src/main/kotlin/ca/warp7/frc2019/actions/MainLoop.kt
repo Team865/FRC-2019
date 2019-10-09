@@ -2,8 +2,8 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.frc.action.*
 import ca.warp7.frc.applyDeadband
+import ca.warp7.frc.control.LatchedBoolean
 import ca.warp7.frc.inputs.ButtonState.*
-import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.HatchCargo
 import ca.warp7.frc2019.constants.LiftConstants
@@ -19,8 +19,8 @@ class MainLoop : Action {
 
     private val io: BaseIO = ioInstance()
 
-    val timerControl = ActionControl()
-    val liftTriggerLatch = ca.warp7.frc.control.LatchedBoolean()
+    val liftTriggerLatch = LatchedBoolean()
+    var timerOn = false
 
     override fun firstCycle() {
         io.config.apply {
@@ -68,11 +68,17 @@ class MainLoop : Action {
             when {
                 aButton == Pressed -> if (!io.pushing) {
                     io.grabbing = false
-                    timerControl.setAction(sequential {
-                        +wait(0.3)
-                        +runOnce { io.invertPushing() }
-                    })
-                    Looper.add(timerControl)
+                    if (!timerOn) {
+                        timerOn = true
+                        Looper.add(sequential {
+                            +wait(0.3)
+                            +runOnce {
+                                io.invertPushing()
+                                timerOn = false
+                            }
+                        })
+                    }
+
                 } else io.invertPushing()
 
                 xButton == Pressed -> {

@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.test.drive
 
 import ca.warp7.frc.action.Action
+import ca.warp7.frc.action.Looper
 import ca.warp7.frc.geometry.radians
-import ca.warp7.frc2019.Looper
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance

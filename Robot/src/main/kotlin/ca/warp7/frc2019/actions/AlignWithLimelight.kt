@@ -42,12 +42,13 @@ class AlignWithLimelight : Action {
         }
     }
 
-    override val shouldFinish
-        get() = io.visionErrorX.epsilonEquals(0.0, 0.5)
+    override fun shouldFinish(): Boolean {
+        return io.visionErrorX.epsilonEquals(0.0, 0.5)
                 && io.angularVelocity.epsilonEquals(0.0, 0.07)
                 && io.foundVisionTarget
+    }
 
-    override fun stop() {
+    override fun interrupt() {
         io.driveControlMode = ControlMode.PercentOutput
         io.leftDemand = 0.0
         io.rightDemand = 0.0

@@ -47,11 +47,12 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
         io.rightDemand = -demand
     }
 
-    override val shouldFinish
-        get() = false//turnPID.isDone()
+    override fun shouldFinish(): Boolean {
+        return false
+    }
 
 
-    override fun stop() {
+    override fun interrupt() {
         io.apply {
             leftDemand = 0.0
             rightDemand = 0.0
