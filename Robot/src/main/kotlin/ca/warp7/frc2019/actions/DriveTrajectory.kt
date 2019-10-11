@@ -5,6 +5,7 @@ import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.log.CSVLogger
+import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.constants.DriveFollower
 import ca.warp7.frc2019.constants.DriveFollower.*
 import ca.warp7.frc2019.io.BaseIO
@@ -16,8 +17,8 @@ import kotlin.math.abs
 
 class DriveTrajectory(
         val waypoints: Array<Pose2D>,
-        val maxVelocity: Double = 0.8 * Drive.model.maxVelocity,
-        val maxAcceleration: Double = 0.7 * Drive.model.maxAcceleration,
+        val maxVelocity: Double = 0.8 * DriveConstants.kMaxVelocity,
+        val maxAcceleration: Double = 0.7 * DriveConstants.kMaxAcceleration,
         val maxCentripetalAcceleration: Double = maxAcceleration,
         val backwards: Boolean = false,
         val absolute: Boolean = false,
@@ -54,10 +55,13 @@ class DriveTrajectory(
         val velocity = setpoint.velocity
         val acceleration = setpoint.acceleration
         when (follower) {
-            VoltageOnly -> Drive.setVoltage(velocity, acceleration)
-            SpeedDemand -> Drive.setDynamics(velocity, acceleration)
-            PosePID -> Drive.updatePosePID(error, velocity, acceleration)
-            AnglePID -> Drive.updateAnglePID(velocity, acceleration)
+            VoltageOnly -> {
+                Drive.setChassisDynamics(velocity, acceleration)
+                Drive.setVoltageOnly()
+            }
+            SpeedDemand -> Drive.setChassisDynamics(velocity, acceleration)
+            PosePID -> Drive.updatePosePID(error, velocity)
+            AnglePID -> Drive.updateAnglePID(velocity)
             SimplePurePursuit -> Drive.updateSimplePurePursuit(error, setpoint)
             PurePursuit -> Drive.updatePurePursuit(error, setpoint)
             Ramsete -> Drive.updateRamsete(error, velocity)

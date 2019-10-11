@@ -27,8 +27,8 @@ object Limelight {
             io.leftDemand = io.leftDemand.coerceAtMost(speedLimit)
             io.rightDemand = io.rightDemand.coerceAtMost(speedLimit)
             if (xSpeed == 0.0) {
-                io.leftDemand += Drive.model.frictionPercent
-                io.rightDemand += Drive.model.frictionPercent
+                io.leftDemand += 1 / 12.0
+                io.rightDemand += 1 / 12.0
             }
             val correction = visionPID.updateByError(Math.toRadians(-io.visionErrorX), io.dt)
             if (correction > 0) io.rightDemand += correction
