@@ -100,10 +100,11 @@ class DriveToPointKt(
         done = Math.abs(yError) < this.eps
     }
 
-    override val shouldFinish: Boolean
-        get() = done && minVelocity <= 0.5
+    override fun shouldFinish(): Boolean {
+        return done && minVelocity <= 0.5
+    }
 
-    override fun stop() {
+    override fun lastCycle() {
         io.apply {
             leftDemand = 0.0
             rightDemand = 0.0

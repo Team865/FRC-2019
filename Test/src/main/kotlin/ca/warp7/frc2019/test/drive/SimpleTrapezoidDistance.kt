@@ -1,8 +1,8 @@
 package ca.warp7.frc2019.test.drive
 
 import ca.warp7.frc2019.constants.DriveConstants
-import ca.warp7.frc2019.lib.config
-import ca.warp7.frc2019.lib.followedBy
+import ca.warp7.frc2019.helper.config
+import ca.warp7.frc2019.helper.followedBy
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX

@@ -29,10 +29,9 @@ object GoToPositionMotionPlanningSimple : Action {
         }
     }
 
-    override val shouldFinish: Boolean
-        get() {
-            return Lift.height == targetHeightFromHome && io.liftVelocity == io.liftDemand.toInt()
-        }
+    override fun shouldFinish(): Boolean {
+        return Lift.height == targetHeightFromHome && io.liftVelocity == io.liftDemand.toInt()
+    }
 
     fun shouldDecelerate(relativeHeight: Double, currentVelocity: Double): Boolean {
         val startDeceletatingAtHeightRelativeToTarget = -1 * currentVelocity.pow(2) / (2 * LiftConstants.kMaxBaseAcceleration)

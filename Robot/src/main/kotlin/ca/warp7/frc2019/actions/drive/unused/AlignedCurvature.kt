@@ -3,9 +3,9 @@ package ca.warp7.frc2019.actions.drive.unused
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.control.PIDControl
-import ca.warp7.frc.control.speedController
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.helper.speedController
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
@@ -80,9 +80,8 @@ class AlignedCurvature : Action {
         }
     }
 
-    override val shouldFinish get() = false
 
-    override fun stop() {
+    override fun lastCycle() {
         io.driveControlMode = ControlMode.PercentOutput
         io.leftDemand = 0.0
         io.rightDemand = 0.0

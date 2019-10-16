@@ -33,8 +33,9 @@ class PIDToPoint(
         absoluteTarget = if (absolute) target else robotState + target
     }
 
-    override val shouldFinish: Boolean
-        get() = false//straightPID.isDone() && turnPID.isDone()
+    override fun shouldFinish(): Boolean {
+        return false//straightPID.isDone() && turnPID.isDone()
+    }
 
     override fun update() {
 
@@ -83,7 +84,7 @@ class PIDToPoint(
         io.rightDemand = (forwardOutput + turningOutput) * DriveConstants.kTicksPerFootPer100ms
     }
 
-    override fun stop() {
+    override fun lastCycle() {
         io.leftDemand = 0.0
         io.rightDemand = 0.0
     }

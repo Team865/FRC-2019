@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.io
 
 import ca.warp7.frc.control.PID
-import ca.warp7.frc.control.lazySolenoid
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.fromRadians
 import ca.warp7.frc.geometry.radians
@@ -12,10 +11,7 @@ import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.constants.IOConstants
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
-import ca.warp7.frc2019.lib.followedBy
-import ca.warp7.frc2019.lib.setPID
-import ca.warp7.frc2019.lib.talonSRX
-import ca.warp7.frc2019.lib.victorSPX
+import ca.warp7.frc2019.helper.*
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.DemandType.ArbitraryFeedForward
 import com.ctre.phoenix.motorcontrol.NeutralMode

@@ -29,8 +29,7 @@ object GoToPositionMotionPlanning : Action {
         io.liftDemand = LiftTrajectory.desiredVelocoity(io.time - timeStarted)
     }
 
-    override val shouldFinish: Boolean
-        get() {
-            return Lift.height == targetHeightFromHome && io.liftVelocity == io.liftDemand.toInt()
-        }
+    override fun shouldFinish(): Boolean {
+        return Lift.height == targetHeightFromHome && io.liftVelocity == io.liftDemand.toInt()
+    }
 }

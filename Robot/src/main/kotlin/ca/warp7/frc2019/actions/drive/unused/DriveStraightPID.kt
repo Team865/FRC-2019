@@ -24,8 +24,9 @@ class DriveStraightPID(val distance: Double, val straightPID: PIDControl = PIDCo
         Drive.robotState = Pose2D(Translation2D.identity, Rotation2D.identity)
     }
 
-    override val shouldFinish: Boolean
-        get() = straightPID.isDone()
+    override fun shouldFinish(): Boolean {
+        return straightPID.isDone()
+    }
 
     override fun update() {
         straightPID.dt = io.dt

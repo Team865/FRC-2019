@@ -60,16 +60,16 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
 //        println("ERROR $error")
     }
 
-    override val shouldFinish
-        get() = error.epsilonEquals(0.0, stopAngleThreshold)
+    override fun shouldFinish(): Boolean {
+        return error.epsilonEquals(0.0, stopAngleThreshold)
                 && dError.epsilonEquals(0.0, 1.0)
                 ||
                 io.foundVisionTarget
                 && error.epsilonEquals(0.0, limeThreshold)
                 && io.visionErrorX.epsilonEquals(0.0, limeThreshold)
+    }
 
-
-    override fun stop() {
+    override fun lastCycle() {
         io.apply {
             leftDemand = 0.0
             rightDemand = 0.0

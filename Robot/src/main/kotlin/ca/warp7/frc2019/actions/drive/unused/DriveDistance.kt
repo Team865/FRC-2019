@@ -25,6 +25,8 @@ class DriveDistance : Action {
         io.rightDemand = 1024 * distance / DriveConstants.kWheelCircumference + rightInitialSensorTicks
     }
 
-    override val shouldFinish
-        get() = abs(distance - ((io.leftPosition + io.rightPosition) / 2.0 - initialDistance)) <= tolerance
+    override fun shouldFinish(): Boolean {
+        return abs(distance - ((io.leftPosition + io.rightPosition) / 2.0 - initialDistance)) <= tolerance
+
+    }
 }

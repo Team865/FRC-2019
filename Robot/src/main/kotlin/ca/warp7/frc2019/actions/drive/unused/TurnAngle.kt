@@ -27,6 +27,7 @@ class TurnAngle(val angle: Double) : Action {
         io.rightDemand = -1024 * distance
     }
 
-    override val shouldFinish
-        get() = abs(angle - (totalAngle - initialAngle)) <= tolerance
+    override fun shouldFinish(): Boolean {
+        return abs(angle - (totalAngle - initialAngle)) <= tolerance
+    }
 }

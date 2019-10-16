@@ -1,6 +1,6 @@
 @file:Suppress("unused", "DuplicatedCode")
 
-package ca.warp7.frc2019.lib
+package ca.warp7.frc2019.helper
 
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.epsilonEquals
@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.DemandType
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.StatusFrame
 import com.ctre.phoenix.motorcontrol.can.*
-import edu.wpi.first.wpilibj.SpeedController
 
 fun <T : TalonSRX> T.config(config: TalonSRXConfiguration) = apply { configAllSettings(config) }
 
@@ -30,30 +29,6 @@ fun <T : BaseMotorController> T.setPID(pid: PID) = apply {
     config_kI(0, pid.kI, 0)
     config_kD(0, pid.kD, 0)
     config_kF(0, pid.kF, 0)
-}
-
-private class UnsafeSpeedController(val base: BaseMotorController) : SpeedController {
-
-    var lastSpeed = 0.0
-
-    override fun getInverted(): Boolean = base.inverted
-
-    override fun pidWrite(output: Double) = set(output)
-
-    override fun stopMotor() = base.neutralOutput()
-
-    override fun get(): Double = lastSpeed
-
-    override fun disable() = base.neutralOutput()
-
-    override fun set(speed: Double) {
-        lastSpeed = speed
-        base.set(ControlMode.PercentOutput, speed)
-    }
-
-    override fun setInverted(isInverted: Boolean) {
-        base.inverted = isInverted
-    }
 }
 
 private class LazyTalonSRX(deviceNumber: Int) : TalonSRX(deviceNumber) {
@@ -131,5 +106,3 @@ fun victorSPX(
     setInverted(inverted)
     selectProfileSlot(0, 0)
 }
-
-fun <T : BaseMotorController> T.wpi(): SpeedController = UnsafeSpeedController(this)
