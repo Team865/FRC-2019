@@ -80,8 +80,8 @@ class PIDToPoint(
         println("lato $lateralOffset")
 
         // convert to ticks/100ms and set the motor velocities
-        io.leftDemand = (forwardOutput - turningOutput) * DriveConstants.kTicksPerFootPer100ms
-        io.rightDemand = (forwardOutput + turningOutput) * DriveConstants.kTicksPerFootPer100ms
+        io.leftDemand = (forwardOutput - turningOutput) * Drive.kTicksPerMeterPer100ms
+        io.rightDemand = (forwardOutput + turningOutput) * Drive.kTicksPerMeterPer100ms
     }
 
     override fun lastCycle() {

@@ -1,31 +1,35 @@
 package ca.warp7.frc2019.actions
 
 import ca.warp7.frc.action.Action
-import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc.trajectory.TrajectoryBuilder
 import ca.warp7.frc.trajectory.TrajectoryController
-import ca.warp7.frc.trajectory.TrajectoryFollower
-import ca.warp7.frc2019.followers.AnglePIDFollower
+import ca.warp7.frc2019.constants.DriveConstants
+import ca.warp7.frc2019.followers.VoltageOnlyFollower
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.Timer
-import kotlin.math.abs
 
-class DriveTrajectory2(func: TrajectoryBuilder.() -> Unit) : Action {
+class DriveTrajectory2(builder: TrajectoryBuilder) : Action {
 
+    companion object {
+        private val voltageOnlyFollower = VoltageOnlyFollower()
+    }
 
-    constructor(distance: Double) : this({
-        moveTo(Pose2D.identity)
-        moveTo(Pose2D(abs(distance), 0.0, Rotation2D.identity))
-        setFollower(AnglePIDFollower())
-    })
+    constructor(func: TrajectoryBuilder.() -> Unit) : this(TrajectoryBuilder()
+            .setTrajectoryVelocity(DriveConstants.kMaxVelocity)
+            .setTrajectoryAcceleration(DriveConstants.kMaxAcceleration)
+            .setMaxCentripetalAcceleration(DriveConstants.kMaxAcceleration)
+            .setBendFactor(1.2)
+            .noJerkLimit()
+            .setFollower(voltageOnlyFollower)
+            .apply(func)
+    )
 
-    val controller = TrajectoryController(func)
+    val controller = TrajectoryController(builder)
 
     private val io: BaseIO = ioInstance()
 
@@ -42,8 +46,6 @@ class DriveTrajectory2(func: TrajectoryBuilder.() -> Unit) : Action {
 
     private val updateNotifier = Notifier(this::onNotifierLoop)
 
-    val TrajectoryController.follower: TrajectoryFollower get() = TODO()
-
     fun onNotifierLoop() {
         val newTime = Timer.getFPGATimestamp()
         val dt = newTime - time
@@ -54,7 +56,7 @@ class DriveTrajectory2(func: TrajectoryBuilder.() -> Unit) : Action {
 
         val setpoint = controller.advanceTrajectory(dt)
         val error = controller.getError(robotState, setpoint.arcPose)
-        controller.follower.updateTrajectory(controller, setpoint, error)
+        controller.getFollower()?.updateTrajectory(controller, setpoint, error)
 
         // Logging
 
@@ -77,7 +79,7 @@ class DriveTrajectory2(func: TrajectoryBuilder.() -> Unit) : Action {
     }
 
     override fun firstCycle() {
-        controller.initTrajectory(arrayOf(), absolute = true, optimizeDkSquared = true, robotState = Pose2D.identity)
+        controller.initTrajectory()
     }
 
     override fun update() {
@@ -89,11 +91,13 @@ class DriveTrajectory2(func: TrajectoryBuilder.() -> Unit) : Action {
     }
 
     override fun shouldFinish(): Boolean {
-        return notifierStarted && Drive.isDoneTrajectory()
+        return notifierStarted && controller.isDoneTrajectory()
     }
 
     override fun interrupt() {
-        if (notifierStarted) updateNotifier.stop()
+        if (notifierStarted) {
+            updateNotifier.stop()
+        }
         Drive.neutralOutput()
     }
 }

@@ -7,14 +7,14 @@ import ca.warp7.frc.action.wait
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc2019.actions.DriveForDistance
-import ca.warp7.frc2019.actions.DriveTrajectory
+import ca.warp7.frc2019.actions.DriveTrajectory2
 import ca.warp7.frc2019.actions.LiftSetpoint
 import ca.warp7.frc2019.actions.QuickTurn
-import ca.warp7.frc2019.constants.DriveFollower.Ramsete
-import ca.warp7.frc2019.constants.DriveFollower.SpeedDemand
+import ca.warp7.frc2019.actions.driveStraight
 import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.LiftConstants
+import ca.warp7.frc2019.followers.RamseteFollower
+import ca.warp7.frc2019.followers.SpeedDemandFollower
 
 object LeftRocketCloseHatch {
 
@@ -24,12 +24,27 @@ object LeftRocketCloseHatch {
     val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
 
     val startToRocket: Action
-        get() = DriveTrajectory(arrayOf(Pose2D.identity, Pose2D(16.feet, 0.0, (-90).degrees)), follower = SpeedDemand)
+        get() = DriveTrajectory2 {
+            startAt(Pose2D.identity)
+            moveTo(Pose2D(16.feet, 0.0, 90.degrees.inverse))
+            setFollower(SpeedDemandFollower())
+        }
 
     val rocketToLoadingStation: Action
         get() = sequential {
-            +DriveTrajectory(arrayOf(rocketPose, turnPose), backwards = true, follower = Ramsete)
-            +DriveTrajectory(arrayOf(turnPose, loadingStationPose), follower = Ramsete)
+            +DriveTrajectory2 {
+                startAt(startPose)
+                moveTo(rocketPose)
+                moveTo(turnPose)
+                setInverted(true)
+                setFollower(RamseteFollower())
+            }
+            +DriveTrajectory2 {
+                startAt(startPose)
+                moveTo(turnPose)
+                moveTo(loadingStationPose)
+                setFollower(RamseteFollower())
+            }
         }
 
     val level1
@@ -43,15 +58,15 @@ object LeftRocketCloseHatch {
     val level2
         get() = sequential {
             // off platform and turn
-            +DriveForDistance(88.0 / 12 + 1.0)
+            +driveStraight(88.0 / 12 + 1.0)
             +QuickTurn(-90.0)
-            +DriveForDistance(65.0 / 12)
+            +driveStraight(65.0 / 12)
 
             // turn to rocket and raise lift
             +QuickTurn(70.0)
             +parallel {
                 +sequential {
-                    +DriveForDistance(50.0 / 12)
+                    +driveStraight(50.0 / 12)
                     +SubActions.outtakeHatch
                     //+stopSignal
                 }
@@ -61,9 +76,9 @@ object LeftRocketCloseHatch {
             // back off and lower lift
             +parallel {
                 +sequential {
-                    +DriveForDistance(3.0, isBackwards = true)
+                    +driveStraight(3.0, isBackwards = true)
                     +QuickTurn(-160.0)
-                    +DriveForDistance(160.0 / 12)
+                    +driveStraight(160.0 / 12)
                 }
                 +sequential {
                     wait(0.5)

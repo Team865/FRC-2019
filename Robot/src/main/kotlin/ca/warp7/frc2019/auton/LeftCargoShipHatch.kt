@@ -2,8 +2,8 @@ package ca.warp7.frc2019.auton
 
 import ca.warp7.frc.action.*
 import ca.warp7.frc2019.actions.AlignWithLimelight
-import ca.warp7.frc2019.actions.DriveForDistance
 import ca.warp7.frc2019.actions.QuickTurn
+import ca.warp7.frc2019.actions.driveStraight
 import ca.warp7.frc2019.constants.LimelightMode
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -22,21 +22,21 @@ object LeftCargoShipHatch {
             +wait(0.5)
 
             // drive to second cargo bay
-            +DriveForDistance(184.0 / 12 + 1.0)
+            +driveStraight(184.0 / 12 + 1.0)
             +QuickTurn(90.0).withTimeout(2.0)
             if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(16.0 / 12)
+            +driveStraight(16.0 / 12)
 
             // outtake hatch
             +SubActions.outtakeHatch
 
             // drive to loading station
-            +DriveForDistance(55.0 / 12, isBackwards = true)
+            +driveStraight(55.0 / 12, isBackwards = true)
             +QuickTurn(93.0)//.withTimeout(1.0)
             if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(215.0 / 12)
+            +driveStraight(215.0 / 12)
             if (isLimelight) +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(10.0 / 12)
+            +driveStraight(10.0 / 12)
 
             // intake hatch
             +SubActions.intakeHatch
@@ -51,31 +51,31 @@ object LeftCargoShipHatch {
             +wait(1.0)
 
             // drive to second cargo bay
-            +DriveForDistance(205.0 / 12 + 1.0)
+            +driveStraight(205.0 / 12 + 1.0)
             +QuickTurn(90.0).withTimeout(1.5)
             +AlignWithLimelight().withTimeout(2.0)
             +wait(0.6)
-            +DriveForDistance(24.0 / 12)
+            +driveStraight(24.0 / 12)
 
             // outtake hatch
             +SubActions.outtakeHatch
 
             // drive to loading station
-            +DriveForDistance(45.0 / 12, isBackwards = true)
+            +driveStraight(45.0 / 12, isBackwards = true)
             +QuickTurn(100.0).withTimeout(5.0)
-            +DriveForDistance(200.0 / 12)
+            +driveStraight(200.0 / 12)
             +AlignWithLimelight().withTimeout(2.0)
-            +DriveForDistance(30.0 / 12)
+            +driveStraight(30.0 / 12)
 
             // intake hatch
             +wait(1.5)
 
             // more driving to places
-            +DriveForDistance(10.0 / 12, isBackwards = true)
+            +driveStraight(10.0 / 12, isBackwards = true)
             +wait(0.5)
-            +DriveForDistance(190.0 / 12, isBackwards = true)
+            +driveStraight(190.0 / 12, isBackwards = true)
             +QuickTurn(-100.0).withTimeout(5.0)
-            +DriveForDistance(40.0 / 12)
+            +driveStraight(40.0 / 12)
         }
 }
 

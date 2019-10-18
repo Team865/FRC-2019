@@ -12,6 +12,7 @@ import ca.warp7.frc2019.constants.IOConstants
 import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
 import ca.warp7.frc2019.helper.*
+import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode.PercentOutput
 import com.ctre.phoenix.motorcontrol.DemandType.ArbitraryFeedForward
 import com.ctre.phoenix.motorcontrol.NeutralMode
@@ -100,10 +101,10 @@ class PhysicalIO : BaseIO {
             hallEffectTriggered = !liftHallEffect.get()
         }
         if (config.enableDriveEncoderInput) {
-            leftPosition = leftMaster.selectedSensorPosition / DriveConstants.kTicksPerRadian
-            rightPosition = -rightMaster.selectedSensorPosition / DriveConstants.kTicksPerRadian
-            leftVelocity = leftMaster.selectedSensorVelocity / DriveConstants.kTicksPerRadian * 10
-            rightVelocity = -rightMaster.selectedSensorVelocity / DriveConstants.kTicksPerRadian * 10
+            leftPosition = leftMaster.selectedSensorPosition / Drive.kTicksPerRadian
+            rightPosition = -rightMaster.selectedSensorPosition / Drive.kTicksPerRadian
+            leftVelocity = leftMaster.selectedSensorVelocity / Drive.kTicksPerRadian * 10
+            rightVelocity = -rightMaster.selectedSensorVelocity / Drive.kTicksPerRadian * 10
         }
         if (config.enableLimelightInput) {
             if (!limelightConnected && limelight.getEntry("tv").exists()) limelightConnected = true
@@ -223,7 +224,7 @@ class PhysicalIO : BaseIO {
         }
 
     override fun resetDrivePosition(positionRadians: Double) {
-        val positionTicks = (positionRadians * DriveConstants.kTicksPerRadian).toInt()
+        val positionTicks = (positionRadians * Drive.kTicksPerRadian).toInt()
         leftMaster.selectedSensorPosition = positionTicks
         rightMaster.selectedSensorPosition = -positionTicks
     }

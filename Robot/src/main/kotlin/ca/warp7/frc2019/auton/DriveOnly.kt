@@ -8,9 +8,11 @@ import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.AlignWithLimelight
-import ca.warp7.frc2019.actions.DriveTrajectory
+import ca.warp7.frc2019.actions.DriveTrajectory2
 import ca.warp7.frc2019.actions.QuickTurn
+import ca.warp7.frc2019.actions.driveStraight
 import ca.warp7.frc2019.constants.LimelightMode
+import ca.warp7.frc2019.followers.VoltageOnlyFollower
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 
@@ -27,39 +29,37 @@ object DriveOnly {
 
     val driveBackingStoreException
         get() = sequential {
-            +DriveTrajectory(8.0)
+            +driveStraight(8.0)
             +wait(0.5)
             +QuickTurn(180.0)
             +wait(0.5)
-            +DriveTrajectory(8.0)
+            +driveStraight(8.0)
             +wait(0.5)
             +QuickTurn(180.0)
         }
 
     val leftCloseRocket
         get() = sequential {
-            //            //+SetRobotState(8.4717, 4.2358, 0.0000)
             +runOnce {
                 io.grabbing = true
                 io.pushing = false
             }
-            +DriveTrajectory(
-                    arrayOf(
-                            Pose2D(0.feet, 0.feet, 0.degrees),
-                            Pose2D(2.feet, 0.feet, 0.degrees),
-                            Pose2D(16.7.feet, 0.feet, 90.degrees)
-                    )
-            )
+            +DriveTrajectory2 {
+                startAt(Pose2D.identity)
+                moveTo(Pose2D(2.feet, 0.feet, 0.degrees))
+                moveTo(Pose2D(16.7.feet, 0.feet, 90.degrees))
+                setFollower(VoltageOnlyFollower())
+            }
             +runOnce { io.limelightMode = LimelightMode.Vision }
             +AlignWithLimelight()
             +wait(0.3)
-            +DriveTrajectory(1.9.feet)
+            +driveStraight(1.9.feet)
             +runOnce {
                 io.grabbing = false
                 io.pushing = true
             }
             +wait(0.3)
-            +DriveTrajectory((-3.0).feet)
+            +driveStraight((-3.0).feet)
             +runOnce {
                 io.pushing = false
             }

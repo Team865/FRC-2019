@@ -9,6 +9,7 @@ import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
+import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Drive.robotState
 import com.ctre.phoenix.motorcontrol.ControlMode
 
@@ -41,7 +42,7 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
         turnPID.dt = io.dt
         val angularGain = turnPID.updateByError(error.degrees)
 
-        val demand = angularGain * DriveConstants.kTicksPerFootPer100ms
+        val demand = angularGain * Drive.kTicksPerMeterPer100ms
         println("ERROR $robotState")
         io.leftDemand = demand
         io.rightDemand = -demand

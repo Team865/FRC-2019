@@ -33,7 +33,7 @@ class DriveStraightPID(val distance: Double, val straightPID: PIDControl = PIDCo
         val error = distance - Drive.robotState.translation.x
         println(error)
 
-        io.leftDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerMeterPer100ms
-        io.rightDemand = straightPID.updateByError(error) * DriveConstants.kTicksPerMeterPer100ms
+        io.leftDemand = straightPID.updateByError(error) * Drive.kTicksPerMeterPer100ms
+        io.rightDemand = straightPID.updateByError(error) * Drive.kTicksPerMeterPer100ms
     }
 }
