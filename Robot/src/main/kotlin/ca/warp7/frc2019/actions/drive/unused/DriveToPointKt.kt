@@ -9,6 +9,7 @@ import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import com.ctre.phoenix.motorcontrol.ControlMode
+import kotlin.math.abs
 
 class DriveToPointKt(
         private val x: Double,
@@ -77,7 +78,7 @@ class DriveToPointKt(
         var yOutput: Double
         yOutput = straightPID.updateByError(yError)
 
-        var distanceFromTargetHeading = Math.abs(turnPID.setpoint - Drive.robotState.rotation.degrees)
+        var distanceFromTargetHeading = abs(turnPID.setpoint - Drive.robotState.rotation.degrees)
         // prevents the y output from being reversed in the next calculation
         if (distanceFromTargetHeading > 90) distanceFromTargetHeading = 90.0
 
@@ -97,7 +98,7 @@ class DriveToPointKt(
         io.leftDemand = leftOut
         io.rightDemand = rightOut
 
-        done = Math.abs(yError) < this.eps
+        done = abs(yError) < this.eps
     }
 
     override fun shouldFinish(): Boolean {

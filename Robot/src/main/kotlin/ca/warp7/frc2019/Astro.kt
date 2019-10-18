@@ -28,7 +28,7 @@ class Astro : TimedRobot(0.2) {
 
     override fun disabledInit() {
         io.disable()
-        looper.reset()
+        looper.resetAll()
     }
 
     override fun autonomousInit() {

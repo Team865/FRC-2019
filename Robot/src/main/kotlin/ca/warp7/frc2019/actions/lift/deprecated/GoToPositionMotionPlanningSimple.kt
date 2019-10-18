@@ -6,9 +6,9 @@ import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Lift
 import com.ctre.phoenix.motorcontrol.ControlMode
-import java.lang.Math.signum
 import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.sign
 
 object GoToPositionMotionPlanningSimple : Action {
     private val io: BaseIO = ioInstance()
@@ -23,7 +23,7 @@ object GoToPositionMotionPlanningSimple : Action {
         targetHeightFromHome = heightInputAbsoluteInches - LiftConstants.kHomeHeightInches
         val relativeDistanceToTarget = targetHeightFromHome - Lift.height
         if (shouldDecelerate(io.liftVelocity.toDouble(), relativeDistanceToTarget)) {
-            io.liftDemand = LiftConstants.kMaxVelocityInchesPerSecond * signum(relativeDistanceToTarget)
+            io.liftDemand = LiftConstants.kMaxVelocityInchesPerSecond * sign(relativeDistanceToTarget)
         } else {
             io.liftDemand = 0.0
         }

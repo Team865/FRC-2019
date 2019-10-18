@@ -26,7 +26,7 @@ object GoToPositionMotionPlanning : Action {
     }
 
     override fun update() {
-        io.liftDemand = LiftTrajectory.desiredVelocoity(io.time - timeStarted)
+        io.liftDemand = LiftTrajectory.desiredVelocity(io.time - timeStarted)
     }
 
     override fun shouldFinish(): Boolean {

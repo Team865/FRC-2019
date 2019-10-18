@@ -6,7 +6,7 @@ import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.withSign
 
-class Trajectory1D(val dt: Double, val distance: Double, val startVel: Double = 0.0, val endVel: Double = 0.0) {
+class Trajectory1D(val dt: Double, val distance: Double, startVel: Double = 0.0, val endVel: Double = 0.0) {
     data class TrajectoryPoint1D(val time: Double, val position: Double, val velocity: Double, val acceleration: Double)
 
     var maxVelocity = DriveConstants.kMaxVelocity
@@ -45,6 +45,7 @@ class Trajectory1D(val dt: Double, val distance: Double, val startVel: Double = 
         backwardsPass.reverse()
         // merge passes
         forwardsPass.forEach {
+            println(it)
 //maxV/(1+0.5*L*curvature)
         }
     }

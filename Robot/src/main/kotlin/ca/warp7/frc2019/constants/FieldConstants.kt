@@ -1,8 +1,5 @@
 package ca.warp7.frc2019.constants
 
-import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.fromDegrees
-
 @Suppress("unused")
 object FieldConstants {
 

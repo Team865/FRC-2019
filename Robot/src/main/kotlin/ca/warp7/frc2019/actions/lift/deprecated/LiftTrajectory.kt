@@ -30,37 +30,35 @@ object LiftTrajectory {
 
         timeUntilMaxVelocityReachedEstimate = maxReachedVelocity / LiftConstants.kMaxBaseAcceleration
 
-        if (isTriangle) {
-            totalTimeEstimate = 2 * timeUntilMaxVelocityReachedEstimate
+        totalTimeEstimate = if (isTriangle) {
+            2 * timeUntilMaxVelocityReachedEstimate
         } else {
             val dxtomaxV = maxReachedVelocity / 2 * timeUntilMaxVelocityReachedEstimate
             val dxatcruiseV = relativeHeight - dxtomaxV * 2
             val dtatcruiseV = dxatcruiseV / maxReachedVelocity
             val tAcandDc = 2 * timeUntilMaxVelocityReachedEstimate
-            totalTimeEstimate = dtatcruiseV + tAcandDc
+            dtatcruiseV + tAcandDc
         }
     }
 
-    fun desiredVelocoity(timeSinceStart: Double): Double {
+    fun desiredVelocity(timeSinceStart: Double): Double {
         // TODO use position data for feedback loop
         // from Trapezoidal Velocity Drive
         if (timeSinceStart > totalTimeEstimate) {
             return 0.0
         }
 
-        if (isTriangle) {
+        return if (isTriangle) {
             if (timeSinceStart <= timeUntilMaxVelocityReachedEstimate) {
-                return timeSinceStart * LiftConstants.kMaxBaseAcceleration
+                timeSinceStart * LiftConstants.kMaxBaseAcceleration
             } else {
-                return maxReachedVelocity - (timeSinceStart - timeUntilMaxVelocityReachedEstimate) * LiftConstants.kMaxBaseAcceleration
+                maxReachedVelocity - (timeSinceStart - timeUntilMaxVelocityReachedEstimate) * LiftConstants.kMaxBaseAcceleration
             }
         } else {
-            if (timeSinceStart <= timeUntilMaxVelocityReachedEstimate) {
-                return timeSinceStart * LiftConstants.kMaxBaseAcceleration
-            } else if (timeSinceStart >= totalTimeEstimate - timeUntilMaxVelocityReachedEstimate) {
-                return (totalTimeEstimate - timeSinceStart) * LiftConstants.kMaxBaseAcceleration
-            } else {
-                return maxReachedVelocity
+            when {
+                timeSinceStart <= timeUntilMaxVelocityReachedEstimate -> timeSinceStart * LiftConstants.kMaxBaseAcceleration
+                timeSinceStart >= totalTimeEstimate - timeUntilMaxVelocityReachedEstimate -> (totalTimeEstimate - timeSinceStart) * LiftConstants.kMaxBaseAcceleration
+                else -> maxReachedVelocity
             }
         }
     }
