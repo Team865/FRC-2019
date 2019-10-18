@@ -35,7 +35,7 @@ class PurePursuit1Follower : TrajectoryFollower {
 
     fun findCenter(pose: Pose2D, point: ArcPose2D): Translation2D {
         val poseToPointHalfway = pose.translation.interpolate(point.translation, 0.5)
-        val normal = pose.translation.inverse.transform(poseToPointHalfway).direction.normal
+        val normal = (pose.translation.inverse + poseToPointHalfway).direction.normal
         val perpendicularBisector = Pose2D(poseToPointHalfway, normal)
         val normalFromPose = Pose2D(pose.translation, pose.rotation.normal)
         return if (normalFromPose.isColinear(perpendicularBisector.run { Pose2D(translation, rotation.normal) })) {
