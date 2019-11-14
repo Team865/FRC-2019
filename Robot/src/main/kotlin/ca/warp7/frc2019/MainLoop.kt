@@ -1,4 +1,4 @@
-package ca.warp7.frc2019.actions
+package ca.warp7.frc2019
 
 import ca.warp7.frc.action.*
 import ca.warp7.frc.applyDeadband
