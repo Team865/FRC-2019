@@ -2,31 +2,31 @@ package ca.warp7.frc2019.actions
 
 import ca.warp7.frc.action.*
 import ca.warp7.frc.applyDeadband
-import ca.warp7.frc.control.LatchedBoolean
+//import ca.warp7.frc.control.LatchedBoolean
 import ca.warp7.frc.input.ButtonState.*
-import ca.warp7.frc2019.constants.FieldConstants
-import ca.warp7.frc2019.constants.HatchCargo
-import ca.warp7.frc2019.constants.LiftConstants
+//import ca.warp7.frc2019.constants.FieldConstants
+//import ca.warp7.frc2019.constants.HatchCargo
+//import ca.warp7.frc2019.constants.LiftConstants
 import ca.warp7.frc2019.constants.LimelightMode
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
 import ca.warp7.frc2019.subsystems.Lift
 import ca.warp7.frc2019.subsystems.Limelight
-import kotlin.math.abs
+import com.ctre.phoenix.motorcontrol.ControlMode
 
 class MainLoop : Action {
 
     private val io: BaseIO = ioInstance()
 
-    val liftTriggerLatch = LatchedBoolean()
-    var timerOn = false
+    //    val liftTriggerLatch = LatchedBoolean()
+    var timerRunning = false
 
     override fun firstCycle() {
         io.config.apply {
-            enableTelemetryOutput = true
-            enableDriveEncoderInput = true
-            enableLiftEncoderInput = true
+            enableTelemetryOutput = false
+            enableDriveEncoderInput = false
+            enableLiftEncoderInput = false
             enableGyroInput = false
             enableLimelightInput = true
             enableDriverInput = true
@@ -68,13 +68,13 @@ class MainLoop : Action {
             when {
                 aButton == Pressed -> if (!io.pushing) {
                     io.grabbing = false
-                    if (!timerOn) {
-                        timerOn = true
+                    if (!timerRunning) {
+                        timerRunning = true
                         Looper.add(sequential {
                             +wait(0.3)
                             +runOnce {
                                 io.invertPushing()
-                                timerOn = false
+                                timerRunning = false
                             }
                         })
                     }
@@ -90,10 +90,16 @@ class MainLoop : Action {
 
         io.operatorInput.apply {
 
-            if (abs(leftY) > 0.2) {
+            io.liftControlMode = ControlMode.PercentOutput
+            io.liftDemand = applyDeadband(leftY, 1.0, 0.2)
+            io.liftFeedforward = -0.12
+
+            /*if (abs(leftY) > 0.2) {
                 Lift.manualSpeed = applyDeadband(leftY, 1.0, 0.2)
                 Lift.isManual = true
             } else Lift.manualSpeed = 0.0
+
+            Lift.updateManualControl()
 
             when (Pressed) {
                 rightBumper -> Lift.increaseSetpoint()
@@ -128,7 +134,7 @@ class MainLoop : Action {
             }
 
             if (Lift.isManual) Lift.updateManualControl()
-            else Lift.updatePositionControl()
+            else Lift.updatePositionControl()*/
         }
     }
 

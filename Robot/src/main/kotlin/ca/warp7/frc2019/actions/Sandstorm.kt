@@ -3,7 +3,7 @@ package ca.warp7.frc2019.actions
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.action.Looper
 import ca.warp7.frc.input.ButtonState
-import ca.warp7.frc2019.auton.LeftRocketCloseHatch
+import ca.warp7.frc2019.auton.StraightHatch
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
@@ -12,7 +12,7 @@ class Sandstorm : Action {
 
     private val io: BaseIO = ioInstance()
 
-    private val auto = LeftRocketCloseHatch.startToRocket
+    private val auto = StraightHatch.straightHatch
 
     override fun firstCycle() {
         Looper.add(auto)
