@@ -7,7 +7,7 @@ private var ioInstance: BaseIO? = null
 fun ioInstance(): BaseIO {
     val instance = ioInstance
     if (instance == null) {
-        val newInstance = if (RobotBase.isReal()) PhysicalIO() else SimulatedIO()
+        val newInstance = if (RobotBase.isReal()) PhysicalIO() else TODO()
         ioInstance = newInstance
         return newInstance
     }
