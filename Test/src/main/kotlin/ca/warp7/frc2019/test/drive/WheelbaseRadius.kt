@@ -32,7 +32,7 @@ class WheelbaseRadius : TimedRobot(0.2) {
 
     override fun disabledInit() {
         io.disable()
-        looper.reset()
+        looper.resetAll()
     }
 
     override fun autonomousInit() {
@@ -46,7 +46,7 @@ class WheelbaseRadius : TimedRobot(0.2) {
         var accumulator = 0.0
         var startDist = 0.0
 
-        override fun start() {
+        override fun firstCycle() {
             accumulator = 0.0
 
             startDist = (io.leftPosition + io.rightPosition) * DriveConstants.kWheelRadius / 2
@@ -72,9 +72,6 @@ class WheelbaseRadius : TimedRobot(0.2) {
             // 0.62865
             // 0.07493 wheelRadius
         }
-
-        override val shouldFinish: Boolean
-            get() = false
     }
 
 
