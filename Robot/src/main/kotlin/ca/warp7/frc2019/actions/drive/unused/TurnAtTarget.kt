@@ -3,8 +3,6 @@ package ca.warp7.frc2019.actions.drive.unused
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -25,7 +23,7 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
     override fun firstCycle() {
         io.driveControlMode = ControlMode.PercentOutput
         startYaw = io.yaw
-        error = targetYaw.radians
+        error = targetYaw.radians()
         targetYaw += startYaw
     }
 
@@ -36,7 +34,7 @@ class TurnAtTarget(angleInDegrees: Double, val stopAngleThreshold: Double = 5.0,
     private val integralZone = 10.0
 
     override fun update() {
-        val newError = (targetYaw - io.yaw).degrees
+        val newError = (targetYaw - io.yaw).degrees()
         dError = (newError - error) / io.dt
 
         if (error.sign != newError.sign) sumError = 0.0

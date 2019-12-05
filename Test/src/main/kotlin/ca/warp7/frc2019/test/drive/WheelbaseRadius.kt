@@ -2,7 +2,6 @@ package ca.warp7.frc2019.test.drive
 
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.action.Looper
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -56,7 +55,7 @@ class WheelbaseRadius : TimedRobot(0.2) {
         override fun update() {
             io.leftDemand = 0.4
             io.rightDemand = -0.4
-            accumulator += (io.yaw - io.previousYaw).radians
+            accumulator += (io.yaw - io.previousYaw).radians()
             val newDist = (io.leftPosition + io.rightPosition) * DriveConstants.kWheelRadius / 2
             val dist = newDist - startDist
             if (accumulator > 10 * 2 * PI) {

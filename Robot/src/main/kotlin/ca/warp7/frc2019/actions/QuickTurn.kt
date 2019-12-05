@@ -4,7 +4,6 @@ import ca.warp7.frc.action.Action
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -39,7 +38,7 @@ class QuickTurn(val angleInDegrees: Double, val stopAngleThreshold: Double = 5.0
         val error = robotState.rotation - initYaw - Rotation2D.fromDegrees(angleInDegrees)
 
         turnPID.dt = io.dt
-        val angularGain = turnPID.updateByError(error.degrees)
+        val angularGain = turnPID.updateByError(error.degrees())
 
         val demand = angularGain * Drive.kTicksPerMeterPer100ms
         println("ERROR $robotState")

@@ -2,7 +2,6 @@ package ca.warp7.frc2019.io
 
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.input.RobotController
 import ca.warp7.frc.log.CSVLogManager
 import ca.warp7.frc.log.CSVLogger
@@ -122,7 +121,7 @@ class PhysicalIO : BaseIO {
                 fusedHeading = Math.toRadians(ahrs.fusedHeading.toDouble())
                 previousYaw = yaw
                 yaw = Rotation2D.fromRadians(fusedHeading)
-                angularVelocity = (previousYaw - yaw).radians / dt
+                angularVelocity = (previousYaw - yaw).radians() / dt
             }
         }
     }

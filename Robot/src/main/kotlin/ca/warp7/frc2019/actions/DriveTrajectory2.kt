@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.actions
 
 import ca.warp7.frc.action.Action
-import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc.log.CSVLogger
 import ca.warp7.frc.trajectory.TrajectoryBuilder
 import ca.warp7.frc.trajectory.TrajectoryController
@@ -67,9 +66,9 @@ class DriveTrajectory2(builder: TrajectoryBuilder) : Action {
                 setpoint.t,
                 setpoint.v, setpoint.dv, setpoint.arcPose.curvature,
                 // "s_x", "s_y", "s_theta",
-                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.degrees,
+                setpointState.translation.x, setpointState.translation.y, setpointState.rotation.degrees(),
                 // "r_x", "r_y", "r_theta"
-                robotState.translation.x, robotState.translation.y, robotState.rotation.degrees,
+                robotState.translation.x, robotState.translation.y, robotState.rotation.degrees(),
                 // "left", "right"
                 io.leftFeedforward * 12.0, io.rightFeedforward * 12.0
         )

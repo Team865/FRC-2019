@@ -2,7 +2,8 @@ package ca.warp7.frc2019.actions.drive.unused
 
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.control.PIDControl
-import ca.warp7.frc.geometry.*
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -59,7 +60,7 @@ class PIDToPoint(
 
         // calculate the total turning error accounting for the lateral offset and rotations
         // over a full circle by converting to a Rotation2D and back to degrees
-        val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees
+        val turningError = (error.rotation - Rotation2D.fromDegrees(lateralOffset)).degrees()
 
         // calculate the turning PID output with the total turning error
         var turningOutput = turnPID.updateByError(turningError)
@@ -67,7 +68,7 @@ class PIDToPoint(
         if (fastTurn) {
             // find the magnitude of angular error in degrees and limit it to 90 degrees,
             // so that the forward output multiplier cannot be less than 0
-            val angularError = error.rotation.degrees.absoluteValue.coerceAtMost(90.0)
+            val angularError = error.rotation.degrees().absoluteValue.coerceAtMost(90.0)
             // slow down the forward output based on the angular error
             forwardOutput *= 1 - angularError / 90
         } else {

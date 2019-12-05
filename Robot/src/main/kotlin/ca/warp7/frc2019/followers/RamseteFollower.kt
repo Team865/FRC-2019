@@ -2,7 +2,6 @@ package ca.warp7.frc2019.followers
 
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.trajectory.TrajectoryController
 import ca.warp7.frc.trajectory.TrajectoryFollower
 import ca.warp7.frc.trajectory.TrajectoryState
@@ -30,7 +29,7 @@ class RamseteFollower : TrajectoryFollower {
 
         val correctionGain = 2.0 * kZeta * sqrt(kBeta * linearSquared + angularSquared) // k
 
-        val angularError = error.rotation.radians
+        val angularError = error.rotation.radians()
         val sinRatio = if (angularError.epsilonEquals(0.0, 1E-2)) {
             1.0
         } else {

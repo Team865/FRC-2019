@@ -16,11 +16,11 @@ class PurePursuit1Follower : TrajectoryFollower {
         fun getLookahead(controller: TrajectoryController, setpoint: TrajectoryState): TrajectoryState {
             var lookaheadTime = kPathLookaheadTime
             var lookahead = controller.interpolatedTimeView(lookaheadTime)
-            var lookaheadDistance = setpoint.arcPose.distanceTo(lookahead.arcPose)
+            var lookaheadDistance = (lookahead.arcPose.pose - setpoint.arcPose.pose).logFast().mag()
             while (lookaheadDistance < kMinLookDist && (controller.totalTime - controller.t) > lookaheadTime) {
                 lookaheadTime += kLookaheadSearchDt
                 lookahead = controller.interpolatedTimeView(lookaheadTime)
-                lookaheadDistance = setpoint.arcPose.distanceTo(lookahead.arcPose)
+                lookaheadDistance = (lookahead.arcPose.pose - setpoint.arcPose.pose).logFast().mag()
             }
             if (lookaheadDistance < kMinLookDist) lookahead = controller.trajectory.last()
             return lookahead
@@ -29,23 +29,23 @@ class PurePursuit1Follower : TrajectoryFollower {
 
     fun getDirection(pose: Pose2D, point: ArcPose2D): Double {
         val poseToPoint = point.translation - pose.translation
-        val robot = pose.rotation.translation
+        val robot = pose.rotation.translation()
         return if (robot cross poseToPoint < 0.0) -1.0 else 1.0 // if robot < pose turn left
     }
 
     fun findCenter(pose: Pose2D, point: ArcPose2D): Translation2D {
         val poseToPointHalfway = pose.translation.interpolate(point.translation, 0.5)
-        val normal = (pose.translation.inverse + poseToPointHalfway).direction.normal
+        val normal = (pose.translation.inverse + poseToPointHalfway).direction().normal()
         val perpendicularBisector = Pose2D(poseToPointHalfway, normal)
-        val normalFromPose = Pose2D(pose.translation, pose.rotation.normal)
-        return if (normalFromPose.isColinear(perpendicularBisector.run { Pose2D(translation, rotation.normal) })) {
+        val normalFromPose = Pose2D(pose.translation, pose.rotation.normal())
+        return if (normalFromPose.isColinear(perpendicularBisector.run { Pose2D(translation, rotation.normal()) })) {
             // Special case: center is poseToPointHalfway.
             poseToPointHalfway
         } else normalFromPose.intersection(perpendicularBisector)
     }
 
     fun findRadius(pose: Pose2D, point: ArcPose2D): Double {
-        return (point.translation - findCenter(pose, point)).mag * getDirection(pose, point)
+        return (point.translation - findCenter(pose, point)).mag() * getDirection(pose, point)
     }
 
     override fun updateTrajectory(

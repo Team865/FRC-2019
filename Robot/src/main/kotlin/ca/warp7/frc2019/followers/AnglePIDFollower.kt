@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.followers
 
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc.trajectory.TrajectoryController
 import ca.warp7.frc.trajectory.TrajectoryFollower
 import ca.warp7.frc.trajectory.TrajectoryState
@@ -19,7 +18,7 @@ class AnglePIDFollower : TrajectoryFollower {
             error: Pose2D
     ) {
         val adjustedAngular = setpoint.w +
-                setpoint.v * kP * error.rotation.radians
+                setpoint.v * kP * error.rotation.radians()
 
         Drive.setAdjustedVelocity(setpoint.v, adjustedAngular)
     }

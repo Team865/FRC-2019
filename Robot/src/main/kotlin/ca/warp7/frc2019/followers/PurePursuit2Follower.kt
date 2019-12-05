@@ -1,7 +1,6 @@
 package ca.warp7.frc2019.followers
 
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.rotate
 import ca.warp7.frc.squared
 import ca.warp7.frc.trajectory.TrajectoryController
 import ca.warp7.frc.trajectory.TrajectoryFollower
@@ -20,7 +19,7 @@ class PurePursuit2Follower : TrajectoryFollower {
         val velocity = setpoint.velocity
         val y = (lookahead.arcPose.translation - initialToRobot.translation)
                 .rotate(initialToRobot.rotation.inverse).y
-        val l = initialToRobot.distanceTo(lookahead.arcPose.pose)
+        val l = (lookahead.arcPose.pose - initialToRobot).logFast().mag()
         val curvature = (2 * y) / l.squared
         Drive.setAdjustedCurvature(velocity, curvature, error.translation.x)
     }

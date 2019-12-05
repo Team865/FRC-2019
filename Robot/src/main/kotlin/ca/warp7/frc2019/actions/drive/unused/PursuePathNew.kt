@@ -3,7 +3,6 @@ package ca.warp7.frc2019.actions.drive.unused
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.geometry.Translation2D
-import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import kotlin.math.PI
@@ -19,15 +18,15 @@ class PursuePathNew(path: List<ArcPose2D>) : Action {
     override fun update() {
         val x = Drive.robotState.translation.x
         val y = Drive.robotState.translation.y
-        val yaw = Drive.robotState.rotation.radians
+        val yaw = Drive.robotState.rotation.radians()
         val p = Translation2D(x, y)
 
-        var i = points.map { (it.translation - p).mag }.let { it.indexOf(it.min()) }
-        var distance = (points[i].translation - p).mag
+        var i = points.map { (it.translation - p).mag() }.let { it.indexOf(it.min()) }
+        var distance = (points[i].translation - p).mag()
 
         while (distance <= lookaheadDistance && i < points.size) {
             i++
-            distance += (points[i].translation - points[i - 1].translation).mag
+            distance += (points[i].translation - points[i - 1].translation).mag()
         }
 
         val t = points[i].translation
@@ -48,10 +47,10 @@ class PursuePathNew(path: List<ArcPose2D>) : Action {
                 -linePT.first * (linePT.second - linePR.second) / (linePT.first - linePR.first) + linePT.second
         )
 
-        val radius = (center - p).mag
+        val radius = (center - p).mag()
 
         val curvature = 1 / radius
-        val arcLength = 2 * radius * asin((t - p).mag / (2 * radius))//TODO make this account for if the arc length is more than 0.5x the circumference
+        val arcLength = 2 * radius * asin((t - p).mag() / (2 * radius))//TODO make this account for if the arc length is more than 0.5x the circumference
         val endVel = DriveConstants.kMaxVelocity / (1 + curvature * DriveConstants.kTurningDiameter / 2)
 
         println("$arcLength, $endVel")

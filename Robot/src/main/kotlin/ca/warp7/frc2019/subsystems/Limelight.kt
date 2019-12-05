@@ -3,7 +3,6 @@ package ca.warp7.frc2019.subsystems
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.tan
 import ca.warp7.frc2019.constants.LimelightConstants.hatchTargetHeightDiff
 import ca.warp7.frc2019.constants.LimelightConstants.limelightAngleY
 import ca.warp7.frc2019.io.BaseIO
@@ -13,7 +12,7 @@ import kotlin.math.abs
 object Limelight {
     private val io: BaseIO = ioInstance()
 
-    val dist get() = hatchTargetHeightDiff / ((Rotation2D.fromDegrees(io.visionErrorY) + limelightAngleY).tan)
+    val dist get() = hatchTargetHeightDiff / ((Rotation2D.fromDegrees(io.visionErrorY) + limelightAngleY).tan())
     val lateral get() = dist * Rotation2D.fromDegrees(io.visionErrorX).sin
 
     var isDriver = false

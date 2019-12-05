@@ -4,7 +4,8 @@ import ca.warp7.frc.control.Delta
 import ca.warp7.frc.drive.ChassisState
 import ca.warp7.frc.drive.WheelState
 import ca.warp7.frc.epsilonEquals
-import ca.warp7.frc.geometry.*
+import ca.warp7.frc.geometry.Pose2D
+import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc2019.followers.PosePIDFollower
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -133,11 +134,11 @@ object Drive {
         val theta = robotState.rotation + dTheta
         val arcLength = (leftDistance.update(io.leftPosition) +
                 rightDistance.update(io.rightPosition)) * kWheelRadius / 2
-        val dThetaRad = dTheta.radians
+        val dThetaRad = dTheta.radians()
         val chordLength =
                 if (dThetaRad.epsilonEquals(0.0, 0.01)) arcLength
                 else sin(dThetaRad / 2) * arcLength / dThetaRad * 2
-        val pos = robotState.translation + theta.translation * chordLength
+        val pos = robotState.translation + theta.translation() * chordLength
         robotState = Pose2D(pos, theta)
     }
 

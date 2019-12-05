@@ -4,7 +4,8 @@ package ca.warp7.frc2019.actions.drive.unused
 import ca.warp7.frc.action.Action
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.control.PIDControl
-import ca.warp7.frc.geometry.*
+import ca.warp7.frc.geometry.Rotation2D
+import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import ca.warp7.frc2019.subsystems.Drive
@@ -62,7 +63,7 @@ class DriveToPointKt(
         turningOffset = turningOffset.coerceIn(-maxTurn, maxTurn)
         targetHeading = this.theta - turningOffset
 
-        val angle = Drive.robotState.rotation.degrees
+        val angle = Drive.robotState.rotation.degrees()
         val offset = angle % 360
 
         // Corrects the target to work with Gyro position
@@ -78,14 +79,14 @@ class DriveToPointKt(
         var yOutput: Double
         yOutput = straightPID.updateByError(yError)
 
-        var distanceFromTargetHeading = abs(turnPID.setpoint - Drive.robotState.rotation.degrees)
+        var distanceFromTargetHeading = abs(turnPID.setpoint - Drive.robotState.rotation.degrees())
         // prevents the y output from being reversed in the next calculation
         if (distanceFromTargetHeading > 90) distanceFromTargetHeading = 90.0
 
         // slow down y if we aren't facing the correct angle
         if (slowTurn) yOutput *= (-1 * distanceFromTargetHeading / 90.0 + 1)
 
-        var xOutput = -turnPID.updateBySetpoint(Drive.robotState.rotation.degrees)
+        var xOutput = -turnPID.updateBySetpoint(Drive.robotState.rotation.degrees())
 
         if (!this.slowTurn) {
             xOutput *= 0.85
