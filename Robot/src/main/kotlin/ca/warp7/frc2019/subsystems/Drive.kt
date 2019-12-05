@@ -1,16 +1,18 @@
 package ca.warp7.frc2019.subsystems
 
-import ca.warp7.frc.control.Delta
 import ca.warp7.frc.drive.ChassisState
+import ca.warp7.frc.drive.DriveOdometry
 import ca.warp7.frc.drive.WheelState
-import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc2019.followers.PosePIDFollower
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
 import com.ctre.phoenix.motorcontrol.ControlMode
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.withSign
 
 object Drive {
 
@@ -115,31 +117,11 @@ object Drive {
         setAdjustedVelocity(adjustedLinear, adjustedAngular)
     }
 
-    var robotState: Pose2D = Pose2D.identity
-    var chassisVelocity = ChassisState(0.0, 0.0)
-
-    private val leftDistance = Delta()
-    private val rightDistance = Delta()
+    val odometry = DriveOdometry(Rotation2D.identity, Pose2D.identity)
+    val robotState: Pose2D get() = odometry.pose()
 
     fun updateRobotStateEstimation() {
-        val left = io.leftVelocity * kWheelRadius
-        val right = io.rightVelocity * kWheelRadius
-        chassisVelocity = ChassisState(
-                (left + right) / 2.0,
-                (right - left) / (2.0 * kWheelBaseRadius)
-        )
-        val dTheta =
-                if (io.gyroConnected) io.yaw - io.previousYaw
-                else Rotation2D.fromRadians(io.dt * chassisVelocity.angular)
-        val theta = robotState.rotation + dTheta
-        val arcLength = (leftDistance.update(io.leftPosition) +
-                rightDistance.update(io.rightPosition)) * kWheelRadius / 2
-        val dThetaRad = dTheta.radians()
-        val chordLength =
-                if (dThetaRad.epsilonEquals(0.0, 0.01)) arcLength
-                else sin(dThetaRad / 2) * arcLength / dThetaRad * 2
-        val pos = robotState.translation + theta.translation() * chordLength
-        robotState = Pose2D(pos, theta)
+        odometry.update(io.yaw, io.leftPosition, io.rightPosition)
     }
 
     private var quickStopAccumulator = 0.0 // gain for stopping from quick turn

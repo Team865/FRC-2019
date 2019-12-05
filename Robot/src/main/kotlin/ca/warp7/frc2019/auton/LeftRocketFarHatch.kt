@@ -10,26 +10,25 @@ import ca.warp7.frc2019.constants.FieldConstants
 import ca.warp7.frc2019.constants.LiftConstants
 
 object LeftRocketFarHatch {
-    val level2
-        get() = sequential {
-            +driveStraight(200.0 / 12 + 1.0)
-            +QuickTurn(-90.0)
-            +parallel {
-                //                val stopSignal = stopSignal
-                +sequential {
-                    +driveStraight(7.0)
-                    +QuickTurn(-45.0)
-                    +SubActions.outtakeHatch
-                    //                    +stopSignal
-                }
-                +LiftSetpoint(FieldConstants.kHatch2Height)
+    fun level2() = sequential {
+        +driveStraight(200.0 / 12 + 1.0)
+        +QuickTurn(-90.0)
+        +parallel {
+            //                val stopSignal = stopSignal
+            +sequential {
+                +driveStraight(7.0)
+                +QuickTurn(-45.0)
+                +SubActions.outtakeHatch()
+                //                    +stopSignal
             }
-            +parallel {
-                +driveStraight(2.0, isBackwards = true)
-                +sequential {
-                    wait(0.5)
-                    +LiftSetpoint(LiftConstants.kHomeHeightInches)
-                }
+            +LiftSetpoint(FieldConstants.kHatch2Height)
+        }
+        +parallel {
+            +driveStraight(2.0, isBackwards = true)
+            +sequential {
+                wait(0.5)
+                +LiftSetpoint(LiftConstants.kHomeHeightInches)
             }
         }
+    }
 }

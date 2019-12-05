@@ -4,8 +4,6 @@ import ca.warp7.frc.action.Action
 import ca.warp7.frc.control.PID
 import ca.warp7.frc.control.PIDControl
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.Rotation2D
-import ca.warp7.frc.geometry.Translation2D
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
 import ca.warp7.frc2019.io.ioInstance
@@ -21,7 +19,7 @@ class DriveStraightPID(val distance: Double, val straightPID: PIDControl = PIDCo
 
     override fun firstCycle() {
         io.driveControlMode = ControlMode.Velocity
-        Drive.robotState = Pose2D(Translation2D.identity, Rotation2D.identity)
+        Drive.odometry.resetPosition(Pose2D.identity, io.yaw)
     }
 
     override fun shouldFinish(): Boolean {

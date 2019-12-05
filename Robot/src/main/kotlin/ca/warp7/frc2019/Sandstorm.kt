@@ -12,7 +12,7 @@ class Sandstorm : Action {
 
     private val io: BaseIO = ioInstance()
 
-    private val auto = StraightHatch.straightHatch
+    private val auto = StraightHatch.straightHatch()
 
     override fun firstCycle() {
         Looper.add(auto)
@@ -28,8 +28,8 @@ class Sandstorm : Action {
 //        val initPos = LiftConstants.kHatchStartHeightInches *
 //                LiftConstants.kTicksPerInch / LiftConstants.kTicksPerRadian
 //        io.resetLiftPosition(positionRadians = initPos)
-        //Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
-        //Lift.updatePositionControl()
+//        Lift.setpointInches = (initPos + LiftConstants.kHomeHeightInches) + 9.0
+//        Lift.updatePositionControl()
     }
 
     override fun update() {

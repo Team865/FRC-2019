@@ -23,69 +23,65 @@ object LeftRocketCloseHatch {
     val turnPose = Pose2D(14.0.feet, 7.0.feet, 90.degrees)
     val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
 
-    val startToRocket: Action
-        get() = DriveTrajectory2 {
-            startAt(Pose2D.identity)
-            moveTo(Pose2D(16.feet, 0.0, 90.degrees.inverse))
-            setFollower(SpeedDemandFollower())
+    fun startToRocket(): Action = DriveTrajectory2 {
+        startAt(Pose2D.identity)
+        moveTo(Pose2D(16.feet, 0.0, 90.degrees.inverse))
+        setFollower(SpeedDemandFollower())
+    }
+
+    fun rocketToLoadingStation(): Action = sequential {
+        +DriveTrajectory2 {
+            startAt(startPose)
+            moveTo(rocketPose)
+            moveTo(turnPose)
+            setInverted(true)
+            setFollower(RamseteFollower())
+        }
+        +DriveTrajectory2 {
+            startAt(startPose)
+            moveTo(turnPose)
+            moveTo(loadingStationPose)
+            setFollower(RamseteFollower())
+        }
+    }
+
+    fun level1() = sequential {
+        +startToRocket()
+        +SubActions.outtakeHatch()
+        +rocketToLoadingStation()
+        +SubActions.intakeHatch()
+    }
+
+    fun level2() = sequential {
+        // off platform and turn
+        +driveStraight(88.0 / 12 + 1.0)
+        +QuickTurn(-90.0)
+        +driveStraight(65.0 / 12)
+
+        // turn to rocket and raise lift
+        +QuickTurn(70.0)
+        +parallel {
+            +sequential {
+                +driveStraight(50.0 / 12)
+                +SubActions.outtakeHatch()
+                //+stopSignal
+            }
+            +LiftSetpoint(FieldConstants.kHatch2Height)
         }
 
-    val rocketToLoadingStation: Action
-        get() = sequential {
-            +DriveTrajectory2 {
-                startAt(startPose)
-                moveTo(rocketPose)
-                moveTo(turnPose)
-                setInverted(true)
-                setFollower(RamseteFollower())
+        // back off and lower lift
+        +parallel {
+            +sequential {
+                +driveStraight(3.0, isBackwards = true)
+                +QuickTurn(-160.0)
+                +driveStraight(160.0 / 12)
             }
-            +DriveTrajectory2 {
-                startAt(startPose)
-                moveTo(turnPose)
-                moveTo(loadingStationPose)
-                setFollower(RamseteFollower())
+            +sequential {
+                wait(0.5)
+                +LiftSetpoint(LiftConstants.kHomeHeightInches)
             }
         }
 
-    val level1
-        get() = sequential {
-            +startToRocket
-            +SubActions.outtakeHatch
-            +rocketToLoadingStation
-            +SubActions.intakeHatch
-        }
-
-    val level2
-        get() = sequential {
-            // off platform and turn
-            +driveStraight(88.0 / 12 + 1.0)
-            +QuickTurn(-90.0)
-            +driveStraight(65.0 / 12)
-
-            // turn to rocket and raise lift
-            +QuickTurn(70.0)
-            +parallel {
-                +sequential {
-                    +driveStraight(50.0 / 12)
-                    +SubActions.outtakeHatch
-                    //+stopSignal
-                }
-                +LiftSetpoint(FieldConstants.kHatch2Height)
-            }
-
-            // back off and lower lift
-            +parallel {
-                +sequential {
-                    +driveStraight(3.0, isBackwards = true)
-                    +QuickTurn(-160.0)
-                    +driveStraight(160.0 / 12)
-                }
-                +sequential {
-                    wait(0.5)
-                    +LiftSetpoint(LiftConstants.kHomeHeightInches)
-                }
-            }
-
-            +SubActions.intakeHatch
-        }
+        +SubActions.intakeHatch()
+    }
 }

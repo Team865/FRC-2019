@@ -28,7 +28,7 @@ object LeftCargoShipHatch {
             +driveStraight(16.0 / 12)
 
             // outtake hatch
-            +SubActions.outtakeHatch
+            +SubActions.outtakeHatch()
 
             // drive to loading station
             +driveStraight(55.0 / 12, isBackwards = true)
@@ -39,43 +39,42 @@ object LeftCargoShipHatch {
             +driveStraight(10.0 / 12)
 
             // intake hatch
-            +SubActions.intakeHatch
+            +SubActions.intakeHatch()
         }
     }
 
-    val leftSideCargoShipHatchLimelight
-        get() = sequential {
+    fun leftSideCargoShipHatchLimelight() = sequential {
 
-            // grab hatch
-            +runOnce { io.grabbing = true }
-            +wait(1.0)
+        // grab hatch
+        +runOnce { io.grabbing = true }
+        +wait(1.0)
 
-            // drive to second cargo bay
-            +driveStraight(205.0 / 12 + 1.0)
-            +QuickTurn(90.0).withTimeout(1.5)
-            +AlignWithLimelight().withTimeout(2.0)
-            +wait(0.6)
-            +driveStraight(24.0 / 12)
+        // drive to second cargo bay
+        +driveStraight(205.0 / 12 + 1.0)
+        +QuickTurn(90.0).withTimeout(1.5)
+        +AlignWithLimelight().withTimeout(2.0)
+        +wait(0.6)
+        +driveStraight(24.0 / 12)
 
-            // outtake hatch
-            +SubActions.outtakeHatch
+        // outtake hatch
+        +SubActions.outtakeHatch()
 
-            // drive to loading station
-            +driveStraight(45.0 / 12, isBackwards = true)
-            +QuickTurn(100.0).withTimeout(5.0)
-            +driveStraight(200.0 / 12)
-            +AlignWithLimelight().withTimeout(2.0)
-            +driveStraight(30.0 / 12)
+        // drive to loading station
+        +driveStraight(45.0 / 12, isBackwards = true)
+        +QuickTurn(100.0).withTimeout(5.0)
+        +driveStraight(200.0 / 12)
+        +AlignWithLimelight().withTimeout(2.0)
+        +driveStraight(30.0 / 12)
 
-            // intake hatch
-            +wait(1.5)
+        // intake hatch
+        +wait(1.5)
 
-            // more driving to places
-            +driveStraight(10.0 / 12, isBackwards = true)
-            +wait(0.5)
-            +driveStraight(190.0 / 12, isBackwards = true)
-            +QuickTurn(-100.0).withTimeout(5.0)
-            +driveStraight(40.0 / 12)
-        }
+        // more driving to places
+        +driveStraight(10.0 / 12, isBackwards = true)
+        +wait(0.5)
+        +driveStraight(190.0 / 12, isBackwards = true)
+        +QuickTurn(-100.0).withTimeout(5.0)
+        +driveStraight(40.0 / 12)
+    }
 }
 
