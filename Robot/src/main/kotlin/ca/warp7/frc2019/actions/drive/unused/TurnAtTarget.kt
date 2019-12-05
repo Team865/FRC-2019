@@ -4,7 +4,6 @@ import ca.warp7.frc.action.Action
 import ca.warp7.frc.epsilonEquals
 import ca.warp7.frc.geometry.Rotation2D
 import ca.warp7.frc.geometry.degrees
-import ca.warp7.frc.geometry.fromDegrees
 import ca.warp7.frc.geometry.radians
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.io.BaseIO
