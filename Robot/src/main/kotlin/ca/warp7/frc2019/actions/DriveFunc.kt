@@ -9,8 +9,7 @@ import kotlin.math.abs
 fun driveStraight(
         distanceInFeet: Double,
         isBackwards: Boolean = distanceInFeet < 0
-) = DriveTrajectory2 {
+) = DriveTrajectory2(AnglePIDFollower()) {
     moveTo(Pose2D.identity)
     moveTo(Pose2D(abs(distanceInFeet / 12.0), 0.0, Rotation2D.identity))
-    setFollower(AnglePIDFollower())
 }

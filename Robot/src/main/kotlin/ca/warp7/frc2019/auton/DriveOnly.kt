@@ -4,9 +4,9 @@ package ca.warp7.frc2019.auton
 import ca.warp7.frc.action.runOnce
 import ca.warp7.frc.action.sequential
 import ca.warp7.frc.action.wait
+import ca.warp7.frc.degrees
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.AlignWithLimelight
 import ca.warp7.frc2019.actions.DriveTrajectory2
 import ca.warp7.frc2019.actions.QuickTurn
@@ -41,11 +41,10 @@ object DriveOnly {
             io.grabbing = true
             io.pushing = false
         }
-        +DriveTrajectory2 {
+        +DriveTrajectory2(VoltageOnlyFollower()) {
             startAt(Pose2D.identity)
             moveTo(Pose2D(2.feet, 0.feet, 0.degrees))
             moveTo(Pose2D(16.7.feet, 0.feet, 90.degrees))
-            setFollower(VoltageOnlyFollower())
         }
         +runOnce { io.limelightMode = LimelightMode.Vision }
         +AlignWithLimelight()

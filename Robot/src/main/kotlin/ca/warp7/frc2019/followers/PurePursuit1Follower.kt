@@ -3,8 +3,8 @@ package ca.warp7.frc2019.followers
 import ca.warp7.frc.geometry.Pose2D
 import ca.warp7.frc.geometry.findRadius
 import ca.warp7.frc.trajectory.TrajectoryController
-import ca.warp7.frc.trajectory.TrajectoryFollower
 import ca.warp7.frc.trajectory.TrajectoryState
+import ca.warp7.frc2019.helper.velocity
 import ca.warp7.frc2019.subsystems.Drive
 
 class PurePursuit1Follower : TrajectoryFollower {
@@ -17,11 +17,11 @@ class PurePursuit1Follower : TrajectoryFollower {
         fun getLookahead(controller: TrajectoryController, setpoint: TrajectoryState): TrajectoryState {
             var lookaheadTime = kPathLookaheadTime
             var lookahead = controller.interpolatedTimeView(lookaheadTime)
-            var lookaheadDistance = (lookahead.arcPose.pose - setpoint.arcPose.pose).logFast().mag()
+            var lookaheadDistance = (lookahead.pose - setpoint.pose).log().mag()
             while (lookaheadDistance < kMinLookDist && (controller.totalTime - controller.t) > lookaheadTime) {
                 lookaheadTime += kLookaheadSearchDt
                 lookahead = controller.interpolatedTimeView(lookaheadTime)
-                lookaheadDistance = (lookahead.arcPose.pose - setpoint.arcPose.pose).logFast().mag()
+                lookaheadDistance = (lookahead.pose - setpoint.pose).log().mag()
             }
             if (lookaheadDistance < kMinLookDist) lookahead = controller.trajectory.last()
             return lookahead
@@ -34,9 +34,9 @@ class PurePursuit1Follower : TrajectoryFollower {
             error: Pose2D
     ) {
         val lookahead = getLookahead(controller, setpoint)
-        val initialToRobot = controller.getInitialToRobot(Drive.robotState)
+        val initialToRobot = setpoint.pose - error
         val velocity = setpoint.velocity
-        val curvature = 1.0 / findRadius(initialToRobot, lookahead.arcPose)
+        val curvature = 1.0 / findRadius(initialToRobot, lookahead.pose)
         Drive.setAdjustedCurvature(velocity, curvature, error.translation.x)
     }
 }

@@ -1,15 +1,15 @@
 package ca.warp7.frc2019.actions.drive.unused
 
 import ca.warp7.frc.action.Action
-import ca.warp7.frc.geometry.ArcPose2D
 import ca.warp7.frc.geometry.Translation2D
+import ca.warp7.frc.trajectory.TrajectoryState
 import ca.warp7.frc2019.constants.DriveConstants
 import ca.warp7.frc2019.subsystems.Drive
 import kotlin.math.PI
 import kotlin.math.asin
 import kotlin.math.tan
 
-class PursuePathNew(path: List<ArcPose2D>) : Action {
+class PursuePathNew(path: List<TrajectoryState>) : Action {
     //var path = Path(emptyList())
     var lookaheadDistance = 0.2
     var lookaheadGain = 0.05
@@ -21,15 +21,15 @@ class PursuePathNew(path: List<ArcPose2D>) : Action {
         val yaw = Drive.robotState.rotation.radians()
         val p = Translation2D(x, y)
 
-        var i = points.map { (it.translation - p).mag() }.let { it.indexOf(it.min()) }
-        var distance = (points[i].translation - p).mag()
+        var i = points.map { (it.pose.translation - p).mag() }.let { it.indexOf(it.min()) }
+        var distance = (points[i].pose.translation - p).mag()
 
         while (distance <= lookaheadDistance && i < points.size) {
             i++
-            distance += (points[i].translation - points[i - 1].translation).mag()
+            distance += (points[i].pose.translation - points[i - 1].pose.translation).mag()
         }
 
-        val t = points[i].translation
+        val t = points[i].pose.translation
 
         val slope = tan(yaw + PI / 2)
 

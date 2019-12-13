@@ -4,9 +4,9 @@ import ca.warp7.frc.action.Action
 import ca.warp7.frc.action.parallel
 import ca.warp7.frc.action.sequential
 import ca.warp7.frc.action.wait
+import ca.warp7.frc.degrees
 import ca.warp7.frc.feet
 import ca.warp7.frc.geometry.Pose2D
-import ca.warp7.frc.geometry.degrees
 import ca.warp7.frc2019.actions.DriveTrajectory2
 import ca.warp7.frc2019.actions.LiftSetpoint
 import ca.warp7.frc2019.actions.QuickTurn
@@ -23,25 +23,22 @@ object LeftRocketCloseHatch {
     val turnPose = Pose2D(14.0.feet, 7.0.feet, 90.degrees)
     val loadingStationPose = Pose2D(0.0.feet, 8.feet, 180.degrees)
 
-    fun startToRocket(): Action = DriveTrajectory2 {
+    fun startToRocket(): Action = DriveTrajectory2(SpeedDemandFollower()) {
         startAt(Pose2D.identity)
         moveTo(Pose2D(16.feet, 0.0, 90.degrees.inverse))
-        setFollower(SpeedDemandFollower())
     }
 
     fun rocketToLoadingStation(): Action = sequential {
-        +DriveTrajectory2 {
+        +DriveTrajectory2(RamseteFollower()) {
             startAt(startPose)
             moveTo(rocketPose)
             moveTo(turnPose)
             setInverted(true)
-            setFollower(RamseteFollower())
         }
-        +DriveTrajectory2 {
+        +DriveTrajectory2(RamseteFollower()) {
             startAt(startPose)
             moveTo(turnPose)
             moveTo(loadingStationPose)
-            setFollower(RamseteFollower())
         }
     }
 

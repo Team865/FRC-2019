@@ -118,7 +118,7 @@ object Drive {
     }
 
     val odometry = DriveOdometry(Rotation2D.identity, Pose2D.identity)
-    val robotState: Pose2D get() = odometry.pose()
+    val robotState: Pose2D get() = odometry.getRobotState()
 
     fun updateRobotStateEstimation() {
         odometry.update(io.yaw, io.leftPosition, io.rightPosition)
